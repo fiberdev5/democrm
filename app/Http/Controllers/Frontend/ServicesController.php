@@ -9,10 +9,15 @@ use App\Models\DeviceBrand;
 use App\Models\DeviceType;
 use App\Models\Il;
 use App\Models\Ilce;
+use App\Models\PaymentType;
 use App\Models\Service;
+use App\Models\ServicePlanning;
 use App\Models\ServiceResource;
 use App\Models\ServiceStage;
+use App\Models\ServiceStageAnswer;
 use App\Models\StageQuestion;
+use App\Models\Stock;
+use App\Models\StockAction;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Models\WarrantyPeriod;
@@ -425,6 +430,568 @@ class ServicesController extends Controller
             return view('frontend.secure.all_services.service_stage_questions_show', 
                     compact('stage_questions', 'stage_id', 'service_id', 'firma', 'islem', 'personeller', 'araclar'));
         }
+    }
+
+    public function SaveServicePlan(Request $request, $tenant_id) {
+        $firma = Tenant::where('id', $tenant_id)->first();
+
+        try {
+            
+            $servisId = $request->input('servis');
+            $gelenIslem = json_decode($request->input('gelenIslem'), true);
+            $gidenIslem = $request->input('gidenIslem');
+
+            // Servis durumu kontrolü
+            $servisDurum = Service::where('firma_id',$firma->id)->where('id', $servisId)->first();
+            if (!$servisDurum || $servisDurum->firma_id != $tenant_id) {
+                return response()->json(['status' => 'error', 'message' => '-1']);
+            }
+
+            // Stok kontrolü
+            $stokHatasiVar = $this->stokKontrolEt($request, $gelenIslem);
+            if ($stokHatasiVar) {
+                return response()->json(['status' => 'error', 'message' => $stokHatasiVar]);
+            }
+
+            
+            $kid = Auth()->user()->user_id;
+            // Servis planlama kaydı
+            $planData = [
+                'firma_id' => $tenant_id,
+                'kid' => $kid,
+                'servisid' => $servisId,
+                'gelenIslem' => $gelenIslem['id'],
+                'gidenIslem' => $gidenIslem,
+                'tarihDurum' => 0,
+                'tarihKontrol' => 0,
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+
+            $planId = ServicePlanning::insertGetId($planData);
+
+            if ($planId) {
+                // Log kaydı
+                $this->logYaz("ServisID: {$servisId}, PlanID: {$planId} Servis Planlamaya Aşama Eklendi");
+
+                // Servis durumunu güncelle
+                Service::where('id', $servisId)
+                    ->update([
+                        'servisDurum' => $gidenIslem,
+                        'planDurum' => $planId,
+                        'updated_at' => now()
+                    ]);
+
+                // Soru cevaplarını işle
+                $this->soruCevaplariniIsle($request, $servisId, $planId, $tenant_id, $gelenIslem);
+
+                // Özel durumları işle
+                $this->ozelDurumlariIsle($request, $servisId, $planId, $tenant_id, $gidenIslem, $servisDurum);
+
+                // Tarih durumu kontrolü
+                $this->tarihDurumuKontrolEt();
+
+              
+                return response()->json(['status' => 'success', 'message' => 'Servis aşama eklendi.']);
+
+            } else {
+               
+                $this->logYaz("ServisID: {$servisId}, PlanID: - Servis Planlamaya Aşama Eklenemedi");
+                return response()->json(['status' => 'error', 'message' => 'HATA! Servis aşama eklenemedi.']);
+            }
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            \Log::error('Service Plan Save Error: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => 'Bir hata oluştu: ' . $e->getMessage()]);
+        }
+    }
+
+     private function stokKontrolEt(Request $request, $gelenIslem)
+    {
+        foreach ($request->all() as $key => $value) {
+            if (strpos($key, 'soru') !== false && $value == "Parca") {
+                foreach ($request->all() as $stokKey => $stokValue) {
+                    if (strpos($stokKey, 'stokCheck') !== false) {
+                        $stokId = (int) filter_var($stokKey, FILTER_SANITIZE_NUMBER_INT);
+                        $adet = abs($request->input("stokAdet{$stokId}", 0));
+
+                        // Stok durumunu kontrol et
+                        $stokHareketleri = StockAction::where('stokId', $stokId)
+                            ->get();
+
+                        if ($stokHareketleri->count() > 0) {
+                            $toplam = 0;
+                            foreach ($stokHareketleri as $hareket) {
+                                if ($hareket->islem == "1") {
+                                    $toplam += $hareket->adet;
+                                } elseif ($hareket->islem == "2") {
+                                    if ($hareket->plan_id == 0) {
+                                        $toplam -= $hareket->adet;
+                                    }
+                                } elseif ($hareket->islem == "3") {
+                                    $toplam -= $hareket->adet;
+                                }
+                            }
+
+                            if ($toplam <= 0 || $adet > $toplam) {
+                                $stok = Stock::where('id', $stokId)->first();
+                                return "STOKHATA: " . mb_convert_case($stok->urun_adi, MB_CASE_TITLE, "UTF-8") . " Stok Adeti Yetersizdir.";
+                            }
+                        } else {
+                            $stok = Stock::where('id', $stokId)->first();
+                            return "STOKHATA: " . mb_convert_case($stok->urun_adi, MB_CASE_TITLE, "UTF-8") . " Stok Adeti Yetersizdir.";
+                        }
+                    }
+                }
+
+                // Parça teslim et işleminde stok seçimi zorunlu
+                if ($gelenIslem == "238") {
+                    $stokSecildi = false;
+                    foreach ($request->all() as $key => $value) {
+                        if (strpos($key, 'stokCheck') !== false) {
+                            $stokSecildi = true;
+                            break;
+                        }
+                    }
+
+                    if (!$stokSecildi) {
+                        return "STOKHATA: Parça Teslim Ederken Stok Seçmeni Zorunludur.";
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private function soruCevaplariniIsle(Request $request, $servisId, $planId, $tenantId, $gelenIslem)
+    {
+        if ($request->has('soru')) {
+            foreach ($request->input('soru') as $soruId => $cevap) {
+                if ($cevap == "Parca") {
+                    $this->parcaIslemleriniYap($request, $servisId, $planId, $tenantId, $soruId, $gelenIslem);
+                } else {
+                    if (is_array($cevap)) {
+                        // Çoklu cevap (checkbox)
+                        foreach ($cevap as $cevapItem) {
+                            ServiceStageAnswer::create([
+                                'firma_id' => $tenantId,
+                                'servisid' => $servisId,
+                                'planid' => $planId,
+                                'soruid' => $soruId,
+                                'cevap' => $cevapItem,
+                                'created_at' => now(),
+                                'updated_at' => now()
+                            ]);
+                        }
+                    } else {
+                        // Tekli cevap
+                        ServiceStageAnswer::create([
+                            'firma_id' => $tenantId,
+                            'servisid' => $servisId,
+                            'planid' => $planId,
+                            'soruid' => $soruId,
+                            'cevap' => $cevap,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ]);
+                    }
+                }
+            }
+        }
+    }
+
+    private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tenantId, $soruId, $gelenIslem)
+    {
+        $stokCevap = "";
+
+        foreach ($request->all() as $key => $value) {
+            if (strpos($key, 'stokCheck') !== false) {
+                $stokId = (int) filter_var($key, FILTER_SANITIZE_NUMBER_INT);
+                $adet = abs($request->input("stokAdet{$stokId}", 1));
+
+                if (empty($stokCevap)) {
+                    $stokCevap = "{$stokId}---{$adet}";
+                } else {
+                    $stokCevap .= ", {$stokId}---{$adet}";
+                }
+
+                if ($gelenIslem == "238") {
+                    $this->parcaTeslimEt($stokId, $adet, $servisId, $planId, $tenantId);
+                } else {
+                    $this->parcaKullan($stokId, $adet, $servisId, $planId, $tenantId);
+                }
+            }
+        }
+        $stokCevap = is_array($stokCevap) ? implode(', ', $stokCevap) : $stokCevap;
+        if (!empty($stokCevap)) {
+            ServiceStageAnswer::create([
+                'firma_id' => $tenantId,
+                'servisid' => $servisId,
+                'planid' => $planId,
+                'soruid' => $soruId,
+                'cevap' => $stokCevap,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+    }
+
+    private function parcaTeslimEt($stokId, $adet, $servisId, $planId, $tenantId)
+    {
+        // Önceki planı bul
+        $sonPlan = ServicePlanning::where('servisid', $servisId)
+            ->orderBy('id', 'desc')
+            ->skip(1)
+            ->first();
+
+        // Personel stok ekle/güncelle
+        $perStok = DB::table('personel_stoklar')
+            ->where('user_id', $sonPlan->user_id)
+            ->where('stok_id', $stokId)
+            ->first();
+
+        // if ($perStok) {
+        //     DB::table('personel_stoklar')
+        //         ->where('id', $perStok->id)
+        //         ->update([
+        //             'adet' => $perStok->adet + $adet,
+        //             'updated_at' => now()
+        //         ]);
+        //     $perStokId = $perStok->id;
+        // } else {
+        //     $perStokId = DB::table('personel_stoklar')->insertGetId([
+        //         'tenant_id' => $tenantId,
+        //         'user_id' => $sonPlan->user_id,
+        //         'stok_id' => $stokId,
+        //         'adet' => $adet,
+        //         'created_at' => now(),
+        //         'updated_at' => now()
+        //     ]);
+        // }
+
+        // Stok hareketi kaydet
+        StockAction::create([
+            'firma_id' => $tenantId,
+            'stokId' => $stokId,
+            'islem' => 3,
+            'adet' => $adet,
+            'servisid' => $servisId,
+            'fiyat' => 0,
+            'fiyat_birim' => 1,
+            'planId' => $planId,
+            //'personel_stok_id' => $perStokId,
+            'personel' => $sonPlan->user_id,
+            'kid' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        $this->logYaz("StokID: {$stokId}, HareketID: {$servisId} Servisten Personel'e Stok Eklendi");
+    }
+
+    private function parcaKullan($stokId, $adet, $servisId, $planId, $tenantId)
+    {
+        $stok = Stock::where('id', $stokId)->first();
+        $fiyat = $adet * $stok->fiyat;
+
+        // Stok hareketi kaydet
+        $stokHareketId = StockAction::insertGetId([
+            'firma_id' => $tenantId,
+            'kid' => auth()->id(),
+            'stokId' => $stokId,
+            'islem' => 2,
+            'servisid' => $servisId,
+            'depo' => 1,
+            'adet' => $adet,
+            'fiyat' => $fiyat,
+            'fiyat_birim' => 1,
+            'planId' => $planId,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        // Personel stoğundan düş
+        // $perStok = DB::table('personel_stoklar')
+        //     ->where('user_id', auth()->id())
+        //     ->where('stok_id', $stokId)
+        //     ->first();
+
+        // if ($perStok) {
+        //     DB::table('personel_stoklar')
+        //         ->where('id', $perStok->id)
+        //         ->update([
+        //             'adet' => $perStok->adet - $adet,
+        //             'updated_at' => now()
+        //         ]);
+        // }
+
+        // Servis durumu bilgilerini al
+        $servisDurum = Service::where('id', $servisId)->first();
+
+        // Kasa hareketi ekle
+        $stokIslem = PaymentType::where('parca', '1')->first();
+
+        // DB::table('kasa_hareketleri')->insert([
+        //     'tenant_id' => $tenantId,
+        //     'user_id' => auth()->id(),
+        //     'personel_id' => auth()->id(),
+        //     'islem_tarihi' => now(),
+        //     'odeme_yonu' => 2,
+        //     'odeme_sekli' => 178,
+        //     'odeme_turu' => $stokIslem->id,
+        //     'odeme_durum' => 1,
+        //     'fiyat' => $fiyat,
+        //     'fiyat_birim' => 1,
+        //     'aciklama' => "Stok ID: {$stokId} ({$stok->urun_adi})",
+        //     'marka' => $servisDurum->cihaz_marka,
+        //     'cihaz' => $servisDurum->cihaz_tur,
+        //     'servis_id' => $servisDurum->id,
+        //     'stok_islem' => $stokHareketId,
+        //     'created_at' => now(),
+        //     'updated_at' => now()
+        // ]);
+
+        // Servis para hareketi ekle
+        // DB::table('servis_para_hareketleri')->insert([
+        //     'tenant_id' => $tenantId,
+        //     'servis_id' => $servisId,
+        //     'tarih' => now(),
+        //     'odeme_sekli' => 178,
+        //     'odeme_durum' => 1,
+        //     'fiyat' => $fiyat,
+        //     'aciklama' => "Stok ID: {$stokId} ({$stok->urun_adi})",
+        //     'odeme_yonu' => 2,
+        //     'stok_islem' => $stokHareketId,
+        //     'user_id' => auth()->id(),
+        //     'created_at' => now(),
+        //     'updated_at' => now()
+        // ]);
+    }
+
+    private function ozelDurumlariIsle(Request $request, $servisId, $planId, $tenantId, $gidenIslem, $servisDurum)
+    {
+        // Parça Teslim Et (259) özel durumu
+        if ($gidenIslem == "259") {
+            $this->parcaTeslimEtOzelDurum($servisId, $planId, $tenantId);
+        }
+
+        // Diğer özel durumlar (254, 267, 268)
+        if ($gidenIslem == "254") {
+            $planlama = ServicePlanning::where('servisid', $servisId)
+                ->orderBy('id', 'desc')
+                ->skip(1)
+                ->first();
+
+            if ($planlama && $planlama->giden_islem == "255") {
+                ServicePlanning::where('id', $planlama->id)->delete();
+            }
+        }
+
+        if ($gidenIslem == "267") {
+            $this->musteriIadeEdildiIslem($request, $servisId, $planId, $tenantId, $servisDurum);
+        }
+
+        if ($gidenIslem == "268") {
+            $this->fiyatYukseltildiIslem($request, $servisId, $planId, $tenantId, $servisDurum);
+        }
+    }
+
+    private function parcaTeslimEtOzelDurum($servisId, $planId, $tenantId)
+    {
+        $planlama = ServicePlanning::where('servisid', $servisId)
+            ->orderBy('id', 'desc')
+            ->skip(1)
+            ->first();
+
+        // Yeni plan oluştur
+        $yeniPlanId = ServicePlanning::insertGetId([
+            'firma_id' => $tenantId,
+            'servisid' => $servisId,
+            'gelenIslem' => 259,
+            'gidenIslem' => $planlama->gelen_islem,
+            'kid' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+
+        // Servis durumunu güncelle
+        Service::where('id', $servisId)
+            ->update([
+                'servisDurum' => $planlama->gelen_islem,
+                'planDurum' => $yeniPlanId,
+                'updated_at' => now()
+            ]);
+
+        // Önceki cevapları kopyala
+        $planlama2 = ServicePlanning::where('servisid', $servisId)
+            ->orderBy('id', 'desc')
+            ->skip(2)
+            ->first();
+
+        $cevaplar = ServiceStageAnswer::where('planid', $planlama2->id)
+            ->orderBy('id', 'asc')
+            ->get();
+
+        foreach ($cevaplar as $cevap) {
+            $soru = StageQuestion::where('id', $cevap->soru_id)->first();
+            $cevapText = ($soru->cevap == "[Tarih]") ? now()->format('d/m/Y') : $cevap->cevap;
+            
+            ServiceStageAnswer::insert([
+                'firma_id' => $tenantId,
+                'servisid' => $servisId,
+                'planid' => $yeniPlanId,
+                'soruid' => $cevap->soru_id,
+                'cevap' => $cevapText,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+    }
+
+    private function musteriIadeEdildiIslem(Request $request, $servisId, $planId, $tenantId, $servisDurum)
+    {
+        $fiyat = $request->input('soru378');
+        $aciklama = $request->input('soru376');
+
+        // Servis para hareketi
+        // $paraHareketId = DB::table('servis_para_hareketleri')->insertGetId([
+        //     'tenant_id' => $tenantId,
+        //     'user_id' => auth()->id(),
+        //     'servis_id' => $servisId,
+        //     'tarih' => now(),
+        //     'odeme_yonu' => 2,
+        //     'odeme_sekli' => 178,
+        //     'odeme_durum' => 1,
+        //     'fiyat' => $fiyat,
+        //     'aciklama' => $aciklama,
+        //     'plan_islem' => $planId,
+        //     'created_at' => now(),
+        //     'updated_at' => now()
+        // ]);
+
+        // Kasa hareketi
+        // DB::table('kasa_hareketleri')->insert([
+        //     'tenant_id' => $tenantId,
+        //     'user_id' => auth()->id(),
+        //     'islem_tarihi' => now(),
+        //     'odeme_yonu' => 2,
+        //     'odeme_sekli' => 178,
+        //     'odeme_turu' => 214,
+        //     'odeme_durum' => 1,
+        //     'fiyat' => $fiyat,
+        //     'fiyat_birim' => 1,
+        //     'aciklama' => $aciklama,
+        //     'servis_id' => $servisId,
+        //     'marka' => $servisDurum->cihaz_marka,
+        //     'cihaz' => $servisDurum->cihaz_tur,
+        //     'servis_islem' => $paraHareketId,
+        //     'created_at' => now(),
+        //     'updated_at' => now()
+        // ]);
+    }
+
+    private function fiyatYukseltildiIslem(Request $request, $servisId, $planId, $tenantId, $servisDurum)
+    {
+        $fiyat = $request->input('soru380');
+        $aciklama = $request->input('soru379');
+
+        // Servis para hareketi
+        // $paraHareketId = DB::table('servis_para_hareketleri')->insertGetId([
+        //     'tenant_id' => $tenantId,
+        //     'user_id' => auth()->id(),
+        //     'servis_id' => $servisId,
+        //     'tarih' => now(),
+        //     'odeme_yonu' => 1,
+        //     'odeme_sekli' => 178,
+        //     'odeme_durum' => 2,
+        //     'fiyat' => $fiyat,
+        //     'aciklama' => $aciklama,
+        //     'plan_islem' => $planId,
+        //     'created_at' => now(),
+        //     'updated_at' => now()
+        // ]);
+
+        // Kasa hareketi
+        // DB::table('kasa_hareketleri')->insert([
+        //     'tenant_id' => $tenantId,
+        //     'user_id' => auth()->id(),
+        //     'islem_tarihi' => now(),
+        //     'odeme_yonu' => 1,
+        //     'odeme_sekli' => 178,
+        //     'odeme_turu' => 202,
+        //     'odeme_durum' => 2,
+        //     'fiyat' => $fiyat,
+        //     'fiyat_birim' => 2,
+        //     'aciklama' => $aciklama,
+        //     'servis_id' => $servisId,
+        //     'marka' => $servisDurum->cihaz_marka,
+        //     'cihaz' => $servisDurum->cihaz_tur,
+        //     'servis_islem' => $paraHareketId,
+        //     'created_at' => now(),
+        //     'updated_at' => now()
+        // ]);
+    }
+
+    private function tarihDurumuKontrolEt()
+    {
+        // Tarih durumu kontrolü - performans optimizasyonu
+        $servisPlanlar = ServicePlanning::where('tarihKontrol', '0')
+            ->get();
+
+        foreach ($servisPlanlar as $servisRow) {
+            $tarihDurum = "0";
+            $cevaplar = ServiceStageAnswer::where('planid', $servisRow->id)
+                ->get();
+
+            foreach ($cevaplar as $cevapRow) {
+                $soru = StageQuestion::where('id', $cevapRow->soru_id)
+                    ->first();
+
+                if ($soru && $soru->cevap == "[Tarih]") {
+                    $tarihDurum = "1";
+                    break;
+                }
+            }
+
+            ServicePlanning::where('id', $servisRow->id)
+                ->update([
+                    'tarihDurum' => $tarihDurum,
+                    'tarihKontrol' => "1",
+                    'updated_at' => now()
+                ]);
+        }
+
+        // Cevap text güncelleme
+        $cevaplar = ServiceStageAnswer::where('cevapText', '')
+            ->get();
+
+        foreach ($cevaplar as $cevapRow) {
+            $soru = StageQuestion::where('id', $cevapRow->soru_id)
+                ->first();
+
+            if ($soru) {
+                ServiceStageAnswer::where('id', $cevapRow->id)
+                    ->update([
+                        'cevapText' => $soru->cevap,
+                        'updated_at' => now()
+                    ]);
+            }
+        }
+    }
+
+    private function logYaz($mesaj)
+    {
+        // Log kayıt sisteminizi burada çağırın
+        
+        
+        // Eğer özel bir log sisteminiz varsa:
+        // DB::table('logs')->insert([
+        //     'message' => $mesaj,
+        //     'user_id' => auth()->id(),
+        //     'created_at' => now()
+        // ]);
     }
 
     public function EditServiceCustomer($tenant_id, $id) {

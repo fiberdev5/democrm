@@ -202,7 +202,7 @@ class PersonelController extends Controller
             );
             return redirect()->back()->with($notification);
         }
-        $roles = Role::all();
+        $roles = Role::where('name','!=', 'Admin')->get();
         $countries = DB::table('ils')->orderBy('name', 'ASC')->get();
         return view('frontend.secure.staffs.edit_staff', compact('staff','roles','firma','countries'));
     }
