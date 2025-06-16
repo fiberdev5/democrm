@@ -10,10 +10,8 @@ use App\Models\DeviceType;
 use App\Models\EmergencyService;
 use App\Models\Il;
 use App\Models\Ilce;
-use App\Models\PaymentMethod;
 use App\Models\PaymentType;
 use App\Models\Service;
-use App\Models\ServiceMoneyAction;
 use App\Models\ServiceOptNote;
 use App\Models\ServicePlanning;
 use App\Models\ServiceResource;
@@ -696,7 +694,7 @@ class ServicesController extends Controller
             'updated_at' => now()
         ]);
 
-        
+        $this->logYaz("StokID: {$stokId}, HareketID: {$servisId} Servisten Personel'e Stok Eklendi");
     }
 
     private function parcaKullan($stokId, $adet, $servisId, $planId, $tenantId)
@@ -1040,25 +1038,25 @@ class ServicesController extends Controller
         
         foreach ($eskiIslemler as $eskiIslem) {
             $personel = User::find($eskiIslem->pid);
-            $asama = ServiceStage::find($eskiIslem->gidenIslem);
+            $asama = ServisAsama::find($eskiIslem->gidenIslem);
             
             // Cevapları al
-            $cevaplar = ServiceStageAnswer::where('firma_id', $tenant_id)->where('planid', $eskiIslem->id)
+            $cevaplar = ServisAsamaCevap::where('planid', $eskiIslem->id)
                 ->orderBy('id', 'asc')
                 ->get();
                 
             $aciklamalar = [];
             foreach ($cevaplar as $cevap) {
                 if (!empty($cevap->cevap)) {
-                    $soru = StageQuestion::find($cevap->soruid);
+                    $soru = ServisAsamaSoru::find($cevap->soruid);
                     $aciklamalar[] = $this->formatCevap($soru, $cevap->cevap);
                 }
             }
             
             $islemData = [
                 'id' => $eskiIslem->id,
-                'tarih' => Carbon::parse($eskiIslem->created_at)->format('d/m/Y H:i'),
-                'personel' => $personel->name ?? '',
+                'tarih' => Carbon::parse($eskiIslem->tarih)->format('d/m/Y H:i'),
+                'personel' => $personel->adsoyad ?? '',
                 'asama' => $asama->asama ?? '',
                 'aciklamalar' => $aciklamalar,
                 'pid' => $eskiIslem->pid,
@@ -1067,10 +1065,10 @@ class ServicesController extends Controller
             $data['eskiIslemler'][] = $islemData;
             
             // Aynı tarihteki para hareketlerini bul
-            $tarih = Carbon::parse($eskiIslem->created_at)->format('Y-m-d');
-            $paraHareketleri = ServiceMoneyAction::where('firma_id', $tenant_id)->where('servisid', $servisId)
+            $tarih = Carbon::parse($eskiIslem->tarih)->format('Y-m-d');
+            $paraHareketleri = ServisParaHareket::where('servisid', $servisId)
                 ->where('odemeYonu', 1)
-                ->whereDate('created_at', $tarih)
+                ->whereDate('tarih', $tarih)
                 ->get();
                 
             foreach ($paraHareketleri as $paraIslem) {
@@ -1082,7 +1080,7 @@ class ServicesController extends Controller
         }
         
         // Eşleşmeyen para hareketleri
-        $kalanParaHareketleri = ServiceMoneyAction::where('firma_id', $tenant_id)->where('servisid', $servisId)
+        $kalanParaHareketleri = ServisParaHareket::where('servisid', $servisId)
             ->where('odemeYonu', 1)
             ->whereNotIn('id', $eklenenPara)
             ->orderBy('id', 'desc')
@@ -1101,13 +1099,13 @@ class ServicesController extends Controller
         
         $result = '<strong>' . $soru->soru . '</strong>: ';
         
-        if (strpos($soru->cevapTuru, 'Grup') !== false) {
-            $personel = User::find($cevap);
-            $result .= $personel->name ?? '';
-        } elseif ($soru->cevapTuru == '[Arac]') {
-            $arac = Car::find($cevap);
+        if (strpos($soru->cevap, 'Grup') !== false) {
+            $personel = Personel::find($cevap);
+            $result .= $personel->adsoyad ?? '';
+        } elseif ($soru->cevap == '[Arac]') {
+            $arac = ServisArac::find($cevap);
             $result .= $arac->arac ?? '';
-        } elseif ($soru->cevapTuru == '[Parca]') {
+        } elseif ($soru->cevap == '[Parca]') {
             $parcalar = explode(', ', $cevap);
             $parcaMetinler = [];
             foreach ($parcalar as $parca) {
@@ -1115,16 +1113,16 @@ class ServicesController extends Controller
                 if (count($parcaData) >= 2) {
                     $parcaId = $parcaData[0];
                     $adet = $parcaData[1];
-                    $stok = Stock::find($parcaId);
+                    $stok = Stok::find($parcaId);
                     if ($stok) {
                         $parcaMetinler[] = $stok->urunAdi . ' (' . $adet . ')';
                     }
                 }
             }
             $result .= implode(', ', $parcaMetinler);
-        } elseif ($soru->cevapTuru == '[Bayi]') {
-            $bayi = User::find($cevap);
-            $result .= $bayi->name ?? '';
+        } elseif ($soru->cevap == '[Bayi]') {
+            $bayi = Personel::find($cevap);
+            $result .= $bayi->adsoyad ?? '';
         } else {
             $result .= $cevap;
         }
@@ -1134,8 +1132,8 @@ class ServicesController extends Controller
     
     private function formatParaHareketi($paraIslem)
     {
-        $personel = User::find($paraIslem->pid);
-        $odemeSekli = PaymentMethod::find($paraIslem->odemeSekli);
+        $personel = Personel::find($paraIslem->pid);
+        $odemeSekli = OdemeSekli::find($paraIslem->odemeSekli);
         
         $odemeDurum = '';
         if ($paraIslem->odemeDurum == 2) {
@@ -1155,8 +1153,8 @@ class ServicesController extends Controller
         
         return [
             'type' => 'para',
-            'tarih' => Carbon::parse($paraIslem->created_at)->format('d/m/Y H:i'),
-            'personel' => $personel->name ?? '',
+            'tarih' => Carbon::parse($paraIslem->tarih)->format('d/m/Y H:i'),
+            'personel' => $personel->adsoyad ?? '',
             'islem' => 'Para Hareketi: ' . $odemeDurum,
             'aciklama' => $fiyat . ' (' . $odemeYonu . ')<br>' . ucfirst($paraIslem->aciklama)
         ];
