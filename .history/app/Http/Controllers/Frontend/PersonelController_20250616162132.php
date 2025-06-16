@@ -41,12 +41,9 @@ class PersonelController extends Controller
         $staffs = User::where('tenant_id', $firma->id)->get();
 
         $roles = Role::where('name','!=', 'Admin')->get();
-        if ($request->ajax()) {       
-            
-            $data = User::whereDoesntHave('roles', function ($query) {
-            $query->where('name', 'Bayi');
-            });    
-            // $data = User::query();  //personeller içinde bayileri de listeliyordu
+        if ($request->ajax()) {           
+            $data = User::query();
+    
             if ($request->filled('durum')) {
                 if ($request->get('durum') == 1) {
                     $data->where('status', 1);
@@ -68,19 +65,9 @@ class PersonelController extends Controller
                 $columns = $request->get('columns');
                 $orderColumn = $columns[$order['column']]['data'];
                 $orderDir = $order['dir'];
-                // $data->where('tenant_id', $firma->id)->orderBy($orderColumn, $orderDir);
-                $data->where('tenant_id', $firma->id)
-                ->whereDoesntHave('roles', function ($query) {
-                    $query->where('name', 'Bayi');
-                })
-                ->orderBy($orderColumn, $orderDir);
+                $data->where('tenant_id', $firma->id)->orderBy($orderColumn, $orderDir);
             } else {
-                // $data->where('tenant_id', $firma->id)->orderBy('user_id','desc');
-                                $data->where('tenant_id', $firma->id)
-                ->whereDoesntHave('roles', function ($query) {
-                    $query->where('name', 'Bayi');
-                })
-                ->orderBy('user_id','desc');
+                $data->where('tenant_id', $firma->id)->orderBy('user_id','desc');
             }
           
             

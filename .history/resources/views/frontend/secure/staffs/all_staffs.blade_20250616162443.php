@@ -3,8 +3,7 @@
 
 @php 
 $personelSayisi = $firma->personelSayisi;
-$staffAll = App\Models\User::where('tenant_id', $firma->id)->where('status','1')
-    ->whereHas('roles', function ($query) {
+$staffAll = App\Models\User::where('tenant_id', $firma->id)->where('status', '1') ->whereHas('roles', function ($query) {
         $query->where('name', '!=', 'Bayi');
     })->count();
 @endphp

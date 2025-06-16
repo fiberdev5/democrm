@@ -32,21 +32,12 @@
           </a>
         </li>
 
-        <li>
+         <li>
           <a href="{{ route('dealers',$user->tenant_id)}}" class="waves-effect">
             <i class="ri-account-circle-line"></i><span class="badge rounded-pill bg-success float-end"></span>
             <span>Bayiler</span>
           </a>
         </li>
-
-        <li>
-          <a href="{{ route('stocks',$user->tenant_id)}}" class="waves-effect">
-            <i class="ri-account-circle-line"></i><span class="badge rounded-pill bg-success float-end"></span>
-            <span>Depo</span>
-          </a>
-        </li>
-
-
 
         <li>
           <a href="{{route('customers', $user->tenant_id)}}" class="waves-effect">

@@ -61,9 +61,7 @@ use App\Http\Controllers\Frontend\StageQuestionController;
 use App\Http\Controllers\Frontend\StockCategoryController;
 use App\Http\Controllers\Frontend\StockShelfController;
 use App\Http\Controllers\Frontend\StockSupplierController;
-use App\Http\Controllers\Frontend\StockController;
 use App\Http\Controllers\Frontend\WarrantyPeriodController;
-
 
 Route::get('/secure', function () {
     return view('backend.index');
@@ -412,12 +410,10 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::get('/bayi-sil/{id}', 'DeleteDealer')->name('delete.dealer');
         Route::get('/bayiler/data', 'GetDealersData')->name('dealers.data');
 
-    });
 
-    Route::controller(StockController::class)->group(function() {
-        Route::get('/stoklar', 'AllStocks')->name('stocks');
-    });
 
+
+    });
 
     Route::controller(CustomerController::class)->group(function() {
         Route::get('/musteriler', 'AllCustomer')->name('customers');
@@ -547,7 +543,6 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::post('/rollerdeki/izinleri/guncelle/{id}', 'UpdateRolesPermission')->name('update.roles.permission');
         Route::get('/rollerdeki/izinleri/sil/{id}', 'DeleteRolesPermission')->name('delete.roles.permission');
     });
-
 
     Route::controller(StockCategoryController::class)->group(function() {
         Route::get('/stok-kategorileri', 'AllStockCategory')->name('stock.categories');

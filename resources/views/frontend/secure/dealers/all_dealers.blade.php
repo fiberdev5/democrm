@@ -2,12 +2,13 @@
 @section('user')
 
 @php 
-$personelSayisi = $firma->personelSayisi;
-$staffAll = App\Models\User::where('tenant_id', $firma->id)->where('status','1')
+$bayiSayisi = $firma->bayiSayisi;
+$dealerAll = App\Models\User::where('tenant_id', $firma->id)->where('status','1')
     ->whereHas('roles', function ($query) {
-        $query->where('name', '!=', 'Bayi');
+        $query->where('name', 'Bayi');
     })->count();
 @endphp
+
 
 <div class="page-content">
   <div class="container-fluid">
@@ -15,14 +16,14 @@ $staffAll = App\Models\User::where('tenant_id', $firma->id)->where('status','1')
       <div class="col-12">
         <div class="card">
           <div class="card-header sayfaBaslik">
-            Personeller
+            Bayiler
           </div>
           <div class="card-body">
-            <table id="datatablePersonel" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                @if($staffAll<$personelSayisi)
-                <a data-bs-toggle="modal" data-bs-target="#addPersonelModal" class="btn btn-success btn-sm addPersonel"><i class="fas fa-plus"></i><span>Personel Ekle</span></a> 
+            <table id="datatableBayi" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                @if($dealerAll<$bayiSayisi)
+                <a data-bs-toggle="modal" data-bs-target="#addBayiModal" class="btn btn-success btn-sm addBayi"><i class="fas fa-plus"></i><span>Bayi Ekle</span></a> 
                 @else
-                <a data-bs-toggle="modal" data-bs-target="#addPersonelModal" class="btn btn-success btn-sm addPersonel" disabled="disabled" style="pointer-events: none;opacity: .4;cursor: default;"><i class="fas fa-plus"></i><span>Personel Ekle</span></a> 
+                <a data-bs-toggle="modal" data-bs-target="#addBayiModal" class="btn btn-success btn-sm addBayi" disabled="disabled" style="pointer-events: none;opacity: .4;cursor: default;"><i class="fas fa-plus"></i><span>Bayi Ekle</span></a> 
                 @endif
                 <div class="searchWrap float-end">
                   <div class="btn-group mb-2 ">
@@ -42,20 +43,6 @@ $staffAll = App\Models\User::where('tenant_id', $firma->id)->where('status','1')
                           </div>
                         </div>
                       </div>
-
-                      <div class="item">
-                        <div class="row">
-                          <label class="col-sm-5">Personel Grubu</label>
-                          <div class="col-sm-7">
-                            <select name="rolePers" id="rolePers" class="form-select">
-                              <option value="">Hepsi</option>
-                              @foreach($roles as $role)
-                                <option value="{{$role->id}}">{{$role->name}}</option>
-                              @endforeach
-                            </select>
-                          </div>
-                        </div>
-                      </div>
                     </div>
                   </div><!-- /btn-group -->
                 </div>
@@ -63,7 +50,7 @@ $staffAll = App\Models\User::where('tenant_id', $firma->id)->where('status','1')
                 <thead class="title">
                   <tr>
                     <th style="width: 10px">ID</th>
-                    <th data-priority="2">Personel Adı</th>
+                    <th data-priority="2">Bayi Adı</th>
                     <th>Personel Grubu</th>
                     <th>Telefon</th>
                     <th>Adres</th>
@@ -83,11 +70,11 @@ $staffAll = App\Models\User::where('tenant_id', $firma->id)->where('status','1')
 </div>
 
 <!-- add modal content -->
-<div id="addPersonelModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="addBayiModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog ">
     <div class="modal-content">
       <div class="modal-header">
-        <h6 class="modal-title" id="myModalLabel">Personel Ekle</h6>
+        <h6 class="modal-title" id="myModalLabel">Bayi Ekle</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -99,11 +86,11 @@ $staffAll = App\Models\User::where('tenant_id', $firma->id)->where('status','1')
 
 
 <!-- edit modal content -->
-<div id="editPersonelModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="editBayiModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h6 class="modal-title" id="myModalLabel">Personel Düzenle</h6>
+        <h6 class="modal-title" id="myModalLabel">Bayi Düzenle</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -116,20 +103,20 @@ $staffAll = App\Models\User::where('tenant_id', $firma->id)->where('status','1')
 <script type="text/javascript">
 $(document).ready(function(){
   var firma_id = {{$firma->id}};
-  $(".addPersonel").click(function(){
+  $(".addBayi").click(function(){
     
     $.ajax({
-      url: "/"+ firma_id + "/personel-ekle/"
+      url: "/"+ firma_id + "/bayi-ekle/"
     }).done(function(data) {
       if ($.trim(data) === "-1") {
         window.location.reload(true);
       } else {
-        $('#addPersonelModal').modal('show');
-        $('#addPersonelModal .modal-body').html(data);
+        $('#addBayiModal').modal('show');
+        $('#addBayiModal .modal-body').html(data);
       }
     });
   });
-  $("#addPersonelModal").on("hidden.bs.modal", function() {
+  $("#addBayiModal").on("hidden.bs.modal", function() {
       $(".modal-body").html("");
     });
 });
@@ -137,21 +124,21 @@ $(document).ready(function(){
 
 <script type="text/javascript">
 $(document).ready(function(){
-    $('#datatablePersonel').on('click', '.editPersonel', function(e){
+    $('#datatableBayi').on('click', '.editBayi', function(e){
         var id = $(this).attr("data-bs-id");
         var firma_id = {{$firma->id}};
         $.ajax({
-            url: "/"+ firma_id + "/personel/duzenle/" + id
+            url: "/"+ firma_id + "/bayi/duzenle/" + id
         }).done(function(data) {
             if ($.trim(data) === "-1") {
                 window.location.reload(true);
             } else {
-                $('#editPersonelModal').modal('show');
-                $('#editPersonelModal .modal-body').html(data);
+                $('#editBayiModal').modal('show');
+                $('#editBayiModal .modal-body').html(data);
             }
         });
     });
-    $("#editPersonalModal").on("hidden.bs.modal", function() {
+    $("#editBayiModal").on("hidden.bs.modal", function() {
       $(".modal-body").html("");
     });
 });
@@ -159,7 +146,7 @@ $(document).ready(function(){
 
 <script>
 $(document).ready(function () {
-  var table = $('#datatablePersonel').DataTable({
+  var table = $('#datatableBayi').DataTable({
       processing: true,
       serverSide: true,
       language: {
@@ -169,7 +156,7 @@ $(document).ready(function () {
         }
       },
       ajax: {
-        url: "{{ route('staffs',$firma->id) }}",
+        url: "{{ route('dealers.data', ['tenant_id' => $firma->id]) }}",
         data: function(data) {
           data.search = $('input[type="search"]').val();
           data.durum = $('#durum').val();
@@ -196,7 +183,7 @@ $(document).ready(function () {
         "oLanguage": {
             "sDecimal":        ",",
           "sEmptyTable":     "Tabloda herhangi bir veri mevcut değil",
-          "sInfo":           "Personel Sayısı: _TOTAL_",
+          "sInfo":           "Bayi Sayısı: _TOTAL_",
           "sInfoEmpty":      "Kayıt yok",
           "sInfoFiltered":   "",
           "sInfoPostFix":    "",
@@ -204,7 +191,7 @@ $(document).ready(function () {
           "sLengthMenu":     "_MENU_",
           "sLoadingRecords": "Yükleniyor...",
           "sProcessing":     "İşleniyor...",
-          "sSearch":         "Personel Ara:",
+          "sSearch":         "Bayi Ara:",
           "sZeroRecords":    "Eşleşen kayıt bulunamadı",
           "oPaginate": {
               "sFirst":    "İlk",
