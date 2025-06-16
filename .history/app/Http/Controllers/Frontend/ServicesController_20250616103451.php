@@ -432,7 +432,6 @@ class ServicesController extends Controller
         }
     }
 
-    //Servis Alt Aşamalarını veritabanına kaydederken yapılan işlemleri içeren fonksiyonlar
     public function SaveServicePlan(Request $request, $tenant_id) {
         $firma = Tenant::where('id', $tenant_id)->first();
 
@@ -984,181 +983,19 @@ class ServicesController extends Controller
             }
         }
     }
-    //Servis Alt Aşamalarının veritabanına kaydını yapan fonksiyonların SONU
 
-    //Servis Aşamalarının servis-information blade'inde görüntülenmesini sağlayan ajaxı çalıştıran fonksionlar
-    public function getServiceHistory($tenant_id, $servisId)
+    private function logYaz($mesaj)
     {
-        $user = auth()->user();
-
-        $servis = Service::where('firma_id',$tenant_id)->findOrFail($servisId);
+        // Log kayıt sisteminizi burada çağırın
         
-        $data = [
-            'acilIslem' => null,
-            'notlar' => [],
-            'eskiIslemler' => [],
-            'paraHareketleri' => []
-        ];
         
-        // Acil durum kontrolü
-        if ($servis->bid == 0 && $servis->acil != 0) {
-            $acilIslem = ServisAcil::where('servisid', $servisId)->first();
-            if ($acilIslem) {
-                $acilPersonel = Personel::find($acilIslem->pid);
-                $data['acilIslem'] = [
-                    'tarih' => Carbon::parse($acilIslem->tarih)->format('d/m/Y'),
-                    'personel' => $acilPersonel->adsoyad ?? ''
-                ];
-            }
-        }
-        
-        // Operatör notları
-        $notlar = ServisOptNot::where('servisid', $servisId)
-            ->orderBy('id', 'desc')
-            ->get();
-            
-        foreach ($notlar as $not) {
-            $personel = Personel::find($not->pid);
-            $data['notlar'][] = [
-                'tarih' => Carbon::parse($not->kayitTarihi)->format('d/m/Y H:i'),
-                'personel' => $personel->adsoyad ?? '',
-                'aciklama' => $not->aciklama
-            ];
-        }
-        
-        // Eski işlemler
-        $eskiIslemler = ServisPlan::where('servisid', $servisId)
-            ->orderBy('tarih', 'desc')
-            ->get();
-            
-        $eklenenPara = [];
-        
-        foreach ($eskiIslemler as $eskiIslem) {
-            $personel = Personel::find($eskiIslem->pid);
-            $asama = ServisAsama::find($eskiIslem->gidenIslem);
-            
-            // Cevapları al
-            $cevaplar = ServisAsamaCevap::where('planid', $eskiIslem->id)
-                ->orderBy('id', 'asc')
-                ->get();
-                
-            $aciklamalar = [];
-            foreach ($cevaplar as $cevap) {
-                if (!empty($cevap->cevap)) {
-                    $soru = ServisAsamaSoru::find($cevap->soruid);
-                    $aciklamalar[] = $this->formatCevap($soru, $cevap->cevap);
-                }
-            }
-            
-            $islemData = [
-                'id' => $eskiIslem->id,
-                'tarih' => Carbon::parse($eskiIslem->tarih)->format('d/m/Y H:i'),
-                'personel' => $personel->adsoyad ?? '',
-                'asama' => $asama->asama ?? '',
-                'aciklamalar' => $aciklamalar,
-                'pid' => $eskiIslem->pid,
-            ];
-            
-            $data['eskiIslemler'][] = $islemData;
-            
-            // Aynı tarihteki para hareketlerini bul
-            $tarih = Carbon::parse($eskiIslem->tarih)->format('Y-m-d');
-            $paraHareketleri = ServisParaHareket::where('servisid', $servisId)
-                ->where('odemeYonu', 1)
-                ->whereDate('tarih', $tarih)
-                ->get();
-                
-            foreach ($paraHareketleri as $paraIslem) {
-                if (!in_array($paraIslem->id, $eklenenPara)) {
-                    $eklenenPara[] = $paraIslem->id;
-                    $data['eskiIslemler'][] = $this->formatParaHareketi($paraIslem);
-                }
-            }
-        }
-        
-        // Eşleşmeyen para hareketleri
-        $kalanParaHareketleri = ServisParaHareket::where('servisid', $servisId)
-            ->where('odemeYonu', 1)
-            ->whereNotIn('id', $eklenenPara)
-            ->orderBy('id', 'desc')
-            ->get();
-            
-        foreach ($kalanParaHareketleri as $paraIslem) {
-            $data['paraHareketleri'][] = $this->formatParaHareketi($paraIslem);
-        }
-        
-        return response()->json($data);
+        // Eğer özel bir log sisteminiz varsa:
+        // DB::table('logs')->insert([
+        //     'message' => $mesaj,
+        //     'user_id' => auth()->id(),
+        //     'created_at' => now()
+        // ]);
     }
-    
-    private function formatCevap($soru, $cevap)
-    {
-        if (!$soru) return '';
-        
-        $result = '<strong>' . $soru->soru . '</strong>: ';
-        
-        if (strpos($soru->cevap, 'Grup') !== false) {
-            $personel = Personel::find($cevap);
-            $result .= $personel->adsoyad ?? '';
-        } elseif ($soru->cevap == '[Arac]') {
-            $arac = ServisArac::find($cevap);
-            $result .= $arac->arac ?? '';
-        } elseif ($soru->cevap == '[Parca]') {
-            $parcalar = explode(', ', $cevap);
-            $parcaMetinler = [];
-            foreach ($parcalar as $parca) {
-                $parcaData = explode('---', $parca);
-                if (count($parcaData) >= 2) {
-                    $parcaId = $parcaData[0];
-                    $adet = $parcaData[1];
-                    $stok = Stok::find($parcaId);
-                    if ($stok) {
-                        $parcaMetinler[] = $stok->urunAdi . ' (' . $adet . ')';
-                    }
-                }
-            }
-            $result .= implode(', ', $parcaMetinler);
-        } elseif ($soru->cevap == '[Bayi]') {
-            $bayi = Personel::find($cevap);
-            $result .= $bayi->adsoyad ?? '';
-        } else {
-            $result .= $cevap;
-        }
-        
-        return $result;
-    }
-    
-    private function formatParaHareketi($paraIslem)
-    {
-        $personel = Personel::find($paraIslem->pid);
-        $odemeSekli = OdemeSekli::find($paraIslem->odemeSekli);
-        
-        $odemeDurum = '';
-        if ($paraIslem->odemeDurum == 2) {
-            $odemeDurum = '<span style="color:red">Beklemede</span>';
-        } elseif ($paraIslem->odemeDurum == 1) {
-            $odemeDurum = '<span style="color:green">Tamamlandı</span>';
-        }
-        
-        $odemeYonu = '';
-        if ($paraIslem->odemeYonu == 2) {
-            $odemeYonu = '<i style="color: red;">Gider-' . ($odemeSekli->sekli ?? '') . '</i>';
-        } elseif ($paraIslem->odemeYonu == 1) {
-            $odemeYonu = '<i style="color: green;">Gelir-' . ($odemeSekli->sekli ?? '') . '</i>';
-        }
-        
-        $fiyat = number_format($paraIslem->fiyat, 2, ',', '.') . ' TL';
-        
-        return [
-            'type' => 'para',
-            'tarih' => Carbon::parse($paraIslem->tarih)->format('d/m/Y H:i'),
-            'personel' => $personel->adsoyad ?? '',
-            'islem' => 'Para Hareketi: ' . $odemeDurum,
-            'aciklama' => $fiyat . ' (' . $odemeYonu . ')<br>' . ucfirst($paraIslem->aciklama)
-        ];
-    }
-    
-
-    //Servis Aşamalarının servis-bilgileri blade'inde görüntülenmesini sağlayan fonk SONU
 
     public function EditServiceCustomer($tenant_id, $id) {
         $firma = Tenant::where('id', $tenant_id)->first();

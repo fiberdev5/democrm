@@ -233,9 +233,8 @@ $(document).ready(function() {
 });
 
 function loadServiceHistory(service_id) {
-    firma_id = {{$firma->id}};
     $.ajax({
-        url: "/" + firma_id + '/servis-asama/' + service_id + '/history',
+        url: '/servis-asama/' + service_id + '/history',
         method: 'GET',
         success: function(data) {
             renderServiceHistory(data);

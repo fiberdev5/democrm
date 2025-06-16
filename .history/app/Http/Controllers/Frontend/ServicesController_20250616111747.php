@@ -986,12 +986,14 @@ class ServicesController extends Controller
     }
     //Servis Alt Aşamalarının veritabanına kaydını yapan fonksiyonların SONU
 
-    //Servis Aşamalarının servis-information blade'inde görüntülenmesini sağlayan ajaxı çalıştıran fonksionlar
-    public function getServiceHistory($tenant_id, $servisId)
+    //Servis Aşamalarının servis-bilgileri blade'inde görüntülenmesini sağlayan ajaxı çalıştıran fonksionlar
+    public function getServiceHistory($servisId)
     {
         $user = auth()->user();
-
-        $servis = Service::where('firma_id',$tenant_id)->findOrFail($servisId);
+        $grupIzinler = $user->grup_izinler ?? [];
+        $kalanGun = $this->calculateRemainingDays($servisId); // Bu metodu kendi ihtiyacınıza göre implemente edin
+        
+        $servis = Servis::findOrFail($servisId);
         
         $data = [
             'acilIslem' => null,
@@ -1057,6 +1059,8 @@ class ServicesController extends Controller
                 'asama' => $asama->asama ?? '',
                 'aciklamalar' => $aciklamalar,
                 'pid' => $eskiIslem->pid,
+                'canEdit' => $this->canEditPlan($eskiIslem, $user, $grupIzinler, $kalanGun),
+                'canDelete' => $this->canDeletePlan($eskiIslem, $user, $grupIzinler, $kalanGun)
             ];
             
             $data['eskiIslemler'][] = $islemData;
@@ -1157,7 +1161,21 @@ class ServicesController extends Controller
         ];
     }
     
-
+    private function canEditPlan($plan, $user, $grupIzinler, $kalanGun)
+    {
+        if ($kalanGun < 0) return false;
+        
+        if (in_array('6', $grupIzinler)) {
+            if (in_array('2', $grupIzinler)) {
+                return $plan->pid == $user->id;
+            }
+            if (in_array('1', $grupIzinler)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
     //Servis Aşamalarının servis-bilgileri blade'inde görüntülenmesini sağlayan fonk SONU
 
     public function EditServiceCustomer($tenant_id, $id) {

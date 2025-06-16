@@ -3,7 +3,7 @@
 
 @php 
 $personelSayisi = $firma->personelSayisi;
-$staffAll = App\Models\User::where('tenant_id', $firma->id)->where('status', '1')->count();
+$staffAll = App\Models\User::where('tenant_id', $firma->id)->count();
 @endphp
 
 <div class="page-content">

@@ -601,7 +601,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::get('/servis-musteri/duzenle/{id}', 'EditServiceCustomer')->name('edit.service.customer');
         Route::get('/servis-asama-sorusu-getir/{asamaid}/{serviceid}', 'ServiceStageQuestionShow')->name('service.stage.question.show');
         Route::post('/servis-plan-kaydet', 'SaveServicePlan')->name('save.service.plan');
-        Route::get('/servis-asama/{id}/history', 'getServiceStageHistory')->name('service.stage.history');
+        Route::get('/service-asama/{id}/history', 'getServiceStageHistory')->name('service.stage.history');
     });
 });
 
