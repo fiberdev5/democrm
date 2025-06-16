@@ -630,11 +630,6 @@ form .mb-3 {margin-bottom: 0.3rem!important;}
   .pageDetail .addPersonel {padding: .5rem .5rem;border-radius: 0;}
   .addPersonel span{display: none;}
   .addPersonel i{display: block!important;}
-  .pageDetail .addBayi {padding: .5rem .5rem;border-radius: 0;}
-  .addBayi span{display: none;}
-  .addBayi i{display: block!important;}
-  #datatableBayi_filter label{width: 116px!important;}
-  #datatableBayi_filter{text-align: center!important;}
   .pageDetail .staffLeaves{border-radius: 0;}
   #datatableOffer_filter label{width: 110px!important;}
   #datatableOffer_filter{text-align: center!important;}
@@ -917,8 +912,6 @@ table.table-bordered.dataTable th:last-child, table.table-bordered.dataTable th:
 .pageDetail .addProgram i{display: none;}
 .pageDetail .addPersonel{position: absolute;}
 .pageDetail .addPersonel i{display: none;}
-.pageDetail .addBayi{position: absolute;}
-.pageDetail .addBayi i{display: none;}
 .pageDetail .addOffer{position: absolute;}
 .pageDetail .addOffer i{display: none;}
 .pageDetail .addTheme{position: absolute;}
