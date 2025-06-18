@@ -462,6 +462,16 @@ form .mb-3 {margin-bottom: 0.3rem!important;}
   #datatablePersonel td .badge{padding: .15em .15em;font-size: 12px;}
   #datatablePersonel .gizli{display: none!important;}
 
+  #datatableStock thead tr{display: none;}
+  #datatableStock tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableStock tbody td{display: flex!important;}
+  #datatableStock tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableStock td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableStock .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableStock > tbody > tr > td .idWrap {display: none;}
+  #datatableStock td .badge{padding: .15em .15em;font-size: 12px;}
+  #datatableStock .gizli{display: none!important;}
+
   #datatableOffer thead tr{display: none;}
   #datatableOffer tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
   #datatableOffer tbody td{display: flex!important;}
@@ -630,6 +640,11 @@ form .mb-3 {margin-bottom: 0.3rem!important;}
   .pageDetail .addPersonel {padding: .5rem .5rem;border-radius: 0;}
   .addPersonel span{display: none;}
   .addPersonel i{display: block!important;}
+  #datatableStock_filter label{width: 116px!important;}
+  #datatableStock_filter{text-align: center!important;}
+  .pageDetail .addStock {padding: .5rem .5rem;border-radius: 0;}
+  .addStock span{display: none;}
+  .addStock i{display: block!important;}
   .pageDetail .addBayi {padding: .5rem .5rem;border-radius: 0;}
   .addBayi span{display: none;}
   .addBayi i{display: block!important;}

@@ -413,9 +413,14 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::get('/bayiler/data', 'GetDealersData')->name('dealers.data');
 
     });
-
+    
     Route::controller(StockController::class)->group(function() {
         Route::get('/stoklar', 'AllStocks')->name('stocks');
+        Route::get('/stoklar/data', 'GetStocksAjax')->name('stocks.ajax');
+        Route::get('/stok-ekle', 'AddStock')->name('add.stock');
+        Route::post('/stok-kaydet', 'StoreStock')->name('store.stock'); 
+        Route::get('/stok/duzenle/{id}', 'EditStock')->name('edit.stock');
+        Route::post('/stok/guncelle/{id}', 'UpdateStock')->name('update.stock');
     });
 
 
@@ -436,7 +441,6 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::get('/teklif-duzenle/{id}', 'EditOffer')->name('edit.offer');
         Route::post('/teklif-guncelle', 'UpdateOffer')->name('update.offer');
         Route::get('/teklif-sil/{id}', 'DeleteOffer')->name('delete.offer');
-
         Route::get('/teklif-yazdir/{id}', 'OffertoPdf')->name('offer.pdf');
     });
 
@@ -575,6 +579,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::post('/stok-tedarikci/guncelle', 'UpdateStockSupplier')->name('update.stock.supplier');
         Route::delete('/stok-tedarikci/sil/{id}', 'DeleteStockSupplier')->name('delete.stock.supplier');
     });
+
 
     Route::controller(PaymentMethodsController::class)->group(function() {
         Route::get('/odeme-sekilleri', 'AllPaymentMethods')->name('payment.methods');
