@@ -13,7 +13,7 @@ class ServicePlanning extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'pid', 'user_id');
+        return $this->belongsTo(User::class, 'pid');
     }
     
     public function serviceStage()

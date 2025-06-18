@@ -229,7 +229,7 @@
 <script>
 $(document).ready(function() {
     // Normal servis form submit
-    $('#servisPlanKaydet2').on('submit', function(e) {
+    $('#servisPlanKaydet').on('submit', function(e) {
         e.preventDefault();
         
         var formData = $(this).serialize();
@@ -280,7 +280,7 @@ $(document).ready(function() {
 
 <script>
   $(document).ready(function() {
-    $('#servisPlanKaydet').on('submit', function(e) {
+    $('#servisAsamaSorusuKaydet').on('submit', function(e) {
       e.preventDefault(); // Formun normal submit işlemini durdur
       var formData = new FormData(this); // Form verilerini al
       $.ajax({
@@ -294,25 +294,12 @@ $(document).ready(function() {
             alert('Aşama başarıyla eklendi');                   
             $('#servisAsamaTable tbody').html(response);
             $('.nav1').trigger('click');                    
-          
-            loadServiceHistory({{ $service_id->id }});
-            $('#datatableService').DataTable().ajax.reload();
-
-            if (response.altAsamalar) {
-              var altAsamalarSelect = $('.servisAsamalari .altAsamalar');
-              altAsamalarSelect.empty();
-              altAsamalarSelect.append('<option value="">-Seçiniz-</option>');
-              
-              $.each(response.altAsamalar, function(index, item) {
-                altAsamalarSelect.append('<option value="' + item.id + '">' + item.asama + '</option>');
-              });
-              
-              // Hiçbir seçenek seçili olmasın
-              altAsamalarSelect.prop('selectedIndex', 0);
-            }
-          
-            $('#servisPlanKaydet').hide();
-            $('.servisAsamalari .kayitAlan span').text(response.asama);
+            // Formu temizle
+            $('#musteriPlanKaydet').trigger('reset');
+            // Select ve datepicker elementlerini sıfırla
+            $('#musteriPlanKaydet select').prop('selectedIndex', 0);
+            $('#musteriPlanKaydet input[type="date"]').val('');
+            $('#musteriPlanKaydet textarea').val('');
           } else {
             alert('Veri kaydedilemedi.');
           }

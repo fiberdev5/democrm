@@ -10,9 +10,4 @@ class ServiceStageAnswer extends Model
     use HasFactory;
 
     protected $guarded = [];
-
-    public function question()
-    {
-        return $this->belongsTo(StageQuestion::class, 'soruid');
-    }
 }

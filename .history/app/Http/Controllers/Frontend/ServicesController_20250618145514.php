@@ -1100,57 +1100,6 @@ class ServicesController extends Controller
         }
     }
 
-    //Servis planı düzenleme
-    public function EditServicePlan($tenant_id, $planid) {
-        $firma = Tenant::where('id', $tenant_id)->first();
-        
-        if (!$firma) {
-            return response()->json(['error' => 'Firma bulunamadı'], 404);
-        }
-
-        // Servis planı bilgilerini al
-        $servisPlan = ServicePlanning::where('id', $planid)
-            ->where('firma_id', $tenant_id)
-            ->first();
-
-        if (!$servisPlan) {
-            return response()->json(['error' => 'Plan bulunamadı'], 404);
-        }
-
-        // Plan cevaplarını al
-        $planCevaplar = ServiceStageAnswer::where('planid', $planid)
-            ->orderBy('id', 'ASC')
-            ->get();
-
-        // Servis bilgilerini al
-        $servis = Service::find($servisPlan->servisid);
-
-        // Personelleri al
-        $personellerAll = User::where('tenant_id', $tenant_id)
-            ->where('status', '1')
-            ->orderBy('name', 'ASC')
-            ->get();
-
-        // Stokları al (eğer işlem parça teslim değilse)
-        $stoklar = collect();
-        if ($servisPlan->gidenIslem != "259") {
-            //$stoklar = $this->getPersonelStoklar($tenant_id, auth()->user()->id);
-        }
-
-        // Kullanıcı bilgilerini al
-        $kullanici = auth()->user();
-
-        return view('frontend.secure.all_services.edit_service_plan', compact(
-            'servisPlan',
-            'planCevaplar', 
-            'servis',
-            'personellerAll',
-            'stoklar',
-            'kullanici',
-            'tenant_id'
-        ));
-    }
-
     //Servis Aşamalarının servis-information blade'inde görüntülenmesini sağlayan ajaxı çalıştıran fonksionlar
     public function getServiceStageHistory($tenant_id, $servisId)
     {

@@ -298,19 +298,8 @@ $(document).ready(function() {
             loadServiceHistory({{ $service_id->id }});
             $('#datatableService').DataTable().ajax.reload();
 
-            if (response.altAsamalar) {
-              var altAsamalarSelect = $('.servisAsamalari .altAsamalar');
-              altAsamalarSelect.empty();
-              altAsamalarSelect.append('<option value="">-Seçiniz-</option>');
-              
-              $.each(response.altAsamalar, function(index, item) {
-                altAsamalarSelect.append('<option value="' + item.id + '">' + item.asama + '</option>');
-              });
-              
-              // Hiçbir seçenek seçili olmasın
-              altAsamalarSelect.prop('selectedIndex', 0);
-            }
-          
+            $('.servisAsamalari .altAsamalar').prop('selectedIndex', 0);
+
             $('#servisPlanKaydet').hide();
             $('.servisAsamalari .kayitAlan span').text(response.asama);
           } else {

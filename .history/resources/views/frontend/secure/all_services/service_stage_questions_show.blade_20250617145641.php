@@ -294,25 +294,14 @@ $(document).ready(function() {
             alert('Aşama başarıyla eklendi');                   
             $('#servisAsamaTable tbody').html(response);
             $('.nav1').trigger('click');                    
-          
-            loadServiceHistory({{ $service_id->id }});
-            $('#datatableService').DataTable().ajax.reload();
+            // Formu temizle
+            $('#servisPlanKaydet').trigger('reset');
+            // Select ve datepicker elementlerini sıfırla
+            $('#servisPlanKaydet select').prop('selectedIndex', 0);
+            $('#servisPlanKaydet input[type="date"]').val('');
+            $('#servisPlanKaydet textarea').val('');
 
-            if (response.altAsamalar) {
-              var altAsamalarSelect = $('.servisAsamalari .altAsamalar');
-              altAsamalarSelect.empty();
-              altAsamalarSelect.append('<option value="">-Seçiniz-</option>');
-              
-              $.each(response.altAsamalar, function(index, item) {
-                altAsamalarSelect.append('<option value="' + item.id + '">' + item.asama + '</option>');
-              });
-              
-              // Hiçbir seçenek seçili olmasın
-              altAsamalarSelect.prop('selectedIndex', 0);
-            }
-          
-            $('#servisPlanKaydet').hide();
-            $('.servisAsamalari .kayitAlan span').text(response.asama);
+            loadServiceHistory({{ $service_id->id }});
           } else {
             alert('Veri kaydedilemedi.');
           }

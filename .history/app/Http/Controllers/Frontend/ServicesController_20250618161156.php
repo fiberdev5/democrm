@@ -1134,7 +1134,7 @@ class ServicesController extends Controller
         // Stokları al (eğer işlem parça teslim değilse)
         $stoklar = collect();
         if ($servisPlan->gidenIslem != "259") {
-            //$stoklar = $this->getPersonelStoklar($tenant_id, auth()->user()->id);
+            $stoklar = $this->getPersonelStoklar($tenant_id, auth()->user()->id);
         }
 
         // Kullanıcı bilgilerini al

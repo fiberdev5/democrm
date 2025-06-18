@@ -487,7 +487,6 @@ class ServicesController extends Controller
                         'planDurum' => $planId,
                         'updated_at' => now()
                     ]);
-                $servis = Service::find($servisId);
 
                 // Soru cevaplarını işle
                 $this->soruCevaplariniIsle($request, $servisId, $planId, $tenant_id, $gelenIslem);
@@ -498,19 +497,8 @@ class ServicesController extends Controller
                 // Tarih durumu kontrolü
                 $this->tarihDurumuKontrolEt($tenant_id);
 
-        
-                $currentStage = $servis->servisDurum; // veya hangi field'dan alıyorsanız
-        
-                // Bu aşamaya ait alt aşamaları getir. Servis planı eklendikten sonra altAsamalar kısmını güncellemek için bunu yaptım.
-                $altAsamaIDs = explode(',', $servis->asamalar->altAsamalar);
-                $altAsamalar = ServiceStage::whereIn('id', $altAsamaIDs)->orderBy('asama')->get();
-
               
-                $guncellenmisAsamaBilgisi = $servis->asamalar->asama;
-                return response()->json([
-                    'asama' => $guncellenmisAsamaBilgisi,
-                    'altAsamalar' => $altAsamalar,
-                ]);
+                return response()->json(['status' => 'success', 'message' => 'Servis aşama eklendi.']);
 
             } else {
                
@@ -1003,261 +991,113 @@ class ServicesController extends Controller
     }
     //Servis Alt Aşamalarının veritabanına kaydını yapan fonksiyonların SONU
 
-    //Servis Alt Aşamalarını silme fonksiyonu
-    public function DeleteServicePlan($tenant_id, $planid) {
-        $servisPlanID = $planid;
-
-        $plan = ServicePlanning::where('firma_id', $tenant_id)->findOrFail($servisPlanID);
-        $servis = Service::where('firma_id', $tenant_id)->findOrFail($plan->servisid);
-        $cevaplar = ServiceStageAnswer::where('planid', $servisPlanID)->get();
-
-        $kullanici = auth()->user();
-
-        try {
-            // alt bayi işlemi silme (gidenIslem == 264)
-            if ($plan->gidenIslem == 264) {
-                // bayi ve ilgili tüm veriler silinir
-                // aynı mantıkla çalıştırılır
-            }
-
-            // stok silme işlemi (gidenIslem == 259)
-            if ($plan->gidenIslem == 259) {
-                $stok_cevap = ServiceStageAnswer::where('firma_id', $tenant_id)->where('planid', $plan->id)->first();
-                $stoklar = explode(', ', $stok_cevap->cevap);
-
-                foreach ($stoklar as $stokCevap) {
-                    [$stokID, $adet] = explode('---', $stokCevap);
-                    $stok = StockAction::where('stokId', $stokID)->where('planId', $plan->id)->first();
-                    // $perStok = PersonelStok::find($stok->perStokID);
-                    // $perStok->update(['adet' => $perStok->adet - $adet]);
-                    // $stok->delete();
-                }
-            }
-
-            // ödeme silme işlemleri
-            if (in_array($plan->gidenIslem, [267, 268])) {
-                $servisPara = ServiceMoneyAction::where('planIslem', $servisPlanID)->first();
-                if ($servisPara) {
-                    // KasaHareket::where('servisIslem', $servisPara->id)->delete();
-                    // $servisPara->delete();
-                }
-            }
-
-            // stokları geri al
-            $stokHareketleri = StockAction::where('planId', $servisPlanID)->get();
-            foreach ($stokHareketleri as $stok) {
-                // PersonelStok::where([
-                //     'pid' => $plan->pid,
-                //     'stokid' => $stok->stokid
-                // ])->increment('adet', $stok->adet);
-
-                //KasaHareket::where('stokIslem', $stok->id)->delete();
-                ServiceMoneyAction::where('stokIslem', $stok->id)->delete();
-
-                $stok->delete();
-            }
-
-            // cevapları sil
-            ServiceStageAnswer::where('planid', $servisPlanID)->delete();
-
-            $plan->delete();
-
-            // son plan mıydı? servisDurum güncelle
-            if ($servis->servisDurum == $plan->gidenIslem) {
-                $sonPlan = ServicePlanning::where('servisid', $plan->servisid)->latest()->first();
-                if ($sonPlan) {
-                    $servis->update([
-                        'servisDurum' => $sonPlan->gidenIslem,
-                        'planDurum' => $sonPlan->id,
-                    ]);
-                } else {
-                    $ilkAsama = ServiceStage::where('ilkServis', 1)->first();
-                    $servis->update([
-                        'servisDurum' => $ilkAsama->id,
-                        'planDurum' => 0,
-                    ]);
-                }
-            }
-
-            // Bu aşamaya ait alt aşamaları getir. Servis planı eklendikten sonra altAsamalar kısmını güncellemek için bunu yaptım.
-                $altAsamaIDs = explode(',', $servis->asamalar->altAsamalar);
-                $altAsamalar = ServiceStage::whereIn('id', $altAsamaIDs)->orderBy('asama')->get();
-
-              
-                $guncellenmisAsamaBilgisi = $servis->asamalar->asama;
-                return response()->json([
-                    'asama' => $guncellenmisAsamaBilgisi,
-                    'altAsamalar' => $altAsamalar,
-                ]);
-
-            $guncellenmisAsamaBilgisi = $servis->asamalar->asama;
-            return response()->json([
-                'asama' => $guncellenmisAsamaBilgisi // örn: $servis->asama->asama
-            ]);
-
-        } catch (\Exception $e) {
-            return response("HATA! Servis Plan Silinemedi.", 500);
-        }
-    }
-
-    //Servis planı düzenleme
-    public function EditServicePlan($tenant_id, $planid) {
-        $firma = Tenant::where('id', $tenant_id)->first();
-        
-        if (!$firma) {
-            return response()->json(['error' => 'Firma bulunamadı'], 404);
-        }
-
-        // Servis planı bilgilerini al
-        $servisPlan = ServicePlanning::where('id', $planid)
-            ->where('firma_id', $tenant_id)
-            ->first();
-
-        if (!$servisPlan) {
-            return response()->json(['error' => 'Plan bulunamadı'], 404);
-        }
-
-        // Plan cevaplarını al
-        $planCevaplar = ServiceStageAnswer::where('planid', $planid)
-            ->orderBy('id', 'ASC')
-            ->get();
-
-        // Servis bilgilerini al
-        $servis = Service::find($servisPlan->servisid);
-
-        // Personelleri al
-        $personellerAll = User::where('tenant_id', $tenant_id)
-            ->where('status', '1')
-            ->orderBy('name', 'ASC')
-            ->get();
-
-        // Stokları al (eğer işlem parça teslim değilse)
-        $stoklar = collect();
-        if ($servisPlan->gidenIslem != "259") {
-            //$stoklar = $this->getPersonelStoklar($tenant_id, auth()->user()->id);
-        }
-
-        // Kullanıcı bilgilerini al
-        $kullanici = auth()->user();
-
-        return view('frontend.secure.all_services.edit_service_plan', compact(
-            'servisPlan',
-            'planCevaplar', 
-            'servis',
-            'personellerAll',
-            'stoklar',
-            'kullanici',
-            'tenant_id'
-        ));
-    }
-
     //Servis Aşamalarının servis-information blade'inde görüntülenmesini sağlayan ajaxı çalıştıran fonksionlar
     public function getServiceStageHistory($tenant_id, $servisId)
     {
-        $servis = Service::where('firma_id', $tenant_id)->findOrFail($servisId);
+         $servis = Service::where('firma_id', $tenant_id)->findOrFail($servisId);
     
-        $data = [
-            'acilIslem' => null,
-            'notlar' => [],
-            'eskiIslemler' => [],
-            'paraHareketleri' => []
-        ];
-        
-        // Acil durum kontrolü - with kullan
-        if ($servis->bid == 0 && $servis->acil != 0) {
-            $acilIslem = EmergencyService::with('user:user_id,name')
-                ->where('firma_id', $tenant_id)
-                ->where('servisid', $servisId)
-                ->first();
-                
-            if ($acilIslem) {
-                $data['acilIslem'] = [
-                    'tarih' => $acilIslem->created_at->format('d/m/Y'),
-                    'personel' => $acilIslem->user->name ?? ''
-                ];
-            }
-        }
-        
-        // Operatör notları - with kullan
-        $notlar = ServiceOptNote::with('user:id,name')
+    $data = [
+        'acilIslem' => null,
+        'notlar' => [],
+        'eskiIslemler' => [],
+        'paraHareketleri' => []
+    ];
+    
+    // Acil durum kontrolü - with kullan
+    if ($servis->bid == 0 && $servis->acil != 0) {
+        $acilIslem = EmergencyService::with('user:user_id,name')
             ->where('firma_id', $tenant_id)
             ->where('servisid', $servisId)
-            ->orderBy('id', 'desc')
-            ->get();
+            ->first();
             
-        foreach ($notlar as $not) {
-            $data['notlar'][] = [
-                'tarih' => $not->created_at->format('d/m/Y H:i'),
-                'personel' => $not->user->name ?? '',
-                'aciklama' => $not->aciklama
+        if ($acilIslem) {
+            $data['acilIslem'] = [
+                'tarih' => $acilIslem->created_at->format('d/m/Y'),
+                'personel' => $acilIslem->user->name ?? ''
             ];
         }
-        
-        // Eski işlemler - nested with kullan
-        $eskiIslemler = ServicePlanning::with([
-            'user:user_id,name',
-            'serviceStage:id,asama',
-            'answers.question:id,soru,cevapTuru'
-        ])->where('servisid', $servisId)
-        ->orderBy('created_at', 'desc')
+    }
+    
+    // Operatör notları - with kullan
+    $notlar = ServiceOptNote::with('user:id,name')
+        ->where('firma_id', $tenant_id)
+        ->where('servisid', $servisId)
+        ->orderBy('id', 'desc')
         ->get();
         
-        $eklenenPara = [];
-        
-        foreach ($eskiIslemler as $eskiIslem) {
-            $aciklamalar = [];
-            foreach ($eskiIslem->answers as $cevap) {
-                if (!empty($cevap->cevap)) {
-                    $aciklamalar[] = $this->formatCevap($cevap->question, $cevap->cevap);
-                }
-            }
-            
-            $islemData = [
-                'id' => $eskiIslem->id,
-                'tarih' => $eskiIslem->created_at->format('d/m/Y H:i'),
-                'personel' => $eskiIslem->user->name ?? '',
-                'asama' => $eskiIslem->serviceStage->asama ?? '',
-                'aciklamalar' => $aciklamalar,
-                'pid' => $eskiIslem->pid,
-            ];
-            
-            $data['eskiIslemler'][] = $islemData;
-            
-            // Para hareketleri için tarih
-            $tarih = $eskiIslem->created_at->format('Y-m-d');
-            $paraHareketleri = ServiceMoneyAction::with([
-                'user:user_id,name',
-                'paymentMethod:id,sekli'
-            ])->where('firma_id', $tenant_id)
-            ->where('servisid', $servisId)
-            ->where('odemeYonu', 1)
-            ->whereDate('created_at', $tarih)
-            ->get();
-                
-            foreach ($paraHareketleri as $paraIslem) {
-                if (!in_array($paraIslem->id, $eklenenPara)) {
-                    $eklenenPara[] = $paraIslem->id;
-                    $data['eskiIslemler'][] = $this->formatParaHareketi($paraIslem);
-                }
+    foreach ($notlar as $not) {
+        $data['notlar'][] = [
+            'tarih' => $not->created_at->format('d/m/Y H:i'),
+            'personel' => $not->user->name ?? '',
+            'aciklama' => $not->aciklama
+        ];
+    }
+    
+    // Eski işlemler - nested with kullan
+    $eskiIslemler = ServicePlanning::with([
+        'user:user_id,name',
+        'serviceStage:id,asama',
+        'answers.question:id,soru,cevapTuru'
+    ])->where('servisid', $servisId)
+      ->orderBy('created_at', 'desc')
+      ->get();
+     
+    $eklenenPara = [];
+    
+    foreach ($eskiIslemler as $eskiIslem) {
+        $aciklamalar = [];
+        foreach ($eskiIslem->answers as $cevap) {
+            if (!empty($cevap->cevap)) {
+                $aciklamalar[] = $this->formatCevap($cevap->question, $cevap->cevap);
             }
         }
         
-        // Kalan para hareketleri
-        $kalanParaHareketleri = ServiceMoneyAction::with([
+        $islemData = [
+            'id' => $eskiIslem->id,
+            'tarih' => $eskiIslem->created_at->format('d/m/Y H:i'),
+            'personel' => $eskiIslem->user->name ?? '',
+            'asama' => $eskiIslem->serviceStage->asama ?? '',
+            'aciklamalar' => $aciklamalar,
+            'pid' => $eskiIslem->pid,
+        ];
+        
+        $data['eskiIslemler'][] = $islemData;
+        
+        // Para hareketleri için tarih
+        $tarih = $eskiIslem->created_at->format('Y-m-d');
+        $paraHareketleri = ServiceMoneyAction::with([
             'user:user_id,name',
             'paymentMethod:id,sekli'
         ])->where('firma_id', $tenant_id)
-        ->where('servisid', $servisId)
-        ->where('odemeYonu', 1)
-        ->whereNotIn('id', $eklenenPara)
-        ->orderBy('id', 'desc')
-        ->get();
+          ->where('servisid', $servisId)
+          ->where('odemeYonu', 1)
+          ->whereDate('created_at', $tarih)
+          ->get();
             
-        foreach ($kalanParaHareketleri as $paraIslem) {
-            $data['paraHareketleri'][] = $this->formatParaHareketi($paraIslem);
+        foreach ($paraHareketleri as $paraIslem) {
+            if (!in_array($paraIslem->id, $eklenenPara)) {
+                $eklenenPara[] = $paraIslem->id;
+                $data['eskiIslemler'][] = $this->formatParaHareketi($paraIslem);
+            }
         }
+    }
+    
+    // Kalan para hareketleri
+    $kalanParaHareketleri = ServiceMoneyAction::with([
+        'user:user_id,name',
+        'paymentMethod:id,sekli'
+    ])->where('firma_id', $tenant_id)
+      ->where('servisid', $servisId)
+      ->where('odemeYonu', 1)
+      ->whereNotIn('id', $eklenenPara)
+      ->orderBy('id', 'desc')
+      ->get();
         
-        return response()->json($data);
+    foreach ($kalanParaHareketleri as $paraIslem) {
+        $data['paraHareketleri'][] = $this->formatParaHareketi($paraIslem);
+    }
+    
+    return response()->json($data);
     }
     
     private function formatCevap($soru, $cevap)

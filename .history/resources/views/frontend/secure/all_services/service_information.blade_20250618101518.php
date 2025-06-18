@@ -316,7 +316,7 @@ function renderServiceHistory(data) {
                 
                 buttons += '</td><td class="btnCS" style="vertical-align: middle;width: 70px;padding: 0 5px;">';
                 
-                buttons += `<a href="#" data-bs-id="${islem.id}" style="font-size: 11px;" class="btn btn-primary btn-sm servisPlanDuzenleBtn">Düzenle</a>`;
+                buttons += `<a href="#" data-id="${islem.id}" style="font-size: 11px;" class="btn btn-primary btn-sm servisPlanDuzenleBtn">Düzenle</a>`;
                  
                 buttons += '</td>';
             
@@ -468,17 +468,16 @@ function renderServiceHistory(data) {
       });
     });
 
-    $('#servisAsamaTable').on('click', '.servisPlanDuzenleBtn', function(e) {
+    $('#servisAsamaTable').on('click', '.musPlanDuzenle', function(e) {
       var id = $(this).attr("data-bs-id");
-      $('#editServicePlanModal').modal('show');
-      var firma_id = {{$firma->id}};
+      $('#editCustomerPlanModal').modal('show');
       $.ajax({
-        url: "/" + firma_id + "/servis-plan/duzenle/" + id
+        url: ""
       }).done(function(data) {
         if ($.trim(data) === "-1") {
           window.location.reload(true);
         } else {       
-          $('#editServicePlanModal .modal-body').html(data);               
+          $('#editCustomerPlanModal .modal-body').html(data);               
         }
       });
     });
@@ -505,21 +504,6 @@ function renderServiceHistory(data) {
               $('#servisAsamaTable tbody').html(data);
               loadServiceHistory({{ $service_id->id }});
               $('#datatableService').DataTable().ajax.reload();
-
-              if (data.altAsamalar) {
-              var altAsamalarSelect = $('.servisAsamalari .altAsamalar');
-              altAsamalarSelect.empty();
-              altAsamalarSelect.append('<option value="">-Seçiniz-</option>');
-              
-              $.each(data.altAsamalar, function(index, item) {
-                altAsamalarSelect.append('<option value="' + item.id + '">' + item.asama + '</option>');
-              });
-              
-              // Hiçbir seçenek seçili olmasın
-              altAsamalarSelect.prop('selectedIndex', 0);
-            }
-
-              $('.kayitAlan span').text(data.asama);
               
             } else {
               alert("Silme işlemi başarısız oldu.");

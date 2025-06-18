@@ -481,13 +481,12 @@ class ServicesController extends Controller
                 
 
                 // Servis durumunu güncelle
-                Service::where('id', $servisId)
+                $servis = Service::where('id', $servisId)
                     ->update([
                         'servisDurum' => $gidenIslem,
                         'planDurum' => $planId,
                         'updated_at' => now()
                     ]);
-                $servis = Service::find($servisId);
 
                 // Soru cevaplarını işle
                 $this->soruCevaplariniIsle($request, $servisId, $planId, $tenant_id, $gelenIslem);
@@ -497,21 +496,18 @@ class ServicesController extends Controller
 
                 // Tarih durumu kontrolü
                 $this->tarihDurumuKontrolEt($tenant_id);
-
         
-                $currentStage = $servis->servisDurum; // veya hangi field'dan alıyorsanız
-        
-                // Bu aşamaya ait alt aşamaları getir. Servis planı eklendikten sonra altAsamalar kısmını güncellemek için bunu yaptım.
-                $altAsamaIDs = explode(',', $servis->asamalar->altAsamalar);
+                // Alt aşamaları yeniden hesapla
+                $altAsamaIDs = explode(',', $servisId->asamalar->altAsamalar);
                 $altAsamalar = ServiceStage::whereIn('id', $altAsamaIDs)->orderBy('asama')->get();
-
-              
-                $guncellenmisAsamaBilgisi = $servis->asamalar->asama;
+                
                 return response()->json([
-                    'asama' => $guncellenmisAsamaBilgisi,
+                    'success' => true,
                     'altAsamalar' => $altAsamalar,
+                    'yeniAsama' => $servisId->asamalar["asama"], // Güncel asama
+                    'message' => 'Aşama başarıyla eklendi'
                 ]);
-
+            
             } else {
                
                 
@@ -1079,17 +1075,6 @@ class ServicesController extends Controller
                 }
             }
 
-            // Bu aşamaya ait alt aşamaları getir. Servis planı eklendikten sonra altAsamalar kısmını güncellemek için bunu yaptım.
-                $altAsamaIDs = explode(',', $servis->asamalar->altAsamalar);
-                $altAsamalar = ServiceStage::whereIn('id', $altAsamaIDs)->orderBy('asama')->get();
-
-              
-                $guncellenmisAsamaBilgisi = $servis->asamalar->asama;
-                return response()->json([
-                    'asama' => $guncellenmisAsamaBilgisi,
-                    'altAsamalar' => $altAsamalar,
-                ]);
-
             $guncellenmisAsamaBilgisi = $servis->asamalar->asama;
             return response()->json([
                 'asama' => $guncellenmisAsamaBilgisi // örn: $servis->asama->asama
@@ -1098,57 +1083,6 @@ class ServicesController extends Controller
         } catch (\Exception $e) {
             return response("HATA! Servis Plan Silinemedi.", 500);
         }
-    }
-
-    //Servis planı düzenleme
-    public function EditServicePlan($tenant_id, $planid) {
-        $firma = Tenant::where('id', $tenant_id)->first();
-        
-        if (!$firma) {
-            return response()->json(['error' => 'Firma bulunamadı'], 404);
-        }
-
-        // Servis planı bilgilerini al
-        $servisPlan = ServicePlanning::where('id', $planid)
-            ->where('firma_id', $tenant_id)
-            ->first();
-
-        if (!$servisPlan) {
-            return response()->json(['error' => 'Plan bulunamadı'], 404);
-        }
-
-        // Plan cevaplarını al
-        $planCevaplar = ServiceStageAnswer::where('planid', $planid)
-            ->orderBy('id', 'ASC')
-            ->get();
-
-        // Servis bilgilerini al
-        $servis = Service::find($servisPlan->servisid);
-
-        // Personelleri al
-        $personellerAll = User::where('tenant_id', $tenant_id)
-            ->where('status', '1')
-            ->orderBy('name', 'ASC')
-            ->get();
-
-        // Stokları al (eğer işlem parça teslim değilse)
-        $stoklar = collect();
-        if ($servisPlan->gidenIslem != "259") {
-            //$stoklar = $this->getPersonelStoklar($tenant_id, auth()->user()->id);
-        }
-
-        // Kullanıcı bilgilerini al
-        $kullanici = auth()->user();
-
-        return view('frontend.secure.all_services.edit_service_plan', compact(
-            'servisPlan',
-            'planCevaplar', 
-            'servis',
-            'personellerAll',
-            'stoklar',
-            'kullanici',
-            'tenant_id'
-        ));
     }
 
     //Servis Aşamalarının servis-information blade'inde görüntülenmesini sağlayan ajaxı çalıştıran fonksionlar
