@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ServiceStageAnswer extends Model
+class ServiceOptNote extends Model
 {
     use HasFactory;
 
     protected $guarded = [];
 
-    public function question()
+    public function user()
     {
-        return $this->belongsTo(StageQuestion::class, 'soruid');
+        return $this->belongsTo(User::class, 'pid');
     }
 }

@@ -180,7 +180,7 @@
       <div class="row">
         <div class="col-4 col-sm-6 left">
           <label class="kayitAlan">  
-            <span>{{$service_id->asamalar["asama"]}}</span>                  
+            <span>{{$service_id->users["name"]}}</span>                  
           </label>     
           <label class="servisAcilLabel servisAcilBtn" style="user-select: none;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;-webkit-touch-callout: none;position: relative;margin: 0; color: #fff; background: #343a40; border: 1px solid #212529;padding: 0 5px;border-radius: 3px;height: 25px;top: 1px;line-height: 25px;">
               <span>Acil</span>
@@ -205,7 +205,7 @@
 </div>
 
 <div class="card card4">
-  <div class="card-body" style="padding: 0!important;">
+  <div class="card-body" style="padding: 0">
     <div id="no-more-tables">
       <div class="table-responsive" style="margin: 0">
         <table class="table table-hover table-striped servisAsamaTable" id="servisAsamaTable" width="100%" cellspacing="0" style="margin: 0">
@@ -312,11 +312,11 @@ function renderServiceHistory(data) {
             
                 buttons = '<td class="btnCS" style="vertical-align: middle;width: 25px;padding: 0 5px;">';
                 
-                buttons += `<a href="#" id="servisPlanSil" style="font-size: 11px;" class="btn btn-danger btn-sm servisPlanSil" data-id="${islem.id}">Sil</a>`;
+                buttons += `<a href="#" style="font-size: 11px;" class="btn btn-danger btn-sm servisPlanSil" data-id="${islem.id}">Sil</a>`;
                 
                 buttons += '</td><td class="btnCS" style="vertical-align: middle;width: 70px;padding: 0 5px;">';
                 
-                buttons += `<a href="#" data-bs-id="${islem.id}" style="font-size: 11px;" class="btn btn-primary btn-sm servisPlanDuzenleBtn">Düzenle</a>`;
+                buttons += `<a href="#" data-id="${islem.id}" style="font-size: 11px;" class="btn btn-primary btn-sm servisPlanDuzenleBtn">Düzenle</a>`;
                  
                 buttons += '</td>';
             
@@ -445,8 +445,39 @@ function renderServiceHistory(data) {
       }else{
         $(".opNot").val("");
         $('#servisAsamaTable tbody').html(data);
-        $('#datatableService').DataTable().ajax.reload();
+        $('#datatableCustomer').DataTable().ajax.reload();
         $('.nav1').trigger('click');
+      }
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+    $('#servisAsamaTable').on('click', '.musteriPlanSil', function(e) {
+      e.preventDefault();
+      var confirmDelete = confirm("Bu müşteri aşamasını silmek istediğinizden emin misiniz?");
+      if (confirmDelete) {
+        var id = $(this).attr('data-id');
+        $.ajax({
+          url: '',
+          type: 'POST',
+          data: {
+            _method: 'DELETE', 
+            _token: '{{ csrf_token() }}'
+          },
+          success: function(data) {
+            if (data) {
+              $('#servisAsamaTable tbody').html(data);
+              $('#datatableCustomer').DataTable().ajax.reload();
+            } else {
+              alert("Silme işlemi başarısız oldu.");
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+          }
+        });
       }
     });
   });
@@ -468,68 +499,18 @@ function renderServiceHistory(data) {
       });
     });
 
-    $('#servisAsamaTable').on('click', '.servisPlanDuzenleBtn', function(e) {
+    $('#servisAsamaTable').on('click', '.musPlanDuzenle', function(e) {
       var id = $(this).attr("data-bs-id");
-      $('#editServicePlanModal').modal('show');
-      var firma_id = {{$firma->id}};
+      $('#editCustomerPlanModal').modal('show');
       $.ajax({
-        url: "/" + firma_id + "/servis-plan/duzenle/" + id
+        url: ""
       }).done(function(data) {
         if ($.trim(data) === "-1") {
           window.location.reload(true);
         } else {       
-          $('#editServicePlanModal .modal-body').html(data);               
+          $('#editCustomerPlanModal .modal-body').html(data);               
         }
       });
-    });
-  });
-</script>
-
-<script>
-  $(document).ready(function() {
-    $('#servisAsamaTable').on('click', '.servisPlanSil', function(e) {
-      e.preventDefault();
-      var confirmDelete = confirm("Bu müşteri aşamasını silmek istediğinizden emin misiniz?");
-      if (confirmDelete) {
-        var id = $(this).attr('data-id');
-        var firma_id = {{$firma->id}};
-        $.ajax({
-          url: '/' + firma_id + '/servis-plan-sil/' + id,
-          type: 'POST',
-          data: {
-            _method: 'POST', 
-            _token: '{{ csrf_token() }}'
-          },
-          success: function(data) {
-            if (data) {
-              $('#servisAsamaTable tbody').html(data);
-              loadServiceHistory({{ $service_id->id }});
-              $('#datatableService').DataTable().ajax.reload();
-
-              if (data.altAsamalar) {
-              var altAsamalarSelect = $('.servisAsamalari .altAsamalar');
-              altAsamalarSelect.empty();
-              altAsamalarSelect.append('<option value="">-Seçiniz-</option>');
-              
-              $.each(data.altAsamalar, function(index, item) {
-                altAsamalarSelect.append('<option value="' + item.id + '">' + item.asama + '</option>');
-              });
-              
-              // Hiçbir seçenek seçili olmasın
-              altAsamalarSelect.prop('selectedIndex', 0);
-            }
-
-              $('.kayitAlan span').text(data.asama);
-              
-            } else {
-              alert("Silme işlemi başarısız oldu.");
-            }
-          },
-          error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-          }
-        });
-      }
     });
   });
 </script>

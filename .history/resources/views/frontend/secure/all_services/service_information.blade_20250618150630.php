@@ -316,7 +316,7 @@ function renderServiceHistory(data) {
                 
                 buttons += '</td><td class="btnCS" style="vertical-align: middle;width: 70px;padding: 0 5px;">';
                 
-                buttons += `<a href="#" data-bs-id="${islem.id}" style="font-size: 11px;" class="btn btn-primary btn-sm servisPlanDuzenleBtn">Düzenle</a>`;
+                buttons += `<a href="#" data-id="${islem.id}" style="font-size: 11px;" class="btn btn-primary btn-sm servisPlanDuzenleBtn">Düzenle</a>`;
                  
                 buttons += '</td>';
             

@@ -1110,7 +1110,7 @@ class ServicesController extends Controller
 
         // Servis planı bilgilerini al
         $servisPlan = ServicePlanning::where('id', $planid)
-            ->where('firma_id', $tenant_id)
+            ->where('kid', $tenant_id)
             ->first();
 
         if (!$servisPlan) {
@@ -1127,14 +1127,14 @@ class ServicesController extends Controller
 
         // Personelleri al
         $personellerAll = User::where('tenant_id', $tenant_id)
-            ->where('status', '1')
-            ->orderBy('name', 'ASC')
+            ->where('durum', '1')
+            ->orderBy('adsoyad', 'ASC')
             ->get();
 
         // Stokları al (eğer işlem parça teslim değilse)
         $stoklar = collect();
         if ($servisPlan->gidenIslem != "259") {
-            //$stoklar = $this->getPersonelStoklar($tenant_id, auth()->user()->id);
+            $stoklar = $this->getPersonelStoklar($tenant_id, auth()->user()->id);
         }
 
         // Kullanıcı bilgilerini al

@@ -373,7 +373,7 @@ class ServicesController extends Controller
         if (!empty($service_id->asamalar->altAsamalar)) {
             // Virgül ile ayrılmış ID listesini array'e dönüştür
             $altAsamaIDs = explode(',', $service_id->asamalar->altAsamalar);
-            $altAsamalar = ServiceStage::whereIn('id', $altAsamaIDs)->orderBy('asama')->get();
+            $altAsamalar = ServiceStage::whereIn('id', $altAsamaIDs)->orderBy('sira')->get();
         }
         return view('frontend.secure.all_services.service_information', compact('firma', 'service_id', 'service_resources', 'iller', 'device_brands', 'device_types', 'warranty_periods','altAsamalar'));
     }
@@ -1098,57 +1098,6 @@ class ServicesController extends Controller
         } catch (\Exception $e) {
             return response("HATA! Servis Plan Silinemedi.", 500);
         }
-    }
-
-    //Servis planı düzenleme
-    public function EditServicePlan($tenant_id, $planid) {
-        $firma = Tenant::where('id', $tenant_id)->first();
-        
-        if (!$firma) {
-            return response()->json(['error' => 'Firma bulunamadı'], 404);
-        }
-
-        // Servis planı bilgilerini al
-        $servisPlan = ServicePlanning::where('id', $planid)
-            ->where('firma_id', $tenant_id)
-            ->first();
-
-        if (!$servisPlan) {
-            return response()->json(['error' => 'Plan bulunamadı'], 404);
-        }
-
-        // Plan cevaplarını al
-        $planCevaplar = ServiceStageAnswer::where('planid', $planid)
-            ->orderBy('id', 'ASC')
-            ->get();
-
-        // Servis bilgilerini al
-        $servis = Service::find($servisPlan->servisid);
-
-        // Personelleri al
-        $personellerAll = User::where('tenant_id', $tenant_id)
-            ->where('status', '1')
-            ->orderBy('name', 'ASC')
-            ->get();
-
-        // Stokları al (eğer işlem parça teslim değilse)
-        $stoklar = collect();
-        if ($servisPlan->gidenIslem != "259") {
-            //$stoklar = $this->getPersonelStoklar($tenant_id, auth()->user()->id);
-        }
-
-        // Kullanıcı bilgilerini al
-        $kullanici = auth()->user();
-
-        return view('frontend.secure.all_services.edit_service_plan', compact(
-            'servisPlan',
-            'planCevaplar', 
-            'servis',
-            'personellerAll',
-            'stoklar',
-            'kullanici',
-            'tenant_id'
-        ));
     }
 
     //Servis Aşamalarının servis-information blade'inde görüntülenmesini sağlayan ajaxı çalıştıran fonksionlar

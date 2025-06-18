@@ -292,12 +292,13 @@ $(document).ready(function() {
         success: function(response) {
           if (response) {
             alert('Aşama başarıyla eklendi');                   
-            $('#servisAsamaTable tbody').html(response);
+            $('#servisAsamaTable tbody').html(response.tableContent);
             $('.nav1').trigger('click');                    
           
             loadServiceHistory({{ $service_id->id }});
             $('#datatableService').DataTable().ajax.reload();
 
+            // Alt aşamalar select'ini güncelle
             if (response.altAsamalar) {
               var altAsamalarSelect = $('.servisAsamalari .altAsamalar');
               altAsamalarSelect.empty();
@@ -306,13 +307,14 @@ $(document).ready(function() {
               $.each(response.altAsamalar, function(index, item) {
                 altAsamalarSelect.append('<option value="' + item.id + '">' + item.asama + '</option>');
               });
-              
-              // Hiçbir seçenek seçili olmasın
-              altAsamalarSelect.prop('selectedIndex', 0);
             }
-          
+
             $('#servisPlanKaydet').hide();
-            $('.servisAsamalari .kayitAlan span').text(response.asama);
+            
+            // Kayıt alanı güncelle
+           
+              $('.kayitAlan span').text(response.yeniAsama);
+            
           } else {
             alert('Veri kaydedilemedi.');
           }

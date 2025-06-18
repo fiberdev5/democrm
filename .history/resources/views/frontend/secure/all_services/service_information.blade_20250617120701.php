@@ -180,7 +180,7 @@
       <div class="row">
         <div class="col-4 col-sm-6 left">
           <label class="kayitAlan">  
-            <span>{{$service_id->asamalar["asama"]}}</span>                  
+            <span>{{$service_id->users["name"]}}</span>                  
           </label>     
           <label class="servisAcilLabel servisAcilBtn" style="user-select: none;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;-webkit-touch-callout: none;position: relative;margin: 0; color: #fff; background: #343a40; border: 1px solid #212529;padding: 0 5px;border-radius: 3px;height: 25px;top: 1px;line-height: 25px;">
               <span>Acil</span>
@@ -205,7 +205,7 @@
 </div>
 
 <div class="card card4">
-  <div class="card-body" style="padding: 0!important;">
+  <div class="card-body" style="padding: 0">
     <div id="no-more-tables">
       <div class="table-responsive" style="margin: 0">
         <table class="table table-hover table-striped servisAsamaTable" id="servisAsamaTable" width="100%" cellspacing="0" style="margin: 0">
@@ -216,30 +216,12 @@
               <th style="padding: 5px 10px;font-size: 12px;">İşlem Adı</th>
               <th style="padding: 5px 10px;font-size: 12px;">Açıklama</th>
               <th style="padding: 5px 10px;font-size: 12px;"></th>
-              <th style="padding: 5px 10px;font-size: 12px;"></th>
             </tr>
           </thead>
           <tbody id="serviceHistoryTableBody">
             
           </tbody>
         </table>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="card cf1" style="margin-top: 10px;">
-  <div class="card-header" style="padding: 3px 5px;">
-    <div class="row">
-      <div class="col-sm-1">
-        <input type="button" class="btn btn-danger btn-sm servisSil2" data-id="" value="Sil"/>
-      </div>
-      <div class="col-sm-11" style="text-align: right;">
-        <a href="#" class="btn btn-warning btn-sm servisMusteriAnketiBtn" data-id="">Müşteri Anketi</a>
-        <a href="#" class="btn btn-warning btn-sm servisYaziKopyala">Fiş Yazdır</a> 
-        <a href="" target="_blank" class="btn btn-warning btn-sm servisA4YazdirBtn">Yazdır</a>
-        <input type="button" class="btn btn-primary btn-sm servisGuncelleBtn" value="Servis Güncelle"/>
-        <div class="clearfix"></div>
       </div>
     </div>
   </div>
@@ -273,7 +255,7 @@ function renderServiceHistory(data) {
     if (data.acilIslem) {
         var acilRow = `
             <tr style="background: #ffc107;">
-                <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 11px; padding: 5px;">${data.acilIslem.tarih}</td>
+                <td class="kayitTarihiCS" style="vertical-align: middle;font-size: 11px; padding: 5px;">${data.acilIslem.tarih}</td>
                 <td style="vertical-align: middle;font-size: 11px; padding: 5px;">${data.acilIslem.personel}</td>
                 <td style="vertical-align: middle;font-size: 11px; padding: 5px;"><strong>Servis Acil Aşamasındadır.</strong></td>
                 <td style="vertical-align: middle;font-size: 11px; padding: 5px;" colspan="3">Servis işlemi bittiğinde acil işaretini kaldırın.</td>
@@ -286,7 +268,7 @@ function renderServiceHistory(data) {
     data.notlar.forEach(function(not) {
         var notRow = `
             <tr>
-                <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 11px; padding: 5px;">${not.tarih}</td>
+                <td class="kayitTarihiCS" style="vertical-align: middle;font-size: 11px; padding: 5px;">${not.tarih}</td>
                 <td style="vertical-align: middle;font-size: 11px; padding: 5px;">${not.personel}</td>
                 <td style="vertical-align: middle;font-size: 11px; padding: 5px;color:#ec0000;"><strong>Operatör Notu</strong></td>
                 <td style="vertical-align: middle;font-size: 11px; padding: 5px;" colspan="3"><strong>${not.aciklama}</strong></td>
@@ -300,7 +282,7 @@ function renderServiceHistory(data) {
         if (islem.type === 'para') {
             var paraRow = `
                 <tr>
-                    <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 11px; padding: 5px;">${islem.tarih}</td>
+                    <td class="kayitTarihiCS" style="vertical-align: middle;font-size: 11px; padding: 5px;">${islem.tarih}</td>
                     <td style="vertical-align: middle;font-size: 11px; padding: 5px;">${islem.personel}</td>
                     <td style="vertical-align: middle;font-size: 11px; padding: 5px;"><strong>${islem.islem}</strong></td>
                     <td style="vertical-align: middle;font-size: 11px; padding: 5px;" colspan="3"><strong>${islem.aciklama}</strong></td>
@@ -310,23 +292,24 @@ function renderServiceHistory(data) {
         } else {
             var buttons = '';
             
-                buttons = '<td class="btnCS" style="vertical-align: middle;width: 25px;padding: 0 5px;">';
+                buttons = '<td class="btnCS" style="vertical-align: middle;padding: 0 5px;">';
                 
-                buttons += `<a href="#" id="servisPlanSil" style="font-size: 11px;" class="btn btn-danger btn-sm servisPlanSil" data-id="${islem.id}">Sil</a>`;
+                buttons += `<a href="#" style="font-size: 11px;" class="btn btn-danger btn-sm servisPlanSil" data-id="${islem.id}">Sil</a>`;
                 
-                buttons += '</td><td class="btnCS" style="vertical-align: middle;width: 70px;padding: 0 5px;">';
+                buttons += '</td><td class="btnCS" style="vertical-align: middle;padding: 0 5px;">';
                 
-                buttons += `<a href="#" data-bs-id="${islem.id}" style="font-size: 11px;" class="btn btn-primary btn-sm servisPlanDuzenleBtn">Düzenle</a>`;
-                 
+                    buttons += `<a href="#" data-id="${islem.id}" style="font-size: 11px;" class="btn btn-primary btn-sm servisPlanDuzenleBtn">Düzenle</a>`;
+                
+                    
                 buttons += '</td>';
             
             
             var islemRow = `
                 <tr>
-                    <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 11px; padding: 0 5px;">${islem.tarih}</td>
+                    <td class="kayitTarihiCS" style="vertical-align: middle;font-size: 11px; padding: 0 5px;">${islem.tarih}</td>
                     <td style="vertical-align: middle;font-size: 11px; padding: 0 5px;">${islem.personel}</td>
                     <td class="islemAsamaCS" style="vertical-align: middle;font-size: 11px; padding: 0 5px;"><strong>${islem.asama}</strong></td>
-                    <td class="islemAciklamaCS" style="vertical-align: middle;font-size: 11px;padding: 0 5px;width: 300px;text-transform: capitalize;">${islem.aciklamalar.join('<br>')}</td>
+                    <td class="islemAciklamaCS" style="vertical-align: middle;font-size: 11px;padding: 0 5px;text-transform: capitalize;">${islem.aciklamalar.join('<br>')}</td>
                     ${buttons}
                 </tr>
             `;
@@ -445,8 +428,39 @@ function renderServiceHistory(data) {
       }else{
         $(".opNot").val("");
         $('#servisAsamaTable tbody').html(data);
-        $('#datatableService').DataTable().ajax.reload();
+        $('#datatableCustomer').DataTable().ajax.reload();
         $('.nav1').trigger('click');
+      }
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function() {
+    $('#servisAsamaTable').on('click', '.musteriPlanSil', function(e) {
+      e.preventDefault();
+      var confirmDelete = confirm("Bu müşteri aşamasını silmek istediğinizden emin misiniz?");
+      if (confirmDelete) {
+        var id = $(this).attr('data-id');
+        $.ajax({
+          url: '',
+          type: 'POST',
+          data: {
+            _method: 'DELETE', 
+            _token: '{{ csrf_token() }}'
+          },
+          success: function(data) {
+            if (data) {
+              $('#servisAsamaTable tbody').html(data);
+              $('#datatableCustomer').DataTable().ajax.reload();
+            } else {
+              alert("Silme işlemi başarısız oldu.");
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+          }
+        });
       }
     });
   });
@@ -468,68 +482,18 @@ function renderServiceHistory(data) {
       });
     });
 
-    $('#servisAsamaTable').on('click', '.servisPlanDuzenleBtn', function(e) {
+    $('#servisAsamaTable').on('click', '.musPlanDuzenle', function(e) {
       var id = $(this).attr("data-bs-id");
-      $('#editServicePlanModal').modal('show');
-      var firma_id = {{$firma->id}};
+      $('#editCustomerPlanModal').modal('show');
       $.ajax({
-        url: "/" + firma_id + "/servis-plan/duzenle/" + id
+        url: ""
       }).done(function(data) {
         if ($.trim(data) === "-1") {
           window.location.reload(true);
         } else {       
-          $('#editServicePlanModal .modal-body').html(data);               
+          $('#editCustomerPlanModal .modal-body').html(data);               
         }
       });
-    });
-  });
-</script>
-
-<script>
-  $(document).ready(function() {
-    $('#servisAsamaTable').on('click', '.servisPlanSil', function(e) {
-      e.preventDefault();
-      var confirmDelete = confirm("Bu müşteri aşamasını silmek istediğinizden emin misiniz?");
-      if (confirmDelete) {
-        var id = $(this).attr('data-id');
-        var firma_id = {{$firma->id}};
-        $.ajax({
-          url: '/' + firma_id + '/servis-plan-sil/' + id,
-          type: 'POST',
-          data: {
-            _method: 'POST', 
-            _token: '{{ csrf_token() }}'
-          },
-          success: function(data) {
-            if (data) {
-              $('#servisAsamaTable tbody').html(data);
-              loadServiceHistory({{ $service_id->id }});
-              $('#datatableService').DataTable().ajax.reload();
-
-              if (data.altAsamalar) {
-              var altAsamalarSelect = $('.servisAsamalari .altAsamalar');
-              altAsamalarSelect.empty();
-              altAsamalarSelect.append('<option value="">-Seçiniz-</option>');
-              
-              $.each(data.altAsamalar, function(index, item) {
-                altAsamalarSelect.append('<option value="' + item.id + '">' + item.asama + '</option>');
-              });
-              
-              // Hiçbir seçenek seçili olmasın
-              altAsamalarSelect.prop('selectedIndex', 0);
-            }
-
-              $('.kayitAlan span').text(data.asama);
-              
-            } else {
-              alert("Silme işlemi başarısız oldu.");
-            }
-          },
-          error: function(xhr, status, error) {
-            console.error(xhr.responseText);
-          }
-        });
-      }
     });
   });
 </script>
