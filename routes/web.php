@@ -413,6 +413,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::get('/bayi-sil/{id}', 'DeleteDealer')->name('delete.dealer');
         Route::get('/bayiler/data', 'GetDealersData')->name('dealers.data');
 
+
     });
     
     Route::controller(StockController::class)->group(function() {
@@ -422,6 +423,50 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::post('/stok-kaydet', 'StoreStock')->name('store.stock'); 
         Route::get('/stok/duzenle/{id}', 'EditStock')->name('edit.stock');
         Route::post('/stok/guncelle/{id}', 'UpdateStock')->name('update.stock');
+        Route::get('/stok-sil/{id}', 'DeleteStock')->name('delete.stock');
+
+        //Stok haraketeri
+        Route::get('/stok-haraketleri/{id}', 'StokActions')->name('stock.actions');
+        Route::post('/stok-haraket-kaydet', 'StoreStockAction')->name('store.stock.action');
+        Route::delete('/stok-haraket-sil/{id}', 'DeleteStockAction')->name('delete.stock.action');
+
+        //Personel Haraketleri
+        Route::get('/personel-stoklari/{id}', 'GetPersonelStocks')->name('stock.personel');
+
+        //Stok Fotoğrafları
+        Route::get('/stok-fotograflar/{stock_id}','getPhotos')->name('stock.photos');
+        Route::post('/stok-foto-ekle','uploadPhoto')->name('stock.photos.update');
+        Route::post('/stok-foto-sil', 'deletePhoto')->name('stock.photos.delete');
+
+        //Stok Barkod
+        Route::get('/stok-barkod/{id}', 'barkodPdf')->name('stok.barkod.pdf');
+
+        //Ürün Adı Kontrol
+        Route::post('/stok/urun-adi-kontrol', 'checkProductName')->name('stok.urunadi.kontrol');
+
+        //Konsinye Cihazlar
+        Route::get('/konsinye-cihazlar', 'consignmentDevice')->name('consignmentdevice');
+        Route::get('/konsinye-cihazlar/data', 'consignmentDeviceData')->name('consignmentdevice.data');
+        Route::get('/konsinye-cihaz-ekle', 'AddConsignmentDevice')->name('add.consignment.device');
+        Route::post('/konsinye-cihaz-kaydet', 'StoreConsignmentDevice')->name('store.consignment.device');
+
+        // Konsinye cihaz düzenleme ve güncelleme
+        Route::get('/konsinye-cihazlar/duzenle/{id}', 'EditConsignmentDevice')->name('edit.consignment.device');
+        Route::post('/konsinye-cihazlar/guncelle/{id}', 'UpdateConsignmentDevice')->name('update.consignment.device');
+
+        // Konsinye cihaz stok hareketleri, personel stokları, fotoğraflar için ajax çağrıları
+        Route::get('/stok-konsinye-hareketleri/{id}', 'ConsignmentStockActions')->name('consignment.stock.actions');
+        Route::post('/stok-konsinye-hareket-kaydet', 'StoreConsignmentStockAction')->name('store.consignment.stock.action');
+        Route::delete('/stok-konsinye-hareket-sil/{id}', 'DeleteConsignmentStockAction')->name('delete.consignment.stock.action');
+        Route::get('/stok-konsinye-fotograflar/{stock_id}', 'GetConsignmentPhotos')->name('consignment.stock.photos');
+        Route::post('/stok-konsinye-foto-ekle', 'UploadConsignmentPhoto')->name('consignment.stock.photos.update');
+        Route::post('/stok-konsinye-foto-sil', 'DeleteConsignmentPhoto')->name('consignment.stock.photos.delete');
+
+        //Konsinye Cihaz Barkod
+        Route::get('/konsinye-cihaz-barkod/{id}', 'ConsignmentBarcode')->name('consignment.device.barcode.pdf');
+
+
+
     });
 
 
