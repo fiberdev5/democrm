@@ -1,28 +1,22 @@
-<form method="post" id="addDocu" action="{{ route('store.documents')}}" enctype="multipart/form-data" class="needs-validation" novalidate>
+<form method="post" id="servisFisNotuDuzenle" action="{{ route('update.service.receipt.note', $firma->id) }}" class="col-sm-6" style="margin: 0 auto;padding:10px;">
   @csrf
-  <div class="row">
-    <label class="col-sm-4">Belge Adı<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
-      <input name="baslik" class="form-control" type="text" placeholder="Belge Adı" required>
+
+  <div class="row form-group">
+    <div class="col-lg-12 rw2">
+      <textarea type="text" name="aciklama" class="form-control aciklama" placeholder="Buraya yazın.." rows="3" style="resize: none;" autocomplete="off" required>{{$note_id->aciklama}}</textarea>
     </div>
   </div>
-  <div class="row">
-    <label class="col-sm-4">Belge<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
-      <input name="belge" class="form-control" type="file" required>
-    </div>
+
+  <div style="text-align: center;margin-top: 5px;">
+    <input type="hidden" name="servisid" class="servisid" value="{{$note_id->servisid}}"/>
+    <input type="submit" class="btn btn-primary btn-sm" value="Gönder"/>
   </div>
-  <div class="row">
-    <div class="col-sm-12 gonderBtn">
-      <input type="hidden" name="id" value="{{$customerId}}">
-      <input type="submit" class="btn btn-sm btn-info waves-effect waves-light" value="Kaydet">
-    </div>
-  </div>
+    
 </form>
 
 <script>
   $(document).ready(function () {
-    $('#addDocu').submit(function (event) {
+    $('#servisFisNotuDuzenle').submit(function (event) {
       var formIsValid = true;
       $(this).find('input, select').each(function () {
         var isRequired = $(this).prop('required');
@@ -43,7 +37,7 @@
 
 <script>
   $(document).ready(function (e) {
-    $("#addDocu").submit(function (event) {
+    $("#servisFisNotuDuzenle").submit(function (event) {
       event.preventDefault();
       if (this.checkValidity() === false) {
         e.stopPropagation();
@@ -60,17 +54,19 @@
           $(".btnWrap").html("Yükleniyor. Bekleyin..");
         },
         success: function (data) {
-          if (data === false) { 
-            window.location.reload(true);
+          if (data.success) { 
+            alert("Servis fiş notu başarıyla güncellendi.");
+            $('#datatableService').DataTable().ajax.reload();
+            $('.nav7').trigger('click');   
+            
           } else {
-            alert("Belge başarıyla yüklendi");
-            $('#datatableCustomer').DataTable().ajax.reload();
-            $('.nav8').trigger('click');       
+              alert("Kayıt yapılamadı.");
+              window.location.reload(true);
           }
         },
         error: function (xhr, status, error) {
           alert("Güncelleme başarısız!");
-          window.location.reload(true);
+          
         },
       });
     }
