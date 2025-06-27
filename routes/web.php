@@ -53,6 +53,7 @@ use App\Http\Controllers\Frontend\PersonelController;
 use App\Http\Controllers\Frontend\ReceiptDesignController;
 use App\Http\Controllers\Frontend\RoleController;
 use App\Http\Controllers\Frontend\ServiceFormSetController;
+use App\Http\Controllers\Frontend\ServiceReportsController;
 use App\Http\Controllers\Frontend\ServiceResourceController;
 use App\Http\Controllers\Frontend\ServicesController;
 use App\Http\Controllers\Frontend\ServiceStagesController;
@@ -670,7 +671,58 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::get('/servis-asama-sorusu-getir/{asamaid}/{serviceid}', 'ServiceStageQuestionShow')->name('service.stage.question.show');
         Route::post('/servis-plan-kaydet', 'SaveServicePlan')->name('save.service.plan');
         Route::get('/servis-asama/{id}/history', 'getServiceStageHistory')->name('service.stage.history');
+        Route::post('/servis-plan-sil/{planid}', 'DeleteServicePlan')->name('delete.service.plan');
+        Route::get('/servis-plan/duzenle/{planid}', 'EditServicePlan')->name('edit.service.plan');
+        Route::post('/servis-plan/guncelle', 'UpdateServicePlan')->name('update.service.plan');
+        
+        //servis yazdırma
+        Route::get('/servis-yazdir/{id}', 'ServicetoPdf')->name('serviceto.pdf');
+
+        //servis para hareketleri
+        Route::get('/servis-para-hareketleri/{service_id}', 'ServiceMoneyActions')->name('service.money.actions');
+        Route::get('/servis-gelir-ekle/{service_id}', 'AddServiceIncome')->name('add.service.income');
+        Route::post('/servis-gelir-kaydet', 'StoreServiceIncome')->name('store.service.income');
+        Route::get('/servis-gider-ekle/{service_id}', 'AddServiceExpense')->name('add.service.expense');
+        Route::post('/servis-gider-kaydet', 'StoreServiceExpense')->name('store.service.expense');
+        Route::get('/servis-para-hareketi/duzenle/{payment_id}', 'EditServiceMoneyAction')->name('edit.service.money.action');
+        Route::post('/servis-para-hareketi/guncelle', 'UpdateServiceMoneyAction')->name('update.service.money.action');
+        Route::delete('/servis-para-hareketi/sil/{payment_id}', 'DeleteServiceMoneyAction')->name('delete.service.money.action');
+    
+        //Servis Fotoğrafları kısmı
+        Route::get('/servis-fotolari/{service_id}', 'ServicePhotos')->name('service.photos');
+        Route::post('/servis-foto-yukle', 'StoreServicePhoto')->name('store.service.photo');
+        Route::delete('/servis-foto-sil/{fotoid}', 'DeleteServicePhoto')->name('delete.service.photo');
+        
+        //Servis Fiş Notları Bölümü
+        Route::get('/servis-fis-notlari/{service_id}', 'ServiceReceiptNotes')->name('service.receipt.notes');
+        Route::get('/servis-fis-notu/ekle/{service_id}', 'AddServiceReceiptNote')->name('add.service.receipt.note');
+        Route::post('/servis-fis-notu/kaydet', 'StoreReceiptNote')->name('store.receipt.note');
+        Route::get('/servis-fis-notu/duzenle/{note_id}', 'EditServiceReceiptNote')->name('edit.service.receipt.note');
+        Route::post('/servis-fis-notu/guncelle', 'UpdateServiceReceiptNote')->name('update.service.receipt.note');
+        Route::delete('/servis-fis-notu/sil/{note_id}', 'DeleteReceiptNote')->name('delete.receipt.note');
+        
+        //Servis Operatör Notları Bölümü
+        Route::get('/servis-operator-notlari/{service_id}', 'ServiceOptNotes')->name('service.opt.notes');
+        Route::get('/servis-opt-notu/ekle/{service_id}', 'AddServiceOptNote')->name('add.service.opt.note');
+        Route::post('/servis-opt-notu/kaydet', 'StoreServiceOptNote')->name('store.service.opt.note');
+        Route::get('/servis-opt-notu/duzenle/{note_id}', 'EditServiceOptNote')->name('edit.service.opt.note');
+        Route::post('/servis-opt-notu/guncelle', 'UpdateServiceOptNote')->name('update.service.opt.note');
+        Route::delete('/servis-opt-notu/sil/{note_id}', 'DeleteServiceOptNote')->name('delete.service.opt.note');
+        
+        //Servisler modalında teklifler Bölümü
+        Route::get('/musteri-teklifleri/{service_id}', 'CustomerOffers')->name('customer.offers');
+        
+        //Servisler modalında faturalar Bölümü
+        Route::get('/musteri-faturalari/{service_id}', 'CustomerInvoices')->name('customer.invoices');
+        
+        
     });
+
+    Route::controller(ServiceReportsController::class)->group(function() { 
+        //Servisler sayfasında sağ üstteki raporlar butonuna tıklanınca açılan modal route u
+        Route::get('/servis-rapor-modal', 'ServiceReports')->name('service.reports');
+    });
+
 });
 
 

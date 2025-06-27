@@ -1,0 +1,1252 @@
+.navbar-brand-box{padding: 0;width: auto;}
+.navbar-brand-box a{color: #fff;font-size: 18px;}
+#sidebar-menu .title{border-bottom: 1px solid #eff2f7;}
+#sidebar-menu .title a{padding: .7rem 1rem !important;display: block;color: white !important;}
+.vertical-collpsed #sidebar-menu .title{border-bottom: 1px solid #eff2f7;}
+.vertical-collpsed #sidebar-menu .title a{padding: .825rem 0.5rem !important;font-size: 12px;text-align: center;}
+.nav-tabs-custom .nav-item .nav-link.active{font-weight: 600;}
+@media screen and (max-width: 767px) {
+	table.dataTable.nowrap th,table.dataTable.nowrap td{white-space:inherit !important}
+}
+@media screen and (max-width: 1024px) {
+	table.dataTable.nowrap th,table.dataTable.nowrap td{white-space:inherit !important}
+}
+.foto .imgWrap img {width: 100%;height: 170px;border: 1px solid #ddd;background: white;}
+.foto .imgWrap a {display: block;width: 100%;border-top-left-radius: 0;border-top-right-radius: 0;padding: 0;}
+.foto .imgWrap .galeriSira {display: block;width: 100%;border-top-left-radius: 0;border-top-right-radius: 0;padding: 0;padding-left: 36px;}
+.foto .row1 {display: -ms-flexbox;display: flex;-ms-flex-wrap: wrap;flex-wrap: wrap;margin-right: 24px;margin-left: 24px;}
+.foto .imgWrap .card {border: 0;border-radius: 10px;}
+.foto .imgWrap1 img {width: 100%;height: 100%;border: 1px solid #ddd;background: white;object-fit: contain;}
+.foto .imgWrap1 a {display: block;width: 100%;border-top-left-radius: 0;border-top-right-radius: 0;padding: 0;}
+.foto .imgWrap1 .galeriSira {display: block;width: 100%;border-top-left-radius: 0;border-top-right-radius: 0;padding: 0;padding-left: 36px;}
+.foto .imgWrap1 .card {border: 0;border-radius: 10px;}
+
+#sifreEkle ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#sifreEkle ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#sifreDuzenle ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#sifreDuzenle ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+.table > tbody > tr > td {vertical-align: middle;padding: 0;color: #111;}
+.table > tbody > tr > td > .t-link{text-decoration: none !important;display: block;padding: 15px 5px;margin-top: -10px;margin-bottom: -10px;color:#505d69;font-size: 13px;}
+#addPasswordModal .modal-header{padding: 5px 14px;}
+#addPasswordModal .form-group{padding-bottom: 3px;margin-bottom: 3px;margin-left: -5px;margin-right: -5px;font-size: 14px;}
+#addPasswordModal .col-form-label{color: #505d69;}
+
+.col-form-label{color: #505d69;}
+form .mb-3 {margin-bottom: 0.3rem!important;}
+.analyticsData .card-title{width: 100% !important;margin: 0;font-size: 14px !important;padding: 10px !important;background: #252b3b !important;color: #fff !important;border-radius: 5px;margin-bottom: 5px;}
+#analyticsData .analyticTable th {border: 1px solid black;}
+#analyticsData .analyticTable td {border: 1px solid black;}
+
+#addAccount ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#addAccount ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editAccount ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#editAccount ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+#addDom ul#sonuc {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#addDom ul#sonuc li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editDom ul#sonuc {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#editDom ul#sonuc li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editServiceDescModal .nav .nav-item a {padding: 6px 1.5px;}
+.nav-pills .nav-link.active {background-color: #212529 !important;color: #fff!important;}
+.nav-pills .nav-link {color: #fff!important;border-radius: 0!important;padding: 5px 9px;font-size: 13px;border: 1px solid #dfdfdf!important;background-color: #343a40 !important;border-color: #212529 !important;}
+.modal-header{padding: 0.5rem 0.5rem!important;}
+#editServiceDescModal #tab1 .card-header {border-bottom: 0;font-size: 13px;}
+#editServiceDescModal #tab1 .ch1 {padding-left: 0;padding-right: 0;}
+.card-header {font-weight: 500;padding: 0!important;font-size: 15px;}
+.getModal .form-control {display: block;width: 100%;height: auto;padding: 3px 5px;line-height: initial;color: #495057;background-clip: padding-box;border: 1px solid #ced4da;border-radius: 0.25rem;transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;font-size: 13px;}
+#editServiceDescModal label{color: #0a1832;}
+#editServiceDescModal #tab1 .card2 .card-header {display: flex;justify-content: space-between;color: #0a1832;}
+#editServiceDescModal #tab1 .card5 {height: 100%;}
+#editServiceDescModal #tab1 .card5 .card-header{color: #0a1832;}
+#editServiceDescModal #tab1 .card3 .right .altAsamalar {display: inline-block;width: 169px;margin-left: 2px;}
+#editServiceDescModal #tab1 .card3 .right {text-align: right;}
+#editServiceDescModal #tab1 .card2 .card-body span {display: block;padding: 1px 5px;font-size: 13px;color: #0a1832;}
+#editServiceDescModal #tab1 .ch1 .right {text-align: right;}
+#editServiceDescModal #tab1 .card3 .left label {background: #ec0000;border: 1px solid #ce0000;color: #fff;padding: 0px 5px;border-radius: 3px;max-width: 215px;margin-top: 4px;}
+#editServiceDescModal thead.title {background: #343a40;color: #fff;}
+#editServiceDescModal .servisAsamalari{margin-top: 7px;}
+#editServiceDescModal .card{margin-bottom: 10px;}
+#editServiceDescModal .tableToplamaAlani .r1 {margin: 0;background: #28a745;color: #fff;font-weight: 500;}
+#editServiceDescModal .tableToplamaAlani .r1 .sol {text-align: right;padding: 10px;border: 1px solid #e0e0e0;border-right: 1px solid #238c3b;float: left;background: #f2f2f2;color: #000;width: calc(100% - 150px);}
+#editServiceDescModal .tableToplamaAlani .r1 .sag {padding: 10px;float: right;width: 150px;text-align: left;}
+#editServiceDescModal .tableToplamaAlani {margin: 0;clear: both;font-size: 13px;}
+#editServiceDescModal .tableToplamaAlani .r2 {margin: 0;background: #dc3545;color: #fff;font-weight: 500;}
+#editServiceDescModal .tableToplamaAlani .r2 .sol {text-align: right;padding: 10px;border-left: 1px solid #e0e0e0;border-right: 1px solid #b92d3b;float: left;width: calc(100% - 150px);background: #f2f2f2;color: #000;}
+#editServiceDescModal .tableToplamaAlani .r2 .sag {padding: 10px;float: right;width: 150px;text-align: left;}
+#editServiceDescModal .tableToplamaAlani .r4 {margin: 0;background: #e0a800;color: #fff;font-weight: 500;}
+#editServiceDescModal .tableToplamaAlani .r4 .sol {text-align: right;padding: 10px;border: 1px solid #e0e0e0;border-right: 1px solid #997300;float: left;width: calc(100% - 150px);background: #f2f2f2;color: #000;}
+#editServiceDescModal .tableToplamaAlani .r4 .sag {padding: 10px;float: right;width: 150px;text-align: left;}
+#editServiceDescModal .tableToplamaAlani .r3 {margin: 0;background: #007bff;color: #fff;font-weight: 500;}
+#editServiceDescModal .tableToplamaAlani .r3 .sol {text-align: right;padding: 10px;border: 1px solid #e0e0e0;border-right: 1px solid #0063ce;float: left;width: calc(100% - 150px);background: #f2f2f2;color: #000;}
+#editServiceDescModal .tableToplamaAlani .r3 .sag {padding: 10px;float: right;width: 150px;text-align: left;}
+.form-control{padding: 3px 5px!important;margin-bottom: 3px!important;font-size:13px!important;}
+.form-select{padding: 3px 5px!important;margin-bottom: 3px!important;font-size: 13px!important;}
+#addOffer .col-form-label{padding-top: 0;padding-bottom: 0;}
+#editOffer .col-form-label{padding-top: 0;padding-bottom: 0;}
+#addOffer .card{margin-bottom: 3px;padding: 0}
+#addOffer .card .form-group{margin: 0;border: 0}
+#addOffer .card .form-group .rw1{padding-left: 5px}
+#addOffer .card .form-group .rw2{padding-top: 0;padding-left: 15px;padding-right: 5px;}
+#addOffer .card .form-group .rw3{padding-right: 5px}
+#addOffer .card5 .form-group .rw1 label{text-align: right;}
+#addOffer .satirBody .form-group .rw4{padding-right: 5px}
+
+#editOffer .card{margin-bottom: 3px;padding: 0}
+#editOffer .card .form-group{margin: 0;border: 0}
+#editOffer .card .form-group .rw1{padding-left: 5px}
+#editOffer .card .form-group .rw2{padding-top: 0;padding-left: 15px;padding-right: 5px;}
+#editOffer .card .form-group .rw3{padding-right: 5px}
+#editOffer .card5 .form-group .rw1 label{text-align: right;}
+#editOffer .satirBody .form-group .rw4{padding-right: 5px}
+#editOffer .card .card-header {border-bottom: 0;padding: 7px 10px;}
+#editOffer .card .card-body {padding: 5px;}
+#addOffer .card .card-header {border-bottom: 0;padding: 7px 10px;font-size: 13px;}
+#addOffer .card .card-body {padding: 5px;}
+@media (min-width: 1367px) {	
+	#addOffer{max-width: 930px;}
+	#editOffer{max-width: 930px;}
+    
+}
+@media (max-width: 991px){
+	#editOffer .card.f3 .row .rw1{-ms-flex: 0 0 66.666667%;flex: 0 0 66.666667%;max-width: 66.666667%;padding-right: 0}
+	#editOffer .card.f3 .row .rw2{-ms-flex: 0 0 33.333333%;flex: 0 0 33.333333%;max-width: 33.333333%;padding-left: 15px}
+	#editOffer .card.f3 .row .rw1 label{text-align: right;}
+	#editOffer .card.f3{margin-bottom: -3px;border-bottom: 0}
+	#editOffer .card.f3 .card-body{padding-bottom: 0}
+	#editOffer .card.f4 .card-body{padding-top: 0}
+	#editOffer .card.f3 .row .rw2{padding-right: 0}
+}
+@media (max-width: 767px){
+	#addOffer .card .form-group .rw2{padding-left: 0}
+	#editOffer .card .form-group .rw2{padding-left: 0}
+  #editServiceDescModal .nav .nav-item a span{display: none;}
+  #editServiceDescModal .nav .nav-item a i{display: block!important;}
+  #editServiceDescModal #tab1 .ch1 .left label{display: none;}
+  #editServiceDescModal #tab1 .ch1 .right label {display: none;}
+  #editServiceDescModal #tab1 .ch1 .bol label{display: none;}
+  .topGun{float: left!important;}
+  .anasayfa-card .card-body{padding: 10px;}
+  .avatar-sm {height: 2rem;width: 2rem;}
+  #cash_transactions .addCashTransactions span{display: none!important;}
+  #cash_transactions .tevkifatHesapla span{display: none!important;}
+  #tab1 .card1 .ch1 .kategori{width: 100%!important;}
+  #editServiceDescModal #tab1 .card3 .right .altAsamalar {margin-left: 0!important;}
+  label {font-size: 14px!important;}
+
+  #no-more-tables table thead tr {display: none;}
+  #no-more-tables table tbody tr{display: grid;border: 1px solid #ccc;margin: 0 !important;}
+  #no-more-tables table tbody tr td{border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;}
+  #no-more-tables table tbody tr .kayitTarihiCS{display: none;}
+
+  #editServiceDescModal #tab1 .card4	#no-more-tables td.islemAciklamaCS{width: 100%}
+	#editServiceDescModal #tab1 .card4	#no-more-tables td.btnCS.btnCSYetkiYok{display: none;}
+	#editServiceDescModal #tab1 .card4	#no-more-tables td.btnCS{width: 50%}
+	#editServiceDescModal #tab1 .card4	#no-more-tables td.btnCS .btn{width: 100%;}
+	#editServiceDescModal #tab1 .card4 #no-more-tables td.btnCS {width: 50% !important;display: inline-block;}
+	#editServiceDescModal #tab1 .card4 #no-more-tables td .musPlanDuzenle{padding: 0.1rem 0.5rem;}
+  #editServiceDescModal #tab1 .card4 #no-more-tables td #musteriPlanSil{padding: 0.1rem 0.5rem;}
+  #editServiceDescModal #tab1 .card4 #no-more-tables td .musNotDuzenle{padding: 0.1rem 0.5rem;}
+  #editServiceDescModal #tab1 .card3 .right .altAsamalar {width: 100px;}
+  #editServiceDescModal #tab1 .card5 form textarea{height: 55px;}
+  #editServiceDescModal #tab1 .card-body{padding: 0.5rem 1rem;}
+  .contButtons{display: flex;}
+  .contButtons a{margin-right: 2px;}
+  #datatableOffer .showInv{display: none;}
+  .mobileTitle {display: inline-block!important;margin-right: 5px;}
+  .table > tbody > tr > td > .t-link {padding: 5px;margin: 0;}
+  .mobilBtn{width: 50%;padding: 0.1rem!important;border-radius: 0!important;}
+  .mbuton1{margin-right: 3px;}
+
+  #datatable thead tr{display: none;}
+  #datatable tbody tr{display: grid;}
+  #datatable tbody td{display: flex!important;}
+  #datatable tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatable td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatable .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatable .idWrap {display: none;}
+  #datatable .gizli {display: none!important;}
+  .pageDetail .card-body{padding: 7px;}
+
+  #datatableMM thead tr{display: none;}
+  #datatableMM tbody tr{display: grid;}
+  #datatableMM tbody td{display: flex!important;}
+  #datatableMM tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableMM td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableMM .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableMM .idWrap {display: none;}
+  #datatableMM .gizli {display: none!important;}
+
+  #datatableAnalyticAcc thead tr{display: none;}
+  #datatableAnalyticAcc tbody tr{display: grid;}
+  #datatableAnalyticAcc tbody td{display: flex!important;}
+  #datatableAnalyticAcc tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableAnalyticAcc td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableAnalyticAcc .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableAnalyticAcc .idWrap {display: none;}
+  #datatableAnalyticAcc .gizli {display: none!important;}
+
+  #datatableCurrency thead tr{display: none;}
+  #datatableCurrency tbody tr{display: flex;align-items: center;}
+  #datatableCurrency tbody td{display: flex!important;}
+  #datatableCurrency tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableCurrency tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableCurrency td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableCurrency .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableCurrency .idWrap {display: none;}
+  #datatableCurrency .gizli {display: none!important;}
+  #datatableCurrency .mobilBtn{width: 20%!important;}
+  #datatableCurrency .deleteCurrency{margin-right: 3px;}
+  #datatableCurrency .mobilBtn span {display: none!important;}
+
+  #datatableBank thead tr{display: none;}
+  #datatableBank tbody tr{display: flex;align-items: center;}
+  #datatableBank tbody td{display: flex!important;}
+  #datatableBank tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableBank td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableBank .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableBank .idWrap {display: none;}
+  #datatableBank .gizli {display: none!important;}
+  #datatableBank tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableBank .mobilBtn{width: 20%!important;}
+  #datatableBank .deleteBank{margin-right: 3px;}
+  #datatableBank .mobilBtn span {display: none!important;}
+
+  #datatablePayType thead tr{display: none;}
+  #datatablePayType tbody tr{display: flex;align-items: center;}
+  #datatablePayType tbody td{display: flex!important;}
+  #datatablePayType tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatablePayType td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatablePayType .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatablePayType .idWrap {display: none;}
+  #datatablePayType .gizli {display: none!important;}
+  #datatablePayType tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatablePayType .mobilBtn{width: 20%!important;}
+  #datatablePayType .deletePayType{margin-right: 3px;}
+  #datatablePayType .mobilBtn span {display: none!important;}
+
+  #datatablePayMethod thead tr{display: none;}
+  #datatablePayMethod tbody tr{display: flex;align-items: center;}
+  #datatablePayMethod tbody td{display: flex!important;}
+  #datatablePayMethod tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatablePayMethod td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatablePayMethod .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatablePayMethod .idWrap {display: none;}
+  #datatablePayMethod .gizli {display: none!important;}
+  #datatablePayMethod tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatablePayMethod .mobilBtn{width: 20%!important;}
+  #datatablePayMethod .deletePayMethod{margin-right: 3px;}
+  #datatablePayMethod .mobilBtn span {display: none!important;}
+
+  #datatableCustStage thead tr{display: none;}
+  #datatableCustStage tbody tr{display: flex;align-items: center;}
+  #datatableCustStage tbody td{display: flex!important;}
+  #datatableCustStage tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableCustStage td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableCustStage .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableCustStage .idWrap {display: none;}
+  #datatableCustStage .gizli {display: none!important;}
+  #datatableCustStage tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableCustStage .mobilBtn{width: 20%!important;}
+  #datatableCustStage .deleteStage{margin-right: 3px;}
+  #datatableCustStage .mobilBtn span {display: none!important;}
+
+  #datatableCustResource thead tr{display: none;}
+  #datatableCustResource tbody tr{display: flex;align-items: center;}
+  #datatableCustResource tbody td{display: flex!important;}
+  #datatableCustResource tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableCustResource td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableCustResource .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableCustResource .idWrap {display: none;}
+  #datatableCustResource .gizli {display: none!important;}
+  #datatableCustResource tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableCustResource .mobilBtn{width: 20%!important;}
+  #datatableCustResource .deleteResource{margin-right: 3px;}
+  #datatableCustResource .mobilBtn span {display: none!important;}
+
+  #datatableQuestions thead tr{display: none;}
+  #datatableQuestions tbody tr{display: grid;}
+  #datatableQuestions tbody td{display: flex!important;}
+  #datatableQuestions tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableQuestions td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableQuestions .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableQuestions .idWrap {display: none;}
+  #datatableQuestions .gizli {display: none!important;}
+
+  #datatableCustCategory thead tr{display: none;}
+  #datatableCustCategory tbody tr{display: flex;align-items: center;}
+  #datatableCustCategory tbody td{display: flex!important;}
+  #datatableCustCategory tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableCustCategory td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableCustCategory .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableCustCategory .idWrap {display: none;}
+  #datatableCustCategory .gizli {display: none!important;}
+  #datatableCustCategory tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableCustCategory .mobilBtn{width: 20%!important;}
+  #datatableCustCategory .deleteCustCategory{margin-right: 3px;}
+  #datatableCustCategory .mobilBtn span {display: none!important;}
+
+  #datatablePermission thead tr{display: none;}
+  #datatablePermission tbody tr{display: grid;}
+  #datatablePermission tbody td{display: flex!important;}
+  #datatablePermission tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatablePermission td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatablePermission .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatablePermission .idWrap {display: none;}
+  #datatablePermission .gizli {display: none!important;}
+
+  #datatableRole thead tr{display: none;}
+  #datatableRole tbody tr{display: flex;align-items: center;}
+  #datatableRole tbody td{display: flex!important;}
+  #datatableRole tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableRole td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableRole .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableRole .idWrap {display: none;}
+  #datatableRole .gizli {display: none!important;}
+  #datatableRole tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableRole .mobilBtn{width: 20%!important;}
+  #datatableRole .deleteRole{margin-right: 3px;}
+  #datatableRole .mobilBtn span {display: none!important;}
+
+  #datatableDevice thead tr{display: none;}
+  #datatableDevice tbody tr{display: flex;align-items: center;}
+  #datatableDevice tbody td{display: flex!important;}
+  #datatableDevice tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableDevice td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableDevice .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableDevice .idWrap {display: none;}
+  #datatableDevice .gizli {display: none!important;}
+  #datatableDevice tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableDevice .mobilBtn{width: 20%!important;}
+  #datatableDevice .deleteCategory{margin-right: 3px;}
+  #datatableDevice .mobilBtn span {display: none!important;}
+
+  #datatableDeviceTypes thead tr{display: none;}
+  #datatableDeviceTypes tbody tr{display: flex;align-items: center;}
+  #datatableDeviceTypes tbody td{display: flex!important;}
+  #datatableDeviceTypes tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableDeviceTypes td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableDeviceTypes .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableDeviceTypes .idWrap {display: none;}
+  #datatableDeviceTypes .gizli {display: none!important;}
+  #datatableDeviceTypes tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableDeviceTypes .mobilBtn{width: 20%!important;}
+  #datatableDeviceTypes .deleteDeviceType{margin-right: 3px;}
+  #datatableDeviceTypes .mobilBtn span {display: none!important;}
+
+  #datatableWarranty thead tr{display: none;}
+  #datatableWarranty tbody tr{display: flex;align-items: center;}
+  #datatableWarranty tbody td{display: flex!important;}
+  #datatableWarranty tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableWarranty td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableWarranty .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableWarranty .idWrap {display: none;}
+  #datatableWarranty .gizli {display: none!important;}
+  #datatableWarranty tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableWarranty .mobilBtn{width: 20%!important;}
+  #datatableWarranty .deleteWarranty{margin-right: 3px;}
+  #datatableWarranty .mobilBtn span {display: none!important;}
+
+  #datatableServiceStage thead tr{display: none;}
+  #datatableServiceStage tbody tr{display: flex;align-items: center;}
+  #datatableServiceStage tbody td{display: flex!important;}
+  #datatableServiceStage tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableServiceStage td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableServiceStage .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableServiceStage .idWrap {display: none;}
+  #datatableServiceStage .gizli {display: none!important;}
+  #datatableServiceStage tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableServiceStage .mobilBtn{width: 20%!important;}
+  #datatableServiceStage .deleteServiceStage{margin-right: 3px;}
+  #datatableServiceStage .mobilBtn span {display: none!important;}
+
+  #datatableCars thead tr{display: none;}
+  #datatableCars tbody tr{display: flex;align-items: center;}
+  #datatableCars tbody td{display: flex!important;}
+  #datatableCars tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableCars td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableCars .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableCars .idWrap {display: none;}
+  #datatableCars .gizli {display: none!important;}
+  #datatableCars tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableCars .mobilBtn{width: 20%!important;}
+  #datatableCars .deleteCar{margin-right: 3px;}
+  #datatableCars .mobilBtn span {display: none!important;}
+
+  #datatableServiceResource thead tr{display: none;}
+  #datatableServiceResource tbody tr{display: flex;align-items: center;}
+  #datatableServiceResource tbody td{display: flex!important;}
+  #datatableServiceResource tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableServiceResource td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableServiceResource .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableServiceResource .idWrap {display: none;}
+  #datatableServiceResource .gizli {display: none!important;}
+  #datatableServiceResource tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableServiceResource .mobilBtn{width: 20%!important;}
+  #datatableServiceResource .deleteCar{margin-right: 3px;}
+  #datatableServiceResource .mobilBtn span {display: none!important;}
+
+  #datatableContractCategory thead tr{display: none;}
+  #datatableContractCategory tbody tr{display: flex;align-items: center;}
+  #datatableContractCategory tbody td{display: flex!important;}
+  #datatableContractCategory tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableContractCategory td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableContractCategory .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableContractCategory .idWrap {display: none;}
+  #datatableContractCategory .gizli {display: none!important;}
+  #datatableContractCategory tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableContractCategory .mobilBtn{width: 20%!important;}
+  #datatableContractCategory .deleteContractCategory{margin-right: 3px;}
+  #datatableContractCategory .mobilBtn span {display: none!important;}
+
+  #datatableDomain thead tr{display: none;}
+  #datatableDomain tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableDomain tbody td{display: flex!important;}
+  #datatableDomain tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableDomain td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableDomain .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableDomain .idWrap {display: none;}
+  #datatableDomain .gizli {display: none!important;}
+
+  #datatableServer thead tr{display: none;}
+  #datatableServer tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableServer tbody td{display: flex!important;}
+  #datatableServer tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableServer td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableServer .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableServer .idWrap {display: none;}
+  #datatableServer .gizli {display: none!important;}
+
+  #datatableAdsAcc thead tr{display: none;}
+  #datatableAdsAcc tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableAdsAcc tbody td{display: flex!important;}
+  #datatableAdsAcc tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableAdsAcc td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableAdsAcc .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableAdsAcc .idWrap {display: none;}
+  #datatableAdsAcc .gizli {display: none!important;}
+
+  #datatableHosting thead tr{display: none;}
+  #datatableHosting tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableHosting tbody td{display: flex!important;}
+  #datatableHosting tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableHosting td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableHosting .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableHosting .idWrap {display: none;}
+  #datatableHosting .gizli {display: none!important;}
+
+  #datatableCustomer thead tr{display: none;}
+  #datatableCustomer tbody tr{display: grid;}
+  #datatableCustomer tbody td{display: flex!important;}
+  #datatableCustomer tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableCustomer td {border: none;border-bottom: 1px solid #cbcbcb;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableCustomer .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableCustomer > tbody > tr > td .idWrap {display: none;}
+  #datatableCustomer .gizli {display: none!important;}
+
+  #datatableProgram thead tr{display: none;}
+  #datatableProgram tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableProgram tbody td{display: flex!important;}
+  #datatableProgram tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableProgram td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableProgram .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableProgram > tbody > tr > td .idWrap {display: none;}
+  #datatableProgram .gizli{display: none!important;}
+
+  #datatablePersonel thead tr{display: none;}
+  #datatablePersonel tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatablePersonel tbody td{display: flex!important;}
+  #datatablePersonel tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatablePersonel td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatablePersonel .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatablePersonel > tbody > tr > td .idWrap {display: none;}
+  #datatablePersonel td .badge{padding: .15em .15em;font-size: 12px;}
+  #datatablePersonel .gizli{display: none!important;}
+
+  #datatableStock thead tr{display: none;}
+  #datatableStock tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableStock tbody td{display: flex!important;}
+  #datatableStock tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableStock td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableStock .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableStock > tbody > tr > td .idWrap {display: none;}
+  #datatableStock td .badge{padding: .15em .15em;font-size: 12px;}
+  #datatableStock .gizli{display: none!important;}
+
+  #datatableOffer thead tr{display: none;}
+  #datatableOffer tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableOffer tbody td{display: flex!important;}
+  #datatableOffer tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableOffer td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableOffer .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableOffer > tbody > tr > td .idWrap {display: none;}
+  #datatableOffer .gizli{display: none!important;}
+    
+  #datatableTheme thead tr{display: none;}
+  #datatableTheme tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableTheme tbody td{display: flex!important;}
+  #datatableTheme tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableTheme td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableTheme .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableTheme > tbody > tr > td .idWrap {display: none;}
+  #datatableTheme .gizli{display: none!important;}
+    
+  #datatableContract thead tr{display: none;}
+  #datatableContract tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableContract tbody td{display: flex!important;}
+  #datatableContract tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableContract td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableContract .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableContract > tbody > tr > td .idWrap {display: none;}
+  #datatableContract .gizli{display: none!important;}
+
+  #datatableDocument thead tr{display: none;}
+  #datatableDocument tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableDocument tbody td{display: flex!important;}
+  #datatableDocument tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableDocument td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableDocument .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableDocument > tbody > tr > td .idWrap {display: none;}
+  #datatableDocument .gizli{display: none!important;}
+
+  #datatableInvoice thead tr{display: none;}
+  #datatableInvoice tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableInvoice tbody td{display: flex!important;}
+  #datatableInvoice tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableInvoice td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableInvoice .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableInvoice > tbody > tr > td .idWrap {display: none;}
+  #datatableInvoice .gizli{display: none!important;}
+
+  #datatableKasa thead tr{display: none;}
+  #datatableKasa tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatableKasa tbody td{display: flex!important;}
+  #datatableKasa tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableKasa td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableKasa .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableKasa > tbody > tr > td .idWrap {display: none;}
+  #datatableKasa .gizli{display: none!important;}
+
+  #datatablePassword thead tr{display: none;}
+  #datatablePassword tbody tr{display: grid;background-color: rgba(0, 0, 0, .05);}
+  #datatablePassword tbody td{display: flex!important;}
+  #datatablePassword tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatablePassword td {border: none;border-bottom: 1px solid #eee;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatablePassword .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatablePassword > tbody > tr > td .idWrap {display: none;}
+  #datatablePassword .gizli{display: none!important;}
+
+  #datatableStockCategory thead tr{display: none;}
+  #datatableStockCategory tbody tr{display: flex;align-items: center;}
+  #datatableStockCategory tbody td{display: flex!important;}
+  #datatableStockCategory tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableStockCategory td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableStockCategory .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableStockCategory .idWrap {display: none;}
+  #datatableStockCategory .gizli {display: none!important;}
+  #datatableStockCategory tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableStockCategory .mobilBtn{width: 20%!important;}
+  #datatableStockCategory .deleteStockCategory{margin-right: 3px;}
+  #datatableStockCategory .mobilBtn span {display: none!important;}
+
+  #datatableStockShelf thead tr{display: none;}
+  #datatableStockShelf tbody tr{display: flex;align-items: center;}
+  #datatableStockShelf tbody td{display: flex!important;}
+  #datatableStockShelf tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableStockShelf td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableStockShelf .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableStockShelf .idWrap {display: none;}
+  #datatableStockShelf .gizli {display: none!important;}
+  #datatableStockShelf tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableStockShelf .mobilBtn{width: 20%!important;}
+  #datatableStockShelf .deleteStockCategory{margin-right: 3px;}
+  #datatableStockShelf .mobilBtn span {display: none!important;}
+
+  #datatableStockSupplier thead tr{display: none;}
+  #datatableStockSupplier tbody tr{display: flex;align-items: center;}
+  #datatableStockSupplier tbody td{display: flex!important;}
+  #datatableStockSupplier tr {border: 1px solid #ccc;margin: 0 !important;}
+  #datatableStockSupplier td {border: none;border-bottom: 0;position: relative;margin: 0;box-sizing: border-box;white-space: normal;text-align: left;width: 100%;line-height: initial;text-transform: inherit;}
+  #datatableStockSupplier .table > tbody > tr > td a {padding: 5px;margin: 0;}     
+  #datatableStockSupplier .idWrap {display: none;}
+  #datatableStockSupplier .gizli {display: none!important;}
+  #datatableStockSupplier tbody .tabloBtn {display: flex;align-items: end;justify-content: end;}
+  #datatableStockSupplier .mobilBtn{width: 20%!important;}
+  #datatableStockSupplier .deleteStockCategory{margin-right: 3px;}
+  #datatableStockSupplier .mobilBtn span {display: none!important;}
+
+  .dataTables_filter label{width: auto!important;}
+  .dataTables_filter {text-align: end!important;}
+  #datatableDomain_filter label{width: 110px!important;}
+  #datatableDomain_filter{text-align: center!important;}
+  .pageDetail .addDomain {padding: .5rem .5rem;border-radius: 0;}
+  .addDomain span{display: none;}
+  .addDomain i{display: block!important;}
+  #datatableHosting_filter label{width: 110px!important;}
+  #datatableHosting_filter{text-align: center!important;}
+  .pageDetail .addHosting {padding: .5rem .5rem;border-radius: 0;}
+  .addHosting span{display: none;}
+  .addHosting i{display: block!important;}
+  .addAccount span{display: none;}
+  .addAccount i{display: block!important;}
+  
+  .addCurrency span{display: none;}
+  .addCurrency i{display: block!important;}
+  .addBank span{display: none;}
+  .addBank i{display: block!important;}
+  .addPaymentType span{display: none;}
+  .addPaymentType i{display: block!important;}
+  .addPaymentMethod span{display: none;}
+  .addPaymentMethod i{display: block!important;}
+  .addStage span{display: none;}
+  .addStage i{display: block!important;}
+  .addResource span{display: none;}
+  .addResource i{display: block!important;}
+  .addStageQuestion span{display: none;}
+  .addStageQuestion i{display: block!important;}
+  .addDevice span{display: none;}
+  .addDevice i{display: block!important;}
+  .addPermission span{display: none;}
+  .addPermission i{display: block!important;}
+  .addRole span{display: none;}
+  .addRole i{display: block!important;}
+  .addContractCategory span{display: none;}
+  .addContractCategory i{display: block!important;}
+  #datatableCustomer_filter label{width: 153px!important;}
+  #datatableCustomer_filter{text-align: center!important;}
+  .pageDetail .addCustomer {padding: .5rem .5rem;border-radius: 0;}
+  .addCustomer span{display: none;}
+  .addCustomer i{display: block!important;}
+  .pageDetail .addInvoice {padding: .5rem .5rem;border-radius: 0;}
+  .addInvoice span{display: none;}
+  .addInvoice i{display: block!important;}
+  .pageDetail .addServer {padding: .5rem .5rem;border-radius: 0;}
+  .addServer span{display: none;}
+  .addServer i{display: block!important;}
+  .pageDetail .addAdsAccount {padding: .5rem .5rem;border-radius: 0;}
+  .addAdsAccount span{display: none;}
+  .addAdsAccount i{display: block!important;}
+  .addDocument span{display: none;}
+  .addDocument i{display: block!important;}
+  #datatableDocument_filter label{width: 110px!important;}
+  #datatableDocument_filter{text-align: center!important;}
+  .pageDetail .addDocument {padding: .5rem .5rem;}
+  #datatableProgram_filter label{width: 110px!important;}
+  #datatableProgram_filter{text-align: center!important;}
+  .pageDetail .addProgram {padding: .5rem .5rem;border-radius: 0;}
+  .addProgram span{display: none;}
+  .addProgram i{display: block!important;}
+  #datatablePersonel_filter label{width: 116px!important;}
+  #datatablePersonel_filter{text-align: center!important;}
+  .pageDetail .addPersonel {padding: .5rem .5rem;border-radius: 0;}
+  .addPersonel span{display: none;}
+  .addPersonel i{display: block!important;}
+  #datatableStock_filter label{width: 116px!important;}
+  #datatableStock_filter{text-align: center!important;}
+  .pageDetail .addStock {padding: .5rem .5rem;border-radius: 0;}
+  .addStock span{display: none;}
+  .addStock i{display: block!important;}
+  .pageDetail .addBayi {padding: .5rem .5rem;border-radius: 0;}
+  .addBayi span{display: none;}
+  .addBayi i{display: block!important;}
+  #datatableBayi_filter label{width: 116px!important;}
+  #datatableBayi_filter{text-align: center!important;}
+  .pageDetail .staffLeaves{border-radius: 0;}
+  #datatableOffer_filter label{width: 110px!important;}
+  #datatableOffer_filter{text-align: center!important;}
+  .pageDetail .addOffer {padding: .5rem .5rem;border-radius: 0;}
+  .addOffer span{display: none;}
+  .addOffer i{display: block!important;}
+  #datatableTheme_filter label{width: 110px!important;}
+  #datatableTheme_filter{text-align: center!important;}
+  .pageDetail .addTheme {padding: .5rem .5rem;border-radius: 0;}
+  .addTheme span{display: none;}
+  .addTheme i{display: block!important;}
+  #datatableContract_filter label{width: 110px!important;}
+  #datatableContract_filter{text-align: center!important;}
+  .pageDetail .addContract {padding: .5rem .5rem;border-radius: 0;}
+  .addContract span{display: none;}
+  .addContract i{display: block!important;}
+  #datatableKasa_filter label{width: 110px!important;}
+  #datatableKasa_filter{text-align: center!important;}
+  .pageDetail .addCashTransactions {padding: .5rem .5rem;border-radius: 0;}
+  .addCashTransactions span{display: none;}
+  .addCashTransactions i{display: block!important;}
+  .pageDetail .tevkifatHesapla{left: 40px!important;padding: .5rem .5rem;border-radius: 0;}
+  .tevkifatHesapla span{display: none;}
+  .tevkifatHesapla i{display: block!important;}
+  .pageDetail .statistics{display: none!important;}
+  #datatablePassword_filter label{width: 110px!important;}
+  #datatablePassword_filter{text-align: center!important;}
+  .pageDetail .addPass {padding: .5rem .5rem;border-radius: 0;}
+  .addPass span{display: none;}
+  .addPass i{display: block!important;}
+  .mobilBtn span{display: inline-block!important;}    
+  #datatable .rolePerm .cateTd{display: block!important;}
+  #datatable .rolePerm .duzenleCat{margin-right: 3px;}
+  .servisAsamaTable .butonCol{display: inline-flex!important;}
+  #giderArea{height: 171px!important;}
+  .gelirTablosu .sag{margin-bottom: 5px;border-bottom: 1px solid #ecedf0;}
+  .staffLeaves{left: 41px!important;padding: .5rem .5rem!important;}
+  .staffLeaves i{display: block!important;}
+  .staffLeaves span{display: none;}
+  .calendarCardNotes .list .alert .text {width: auto!important;}
+  .pageDetail .addAnalyticAccount i{display: block!important;}
+  .pageDetail .addAnalyticAccount span{display: none!important;}
+  .vertical-menu{width: 170px!important;}
+  .loginForm{max-width: 20rem;}
+  #kasaFilter .musteriAdSoyad{margin-right: -38px;}
+  .kasaSubMenu .nav-item i{display: block!important;}
+  .kasaSubMenu .nav-item span{display: none;}
+  .kasaSubMenu .nav-item .mdi{font-size: 9px!important;}
+  .button-items{text-align: start!important;}
+  .searchWrap .dropdown-menu{width: 200px!important;}
+  .addDeviceType span{display: none;}
+  .addDeviceType i{display: block!important;}
+  .addWarranty span{display: none;}
+  .addWarranty i{display: block!important;}
+  .addCar span{display: none;}
+  .addCar i{display: block!important;}
+  .addServiceStage span{display: none;}
+  .addServiceStage i{display: block!important;}
+  .addServiceResource span{display: none;}
+  .addServiceResource i{display: block!important;}
+  .addStockCategory span{display: none;}
+  .addStockCategory i{display: block!important;}
+  .addStockShelf span{display: none;}
+  .addStockShelf i{display: block!important;}
+  .addStockSupplier span{display: none;}
+  .addStockSupplier i{display: block!important;}
+  .addService span{display: none;}
+  .addService i{display: block!important;}
+}   
+
+@media (max-width: 575px){
+	#editOffer .card.f6 .col-sm-1{width: 100%}
+	#editOffer .card.f6 .col-sm-11{width: 100%}
+	#editOffer .card.f6 input,
+	#editOffer .card.f6 button{display: block;width: 100%;margin-bottom: 5px}
+}
+
+/* KASA BÖLÜMÜ CSSLERİ */
+.tableToplamaAlani {margin-bottom: 0;clear: both;}
+.tableToplamaAlani .r1 {background: #28a745;}
+.tableToplamaAlani .row {margin: 0;color: #fff;font-weight: 700;}
+.tableToplamaAlani .r1 .sol {border-right: 1px solid #238c3b;}
+.tableToplamaAlani .row .sol {text-align: right;padding: 36px 15px;border: 1px solid #e0e0e0;float: left;background: #eff2f7;color: #000;width: calc(100% - 230px);}
+.tableToplamaAlani .row .sag {padding: 5px 15px;float: right;width: 230px;text-align: left;font-size: 13px!important;}
+.tableToplamaAlani .row .sag .tur span {width: 97px;display: inline-block;text-align: left;}
+.tableToplamaAlani .row .sag .t4 {font-weight: bolder;}
+.tableToplamaAlani .r2 {background: #dc3545;}
+.tableToplamaAlani .r2 .sol {border-right: 1px solid #b92d3b;}
+.tableToplamaAlani .r3 {background: #007bff;}
+.kasaToplamaAlani .r3 .sol {padding: 5px 15px;border-right: 1px solid #005fc5;}
+.kasaToplamaAlani .r4 {background: #343a40;}
+.kasaToplamaAlani .r4 .sol {padding: 5px 15px;border-right: 1px solid #1e2225;}
+
+#addInvo .card{margin-bottom: 10px;}
+#addInvo .cardRow1{margin: 0;}
+label{font-size: 13px;}
+#editInvo .card{margin-bottom: 10px;}
+#editInvo .cardRow1{margin: 0;}
+#showInvo .faturalar .stn {text-align: center;}
+#showInvo .faturalar .stn i {font-size: 45px;padding: 15px;border-radius: 5px;width: 100%;background: #e9ecef;margin-bottom: 5px;}
+
+.asama-4 {background-color: #62daff;}
+.asama-11 {background-color: #f2ff2a;}
+.asama-5 {background-color: #ff2a2a;}
+
+.calendarCardWrap-right {padding-right: 0;}
+.calendarCardWrap-right .card-body{min-height: auto;padding-bottom: 0;padding: 10px;}
+.calendarCardWrap-right .calendarCardNumbers .digerSayilar .card-body-icon {position: absolute;transform: none;top: 2px;right: 4px;font-size: 1.6rem;}
+.gonderBtn{display: flex;align-items: end;justify-content: end;}
+.searchWrap .dropdown-menu{width: 300px;padding: 7px;border: 1px solid #fff;border-radius: 5px;}
+.searchWrap .tarih-araligi{background: #fff;cursor: pointer;padding: 5px 21px;border: 1px solid #ccc;font-size: 12px;}
+.calendarNotes .list .alert{padding: 5px;font-size: 13px;margin-bottom: 3px;display: flex;justify-content: space-between;}
+.calendarNotes .list .alert .tarih{color: white;display: inline-block;background: #505d69;padding: 1px 3px;font-weight: 400;border-radius: 3px;margin-right: 5px;}
+
+#addInvo ul#sonuc {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#addInvo ul#sonuc li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editInvo ul#sonuc {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#editInvo ul#sonuc li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+#addAdsAccount ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#addAdsAccount ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editAcc ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#editAcc ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+#addProgram ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#addProgram ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editProgram ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#editProgram ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+#addInvo ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#addInvo ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editInvo ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#editInvo ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+#addOffer ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#addOffer ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editOffer ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#editOffer ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+#addContracts ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#addContracts ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editContracts ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#editContracts ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+#addDocu ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#addDocu ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editDocu ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#editDocu ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+
+#addWork ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#addWork ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editWork ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#editWork ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+#odemeAciklamalariAlt ul#sonuc {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#odemeAciklamalariAlt li {padding:5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+#customerTable .table > tbody > tr > td > .t-link{color: #000;}
+
+.btn-success {color: #fff;background-color: #28a745!important;border-color: #28a745!important;}
+.btn-success:hover {color: #fff;background-color: #28a745!important;border-color: #28a745!important;}
+
+#sidebar-menu ul li a {padding: 0.3rem 1.1rem;border-bottom: 1px solid #eff2f71c;color: white;}
+#sidebar-menu ul li a:hover{color: white;}
+#addHost ul#sonuc {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#addHost ul#sonuc li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+#editHost ul#sonuc {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#editHost ul#sonuc li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+.digerSayilar a{margin-bottom: 5px;}
+#addInvo .tarihWrap{display: flex;align-items: center;justify-content: end;}
+#editInvo .tarihWrap{display: flex;align-items: center;justify-content: end;}
+
+#passwords ul#result {position: absolute;z-index: 1;top: 35px;left: 12px;right: 0px;width: 94%;}
+#passwords ul#result li {padding: 5px;font-size: 12px;background: #343a40;color: #fff;border-bottom: 2px solid #111315;text-transform: capitalize;cursor: pointer;}
+
+#not {width: 100%;display: grid;grid-template-columns: repeat(7, 1fr);}
+#not tr, #not tbody {grid-column: 1 / -1;display: grid;grid-template-columns: repeat(7, 1fr); width: 100%;}
+#not caption{text-align: center;padding: 3px 0;display: block;width: 100%;color: #fff;font-size: 16px;border-top-left-radius: 5px;border-top-right-radius: 5px;}
+#not caption.title{text-align: center;display: flex;width: 100%;justify-content: space-between;background: #343a40;padding: 6px 10px;color: #fff;font-size: 16px;align-items: center;border-top-left-radius: 5px;border-top-right-radius: 5px;}
+#not caption.title .btn{padding: 0 5px;text-align: center;}
+#not caption.btnWrap .btn{width: 90%}
+#not a {margin-right: 40px;display: block;}
+#not td, #not th {padding: 5px;box-sizing:border-box;border-right: 1px solid #ccc;border-bottom: 1px solid #ccc;}
+#not .weekdays{background: #212529;text-align: center;text-transform: uppercase;/* line-height: 14px; */border: none !important;padding: 8px 1px;color: #fff;font-size: 10px;}
+#not td {height: 40px;display: flex;flex-direction: column;position: relative;vertical-align: middle;align-items: center;justify-content: center;font-weight: 500;}
+#not td.full{color: #fff;cursor: pointer;}
+#not .days li:hover {background: #d3d3d3;}
+#not td.satir{display: 1none;height: 1px}
+#not td.full .date{display: block;width: 100%;height: 100%;display: flex;justify-content: center;align-items: center;}
+#not .date{text-align: center;font-size: 13px;padding: 0;display: block;}
+#not tr .list{display: none;}
+#not tr .list .alert{padding: 5px;font-size: 13px;margin-bottom: 3px;display: flex;justify-content: space-between;}
+#not tr .list .alert .text{width: calc(100% - 60px);}
+#not tr .list .alert .btnWrap{width: 60px;}
+#not tr .list .alert .delete{background: #eb0000;}
+#not tr .list .alert .edit{background: #0074ed;}
+#not tr .list .alert a{float: right;font-size: 11px;cursor: pointer;margin-left: 5px;width: 21px;height: 21px;padding: 0;border-radius: 3px;color: #fff;display: flex;justify-content: center;align-items: center;}
+
+.address {white-space: normal;}
+.dataTables_wrapper .dataTables_info {clear: both;float: left;padding-top: 5px !important;font-size: 13px;}
+.dataTables_wrapper .dataTables_length {float: right;}
+#editServiceDescModal .nav .nav-item a i{display: none;}
+.tarihAraligi button{padding: 2px 2px;background: transparent;color: red;border: 0;}
+.navbar-brand-box a:hover {color: #fff;}
+#editInvo .alt-cizgi{border-bottom: 1px solid rgb(90 85 85 / 10%);}
+.btn-turuncu{color: #fff!important;background-color: #efa31e!important;border-color: #efa31e!important;}
+.vertical-menu{background-color: #252b3b;}
+#sidebar-menu ul li a i{color: white;}
+#sidebar-menu ul li a:hover i {color: white;}
+.mm-active {color: white!important}
+.mm-active>a {color: white!important}
+.mm-active>a i {color: white!important}
+.mm-active>i {color: white!important}
+.mm-active .active {color: white!important}
+.mm-active .active i {color: white!important}
+
+.main-content{margin-left: 180px;}
+#sidebar-menu ul li ul.sub-menu li a {color: white;}
+.topGun{float: right;}
+#sidebar-menu ul li ul.sub-menu li ul.sub-menu li a {padding: 0.2rem 1.5rem 0.2rem 3.2rem;font-size: 11.5px;}
+.navbar-header {height: 50px;}
+.vertical-menu {top: 50px;}
+.page-content {padding: calc(40px + 24px) calc(24px / 2) 60px calc(24px / 2);}
+.navbar-brand-box a {font-size: 16px;}
+
+.getProgramlarListAnasayfa .getProgramlarList .title {display: block;width: 100% !important;margin: 0;font-size: 14px !important;padding: 6px !important;background: #343a40 !important;color: #fff !important;border-radius: 5px;margin-bottom: 5px;}
+.getProgramlarListAnasayfa .getProgramlarList .card-header {padding: 0;}
+.getProgramlarListAnasayfa .getProgramlarList .card-header button {display: flex;width: 100%;margin: 0;padding: 0;color: #222;text-decoration: none !important;}
+.getProgramlarListAnasayfa .getProgramlarList .card-header .col {padding: 4px 8px;display: flex;justify-content: space-between;align-items: center;}
+.getProgramlarListAnasayfa .getProgramlarList .card-header .col.title {color: #222 !important;font-weight: 500;background: #e9e9e9 !important;margin: 0 !important;padding: 4px 8px !important;}
+.getProgramlarListAnasayfa .custom-accordion .card{margin-bottom: 5px;padding-right: 5px;padding-left: 5px;}
+.getProgramlarListAnasayfa .getProgramlarList .card-body {min-height: 63px;display: flex;flex-direction: column;justify-content: flex-start;flex-wrap: wrap;box-sizing: content-box;}
+.getProgramlarListAnasayfa .getProgramlarList .card-body .sonucBox {box-sizing: border-box;max-width: 50%;border: 1px solid #ecedf0;padding: 7px;width: 100%;font-size: 12px;}
+.getProgramlarListAnasayfa .getProgramlarList .card-body .sonucBox span {float: right;font-size: 12px;}
+
+.sub-menu .alt{background-color: #555d73e8;}
+.mobileTitle {display: none;}
+#datatableTheme >tbody > tr > td img{width: 100%;object-fit: cover;height: 90px;object-position: top;}
+.table-bordered tbody tr:nth-of-type(odd) {background-color: rgba(0, 0, 0, .05);}
+.table-bordered {border: 1px solid #dde0e5!important;}
+thead.title {background: #343a40!important;   /*#252b3b */color: #fff;}
+thead.title tr th {padding: 5px 10px;border: 0;font-size: 14px;}
+table.dataTable thead .sorting:before, table.dataTable thead .sorting_asc:before, table.dataTable thead .sorting_asc_disabled:before, table.dataTable thead .sorting_desc:before, table.dataTable thead .sorting_desc_disabled:before {top: 1px;}
+table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, table.dataTable thead .sorting_asc_disabled:after, table.dataTable thead .sorting_desc:after, table.dataTable thead .sorting_desc_disabled:after {top: 7px;}
+table.table-bordered.dataTable th:last-child, table.table-bordered.dataTable th:last-child, table.table-bordered.dataTable td:last-child, table.table-bordered.dataTable td:last-child {text-align: center;padding: 3px;}
+
+.searchWrap {display: flex;align-items: center;}
+.searchWrap .dataTables_filter {margin-right: 10px;}
+.searchWrap .btn-group {position: relative;}
+.searchWrap .dropdown-menu {position: absolute;right: 0;z-index: 1000;}
+
+.pageDetail .addDomain{position: absolute;}
+.pageDetail .addDomain i{display: none;}
+.pageDetail .addHosting{position: absolute;}
+.pageDetail .addHosting i{display: none;}
+.pageDetail .addAccount i{display: none;}
+.pageDetail .addAnalyticAccount i{display: none;}
+.pageDetail .addCurrency i{display: none;}
+.pageDetail .addBank i{display: none;}
+.pageDetail .addPaymentType i{display: none;}
+.pageDetail .addPaymentMethod i{display: none;}
+.pageDetail .addStage i{display: none;}
+.pageDetail .addResource i{display: none;}
+.pageDetail .addStageQuestion i{display: none;}
+.pageDetail .addCategory i{display: none;}
+.pageDetail .addPermission i{display: none;}
+.pageDetail .addRole i{display: none;}
+.pageDetail .addContractCategory i{display: none;}
+.pageDetail .addCustomer{position: absolute;}
+.pageDetail .addCustomer i{display: none;}
+.pageDetail .addInvoice{position: absolute;}
+.pageDetail .addInvoice i{display: none;}
+.pageDetail .addServer{position: absolute;}
+.pageDetail .addServer i{display: none;}
+.pageDetail .addAdsAccount{position: absolute;}
+.pageDetail .addAdsAccount i{display: none;}
+.pageDetail .addProgram{position: absolute;}
+.pageDetail .addProgram i{display: none;}
+.pageDetail .addPersonel{position: absolute;}
+.pageDetail .addPersonel i{display: none;}
+.pageDetail .addBayi{position: absolute;}
+.pageDetail .addBayi i{display: none;}
+.pageDetail .addOffer{position: absolute;}
+.pageDetail .addOffer i{display: none;}
+.pageDetail .addTheme{position: absolute;}
+.pageDetail .addTheme i{display: none;}
+.pageDetail .addContract{position: absolute;}
+.pageDetail .addContract i{display: none;}
+.pageDetail .addCashTransactions{position: absolute;}
+.pageDetail .addCashTransactions i{display: none;}
+.pageDetail .tevkifatHesapla{position: absolute;left: 135px;}
+.pageDetail .tevkifatHesapla i{display: none;}
+.pageDetail .addPass{position: absolute;}
+.pageDetail .addPass i{display: none;}
+.pageDetail .statistics{position: absolute;left: 267px;}
+.pageDetail .statistics i{display: none;}
+.pageDetail .addDocument{position: absolute;}
+.pageDetail .addDocument i{display: none;}
+/*.pageDetail .addDevice{position: absolute;}*/
+.pageDetail .addDevice i{display: none;}
+/*.pageDetail .addDeviceType{position: absolute;}*/
+.pageDetail .addDeviceType i{display: none;}
+.pageDetail .addWarranty i{display: none;}
+.pageDetail .addCar i{display: none;}
+.pageDetail .addServiceStage i{display: none;}
+.pageDetail .addServiceResource i{display: none;}
+.pageDetail .addStockCategory i{display: none;}
+.pageDetail .addStockShelf i{display: none;}
+.pageDetail .addStockSupplier i{display: none;}
+.pageDetail .addService{position: absolute;}
+.pageDetail .addService i{display: none;}
+
+.gelirTablosu .sag{border-right: 1px solid #ecedf0;}
+.kasaSonuclari .giderTablosu .sol {padding: 11px 15px;}
+.kasaSonuclari .sol ul {padding: 0;list-style: none;max-width: 240px;margin: 0 auto;}
+.kasaSonuclari .sol ul li {border-bottom: 1px dashed #e4e4e4;clear: both;font-size: 14px;}
+.kasaSonuclari .sol ul li .renk {width: 10px;height: 10px;background: #1a73e8;display: inline-block;margin-right: 5px;}
+.kasaSonuclari .sol ul li .adi {display: inline-block;font-size: 14px;}
+.kasaSonuclari .sol ul li .para {float: right;}
+.filtrele{border-radius: 0!important;}
+.mobilBtn span{display: none;}
+.pageDetail .card-header{font-size: 18px;font-weight: 600;padding: 3px 10px!important;}
+.dataTables_filter{margin-bottom: -10px;}
+.card-body{padding: 10px!important;}
+.servisAsamaTable .butonCol{display: table-cell;text-align: center;}
+#addAdsAccount ul#sonuc {
+    position: absolute;
+    z-index: 1;
+    top: 35px;
+    left: 12px;
+    right: 0px;
+    width: 94%;
+}
+#addAdsAccount ul#sonuc li {
+    padding: 5px;
+    font-size: 12px;
+    background: #343a40;
+    color: #fff;
+    border-bottom: 2px solid #111315;
+    text-transform: capitalize;
+    cursor: pointer;
+}
+
+#editAcc  ul#sonuc {
+    position: absolute;
+    z-index: 1;
+    top: 35px;
+    left: 12px;
+    right: 0px;
+    width: 94%;
+}
+#editAcc ul#sonuc li {
+    padding: 5px;
+    font-size: 12px;
+    background: #343a40;
+    color: #fff;
+    border-bottom: 2px solid #111315;
+    text-transform: capitalize;
+    cursor: pointer;
+}
+#adsAccounts ul#result{
+    position: absolute;
+    z-index: 1;
+    top: 30px;
+    left: 12px;
+    right: 0px;
+    
+}
+#adsAccounts ul#result li{
+    padding: 5px;
+    font-size: 12px;
+    background: #343a40;
+    color: #fff;
+    border-bottom: 2px solid #111315;
+    text-transform: capitalize;
+    cursor: pointer;
+}
+
+.staffLeaves{
+    position: absolute;
+    left: 107px;
+}
+.staffLeaves i{display: none;}
+
+.card-body-icon {position: absolute;z-index: 0;top: -7px;right: 2px;opacity: 0.4;font-size: 2rem;-webkit-transform: rotate(15deg);transform: rotate(15deg);}
+.bg-geceMavisi{background-color: rgb(56 93 175) !important;}
+.bg-koyuYesil{background-color: rgb(6 98 30) !important;}
+.bg-murdum{background-color: rgb(167 31 191) !important;}
+.bg-turuncu{background-color: rgb(229 135 35) !important;}
+.bg-pembe{background-color: #e83e8c !important;}
+.bg-bebeMavi{background-color: #04a9a9 !important;}
+.bg-laci{background-color: #1e66df !important;}
+
+.digerSayilarWrap {
+    
+    padding: 0 10px;
+  }
+  .digerSayilarWrap a{margin-bottom: 9px;}
+  .digerSay {
+    margin: -7px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    .digerSay {
+      flex: 1 1 calc(50% - 20px); /* Ekran küçüldükçe butonları iki sıra yap */
+    }
+  }
+  
+  @media screen and (max-width: 576px) {
+    .digerSay {
+      flex: 1 1 calc(100% - 20px); /* Ekran daha da küçüldüğünde butonları tek sıra yap */
+    }
+  }
+.kasaSonuclari .dropdown-menu{left: -224px!important;}
+#datatableKasa_filter{display: none;}
+#kasaFilter ul#result {
+  position: absolute;
+  z-index: 1;
+  top: 73px;
+  right: 9px;
+  width: 15%;
+}
+#kasaFilter ul#result li {
+  padding: 5px;
+  font-size: 12px;
+  background: #343a40;
+  color: #fff;
+  border-bottom: 2px solid #111315;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.modal-backdrop.show {
+  z-index: 1040;
+}
+
+.modal.show {
+  z-index: 1050;
+}
+
+/* Küçük modallar için daha yüksek z-index değeri */
+#editCustomerNotModal.modal-backdrop.show,
+#editCustomerPlanModal.modal-backdrop.show{z-index: 1060;}
+#editCustomerNotModal.modal.show,
+#editCustomerPlanModal.modal.show{z-index: 1070;}
+.bg-static{background-color: #343a40 !important;}
+.kasaSubMenu .nav-item i{display: none;}
+.kasaSubMenu .nav-item .mdi{display: inline-block;}
+.button-items{text-align:center}
+.kasaSubMenu .nav-pills .nav-link{font-size: 15px;}
+#workflows .dataTables_filter{display: none!important;}
+.searchBtn{border-radius: 0!important;border-left: 1px #373737 solid!important;}
+.daterangepicker {position: absolute !important;z-index: 1050;left: auto !important;right: 0 !important;top: 250px !important;}
+div.dataTables_wrapper div.dataTables_filter input{border-radius: 0;}
+#kasaFilter input{border-radius: 0;min-height: calc(1.5em + .5rem + 2px);}
+.vertical-collpsed .vertical-menu #sidebar-menu>ul>li>a {padding: 10px 13px;min-height: 45px!important;}
+.vertical-collpsed .vertical-menu #sidebar-menu>ul>li:hover>a {position: relative;width: calc(190px + 70px);color: #0f9cf3;background-color: #252b3b;-webkit-transition: none;transition: none}
+.servisAsamaTable .butonCol .musPlanDuzenle{border-radius: .2rem!important;}
+.servisAsamaTable .butonCol .musteriPlanSil{border-radius: .2rem!important;}
+.servisAsamaTable .butonCol .musNotDuzenle{border-radius: .2rem!important;}
+.loginForm input{width: 78%!important;}
+
+.editCust{
+  position: relative;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, .125);
+  border-radius: .25rem;
+  padding: 5px;
+  border-top-left-radius: 0;
+}
+.accordion-button{padding: 7px 15px;font-size: 13px;}
+.servisAcilLabel span {
+  display: inline-block;
+  float: inherit !important;
+  font-size: 14px !important;
+  position: relative;
+  top: -1px;
+}
+.servisAcilLabel .checkmark {
+  position: relative;
+  top: 1px;
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  background: #ffffff;
+  color: #fff;
+  padding: 0px 5px;
+  border-radius: 3px;
+  margin-left: 5px;
+  display: inline-block;
+}
+.servisAcilLabel .checkmark .fas
+{
+  color: #fff;
+  position: absolute;
+  left: 0;
+  font-size: 11px;
+  margin-top: 2px;
+  margin-left: 1.5px;
+}
+.servisAcilLabel input:checked ~ .checkmark .fas {
+  color: red;
+}
+.modal-body{padding: 5px;}
+#addServiceModal .c1{padding-right: 5px;}
+#addServiceModal .c2{padding-left: 5px;}
+.datepicker {border: 1px solid #ced4da;}
+#addServiceModal .form-group {
+    padding-bottom: 3px;
+    margin-bottom: 3px;
+    margin-left: -10px;
+    margin-right: -10px;
+    border-bottom: 1px solid #eff2f7;
+}
+#addServiceModal .c1 .card .card-header span {
+    float: right!important;
+    font-size: 13px;
+}
+#editServiceDescModal .nav .nav-item a i{display: none;}
+@media (min-width: 992px) {
+  .modal-lg, .modal-xl {max-width: 930px;}
+}
+.kayitAlan{
+  background: #ec0000;
+  border:1px solid #ce0000;
+  color: #fff;
+  padding: 3px 5px;
+  border-radius: 3px;
+  margin-left: 5px;
+  max-width: 215px;
+}
+#editServiceDescModal .card5 .form-group {
+    padding-bottom: 3px;
+    margin-bottom: 3px;
+    margin-left: -10px;
+    margin-right: -10px;
+    border-bottom: 1px solid #eff2f7;
+}
+#servisEkle ul#result {
+    position: absolute;
+    z-index: 1;
+    top: 30px;
+    left: 12px;
+    right: 0;
+}
+#servisEkle ul#result li {
+    padding: 5px;
+    font-size: 12px;
+    background: #343a40;
+    color: #fff;
+    border-bottom: 2px solid #111315;
+    text-transform: capitalize;
+    cursor: pointer;
+}
+#servisEkle ul#result li small{
+  color: #fff!important;
+}
+.btn-primary {
+  color: #fff;
+  background-color: #343a40 !important;
+  border-color: #212529 !important;
+}
+#servisFotoEkle .custom-file {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: calc(1.5em + .75rem + 2px);
+    margin-bottom: 0;
+}
+#servisFotoEkle .custom-file-input {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: calc(1.5em + .75rem + 2px);
+    margin: 0;
+    overflow: hidden;
+    opacity: 0;
+}
+#servisFotoEkle .custom-file label {
+    width: inherit;
+    display: inherit;
+    padding: 7px;
+    height: auto;
+}
+#servisFotoEkle .custom-file .resimInput::after {
+    height: auto;
+    padding: 2px 10px;
+    content: "Fotograf Ekle";
+    background: #28a745;
+    color: #fff;
+    float: right;
+}

@@ -146,8 +146,16 @@ public function AllStocks($tenant_id, Request $request)
                           ->orWhere('urunKodu', 'like', "%{$search}%");
                     });
                 }
+
             })
             ->rawColumns(['urunKodu', 'urunAdi', 'adet', 'toplamTutar', 'raf_adi', 'marka_cihaz', 'created_at', 'action'])
+
+                $firma = Tenant::findOrFail($tenant_id);
+                $personeller = User::where('tenant_id', $tenant_id)->get();
+                $rafListesi = StockShelf::where('firma_id', $tenant_id)->get();
+                $markalar = DeviceBrand::where('firma_id', $tenant_id)->get();
+                $cihazlar = DeviceType::where('firma_id', $tenant_id)->get();
+
 
             ->with([
                 'toplamAdet' => number_format($toplamAdet),
@@ -175,9 +183,12 @@ public function AllStocks($tenant_id, Request $request)
             $rafListesi = StockShelf::where('firma_id', $tenant_id)->get();
             $markalar = DeviceBrand::where('firma_id', $tenant_id)->get();
             $cihazlar = DeviceType::where('firma_id', $tenant_id)->get();
+
             $kategoriler = StockCategory::where('firma_id', $tenant_id)
                 ->where('id', '!=', 3)  // konsinye kategori hariç
                 ->get();
+
+
 
             return view('frontend.secure.stocks.add_stock', compact('firma','rafListesi', 'markalar', 'cihazlar', 'kategoriler','tenant_id'));
         }
@@ -281,8 +292,10 @@ public function AllStocks($tenant_id, Request $request)
             $rafListesi = StockShelf::where('firma_id', $tenant_id)->get();
             $markalar = DeviceBrand::where('firma_id', $tenant_id)->get();
             $cihazlar = DeviceType::where('firma_id', $tenant_id)->get();
+
             $kategoriler = StockCategory::where('firma_id', $tenant_id)->get();
             $html = view('frontend.secure.stocks.edit_stock', compact('firma', 'stock', 'rafListesi', 'markalar','kategoriler', 'cihazlar'))->render();
+
 
             return response()->json([
                 'html' => $html,
