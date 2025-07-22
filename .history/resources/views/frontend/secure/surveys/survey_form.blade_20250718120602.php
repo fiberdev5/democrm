@@ -1,0 +1,78 @@
+<form id="surveyForm" method="POST" action="{{ route('survey.store') }}">
+    @csrf
+    <input type="hidden" name="servisid" value="{{ $servis->id }}">
+    <input type="hidden" name="tip" value="{{ $tip }}">
+    <input type="hidden" name="user_id" value="{{ $user_id }}">
+
+    <!-- Soru 1 -->
+    <div class="row form-group">
+        <div class="col-lg-12 rw1"><label>Teknisyen dediği saatte geldi mi?</label></div>
+        <div class="col-lg-3 rw2">
+            <select class="form-control" name="soru1">
+                <option value="0" {{ $anket?->soru1 === "0" ? 'selected' : '' }}>Belli Değil</option>
+                <option value="1" {{ $anket?->soru1 === "1" ? 'selected' : '' }}>Evet</option>
+                <option value="2" {{ $anket?->soru1 === "2" ? 'selected' : '' }}>Hayır</option>
+            </select>
+        </div>
+        <div class="col-lg-9 rw2">
+            <input type="text" class="form-control" name="soru1Text" placeholder="Açıklama" value="{{ $anket?->soru1Text }}">
+        </div>
+    </div>
+
+    <!-- Soru 2 -->
+    <div class="row form-group">
+        <div class="col-lg-12 rw1"><label>Teknisyen davranışlarından, kılık ve kıyafetlerinden memnun musunuz?</label></div>
+        <div class="col-lg-3 rw2">
+            <select class="form-control" name="soru2">
+                <option value="0" {{ $anket?->soru2 === "0" ? 'selected' : '' }}>Belli Değil</option>
+                <option value="1" {{ $anket?->soru2 === "1" ? 'selected' : '' }}>Evet</option>
+                <option value="2" {{ $anket?->soru2 === "2" ? 'selected' : '' }}>Hayır</option>
+            </select>
+        </div>
+        <div class="col-lg-9 rw2">
+            <input type="text" class="form-control" name="soru2Text" placeholder="Açıklama" value="{{ $anket?->soru2Text }}">
+        </div>
+    </div>
+
+    <!-- Soru 3 -->
+    <div class="row form-group">
+        <div class="col-lg-12 rw1"><label>Teknisyen cihazınızla yeterince ilgilendi mi?</label></div>
+        <div class="col-lg-3 rw2">
+            <select class="form-control" name="soru3">
+                <option value="0" {{ $anket?->soru3 === "0" ? 'selected' : '' }}>Belli Değil</option>
+                <option value="1" {{ $anket?->soru3 === "1" ? 'selected' : '' }}>Evet</option>
+                <option value="2" {{ $anket?->soru3 === "2" ? 'selected' : '' }}>Hayır</option>
+            </select>
+        </div>
+        <div class="col-lg-9 rw2">
+            <input type="text" class="form-control" name="soru3Text" placeholder="Açıklama" value="{{ $anket?->soru3Text }}">
+        </div>
+    </div>
+
+    <!-- Soru 4 -->
+    <div class="row form-group">
+        <div class="col-lg-12 rw1"><label>Sizden Talep Edilen Ücret</label></div>
+        <div class="col-lg-12 rw2">
+            <input type="text" name="soru4Text" class="form-control" autocomplete="off" placeholder="0.00" value="{{ $anket?->soru4Text }}" onkeyup="sayiKontrol(this)">
+        </div>
+    </div>
+
+    <!-- Soru 5 -->
+    <div class="row form-group">
+        <div class="col-lg-12 rw1"><label>Genel olarak servis hizmetimizden memnun musunuz?</label></div>
+        <div class="col-lg-3 rw2">
+            <select class="form-control" name="soru5">
+                <option value="0" {{ $anket?->soru5 === "0" ? 'selected' : '' }}>Belli Değil</option>
+                <option value="1" {{ $anket?->soru5 === "1" ? 'selected' : '' }}>Evet</option>
+                <option value="2" {{ $anket?->soru5 === "2" ? 'selected' : '' }}>Hayır</option>
+            </select>
+        </div>
+        <div class="col-lg-9 rw2">
+            <input type="text" class="form-control" name="soru5Text" placeholder="Açıklama" value="{{ $anket?->soru5Text }}">
+        </div>
+    </div>
+
+    <div class="text-end">
+        <button type="submit" class="btn btn-success">Kaydet</button>
+    </div>
+</form>
