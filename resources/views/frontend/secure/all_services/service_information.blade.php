@@ -1,4 +1,6 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<form method="POST" id="servisDuzenle">
+  @csrf
 <div class="card card1" style="margin-bottom: 5px">
   <div class="card-header ch1" style="padding: 3px 10px!important;">
     <div class="row">
@@ -173,6 +175,9 @@
     </div>
   </div>
 </div>
+<input type="hidden" name="servisid" class="servisid" value="{{$service_id->id}}"/>
+<input type="submit" class="btn btn-primary btn-sm" style="display: none;">
+</form>
 
 <div class="servisAsamalari">
   <div class="card card3">
@@ -307,7 +312,7 @@ $(document).on('click', '.servisMusteriAnketiBtn', function(e) {
 function renderServiceHistory(data) {
     var tbody = $('#serviceHistoryTableBody');
     tbody.empty();
-    
+    var currentUserId = {{ auth()->id() }};
     // Acil durum
     if (data.acilIslem) {
         var acilRow = `
@@ -570,5 +575,45 @@ function renderServiceHistory(data) {
         });
       }
     });
+  });
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function (e) {  
+    $(".servisGuncelleBtn").click( function(){
+      if ($('.servisAcilBtn input').is(":checked")){
+        $("#servisDuzenle .acil").val("1");  //Eğer .servisAcilBtn input (bir checkbox) işaretliyse, #servisDuzenle formundaki .acil alanı 1 olur
+      }else{
+        $("#servisDuzenle .acil").val("0");
+      }
+      
+      $("#servisDuzenle").submit();
+    });
+
+    $("#servisDuzenle").on('submit', (function (e) {
+      var cihazModel = $.trim($("#servisDuzenle .cihazModel").val());  //cihazModel input alanı boş mu?
+      var firma = {{$firma->id}};
+     
+      
+        e.preventDefault();  //Sayfa yenilenmesi engellenir
+        $.ajax({
+          url: "/" + firma +  "/servis/guncelle",  //ajax ile gonder.php'ye veri gönderilir.
+          type: "POST",
+          data: new FormData(this),
+          contentType: false,
+          cache: false,
+          processData: false,
+          success: function (data) {
+            
+              alert("Servis başarıyla güncellendi.");
+              $('.nav1').trigger('click');
+              
+          },
+          error: function (e) {
+            alert("Servis güncellenirken hatayla karşılaşıldı." + e);
+          }
+        });
+      
+    }));
   });
 </script>

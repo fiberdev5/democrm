@@ -37,6 +37,7 @@ use App\Http\Controllers\Backend\FeaturesController;
 use App\Http\Controllers\Backend\PricingController;
 use App\Http\Controllers\Frontend\CarController;
 use App\Http\Controllers\Frontend\CustomerController;
+use App\Http\Controllers\Frontend\DeletedServicesController;
 use App\Http\Controllers\Frontend\DeviceBrandsController;
 use App\Http\Controllers\Frontend\DeviceTypesController;
 use App\Http\Controllers\Frontend\FeatureController;
@@ -46,12 +47,14 @@ use App\Http\Controllers\Frontend\ProductsController;
 use App\Http\Controllers\Frontend\KatalogController;
 use App\Http\Controllers\Frontend\FrontendContactController;
 use App\Http\Controllers\Frontend\GenelAyarlarController;
+use App\Http\Controllers\Frontend\IncomingCallsController;
 use App\Http\Controllers\Frontend\OfferController;
 use App\Http\Controllers\Frontend\PaymentMethodsController;
 use App\Http\Controllers\Frontend\PaymentTypesController;
 use App\Http\Controllers\Frontend\PersonelController;
 use App\Http\Controllers\Frontend\ReceiptDesignController;
 use App\Http\Controllers\Frontend\RoleController;
+use App\Http\Controllers\Frontend\ServiceBatchPlanningController;
 use App\Http\Controllers\Frontend\ServiceFormSetController;
 use App\Http\Controllers\Frontend\ServiceReportsController;
 use App\Http\Controllers\Frontend\ServiceResourceController;
@@ -64,7 +67,9 @@ use App\Http\Controllers\Frontend\StockShelfController;
 use App\Http\Controllers\Frontend\StockSupplierController;
 use App\Http\Controllers\Frontend\StockController;
 use App\Http\Controllers\Frontend\WarrantyPeriodController;
+
 use App\Http\Controllers\Frontend\SurveyController;
+use Illuminate\Support\Facades\File;
 
 
 Route::get('/secure', function () {
@@ -670,11 +675,12 @@ Route::controller(SurveyController::class)->group(function() {
         Route::post('/servis/yukle', 'StoreService')->name('store.service');
         Route::get('/servis/duzenle/{id}', 'EditService')->name('edit.service');
         Route::post('/servis/guncelle', 'UpdateService')->name('update.service');
-        Route::delete('/servis/sil/{id}', 'DeleteService')->name('delete.service');
+        Route::get('/servis/sil/{id}', 'DeleteService')->name('delete.service');
 
         Route::post('/customer/search', 'searchCustomer')->name('customer.search');
 
         Route::get('/servis-bilgileri/tum/{id}', 'TumServiceDesc')->name('tum.service.desc');
+        Route::get('/servis-bilgileri/kendi/{id}', 'KendiServiceDesc')->name('kendi.service.desc');
         Route::get('/servis-musteri/duzenle/{id}', 'EditServiceCustomer')->name('edit.service.customer');
         Route::get('/servis-asama-sorusu-getir/{asamaid}/{serviceid}', 'ServiceStageQuestionShow')->name('service.stage.question.show');
         Route::post('/servis-plan-kaydet', 'SaveServicePlan')->name('save.service.plan');
@@ -723,7 +729,6 @@ Route::controller(SurveyController::class)->group(function() {
         //Servisler modalında faturalar Bölümü
         Route::get('/musteri-faturalari/{service_id}', 'CustomerInvoices')->name('customer.invoices');
         
-        
     });
 
     Route::controller(ServiceReportsController::class)->group(function() { 
@@ -731,11 +736,78 @@ Route::controller(SurveyController::class)->group(function() {
         Route::get('/servis-rapor-modal', 'ServiceReports')->name('service.reports');
     });
 
+    //TOPLU SERVİS PLANLAMA
+    Route::controller(ServiceBatchPlanningController::class)->group(function() { 
+        //Servisler sayfasında sol üstteki servis planlama butonuna tıklanınca açılan modal route u
+        Route::get('/servis-toplu-planlama', 'ServiceBatchPlanning')->name('service.batch.planning');
+        Route::get('/ilce-getir', 'getDistricts')->name('service.districts');
+        Route::get('/servis-liste-getir','getServiceList')->name('service.list');
+        Route::get('/servis-atama-formu','getServicePlanForm')->name('service.plan.form');
+        Route::post('/servis-atama', 'assignService')->name('service.assign');
+        Route::get('/servis-atama-guncelle-formu','getServicePlanUpdateForm')->name('service.plan.update.form');
+        Route::post('/servis-personel-atama-guncelleme', 'updatePersonelBatch')->name('update.personel.batch');
+        
+    });
+
+    //GELEN ÇAĞRILAR MODÜLÜ
+    Route::controller(IncomingCallsController::class)->group(function() { 
+        //Servisler sayfasında sol üstteki gelen çağrılar butonuna tıklanınca açılan modal route u
+        Route::get('/gelen-cagrilar', 'IncomingCalls')->name('incoming.calls');
+        Route::get('/yeni-cagri-ekle', 'AddCall')->name('add.call');
+        Route::post('/yeni-cagri-gonder', 'StoreCall')->name('store.call');
+        Route::get('/yeni-cagri-duzenle/{call_id}', 'EditCall')->name('edit.call');
+        Route::post('/yeni-cagri-guncelle', 'UpdateCall')->name('update.call');
+        Route::delete('/yeni-cagri-sil/{call_id}', 'DeleteCall')->name('delete.call');
+
+        //markalar seçildiğinde ona ait servis numarasını getiren fonksiyon
+        Route::post('/get-brand-phone', 'getPhone')->name('get.brand.phone');
+
+        //çağrı kaydederken önceki arızadan seçebilmeyi sağlayan route
+        Route::get('/ariza/search', 'arizaSearch')->name('ariza.search');
+    });
+
+    //SİLİNEN SERVİSLER MODÜLÜ
+    Route::controller(DeletedServicesController::class)->group(function() { 
+        //Silinen servisler sayfası
+        Route::get('/silinen-servisler', 'DeletedServices')->name('deleted.services');
+        Route::get('/servis-geri-al/{service_id}', 'RestoreService')->name('restore.service');
+    });
+
 });
 
 
 
+Route::get('/logs', function () {
+        $logFiles = File::files(storage_path('logs'));
+        $logs = [];
 
+        // Log dosyalarını tarihe göre sırala (en yeniden eskiye)
+        usort($logFiles, function ($a, $b) {
+            return -strcmp($a->getFilename(), $b->getFilename());
+        });
+
+        // Sadece son 30 günlük logları göster (isteğe bağlı)
+        $logFiles = array_slice($logFiles, 0, 30);
+
+        foreach ($logFiles as $file) {
+            $filename = $file->getFilename();
+            $date = str_replace(['laravel-', '.log'], '', $filename);
+
+            // Dosya içeriğini oku (büyük dosyalar için dikkatli olun)
+            // Sadece ilk 100 satırı veya belirli bir boyutu okuyabilirsiniz
+            $content = File::get($file->getPathname());
+            $lines = explode("\n", $content);
+            $logs[$date] = array_slice($lines, 0, 200); // İlk 200 satırı al
+
+            // Veya sadece dosya adlarını ve boyutlarını listele
+            // $logs[$date] = [
+            //     'filename' => $filename,
+            //     'size' => File::size($file->getPathname()) . ' bytes',
+            // ];
+        }
+
+        return view('frontend.secure.logs.index', compact('logs'));
+    })->middleware('auth'); 
 
 
 

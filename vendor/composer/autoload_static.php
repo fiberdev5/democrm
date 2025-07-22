@@ -588,6 +588,7 @@ class ComposerStaticInitda0e5f40450af46c95449aedff64a243
     );
 
     public static $classMap = array (
+        'App\\Console\\Commands\\DeleteOldServicePhotos' => __DIR__ . '/../..' . '/app/Console/Commands/DeleteOldServicePhotos.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Backend\\AboutController' => __DIR__ . '/../..' . '/app/Http/Controllers/Backend/AboutController.php',
@@ -621,6 +622,7 @@ class ComposerStaticInitda0e5f40450af46c95449aedff64a243
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\Frontend\\CarController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/CarController.php',
         'App\\Http\\Controllers\\Frontend\\CustomerController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/CustomerController.php',
+        'App\\Http\\Controllers\\Frontend\\DeletedServicesController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/DeletedServicesController.php',
         'App\\Http\\Controllers\\Frontend\\DeviceBrandsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/DeviceBrandsController.php',
         'App\\Http\\Controllers\\Frontend\\DeviceTypesController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/DeviceTypesController.php',
         'App\\Http\\Controllers\\Frontend\\FeatureController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/FeatureController.php',
@@ -628,6 +630,7 @@ class ComposerStaticInitda0e5f40450af46c95449aedff64a243
         'App\\Http\\Controllers\\Frontend\\GenelAyarlarController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/GenelAyarlarController.php',
         'App\\Http\\Controllers\\Frontend\\HakkimizdaController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/HakkimizdaController.php',
         'App\\Http\\Controllers\\Frontend\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/HomeController.php',
+        'App\\Http\\Controllers\\Frontend\\IncomingCallsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/IncomingCallsController.php',
         'App\\Http\\Controllers\\Frontend\\KatalogController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/KatalogController.php',
         'App\\Http\\Controllers\\Frontend\\OfferController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/OfferController.php',
         'App\\Http\\Controllers\\Frontend\\PaymentMethodsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/PaymentMethodsController.php',
@@ -636,6 +639,7 @@ class ComposerStaticInitda0e5f40450af46c95449aedff64a243
         'App\\Http\\Controllers\\Frontend\\ProductsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/ProductsController.php',
         'App\\Http\\Controllers\\Frontend\\ReceiptDesignController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/ReceiptDesignController.php',
         'App\\Http\\Controllers\\Frontend\\RoleController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/RoleController.php',
+        'App\\Http\\Controllers\\Frontend\\ServiceBatchPlanningController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/ServiceBatchPlanningController.php',
         'App\\Http\\Controllers\\Frontend\\ServiceFormSetController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/ServiceFormSetController.php',
         'App\\Http\\Controllers\\Frontend\\ServiceReportsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/ServiceReportsController.php',
         'App\\Http\\Controllers\\Frontend\\ServiceResourceController' => __DIR__ . '/../..' . '/app/Http/Controllers/Frontend/ServiceResourceController.php',
@@ -678,6 +682,7 @@ class ComposerStaticInitda0e5f40450af46c95449aedff64a243
         'App\\Models\\HomeSlide' => __DIR__ . '/../..' . '/app/Models/HomeSlide.php',
         'App\\Models\\Il' => __DIR__ . '/../..' . '/app/Models/Il.php',
         'App\\Models\\Ilce' => __DIR__ . '/../..' . '/app/Models/Ilce.php',
+        'App\\Models\\IncomingCall' => __DIR__ . '/../..' . '/app/Models/IncomingCall.php',
         'App\\Models\\Menus' => __DIR__ . '/../..' . '/app/Models/Menus.php',
         'App\\Models\\Misyon' => __DIR__ . '/../..' . '/app/Models/Misyon.php',
         'App\\Models\\Offer' => __DIR__ . '/../..' . '/app/Models/Offer.php',
@@ -707,6 +712,7 @@ class ComposerStaticInitda0e5f40450af46c95449aedff64a243
         'App\\Models\\ServiceMoneyAction' => __DIR__ . '/../..' . '/app/Models/ServiceMoneyAction.php',
         'App\\Models\\ServiceOptNote' => __DIR__ . '/../..' . '/app/Models/ServiceOptNote.php',
         'App\\Models\\ServicePhoto' => __DIR__ . '/../..' . '/app/Models/ServicePhoto.php',
+        'App\\Models\\ServicePlanStatu' => __DIR__ . '/../..' . '/app/Models/ServicePlanStatu.php',
         'App\\Models\\ServicePlanning' => __DIR__ . '/../..' . '/app/Models/ServicePlanning.php',
         'App\\Models\\ServiceReceiptNote' => __DIR__ . '/../..' . '/app/Models/ServiceReceiptNote.php',
         'App\\Models\\ServiceResource' => __DIR__ . '/../..' . '/app/Models/ServiceResource.php',

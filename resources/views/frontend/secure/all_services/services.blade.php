@@ -17,6 +17,9 @@
           <div class="card-body">
             <table id="datatableService" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <a class="btn btn-success btn-sm addService" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i class="fas fa-plus"></i><span>Servis Ekle</span></a> 
+                <a href="{{route('incoming.calls', $firma->id)}}" type="button" class="btn btn-success btn-sm gelenCagriButon"><div class="text">Gelen Çağrılar <i data-toggle="tooltip" title="" class="fas fa-info-circle" data-bs-original-title="Toplu servis yönlendirmeleri yapmak için kullanılır."></i></div></a>
+                <button type="button" class="btn btn-danger btn-sm servisPlanlaBtn"><div class="text">Servis Planlama <i data-toggle="tooltip" title="" class="fas fa-info-circle" data-bs-original-title="Toplu servis yönlendirmeleri yapmak için kullanılır."></i></div></button>
+                
                 <button type="button" class="btn btn-primary btn-sm servisRaporlaModalBtn" data-toggle="modal" data-target="#servisRaporlaModal">Raporlar</button>
 
               <div class="searchWrap float-end">
@@ -235,6 +238,22 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div id="servisTopluPlanlaModal" class="modal fade" data-bs-backdrop="static" tabindex='-1'>
+  <div class="modal-dialog modal-lg" style="max-width: 1000px!important;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" >Toplu Servis Planlama</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Yükleniyor...
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
 <script type="text/javascript">
 $(document).ready(function(){
   $(".addService").click(function(){
@@ -301,6 +320,26 @@ $(document).ready(function(){
     });
 });
 </script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".servisPlanlaBtn").click(function(){
+    var firma_id = {{$firma->id}};
+    $.ajax({
+      url: "/"+ firma_id + "/servis-toplu-planlama/"
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#servisTopluPlanlaModal').modal('show');
+        $('#servisTopluPlanlaModal .modal-body').html(data);
+      }
+    });
+  });
+});
+</script>
+
+
 
 <script>
   $(document).ready(function () {
@@ -380,6 +419,9 @@ $(document).ready(function(){
     });
 
     var firma_id = {{$firma->id}};
+    let activeFilters    = {};
+    let activeFilterType = '';
+
     var table = $('#datatableService').DataTable({
       processing: true,
       serverSide: true,
@@ -393,6 +435,7 @@ $(document).ready(function(){
 
       ajax: {
         url: "{{ route('all.services', $firma->id) }}",
+        type: 'GET', 
         data: function(data) {
           data.search = $('input[type="search"]').val();
           data.device_brands = $('#device_brands').val();
@@ -403,6 +446,10 @@ $(document).ready(function(){
           data.ilce = $('#city2').val();
           data.from_date = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
           data.to_date = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
+        
+          //Raporlama filtreleri
+          data.filters    = activeFilters;
+          data.filterType = activeFilterType;
         }
       },
       'columns': [
@@ -413,22 +460,31 @@ $(document).ready(function(){
         { data: 'asama_id',name:'durum', orderable: true },
         { data: 'action', name:'action', orderable: false, searchable: false}           
       ],
+      createdRow: function (row, data) {
+        // 5. sütundaki <strong> içeriği (0‑bazlı => 4. index)
+        const asama = $('td:eq(4) strong', row).text().trim();
+
+        /** Durum → Renk eşlemesi */
+        const renkHaritasi = {
+          'Şikayetçi':   '#e96464',   // kırmızımsı
+          'Yeni Servisler': '#87ff87', // yeşil
+          'Tekrar Aranacak': '#f2ff2a',// sarı
+          'Parça Takmak İçin Teknisyen Yönlendir': '#62daff' // mavi
+        };
+
+        // Eşleşme varsa satıra uygula
+        if (renkHaritasi[asama]) {
+          $(row).css('background-color', renkHaritasi[asama]);
+        }
+
+        // Uzun metin sarması gereken sütunlara sınıf ekleyelim
+        $('td', row).eq(5).addClass('tdRowWrap');
+        $('td', row).eq(6).addClass('tdRowWrap');
+      },
       drawCallback: function() {
         $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
         
-        // Her satırı döngü ile kontrol et ve duruma göre arka plan rengini ayarla
-        $('#datatableService tbody tr').each(function() {
-          var asama_id = $(this).find('td:eq(4) strong').text().trim(); // Durum sütunu
-          if (asama_id === 'Şikayetçi') {
-            $(this).css('background-color', 'rgb(233 100 100)'); // Örneğin, kırmızı rgb(205 28 28)
-          } else if (asama_id === 'Yeni Servisler') {
-            $(this).css('background-color', 'rgb(135, 255, 135)'); // Örneğin, yeşil
-          }else if (asama_id === 'Tekrar Aranacak') {
-            $(this).css('background-color', 'rgb(242, 255, 42)')
-          }else if (asama_id === 'Parça Takmak İçin Teknisyen Yönlendir') {
-            $(this).css('background-color', 'rgb(98, 218, 255)')
-          }     
-        });
+       
       },
       order: [[0, 'desc']],
       "columnDefs": [{
@@ -495,7 +551,96 @@ $(document).ready(function(){
      $('#city2').change(function(){
       table.draw();        
     }); 
- 
+
+     /* ---------- FORM SUBMIT HANDLER'LARI ---------- */
+
+     function formToObj($form) {
+    return $form.serializeArray().reduce((acc, f) => {
+      acc[f.name] = f.value;
+      return acc;
+    }, {});
+  }
+
+  $(document).on('submit', '#operatorArama', function (e) {
+    e.preventDefault();
+    activeFilterType = 'operator';
+    activeFilters = formToObj($(this)); //form verilerini objeye çevir
+    table.draw(); // datatable’ı güncelle
+    $('#servisRaporlaModal').modal('hide');
+  });
+
+  $(document).on('submit', '#teknisyenArama', function (e) {
+    e.preventDefault();
+    activeFilterType = 'teknisyen';
+    activeFilters = formToObj($(this));
+    table.draw(); // datatable’ı güncelle
+    $('#servisRaporlaModal').modal('hide');
+  });
+
+  $(document).on('submit', '#urunSatisArama', function(e){
+    e.preventDefault();
+
+    let tarih1 = $('.satis_tarih1').val();
+    let tarih2 = $('.satis_tarih2').val();
+
+    let postData = {
+        filterType: 'urunSatis',
+        filters: {
+            tarih1: tarih1,
+            tarih2: tarih2
+        }
+    };
+
+    activeFilterType = 'urunSatis';
+    activeFilters = postData.filters;
+
+    table.draw(); // DataTable yeniden yükle
+    $('#servisRaporlaModal').modal('hide');
+  });
+
+  $(document).on('submit', '#bayiArama', function(e){
+    e.preventDefault();
+
+    let tarih1 = $('.bayi_tarih1').val();
+    let tarih2 = $('.bayi_tarih2').val();
+
+    let postData = {
+        filterType: 'bayiArama',
+        filters: {
+            bayi_tarih1: tarih1,
+            bayi_tarih2: tarih2
+        }
+    };
+
+    activeFilterType = 'bayiArama';
+    activeFilters = postData.filters;
+
+    table.draw(); // DataTable yeniden yükle
+    $('#servisRaporlaModal').modal('hide');
+  });
+
+  $(document).on('submit', '#acilArama', function(e){
+    e.preventDefault();
+
+    let tarih1 = $('.acil_tarih1').val();
+    let tarih2 = $('.acil_tarih2').val();
+
+    let postData = {
+        filterType: 'acilArama',
+        filters: {
+            acil_tarih1: tarih1,
+            acil_tarih2: tarih2
+        }
+    };
+
+    activeFilterType = 'acilArama';
+    activeFilters = postData.filters;
+
+    table.draw(); // DataTable yeniden yükle
+    $('#servisRaporlaModal').modal('hide');
+  });
+
+
   });
 </script>
 <script>

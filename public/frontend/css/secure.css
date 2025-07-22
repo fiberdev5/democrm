@@ -52,6 +52,10 @@ form .mb-3 {margin-bottom: 0.3rem!important;}
 .modal-header{padding: 0.5rem 0.5rem!important;}
 #editServiceDescModal #tab1 .card-header {border-bottom: 0;font-size: 13px;}
 #editServiceDescModal #tab1 .ch1 {padding-left: 0;padding-right: 0;}
+
+#personelServisDuzenleModal #tab1 .card-header {border-bottom: 0;font-size: 13px;}
+#personelServisDuzenleModal #tab1 .ch1 {padding-left: 0;padding-right: 0;}
+
 .card-header {font-weight: 500;padding: 0!important;font-size: 15px;}
 .getModal .form-control {display: block;width: 100%;height: auto;padding: 3px 5px;line-height: initial;color: #495057;background-clip: padding-box;border: 1px solid #ced4da;border-radius: 0.25rem;transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;font-size: 13px;}
 #editServiceDescModal label{color: #0a1832;}
@@ -79,6 +83,20 @@ form .mb-3 {margin-bottom: 0.3rem!important;}
 #editServiceDescModal .tableToplamaAlani .r3 {margin: 0;background: #007bff;color: #fff;font-weight: 500;}
 #editServiceDescModal .tableToplamaAlani .r3 .sol {text-align: right;padding: 10px;border: 1px solid #e0e0e0;border-right: 1px solid #0063ce;float: left;width: calc(100% - 150px);background: #f2f2f2;color: #000;}
 #editServiceDescModal .tableToplamaAlani .r3 .sag {padding: 10px;float: right;width: 150px;text-align: left;}
+
+#personelServisDuzenleModal label{color: #0a1832;}
+#personelServisDuzenleModal #tab1 .card2 .card-header {display: flex;justify-content: space-between;color: #0a1832;}
+#personelServisDuzenleModal #tab1 .card5 {height: 100%;}
+#personelServisDuzenleModal #tab1 .card5 .card-header{color: #0a1832;}
+#personelServisDuzenleModal #tab1 .card3 .right .altAsamalar {display: inline-block;width: 169px;margin-left: 2px;}
+#personelServisDuzenleModal #tab1 .card3 .right {text-align: right;}
+#personelServisDuzenleModal #tab1 .card2 .card-body span {display: block;padding: 1px 5px;font-size: 13px;color: #0a1832;}
+#personelServisDuzenleModal #tab1 .ch1 .right {text-align: right;}
+#personelServisDuzenleModal #tab1 .card3 .left label {background: #ec0000;border: 1px solid #ce0000;color: #fff;padding: 0px 5px;border-radius: 3px;max-width: 215px;margin-top: 4px;}
+#personelServisDuzenleModal thead.title {background: #343a40;color: #fff;}
+#personelServisDuzenleModal .servisAsamalari{margin-top: 7px;}
+#personelServisDuzenleModal .card{margin-bottom: 10px;}
+
 .form-control{padding: 3px 5px!important;margin-bottom: 3px!important;font-size:13px!important;}
 .form-select{padding: 3px 5px!important;margin-bottom: 3px!important;font-size: 13px!important;}
 #addOffer .col-form-label{padding-top: 0;padding-bottom: 0;}
@@ -124,6 +142,13 @@ form .mb-3 {margin-bottom: 0.3rem!important;}
   #editServiceDescModal #tab1 .ch1 .left label{display: none;}
   #editServiceDescModal #tab1 .ch1 .right label {display: none;}
   #editServiceDescModal #tab1 .ch1 .bol label{display: none;}
+
+  #personelServisDuzenleModal .nav .nav-item a span{display: none;}
+  #personelServisDuzenleModal .nav .nav-item a i{display: block!important;}
+  #personelServisDuzenleModal #tab1 .ch1 .left label{display: none;}
+  #personelServisDuzenleModal #tab1 .ch1 .right label {display: none;}
+  #personelServisDuzenleModal #tab1 .ch1 .bol label{display: none;}
+
   .topGun{float: left!important;}
   .anasayfa-card .card-body{padding: 10px;}
   .avatar-sm {height: 2rem;width: 2rem;}
@@ -131,6 +156,7 @@ form .mb-3 {margin-bottom: 0.3rem!important;}
   #cash_transactions .tevkifatHesapla span{display: none!important;}
   #tab1 .card1 .ch1 .kategori{width: 100%!important;}
   #editServiceDescModal #tab1 .card3 .right .altAsamalar {margin-left: 0!important;}
+  #personelServisDuzenleModal #tab1 .card3 .right .altAsamalar {margin-left: 0!important;}
   label {font-size: 14px!important;}
 
   #no-more-tables table thead tr {display: none;}
@@ -149,6 +175,19 @@ form .mb-3 {margin-bottom: 0.3rem!important;}
   #editServiceDescModal #tab1 .card3 .right .altAsamalar {width: 100px;}
   #editServiceDescModal #tab1 .card5 form textarea{height: 55px;}
   #editServiceDescModal #tab1 .card-body{padding: 0.5rem 1rem;}
+
+   #personelServisDuzenleModal #tab1 .card4	#no-more-tables td.islemAciklamaCS{width: 100%}
+	#personelServisDuzenleModal #tab1 .card4	#no-more-tables td.btnCS.btnCSYetkiYok{display: none;}
+	#personelServisDuzenleModal #tab1 .card4	#no-more-tables td.btnCS{width: 50%}
+	#personelServisDuzenleModal #tab1 .card4	#no-more-tables td.btnCS .btn{width: 100%;}
+	#personelServisDuzenleModal #tab1 .card4 #no-more-tables td.btnCS {width: 50% !important;display: inline-block;}
+	#personelServisDuzenleModal #tab1 .card4 #no-more-tables td .musPlanDuzenle{padding: 0.1rem 0.5rem;}
+  #personelServisDuzenleModal #tab1 .card4 #no-more-tables td #musteriPlanSil{padding: 0.1rem 0.5rem;}
+  #personelServisDuzenleModal #tab1 .card4 #no-more-tables td .musNotDuzenle{padding: 0.1rem 0.5rem;}
+  #personelServisDuzenleModal #tab1 .card3 .right .altAsamalar {width: 100px;}
+  #personelServisDuzenleModal #tab1 .card5 form textarea{height: 55px;}
+  #personelServisDuzenleModal #tab1 .card-body{padding: 0.5rem 1rem;}
+
   .contButtons{display: flex;}
   .contButtons a{margin-right: 2px;}
   #datatableOffer .showInv{display: none;}
@@ -1182,6 +1221,7 @@ div.dataTables_wrapper div.dataTables_filter input{border-radius: 0;}
     font-size: 13px;
 }
 #editServiceDescModal .nav .nav-item a i{display: none;}
+#personelServisDuzenleModal .nav .nav-item a i{display: none;}
 @media (min-width: 992px) {
   .modal-lg, .modal-xl {max-width: 930px;}
 }
@@ -1310,6 +1350,7 @@ div.dataTables_wrapper div.dataTables_filter input{border-radius: 0;}
 .servisRaporlaModalBtn{position: absolute;right: 325px;}
 
 
+
 /*Stok ve konsinye stok serviste kullanım yönlendirme linkleri*/
 a.link-stock {
     color: black !important;
@@ -1318,4 +1359,85 @@ a.link-stock {
 a.link-stock:hover {
     text-decoration: underline !important;
   }
+
+.servisPlanlaBtn{position: absolute;left: 209px;}
+.gelenCagriButon{position: absolute;left: 92px;background: #4285f4!important;border-color: #4285f4!important;}
+.gelenCagriButon:hover{background: #4285f4!important;border-color: #4285f4!important;}
+#servisPersonelAtamaModal {z-index: 1060 !important;}
+#editServicePlanModal{z-index: 1053 !important;}
+#editServiceCustomerModal{z-index: 1053 !important;}
+.table > tbody > tr > td .spanBox span {font-size: 12px;display: block;}
+#gelenCagriModal ul#arizaResult {
+  position: absolute;
+  z-index: 1;
+  top: 27px;
+  left: 12px;
+  right: 12px;
+}
+#gelenCagriModal ul#arizaResult li {
+  padding: 5px;
+  font-size: 12px;
+  background: #343a40;
+  color: #fff;
+  border-bottom: 2px solid #111315;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+#gelenCagriModal{z-index: 1053!important;}
+#editIncomingCallModal ul#arizaResult {
+  position: absolute;
+  z-index: 1;
+  top: 27px;
+  left: 12px;
+  right: 12px;
+}
+#editIncomingCallModal ul#arizaResult li {
+  padding: 5px;
+  font-size: 12px;
+  background: #343a40;
+  color: #fff;
+  border-bottom: 2px solid #111315;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+.gelenCagriBtn i{display: none;}
+.teknisyenServisModal .card .card-body span
+ {
+    display: block;
+    margin-bottom: 2px;
+}
+.teknisyenServisModal .card .card-header {
+    border-bottom: 0;
+    padding: 7px 10px;
+    font-size: 13px;
+}
+.teknisyenServisModal .card .card-body {
+    font-size: 13px;
+    padding: 5px 10px;
+}
+.teknisyenServisModal .card .card-header .col1 {
+    height: 25px;
+}
+.teknisyenServisModal .card .card-header .col1 .servisAcilLabel {
+    background: #343a40;
+    border: 1px solid #212529;
+    margin-left: 3px;
+}
+.servisAcilLabel span {
+    display: inline-block;
+    float: inherit !important;
+    font-size: 14px !important;
+    position: relative;
+    top: -1px;
+    color: #fff;
+}
+
+.teknisyenServisModal .card .card-header .col2 {
+    display: flex;
+    height: 25px;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+
 

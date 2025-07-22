@@ -149,9 +149,6 @@ public function AllStocks($tenant_id, Request $request)
 
             })
             ->rawColumns(['urunKodu', 'urunAdi', 'adet', 'toplamTutar', 'raf_adi', 'marka_cihaz', 'created_at', 'action'])
-
-
-
             ->with([
                 'toplamAdet' => number_format($toplamAdet),
                 'toplamFiyat' => number_format($toplamFiyat, 2, ',', '.') . ' ₺',

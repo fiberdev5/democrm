@@ -31,11 +31,13 @@ use App\Models\WarrantyPeriod;
 use App\Models\ServiceReceiptNote;
 use App\Models\Offer;
 use App\Models\PersonelStock;
+use App\Models\ServiceTime;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
@@ -61,10 +63,19 @@ class ServicesController extends Controller
         })->orderBy('asama', 'asc')->get();
         $service_resources = ServiceResource::where('firma_id', $tenant_id)->orderBy('kaynak', 'asc')->get();
         $states = Il::orderBy('name', 'ASC')->get();
-
+        
 
         if ($request->ajax()) {           
-            $data = Service::where('firma_id', $firma->id)->where('durum', 1);
+            $data = Service::with(['musteri', 'markaCihaz', 'turCihaz', 'asamalar','cevaplar'])
+              ->where('firma_id', $firma->id)->where('durum', 1);
+
+              $user = auth()->user();
+
+            if ($user->can('Kendi Servislerini Görebilir')) {
+                // Sadece kendi kayıtlarını görebilir
+                $servisIDleri = $this->getYetkiliServisIDleri($user, $firma->id);
+                $data->whereIn('id', $servisIDleri);
+            } 
 
             $data->when($request->filled('from_date') && $request->filled('to_date'), function ($query) use ($request) {
                 return $query->whereDate('services.created_at', '>=', $request->from_date)
@@ -94,6 +105,83 @@ class ServicesController extends Controller
             if ($request->get('ilce')) {
                 $data->whereRelation('musteri', 'ilce', $request->get('ilce'));
             }
+
+            /** Raporlama filtreleri */
+            if ($request->filterType && $request->filters) {
+                $filters = is_array($request->filters) ? $request->filters : json_decode($request->filters, true);
+                
+
+                switch ($request->filterType) {
+                    case 'operator':
+                        $tarih1 = Carbon::parse($filters['operator_tarih1'])->startOfDay();
+                        $tarih2 = Carbon::parse($filters['operator_tarih2'])->endOfDay();
+                        if (!empty($filters['operator_pers']) && $filters['operator_pers'] != '0') {
+                            $data->where('kayitAlan', $filters['operator_pers']);
+                        }
+
+                        if (!empty($tarih1) && !empty($tarih2)) {
+                            $data->whereBetween('created_at', [$tarih1, $tarih2]);
+                        }
+                    break; 
+                    case 'teknisyen':
+                        
+                         // ❶ Teknisyen
+                        if (!empty($filters['teknisyen']) && $filters['teknisyen'] != '0') {
+                            $data->whereHas('cevaplar', function ($q) use ($filters) {
+                                $q->where('soruid', 45)
+                                ->where('cevap',  $filters['teknisyen']);
+                            });
+                        }
+
+                        // ❷ Araç
+                        if (!empty($filters['tekArac']) && $filters['tekArac'] != '0') {
+                            $data->whereHas('cevaplar', function ($q) use ($filters) {
+                                $q->where('soruid', 47)
+                                ->where('cevap',  $filters['tekArac']);
+                            });
+                        }
+
+                        // ❸ Tarih  ‑‑ cevaplardaki formatla eşleştirin
+                        if (!empty($filters['tekTarih'])) {
+                            // Örneğin cevaplar dd/mm/YYYY tutuluyorsa:
+                            $date = Carbon::parse($filters['tekTarih'])->format('Y-m-d');
+                            $data->whereHas('cevaplar', function ($q) use ($date) {
+                                $q->where('soruid', 48)
+                                ->where('cevap',  $date);
+                            });
+                            // eğer cevap kolonu gerçek DATE ise →  $q->whereDate('cevap', $filters['tekTarih']);
+                        }
+                    break;
+                    case 'urunSatis':
+                        $t1 = Carbon::parse($filters['tarih1'])->startOfDay();
+                        $t2 = Carbon::parse($filters['tarih2'])->endOfDay();
+
+                        // "Cihaz Satışı Yapıldı" aşaması = Örneğin asama_id 300
+                        $data->whereHas('plans', function ($query) use ($t1, $t2) {
+                            $query->where('gidenIslem', 256) // kendi cihaz satış aşama ID'nizi yazın
+                                ->whereBetween('created_at', [$t1, $t2]);
+                        });
+                    break;
+                    case 'bayiArama':
+                        $t1 = Carbon::parse($filters['bayi_tarih1'])->startOfDay();
+                        $t2 = Carbon::parse($filters['bayi_tarih2'])->endOfDay();
+
+                        // "Cihaz Satışı Yapıldı" aşaması = Örneğin asama_id 300
+                        $data->whereHas('plans', function ($query) use ($t1, $t2) {
+                            $query->where('gidenIslem', 264) // kendi cihaz satış aşama ID'nizi yazın
+                                ->whereBetween('created_at', [$t1, $t2]);
+                        });
+                    break;
+                    case 'acilArama':
+                        $t1 = Carbon::parse($filters['acil_tarih1'])->startOfDay();
+                        $t2 = Carbon::parse($filters['acil_tarih2'])->endOfDay();
+
+                        $data->where('acil', 1)
+                        ->whereBetween('created_at', [$t1, $t2]);
+                    break;
+                }
+            }
+
     
             // Sıralama işlemi
             if ($request->has('order')) {
@@ -126,10 +214,61 @@ class ServicesController extends Controller
                     return '<a class="t-link serBilgiDuzenle" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal"><span class="mobileTitle">Cihaz:</span><strong>'.$row->markaCihaz->marka.' - '.$row->turCihaz->cihaz.'</strong></a>';
                 })
                 ->addColumn('asama_id', function($row){                   
-                    return '<a class="t-link serBilgiDuzenle address" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal"><span class="mobileTitle">S. Durumu:</span><strong>'.$row->asamalar?->asama.'</strong><br><div style="font-size:12px;">('.$row->cihazAriza.')</div></a>';    
+                    $asamaHTML = '<a class="t-link serBilgiDuzenle address" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal">';
+                    $asamaHTML .= '<span class="mobileTitle">S. Durumu:</span><strong>'.$row->asamalar?->asama.'</strong><br>';
+                    
+                    if ($row->asamalar?->id == 235) {
+                        $asamaHTML .= '<div style="font-size:12px;">('.$row->users?->name.')</div>';
+                    }
+
+                    // Sadece servisDurumu'na ait cevapları getir
+                    $cevaplar = ServiceStageAnswer::where('planid', $row->planDurum)
+                        ->where('servisid', $row->id)
+                        ->get();
+                        
+                    // Aşama cevaplarını detaylı göster
+                    if ($cevaplar->count()) {
+                        $asamaHTML .= '<div class="spanBox" style="font-size:11px;margin-top:5px;">';
+                        foreach ($cevaplar as $cevap) {
+                            $soru = StageQuestion::find($cevap->soruid); // performans için eager load edilebilir
+                            if (!$soru) continue;
+
+                            if ($soru->cevapTuru == '[Fiyat]' || $soru->cevapTuru == '[Teklif]') {
+                                $asamaHTML .= '<span>'.$soru->soru.': '.$cevap->cevap.' TL</span>';
+                            } elseif (str_contains($soru->cevapTuru, 'Grup')) {
+                                $personel = User::find($cevap->cevap);
+                                $asamaHTML .= '<span>'.$soru->soru.': '.$personel?->name.'</span>';
+                            } elseif (str_contains($soru->cevapTuru, '[Arac]')) {
+                                $arac = Car::find($cevap->cevap);
+                                $asamaHTML .= '<span>'.$soru->soru.': '.$arac?->arac.'</span>';
+                            }elseif ($soru->cevapTuru == '[Tarih]') {
+                                $tarih = Carbon::parse($cevap->cevap)->format('d/m/Y');
+                                $asamaHTML .= '<span>'.$soru->soru.': '.$tarih.'</span>';
+                            }elseif ($soru->cevapTuru == '[Bayi]') {
+                                $bayi = User::find($cevap->cevap);
+                                $asamaHTML .= '<span>'.$soru->soru.': '.$bayi?->name.'</span>';
+                            }elseif ($soru->cevapTuru == '[Parca]') {
+                                $parcalar = explode(", ", $cevap->cevap);
+                                $parcaHTML = '';
+                                foreach ($parcalar as $parca) {
+                                    [$parcaId, $adet] = explode("---", $parca);
+                                    $stok = Stock::find($parcaId);
+                                    $parcaHTML .= $stok?->urunAdi." (".$adet."), ";
+                                }
+                                $asamaHTML .= '<span>'.$soru->soru.': '.rtrim($parcaHTML, ", ").'</span>';
+                            } else {
+                                $asamaHTML .= '<span>'.$soru->soru.': '.$cevap->cevap.'</span>';
+                            }
+                        }
+                        $asamaHTML .= '</div>';
+                    }
+
+                    $asamaHTML .= '</a>';
+
+                    return $asamaHTML;
                 })
                 ->addColumn('action', function($row){
-                    $deleteUrl = route('delete.customer', [$row->firma_id,$row->id]);
+                    $deleteUrl = route('delete.service', [$row->firma_id,$row->id]);
                     $editButton = '';
                     $deleteButton = '';
                         $editButton = '<a href="javascript:void(0);" data-bs-id="'.$row->id.'" class="btn btn-warning btn-sm serBilgiDuzenle mobilBtn mbuton1" data-bs-toggle="modal" data-bs-target="#editServiceDescModal" title="Düzenle" ><i class="fas fa-edit"></i><span> Düzenle</span></a>';
@@ -154,6 +293,153 @@ class ServicesController extends Controller
         }
     
         return view('frontend.secure.all_services.services', compact('services', 'device_brands', 'device_types', 'service_stages','firma', 'service_resources','states'));
+    }
+
+    //Sadece kendine atanan servisleri gören kişilerin koşullarını kontrol eden fonksiyon.(üstteki AllServices fonksiyonunda kullandım)
+    private function getYetkiliServisIDleri($user, $tenant_id)
+    {
+        $yetkiliServisIDler = [];
+
+        // Kullanıcının cevap verdiği servisleri, her servis için en yüksek planid ile al
+        $servisler = ServiceStageAnswer::with(['question','plan'])->where('firma_id', $tenant_id)
+            ->where('cevap', $user->user_id)
+            ->get();
+
+        foreach ($servisler as $servisRow) {
+            $soru = StageQuestion::find($servisRow->soruid);
+            
+            if (!$soru) continue;
+
+            // Grup kontrolü
+            if (str_contains($soru->cevapTuru, 'Grup')) {
+                $plan = ServicePlanning::find($servisRow->planid);
+                if (!$plan) continue;
+
+                $tarihDurum = $plan->tarihDurum > 0 ? "1" : "0";
+
+                if ($tarihDurum == "1") {
+                    // Tarih durumu var
+                    $tarihCevap = ServiceStageAnswer::where('planid', $servisRow->planid)
+                        ->where('cevapText', '[Tarih]')
+                        ->first();
+
+                    if ($tarihCevap) {
+                         $bugun = now()->format('Y-m-d');
+                        $tarih = $tarihCevap->cevap;
+
+                        if ($bugun == $tarih) {
+                            // Zaman kontrolü - PHP kodundaki $kid değişkenini kullanıcının kid'i ile değiştiriyoruz
+                            // $kid değişkeni PHP kodunda nereden geldiğini bilmediğimiz için user_id kullanıyoruz
+                            $zaman = ServiceTime::where('firma_id', $tenant_id)->first();
+                            
+                            if ($zaman) {
+                                $ilksaat = date("H.i"); // Şu anki saat
+                                $sonsaat = $zaman->zaman; // Servis zamanı
+                                
+                                if ($ilksaat >= $sonsaat) {
+                                    // Depocu değil ise devam et
+                                    if (!$user->hasRole('Depocu')) {
+                                        $yetkiliServisIDler[] = $tarihCevap->servisid;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Depocu için özel durum
+                        if ($user->hasRole('Depocu')) {
+                            $servis = Service::find($tarihCevap->servisid);
+                            if ($servis && in_array($servis->servisDurum, ['257', '263'])) {
+                                $yetkiliServisIDler[] = $tarihCevap->servisid;
+                            }
+                        }
+                    }
+                } else {
+                    // Tarih durumu yok
+                    $servis = Service::find($servisRow->servisid);
+                    if ($servis && $servis->planDurum == $servisRow->planid) {
+                        $yetkiliServisIDler[] = $servisRow->servisid;
+                    }
+
+                    // Planid içerisindeki son eklenen aşama kontrolü
+                    if (!$user->hasRole('Depocu')) {
+                        $planSec = ServicePlanning::find($servis->planDurum);
+                        if ($planSec && $planSec->pid == $user->user_id) {
+                            $planTarihBugun = date("Y-m-d");
+                            $planTarih = explode(" ", $planSec->tarih);
+                            
+                            if ($planTarih[0] == $planTarihBugun) {
+                                $yetkiliServisIDler[] = $servisRow->servisid;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Bayi kontrolü
+            if (str_contains($soru->cevapTuru, 'Bayi')) {
+                $plan = ServicePlanning::find($servisRow->planid);
+                if (!$plan) continue;
+
+                $tarihDurum = $plan->tarihDurum > 0 ? "1" : "0";
+
+                if ($tarihDurum == "1") {
+                    // Tarih durumu var - Grup ile aynı logic
+                    $tarihCevap = ServiceStageAnswer::where('planid', $servisRow->planid)
+                        ->where('cevapText', '[Tarih]')
+                        ->first();
+
+                    if ($tarihCevap) {
+                        $bugun = now()->format('Y-m-d');
+                        $tarih = $tarihCevap->cevap;
+
+                        if ($bugun == $tarih) {
+                            // Zaman kontrolü - PHP kodundaki $kid değişkenini kullanıcının kid'i ile değiştiriyoruz
+                            $zaman = ServiceTime::where('firma_id', $tenant_id)->first();
+                            
+                            if ($zaman) {
+                                $ilksaat = date("H.i"); // Şu anki saat
+                                $sonsaat = $zaman->zaman; // Servis zamanı
+                                
+                                if ($ilksaat >= $sonsaat) {
+                                    if (!$user->hasRole('Depocu')) {
+                                        $yetkiliServisIDler[] = $tarihCevap->servisid;
+                                    }
+                                }
+                            }
+                        }
+
+                        // Depocu için özel durum
+                        if ($user->hasRole('Depocu')) {
+                            $servis = Service::find($tarihCevap->servisid);
+                            if ($servis && in_array($servis->servisDurum, ['257', '263'])) {
+                                $yetkiliServisIDler[] = $tarihCevap->servisid;
+                            }
+                        }
+                    }
+                } else {
+                    // Tarih durumu yok
+                    $servis = Service::find($servisRow->servisid);
+                    if ($servis && $servis->planDurum == $servisRow->planid) {
+                        $yetkiliServisIDler[] = $servisRow->servisid;
+                    }
+
+                    // Planid içerisindeki son eklenen aşama kontrolü
+                    if (!$user->hasRole('Depocu')) {
+                        $planSec = ServicePlanning::find($servis->planDurum);
+                        if ($planSec && $planSec->pid == $user->user_id) {
+                            $planTarihBugun = date("Y-m-d");
+                            $planTarih = explode(" ", $planSec->tarih);
+                            
+                            if ($planTarih[0] == $planTarihBugun) {
+                                $yetkiliServisIDler[] = $servisRow->servisid;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return array_unique($yetkiliServisIDler);
     }
 
     public function searchCustomer(Request $request, $firma_id)
@@ -395,6 +681,7 @@ class ServicesController extends Controller
         return view('frontend.secure.all_services.edit_service', compact('firma', 'service_id'));
     }
 
+    //servis-bilgileri kısmı(Tüm servisleri görmeye izni olanlar)
     public function TumServiceDesc($tenant_id, $id) {
         $firma = Tenant::where('id', $tenant_id)->first();
         $service_id = Service::where('firma_id', $firma->id)->findOrFail($id);
@@ -413,6 +700,86 @@ class ServicesController extends Controller
             $altAsamalar = ServiceStage::whereIn('id', $altAsamaIDs)->orderBy('asama')->get();
         }
         return view('frontend.secure.all_services.service_information', compact('firma', 'service_id', 'service_resources', 'iller', 'device_brands', 'device_types', 'warranty_periods','altAsamalar'));
+    }
+
+    //servis-bilgileri2 kısmı(Sadece kendine atanan servisleri görebildiği ekran)
+    public function KendiServiceDesc($tenant_id, $id) {
+        $firma = Tenant::where('id', $tenant_id)->first();
+        $servis = Service::where('firma_id', $firma->id)->with(['asamalar'])->findOrFail($id);
+
+        if (!$servis) {
+            return response()->json(['error' => 'Servis bulunamadı'], 404);
+        }
+
+        // Yetkilendirme kontrolü - Kullanıcının firma ID'si ile servisin firma ID'si eşleşmeli
+        if ($servis->firma_id != $firma->id) {
+            return response()->json(['error' => 'Bu servise erişim yetkiniz yok'], 403);
+        }
+
+        // Alt aşamaları getir
+        $altAsamalar = [];
+        if ($servis->asamalar && $servis->asamalar->altAsamalar) {
+            $altAsamaIds = explode(',', $servis->asamalar->altAsamalar);
+            $altAsamalar = ServiceStage::whereIn('id', $altAsamaIds)
+                ->orderBy('asama')
+                ->get();
+        }
+
+        // Konsinye cihaz bilgisi
+        // $konsinyeCihaz = null;
+        // if ($servis->konsinye) {
+        //     $konsinyeCihaz = Stock::find($servis->konsinye);
+        // }
+
+        // Eski işlemler
+        $eskiIslemler = ServicePlanning::where('servisid', $id)
+            ->with('user')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $eskiIslemler2 = ServicePlanning::where('servisid', $id)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        // Müsait tarih formatla
+        $musaitTarih = explode('-', $servis->musaitTarih);
+
+        // Garanti hesaplama
+        $garantiBitis = null;
+        $kalanGun = -1;
+        
+        if ($servis->warranty && $servis->warranty->garanti) {
+            $garantiBitis = \Carbon\Carbon::parse($servis->created_at)
+                ->addMonths($servis->warranty->garanti)
+                ->format('Y-m-d');
+                
+            $garantiBitisFormatted = explode('-', $garantiBitis);
+            
+            // Kalan gün hesaplama
+            $kalanGun = Carbon::now()->diffInDays(Carbon::parse($garantiBitis), false);
+        }
+
+        // Acil işlem kontrol
+        $acilIslem = null;
+        if ($servis->acil != 0) {
+            $acilIslem = Service::where('id', $id)
+                ->first();
+        }
+
+        // Servis notları
+        $servisNotlari = ServiceOptNote::where('servisid', $id)
+            ->with('user')
+            ->orderBy('id', 'desc')
+            ->get();
+        return view('frontend.secure.all_services.own_service_information', compact('firma','servis',
+            'altAsamalar',
+            'eskiIslemler',
+            'eskiIslemler2',
+            'musaitTarih',
+            'garantiBitis',
+            'kalanGun',
+            'acilIslem',
+            'servisNotlari',));
     }
 
     //Servis Bilgileri düzenleme modalında yapılacak işlemler selectini seçince çıkan formun olduğu sayfayı gösteren fonksiyon
@@ -477,6 +844,7 @@ class ServicesController extends Controller
         $konsinyeCihazlar = $konsinyeCihazlar->filter(function($device) {
             return $device->current_stock_quantity > 0;
         });
+
                         
         // Personel listesi al (grup kontrolü için)
             $personeller = User::where('tenant_id', $firma->id)
@@ -501,6 +869,7 @@ class ServicesController extends Controller
          return view('frontend.secure.all_services.service_stage_questions_show', 
                     compact('stage_questions', 'stage_id', 'service_id', 'firma', 'islem', 'personeller', 
                     'araclar','stoklar','toplamPersonelStokAdedi','konsinyeCihazlar','toplamKonsinyeCihazAdedi'));
+
         
     }
 
@@ -628,17 +997,18 @@ private function stokKontrolEt(Request $request, $gelenIslem)
                                 } elseif ($hareket->islem == "2") { // Çıkış işlemi (Serviste Kullanım, Teslimat vb.)
                                     $toplam -= $hareket->adet;
                                 } elseif ($hareket->islem == "3") { // Farklı bir çıkış işlemi
+
                                     $toplam -= $hareket->adet;
                                 }
                             }
 
                             if ($toplam <= 0 || $adet > $toplam) {
                                 $stok = Stock::where('id', $stokId)->first();
-                                return "STOKHATA: " . mb_convert_case($stok->urun_adi, MB_CASE_TITLE, "UTF-8") . " Stok Adeti Yetersizdir.";
+                                return "STOKHATA: " . mb_convert_case($stok->urunAdi, MB_CASE_TITLE, "UTF-8") . " Stok Adeti Yetersizdir.";
                             }
                         } else {
                             $stok = Stock::where('id', $stokId)->first();
-                            return "STOKHATA: " . mb_convert_case($stok->urun_adi, MB_CASE_TITLE, "UTF-8") . " Stok Adeti Yetersizdir.";
+                            return "STOKHATA: " . mb_convert_case($stok->urunAdi, MB_CASE_TITLE, "UTF-8") . " Stok Adeti Yetersizdir.";
                         }
                     }
                 }
@@ -878,6 +1248,7 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
                     ]);
                 }
 
+
         // Stok hareketi kaydet
         StockAction::create([
             'firma_id' => $tenantId,
@@ -890,7 +1261,7 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
             'planId' => $planId,
              //'personel_stok_id' => $perStokId,
             'personel' => $sonPlan->user_id,
-            'kid' => auth()->id(),
+            'pid' => auth()->id(),
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -900,13 +1271,13 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
 
     private function parcaKullan($stokId, $adet, $servisId, $planId, $tenantId)
     {
-        $stok = Stock::where('id', $stokId)->first();
+        $stok = Stock::where('firma_id',$tenantId)->where('id', $stokId)->first();
         $fiyat = $adet * $stok->fiyat;
 
         // Stok hareketi kaydet
         $stokHareketId = StockAction::insertGetId([
             'firma_id' => $tenantId,
-            'kid' => auth()->id(),
+            'pid' => auth()->id(),
             'stokId' => $stokId,
             'islem' => 2,
             'servisid' => $servisId,
@@ -1565,7 +1936,7 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
     //Servis Aşamalarının servis-information blade'inde görüntülenmesini sağlayan ajaxı çalıştıran fonksionlar
     public function getServiceStageHistory($tenant_id, $servisId)
     {
-        $servis = Service::where('firma_id', $tenant_id)->findOrFail($servisId);
+        $servis = Service::with(['asamalar','users','cevaplar','plans'])->where('firma_id', $tenant_id)->findOrFail($servisId);
     
         $data = [
             'acilIslem' => null,
@@ -1764,14 +2135,108 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
         return view('frontend.secure.all_services.edit_service_customer', compact('firma', 'customer', 'countries'));
     }
 
-    public function UpdateService($tenant_id, Request $request) {
+    
+    public function UpdateService($tenant_id, Request $request) 
+    {
         $firma = Tenant::where('id', $tenant_id)->first();
-        $resource_id = $request->id;
-        Service::findOrFail($resource_id)->update([
+        
+        if (!$firma) {
+            return response()->json(['error' => 'Firma bulunamadı'], 404);
+        }
+        
+        $user = auth()->user();
+        
+        // Yetki kontrolü - PHP kodundaki grup_izinler kontrolü
+        if ($user->can('Servisleri Göremez')) { // 3 nolu izni olanlar güncelleme yapamaz
+            return response()->json(['error' => 'Yetkiniz yok'], 403);
+        }
+        
+        // Validation rules
+        $rules = [
+            'cihazModel' => 'required|string|max:255',
+        ];
+        
+        // Eğer kullanıcı admin (1 nolu grup) ise ek validasyon kuralları
+        if ($user->can('Tüm Servisleri Görebilir')) {
+            $rules = array_merge($rules, [
+                'servisKaynak' => 'nullable|integer',
+                'musaitSaat1' => 'nullable|string|max:10',
+                'musaitSaat2' => 'nullable|string|max:10',
+                'cihazSeriNo' => 'nullable|string|max:255',
+                'cihazAriza' => 'nullable|string|max:1000',
+                'operatorNotu' => 'nullable|string|max:1000',
+                'garantiSuresi' => 'nullable|integer',
+                'faturaNumarasi' => 'nullable|string|max:255',
+                'konsinye' => 'nullable|integer',
+            ]);
+        }
+        
+        $validator = Validator::make($request->all(), $rules);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'error' => 'Validation failed',
+                'messages' => $validator->errors()
+            ], 422);
+        }
+        
+        $resource_id = $request->servisid;
+        
+        // Servisi bul ve kullanıcının bu servisi güncelleyebilir olup olmadığını kontrol et
+        $service = Service::findOrFail($resource_id);
+        
+        try {
+            // Güncelleme verilerini hazırla
+            $data = [
+                'kid' => $user->user_id,
+                'cihazModel' => strip_tags(trim($request->cihazModel)),
+                'acil' => $request->acil,
+                'updated_at' => now(),
+            ];
             
-        ]);
-        $updatedResource = Service::find($resource_id);
-        return response()->json($updatedResource);
+            // Eğer kullanıcı admin (1 nolu grup) ise tüm alanları güncelleyebilir
+            if ($user->can('Tüm Servisleri Görebilir')) {
+                $data = array_merge($data, [
+                    'kid' => $user->user_id,
+                    'acil' => $request->acil,
+                    'servisKaynak' => $request->kaynak ?: null,
+                    'musaitTarih' => $request->musaitTarih,
+                    'musaitSaat1' => $request->musaitSaat1 ?: null,
+                    'musaitSaat2' => $request->musaitSaat2 ?: null,
+                    'cihazMarka' => $request->cihazMarka,
+                    'cihazTur' => $request->cihazTur,
+                    'cihazModel' => $request->cihazModel,
+                    'cihazSeriNo' => $request->cihazSeriNo ?: null,
+                    'cihazAriza' => $request->cihazAriza ?: null,
+                    'operatorNotu' => $request->opNot ?: null,
+                    'garantiSuresi' => $request->cihazGaranti ?: null,
+                    'faturaNumarasi' => $request->faturaNumarasi ?: null,
+                    'konsinye' => $request->konsinye ?: null,
+                ]);
+            }
+            
+            // Servisi güncelle
+            $service->update($data);
+            
+            // Güncellenmiş servisi döndür
+            $updatedResource = Service::with([
+                'musteri:id,adSoyad,tel1,tel2',
+                'markaCihaz:id,marka',
+                'turCihaz:id,cihaz'
+            ])->find($resource_id);
+            
+            return response()->json([
+                'success' => true,
+                'data' => $updatedResource,
+                'message' => 'Servis başarıyla güncellendi'
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Güncelleme sırasında hata oluştu',
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     public function DeleteService($tenant_id, $id) {
@@ -1782,14 +2247,19 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
                 'alert-type' => 'danger',
             ]);
         }
-        $service_resources = Service::find($id);
-        if($service_resources) {
-            $service_resources->delete();
-            return response()->json(['success' => true]);
-        }
-        else{
-            return response()->json(['success' => false, 'message' => 'Stok kategorisi başarıyla silindi.']);
-        }
+        Service::where('firma_id', $tenant_id)->findOrFail($id)->update([
+            'durum' => 0,
+            'silinmeTarihi' => Carbon::now(),
+            'silenKisi' => auth()->id(),
+        ]);
+        Log::info( $firma->firma_adi . ' firmasının ' . Auth::user()->name . '  personeli ' . $id. ' IDli servisi sildi.', [
+            'ip_address' => request()->ip(),
+        ]);
+        $notification = array(
+            'message' => 'Servis Başarıyla Silindi',
+            'alert-type' => 'success'
+        );
+        return redirect()->back()->with($notification);
     }
 
     //Servis yazdırma fonksiyonu
@@ -2454,6 +2924,27 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
                     'message' => $validator->errors()->first()
                 ], 422);
             }
+
+            // ➊ İlgili servisteki mevcut fotoğraf sayısını kontrol et
+            $currentCount = ServicePhoto::where('firma_id', $tenant_id)
+                            ->where('servisid', $request->servisid)
+                            ->count();
+
+            if ($currentCount >= 4) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bu servise en fazla 4 fotoğraf yükleyebilirsiniz.'
+                ], 422);
+            }
+
+            // ➋ Devam eden paralel yüklemeler sırasında sınırı aşmamak için:
+            //    toplamdaki +1 kontrolü
+            if ($currentCount + 1 > 4) {            // sadece tek dosya geliyorsa yeterli
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Fotoğraf limiti aşıldı.'
+                ], 422);
+            }
             
             $firma = Tenant::where('id', $tenant_id)->first();
 
@@ -2702,3 +3193,4 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
     }
 
 }
+

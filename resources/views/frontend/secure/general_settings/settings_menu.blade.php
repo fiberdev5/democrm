@@ -15,7 +15,9 @@
   }
   
 </style>
-<div class="kasaSubMenu" >
+
+<div class="kasaSubMenu"  > {{-- Genel ayarlarda dropdown altta kaldığı zaman bu css'i eklemiştim. Daha sonra modalları bozmaktaydı. style="margin-top:15px;position:relative;z-index:10;"  --}}
+
   <ul class="nav nav-pills nav-justified" role="tablist" style="margin-bottom: 5px">
     <li class="nav-item" style="font-size: 14px;">
       <div class="dropdown">

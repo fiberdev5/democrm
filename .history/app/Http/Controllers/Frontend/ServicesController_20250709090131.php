@@ -40,7 +40,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
 
 class ServicesController extends Controller
 {
@@ -64,7 +63,8 @@ class ServicesController extends Controller
 
 
         if ($request->ajax()) {           
-            $data = Service::where('firma_id', $firma->id)->where('durum', 1);
+            $data = Service::with(['musteri', 'markaCihaz', 'turCihaz', 'asamalar','cevaplar'])
+              ->where('firma_id', $firma->id)->where('durum', 1);
 
             $data->when($request->filled('from_date') && $request->filled('to_date'), function ($query) use ($request) {
                 return $query->whereDate('services.created_at', '>=', $request->from_date)
@@ -94,6 +94,68 @@ class ServicesController extends Controller
             if ($request->get('ilce')) {
                 $data->whereRelation('musteri', 'ilce', $request->get('ilce'));
             }
+
+
+            /** Raporlama filtreleri */
+            if ($request->filterType && $request->filters) {
+                $filters = is_array($request->filters) ? $request->filters : json_decode($request->filters, true);
+                
+
+                switch ($request->filterType) {
+                    case 'operator':
+                        $tarih1 = Carbon::parse($filters['operator_tarih1'])->startOfDay();
+                        $tarih2 = Carbon::parse($filters['operator_tarih2'])->endOfDay();
+                        if (!empty($filters['operator_pers']) && $filters['operator_pers'] != '0') {
+                            $data->where('kayitAlan', $filters['operator_pers']);
+                        }
+
+                        if (!empty($tarih1) && !empty($tarih2)) {
+                            $data->whereBetween('created_at', [$tarih1, $tarih2]);
+                        }
+                    break; 
+                    case 'teknisyen':
+                        
+                         // ❶ Teknisyen
+                        if (!empty($filters['teknisyen']) && $filters['teknisyen'] != '0') {
+                            $data->whereHas('cevaplar', function ($q) use ($filters) {
+                                $q->where('soruid', 45)
+                                ->where('cevap',  $filters['teknisyen']);
+                            });
+                        }
+
+                        // ❷ Araç
+                        if (!empty($filters['tekArac']) && $filters['tekArac'] != '0') {
+                            $data->whereHas('cevaplar', function ($q) use ($filters) {
+                                $q->where('soruid', 47)
+                                ->where('cevap',  $filters['tekArac']);
+                            });
+                        }
+
+                        // ❸ Tarih  ‑‑ cevaplardaki formatla eşleştirin
+                        if (!empty($filters['tekTarih'])) {
+                            // Örneğin cevaplar dd/mm/YYYY tutuluyorsa:
+                            $date = Carbon::parse($filters['tekTarih'])->format('Y-m-d');
+                            $data->whereHas('cevaplar', function ($q) use ($date) {
+                                $q->where('soruid', 48)
+                                ->where('cevap',  $date);
+                            });
+                            // eğer cevap kolonu gerçek DATE ise →  $q->whereDate('cevap', $filters['tekTarih']);
+                        }
+                    break;
+                    case 'urunSatis':
+                        $t1 = Carbon::parse($filters['tarih1'])->startOfDay();
+                        $t2 = Carbon::parse($filters['tarih2'])->endOfDay();
+
+                        // "Cihaz Satışı Yapıldı" aşaması = Örneğin asama_id 300
+                        $data->whereHas('plans', function ($query) use ($t1, $t2) {
+                            $query->where('gidenIslem', 256) // kendi cihaz satış aşama ID'nizi yazın
+                                ->whereBetween('created_at', [$t1, $t2]);
+                        });
+                    break;
+                }
+            }
+
+
     
             // Sıralama işlemi
             if ($request->has('order')) {
@@ -126,10 +188,64 @@ class ServicesController extends Controller
                     return '<a class="t-link serBilgiDuzenle" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal"><span class="mobileTitle">Cihaz:</span><strong>'.$row->markaCihaz->marka.' - '.$row->turCihaz->cihaz.'</strong></a>';
                 })
                 ->addColumn('asama_id', function($row){                   
+
                     return '<a class="t-link serBilgiDuzenle address" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal"><span class="mobileTitle">S. Durumu:</span><strong>'.$row->asamalar?->asama.'</strong><br><div style="font-size:12px;">('.$row->cihazAriza.')</div></a>';    
                 })
                 ->addColumn('action', function($row){
                     $deleteUrl = route('delete.customer', [$row->firma_id,$row->id]);
+
+                    $asamaHTML = '<a class="t-link serBilgiDuzenle address" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal">';
+                    $asamaHTML .= '<span class="mobileTitle">S. Durumu:</span><strong>'.$row->asamalar?->asama.'</strong><br>';
+                    
+                    if ($row->asamalar?->id == 235) {
+                        $asamaHTML .= '<div style="font-size:12px;">('.$row->users?->name.')</div>';
+                    }
+
+                    // Sadece servisDurumu'na ait cevapları getir
+                    $cevaplar = ServiceStageAnswer::where('planid', $row->planDurum)
+                        ->where('servisid', $row->id)
+                        ->get();
+                        
+                    // Aşama cevaplarını detaylı göster
+                    if ($cevaplar->count()) {
+                        $asamaHTML .= '<div class="spanBox" style="font-size:11px;margin-top:5px;">';
+                        foreach ($cevaplar as $cevap) {
+                            $soru = StageQuestion::find($cevap->soruid); // performans için eager load edilebilir
+                            if (!$soru) continue;
+
+                            if ($soru->cevapTuru == '[Fiyat]' || $soru->cevapTuru == '[Teklif]') {
+                                $asamaHTML .= '<span>'.$soru->soru.': '.$cevap->cevap.' TL</span>';
+                            } elseif (str_contains($soru->cevapTuru, 'Grup')) {
+                                $personel = User::find($cevap->cevap);
+                                $asamaHTML .= '<span>'.$soru->soru.': '.$personel?->name.'</span>';
+                            } elseif (str_contains($soru->cevapTuru, '[Arac]')) {
+                                $arac = Car::find($cevap->cevap);
+                                $asamaHTML .= '<span>'.$soru->soru.': '.$arac?->arac.'</span>';
+                            }elseif ($soru->cevapTuru == '[Tarih]') {
+                                $tarih = Carbon::parse($cevap->cevap)->format('d/m/Y');
+                                $asamaHTML .= '<span>'.$soru->soru.': '.$tarih.'</span>';
+                            } elseif ($soru->cevapTuru == '[Parca]') {
+                                $parcalar = explode(", ", $cevap->cevap);
+                                $parcaHTML = '';
+                                foreach ($parcalar as $parca) {
+                                    [$parcaId, $adet] = explode("---", $parca);
+                                    $stok = Stock::find($parcaId);
+                                    $parcaHTML .= $stok?->urunAdi." (".$adet."), ";
+                                }
+                                $asamaHTML .= '<span>'.$soru->soru.': '.rtrim($parcaHTML, ", ").'</span>';
+                            } else {
+                                $asamaHTML .= '<span>'.$soru->soru.': '.$cevap->cevap.'</span>';
+                            }
+                        }
+                        $asamaHTML .= '</div>';
+                    }
+
+                    $asamaHTML .= '</a>';
+
+                    return $asamaHTML;
+                })
+                ->addColumn('action', function($row){
+                    $deleteUrl = route('delete.service', [$row->firma_id,$row->id]);
                     $editButton = '';
                     $deleteButton = '';
                         $editButton = '<a href="javascript:void(0);" data-bs-id="'.$row->id.'" class="btn btn-warning btn-sm serBilgiDuzenle mobilBtn mbuton1" data-bs-toggle="modal" data-bs-target="#editServiceDescModal" title="Düzenle" ><i class="fas fa-edit"></i><span> Düzenle</span></a>';
@@ -418,7 +534,6 @@ class ServicesController extends Controller
     //Servis Bilgileri düzenleme modalında yapılacak işlemler selectini seçince çıkan formun olduğu sayfayı gösteren fonksiyon
     public function ServiceStageQuestionShow($tenant_id ,$asamaid, $serviceid) {
         $firma = Tenant::where('id', $tenant_id)->first();
-        
         $stage_id = ServiceStage::findOrFail($asamaid);
         $service_id = Service::where('firma_id', $firma->id)->findOrFail($serviceid);
         $stage_questions = StageQuestion::where('asama', $asamaid)->orderBy('sira', 'asc')->get();
@@ -428,6 +543,7 @@ class ServicesController extends Controller
         
         // Servis bilgilerini kontrol et
         $servisSec = Service::where('id', $serviceid)->first();
+
 
         // Normal servis işlemleri       
             $stoklar = PersonelStock::where('firma_id', $firma->id)
@@ -444,7 +560,6 @@ class ServicesController extends Controller
                 ->having('adet', '>', 0) // sadece adeti olanları getir
                 ->get();
             $toplamKonsinyeCihazAdedi = $konsinyeCihazlar->sum('adet');
-
                         
             // Personel listesi al (grup kontrolü için)
             $personeller = User::where('tenant_id', $firma->id)
@@ -469,6 +584,7 @@ class ServicesController extends Controller
             return view('frontend.secure.all_services.service_stage_questions_show', 
                     compact('stage_questions', 'stage_id', 'service_id', 'firma', 'islem', 'personeller', 
                     'araclar','stoklar','toplamPersonelStokAdedi','konsinyeCihazlar','toplamKonsinyeCihazAdedi'));
+
         
     }
 
@@ -546,8 +662,7 @@ class ServicesController extends Controller
                 return response()->json([
                     'status' => 'success',
                     'message' => 'Servis planı başarıyla kaydedildi.',
-                    'asama' => $guncellenmisAsamaBilgisi,
-                    'altAsamalar' => $altAsamalar,
+
                 ]);
 
             } else {
@@ -581,9 +696,11 @@ class ServicesController extends Controller
                                 if ($hareket->islem == "1") {
                                     $toplam += $hareket->adet;
                                 } elseif ($hareket->islem == "2") {
+
                                     
                                         $toplam -= $hareket->adet;
                                     
+
                                 } elseif ($hareket->islem == "3") {
                                     $toplam -= $hareket->adet;
                                 }
@@ -591,11 +708,13 @@ class ServicesController extends Controller
 
                             if ($toplam <= 0 || $adet > $toplam) {
                                 $stok = Stock::where('id', $stokId)->first();
+
                                 return "STOKHATA: " . mb_convert_case($stok->urun_adi, MB_CASE_TITLE, "UTF-8") . " Stok Adeti Yetersizdir.";
                             }
                         } else {
                             $stok = Stock::where('id', $stokId)->first();
                             return "STOKHATA: " . mb_convert_case($stok->urun_adi, MB_CASE_TITLE, "UTF-8") . " Stok Adeti Yetersizdir.";
+
                         }
                     }
                 }
@@ -614,6 +733,7 @@ class ServicesController extends Controller
                         return "STOKHATA: Parça Teslim Ederken Stok Seçmeni Zorunludur.";
                     }
                 }
+
                 
         // === KONSİNYE CİHAZ CEVAP TÜRÜ ===
         elseif ($cevapTuru === "Konsinye Cihaz") {
@@ -672,6 +792,7 @@ private function soruCevaplariniIsle(Request $request, $servisId, $planId, $tena
                         }
                     }
                 }
+
                 } else {
                     $kid = Auth()->user()->user_id;
                     if (is_array($cevap)) {
@@ -705,6 +826,7 @@ private function soruCevaplariniIsle(Request $request, $servisId, $planId, $tena
             }
         }
     }
+
 
 private function useConsignmentDevice($stokId, $adet, $servisId, $planId, $tenantId,$soruId)
 {
@@ -774,6 +896,7 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
     }
 }
  private function parcaTeslimEt($stokId, $adet, $servisId, $planId, $tenantId)
+
     {
         // Önceki planı bul
         $sonPlan = ServicePlanning::where('servisid', $servisId)
@@ -804,6 +927,7 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
                     ]);
                 }
 
+
         // Stok hareketi kaydet
         StockAction::create([
             'firma_id' => $tenantId,
@@ -814,9 +938,11 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
             'fiyat' => 0,
             'fiyatBirim' => 1,
             'planId' => $planId,
+
              //'personel_stok_id' => $perStokId,
             'personel' => $sonPlan->user_id,
             'kid' => auth()->id(),
+
             'created_at' => now(),
             'updated_at' => now()
         ]);
@@ -826,7 +952,9 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
 
     private function parcaKullan($stokId, $adet, $servisId, $planId, $tenantId)
     {
+
         $stok = Stock::where('id', $stokId)->first();
+
         $fiyat = $adet * $stok->fiyat;
 
         // Stok hareketi kaydet
@@ -856,6 +984,7 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
                             'updated_at' => now()
                         ]);
                 }
+
 
         // Servis durumu bilgilerini al
         $servisDurum = Service::where('id', $servisId)->first();
@@ -1211,6 +1340,7 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
     }
 
       //Servis planı düzenleme viewını açan fonksiyon
+
     public function EditServicePlan($tenant_id, $planid) {
         $firma = Tenant::where('id', $tenant_id)->first();
         
@@ -1242,6 +1372,7 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
             ->get();
 
         // Stokları al (eğer işlem parça teslim değilse)
+
          $personel_id = Auth::user()->user_id;
         $stoklar = collect();
         if ($servisPlan->gidenIslem != "259") {
@@ -1277,7 +1408,9 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
     }
     //servis planı düzenleme viewını açma fonksiyonu SONU
 
+
  //Servis plan aşama düzenleme güncelleme fonksiyonu
+
     public function UpdateServicePlan(Request $request, $tenant_id)
     {
         $planid = $request->input('planid');
@@ -1332,6 +1465,7 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
             ], 500);
         }
     }
+
     
 private function processParcaSelection(Request $request, $tenant_id)
 {
@@ -1367,7 +1501,7 @@ private function processParcaSelection(Request $request, $tenant_id)
     return implode(', ', $stokCevap); // View'da input name="soru..." olan alanın cevabına atanır
 }
 
-   
+
     //Servis Aşamalarının servis-information blade'inde görüntülenmesini sağlayan ajaxı çalıştıran fonksionlar
     public function getServiceStageHistory($tenant_id, $servisId)
     {
@@ -1504,6 +1638,7 @@ private function processParcaSelection(Request $request, $tenant_id)
                 }
             }
             $result .= implode(', ', $parcaMetinler);
+
         } elseif ($soru->cevapTuru == '[Konsinye Cihaz]') {
             $parcalar = explode(', ', $cevap);
             $parcaMetinler = [];
@@ -1521,6 +1656,7 @@ private function processParcaSelection(Request $request, $tenant_id)
             $result .= implode(', ', $parcaMetinler);
         }
         elseif ($soru->cevapTuru == '[Bayi]') {
+
             $bayi = User::find($cevap);
             $result .= $bayi->name ?? '';
         } else {
@@ -1588,13 +1724,16 @@ private function processParcaSelection(Request $request, $tenant_id)
                 'alert-type' => 'danger',
             ]);
         }
-        $service_resources = Service::find($id);
-        if($service_resources) {
-            $service_resources->delete();
+
+        $service = Service::where('firma_id', $tenant_id)->find($id);
+        if($service) {
+            $service->durum = 0;
+            $service->save();
             return response()->json(['success' => true]);
         }
         else{
-            return response()->json(['success' => false, 'message' => 'Stok kategorisi başarıyla silindi.']);
+            return response()->json(['success' => false, 'message' => 'Servis başarıyla silindi.']);
+
         }
     }
 
@@ -2260,6 +2399,29 @@ private function processParcaSelection(Request $request, $tenant_id)
                     'message' => $validator->errors()->first()
                 ], 422);
             }
+
+
+            // ➊ İlgili servisteki mevcut fotoğraf sayısını kontrol et
+            $currentCount = ServicePhoto::where('firma_id', $tenant_id)
+                            ->where('servisid', $request->servisid)
+                            ->count();
+
+            if ($currentCount >= 4) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bu servise en fazla 4 fotoğraf yükleyebilirsiniz.'
+                ], 422);
+            }
+
+            // ➋ Devam eden paralel yüklemeler sırasında sınırı aşmamak için:
+            //    toplamdaki +1 kontrolü
+            if ($currentCount + 1 > 4) {            // sadece tek dosya geliyorsa yeterli
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Fotoğraf limiti aşıldı.'
+                ], 422);
+            }
+
             
             $firma = Tenant::where('id', $tenant_id)->first();
 
@@ -2507,4 +2669,7 @@ private function processParcaSelection(Request $request, $tenant_id)
         return view('frontend.secure.all_services.customer_invoices', compact('servis','firma'));
     }
 
+
+
 }
+

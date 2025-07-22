@@ -46,6 +46,28 @@ class Service extends Model
         return $this->hasMany(Survey::class, 'servisid', 'id');
     }
 
+    public function cevaplar()
+    {
+        return $this->hasMany(ServiceStageAnswer::class, 'servisid', 'id');
+    }
 
+    public function plans()       
+    { 
+        return $this->hasMany(ServicePlanning::class, 'servisid'); 
+    }
+    public function currentPlan() 
+    { 
+        return $this->belongsTo(ServicePlanning::class, 'planDurum'); 
+    }
+
+    public function staffwhodeleted() 
+    { 
+        return $this->belongsTo(User::class, 'silenKisi', 'user_id'); 
+    }
+
+    public function skaynak() 
+    { 
+        return $this->belongsTo(ServiceResource::class, 'servisKaynak', 'id'); 
+    }
 
 }
