@@ -1,0 +1,1 @@
+{"success":true,"message":"Plan ba\u015far\u0131yla g\u00fcncellendi","servis_id":17}

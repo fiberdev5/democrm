@@ -67,7 +67,10 @@ use App\Http\Controllers\Frontend\StockShelfController;
 use App\Http\Controllers\Frontend\StockSupplierController;
 use App\Http\Controllers\Frontend\StockController;
 use App\Http\Controllers\Frontend\WarrantyPeriodController;
+
+use App\Http\Controllers\Frontend\SurveyController;
 use Illuminate\Support\Facades\File;
+
 
 Route::get('/secure', function () {
     return view('backend.index');
@@ -399,6 +402,14 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::get('/dashboard', 'Dashboard')->name('secure.home');
     });
 
+Route::controller(SurveyController::class)->group(function() {
+    Route::get('/anket/{servisId}/create', 'SurveyCreate')->name('survey.create');
+    Route::post('/anket/{servisId}/store', 'SurveyStore')->name('survey.store');
+
+
+    
+});
+
     Route::controller(PersonelController::class)->group(function() {
         Route::get('/personeller', 'AllStaffs')->name('staffs');
         Route::get('/personel-ekle', 'AddStaff')->name('add.staff');
@@ -471,7 +482,6 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
 
 
     });
-
 
     Route::controller(CustomerController::class)->group(function() {
         Route::get('/musteriler', 'AllCustomer')->name('customers');

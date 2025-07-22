@@ -240,10 +240,28 @@
         <input type="button" class="btn btn-danger btn-sm servisSil2" data-id="" value="Sil"/>
       </div>
       <div class="col-sm-11" style="text-align: right;">
-        <a href="#" class="btn btn-warning btn-sm servisMusteriAnketiBtn" data-id="">Müşteri Anketi</a>
+        <a href="#" class="btn btn-warning btn-sm servisMusteriAnketiBtn" data-id="{{ $service_id->id }}">Müşteri Anketi</a>
         <a href="{{ route('serviceto.pdf', [$firma->id, $service_id->id]) }}" target="_blank" class="btn btn-warning btn-sm servisA4YazdirBtn">Yazdır</a>
         <input type="button" class="btn btn-primary btn-sm servisGuncelleBtn" value="Servis Güncelle"/>
         <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Anket Modalı -->
+<div class="modal fade" id="anketModal" tabindex="-1" aria-labelledby="anketModalLabel" aria-hidden="true"style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
+  <div class="modal-dialog  modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-fade-title">Müşteri Anketi</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+      </div>
+      <div class="modal-body" style="max-height: 80vh; overflow-y: auto;"id="anketModalContent">
+        <!-- Form buraya yüklenecek -->
+        <div class="text-center">
+          <span class="spinner-border text-primary"></span>
+          <p>Yükleniyor...</p>
+        </div>
       </div>
     </div>
   </div>
@@ -268,6 +286,28 @@ function loadServiceHistory(service_id) {
         }
     });
 }
+
+//Müşteri Anketi
+$(document).on('click', '.servisMusteriAnketiBtn', function(e) {
+    e.preventDefault();
+    let servisId = $(this).data('id');
+    let tenantId = '{{ $firma->id }}'; 
+    $('#anketModal').modal('show');
+
+    $('#anketModalContent').html('<div class="text-center"><span class="spinner-border text-primary"></span><p>Yükleniyor...</p></div>');
+
+    $.ajax({
+        url: `/${tenantId}/anket/${servisId}/create`,
+        method: 'GET',
+        success: function(response) {
+            $('#anketModalContent').html(response);
+        },
+        error: function() {
+            $('#anketModalContent').html('<div class="alert alert-danger">Form yüklenemedi.</div>');
+        }
+    });
+});
+
 
 function renderServiceHistory(data) {
     var tbody = $('#serviceHistoryTableBody');
@@ -316,7 +356,7 @@ function renderServiceHistory(data) {
             
                 buttons = '<td class="btnCS" style="vertical-align: middle;width: 25px;padding: 0 5px;">';
                 
-                buttons += `<a href="#" id="servisPlanSil" style="font-size: 11px;" class="btn btn-danger btn-sm servisPlanSil" data-id="${islem.id}">Sil</a>`;
+                buttons += `<a href="#" id="servisPlanSil" style="font-size: 11px;" class="btn btn-danger btn-sm servisPlanSil" data-id="${islem.id}"> <i class="fas fa-trash-alt"></i></a>`;
                 
                 buttons += '</td><td class="btnCS" style="vertical-align: middle;width: 70px;padding: 0 5px;">';
                 

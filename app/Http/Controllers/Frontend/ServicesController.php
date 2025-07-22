@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class ServicesController extends Controller
 {
@@ -784,6 +785,7 @@ class ServicesController extends Controller
     //Servis Bilgileri düzenleme modalında yapılacak işlemler selectini seçince çıkan formun olduğu sayfayı gösteren fonksiyon
     public function ServiceStageQuestionShow($tenant_id ,$asamaid, $serviceid) {
         $firma = Tenant::where('id', $tenant_id)->first();
+        
         $stage_id = ServiceStage::findOrFail($asamaid);
         $service_id = Service::where('firma_id', $firma->id)->findOrFail($serviceid);
         $stage_questions = StageQuestion::where('asama', $asamaid)->orderBy('sira', 'asc')->get();
@@ -793,27 +795,70 @@ class ServicesController extends Controller
         
         // Servis bilgilerini kontrol et
         $servisSec = Service::where('id', $serviceid)->first();
-        
-        
-        // Normal servis işlemleri        
+
+        // Normal servis işlemleri 
+            
+        if (auth()->user()->hasRole('Patron')) {
+            // Patron: tüm personel stoklarını görür
             $stoklar = PersonelStock::where('firma_id', $firma->id)
-                         ->where('pid', auth()->user()->user_id)
-                         ->orderBy('id', 'asc')
+                        ->orderBy('id', 'asc')
                         ->get();
+        } else {  
+                    $stoklar = PersonelStock::where('firma_id', $firma->id)
+                                ->where('pid', auth()->user()->user_id)
+                                ->orderBy('id', 'asc')
+                                ->get();
+        }
+            //Personele ait toplam stok            
+            $toplamPersonelStokAdedi = $stoklar->sum('adet');
+
+        //Konsinye Cihaz Stok İşlemleri
+        $konsinyeKategoriId = 3;
+        $konsinyeCihazlar = Stock::where('firma_id', $firma->id)
+            ->where('urunKategori', $konsinyeKategoriId)
+            ->get();
+
+        $toplamKonsinyeCihazAdedi = 0;
+
+        foreach ($konsinyeCihazlar as $device) {
+            // Giriş işlemleri (1: Alış, 4: Müşteriden İade)
+            $girisAdet = StockAction::where('stokId', $device->id)
+                ->whereIn('islem', [1, 4])
+                ->sum('adet');
+            
+            // Çıkış işlemleri (2: Serviste Kullanım)
+            $cikisAdet = StockAction::where('stokId', $device->id)
+                ->where('islem', 2)
+                ->sum('adet');
+            
+            // Güncel stok miktarını hesapla
+            $device->current_stock_quantity = $girisAdet - $cikisAdet;
+            
+            // Sadece pozitif stokları toplama dahil et
+            if ($device->current_stock_quantity > 0) {
+                $toplamKonsinyeCihazAdedi += $device->current_stock_quantity;
+            }
+        }
+
+        // Sadece stoku olan cihazları filtrele
+        $konsinyeCihazlar = $konsinyeCihazlar->filter(function($device) {
+            return $device->current_stock_quantity > 0;
+        });
+
                         
-            // Personel listesi al (grup kontrolü için)
+        // Personel listesi al (grup kontrolü için)
             $personeller = User::where('tenant_id', $firma->id)
                             ->where('status', '1')
                             ->orderBy('name', 'asc')
                             ->get();
                             
-            // Araç listesi al
+        // Araç listesi al
             $araclar = Car::where('firma_id', $firma->id)
                         ->where('durum', '1')
                         ->orderBy('id', 'asc')
                         ->get();
                         
-            // Bayi listesi al
+         // Bayi listesi al
             // $bayiler = DB::table('personeller')
             //             ->where('grup', '258')
             //             ->where('firma_id', $firma->id)
@@ -821,8 +866,10 @@ class ServicesController extends Controller
             //             ->orderBy('adsoyad', 'asc')
             //             ->get();
             
-            return view('frontend.secure.all_services.service_stage_questions_show', 
-                    compact('stage_questions', 'stage_id', 'service_id', 'firma', 'islem', 'personeller', 'araclar','stoklar'));
+         return view('frontend.secure.all_services.service_stage_questions_show', 
+                    compact('stage_questions', 'stage_id', 'service_id', 'firma', 'islem', 'personeller', 
+                    'araclar','stoklar','toplamPersonelStokAdedi','konsinyeCihazlar','toplamKonsinyeCihazAdedi'));
+
         
     }
 
@@ -884,11 +931,25 @@ class ServicesController extends Controller
 
                 // Özel durumları işle
                 $this->ozelDurumlariIsle($request, $servisId, $planId, $tenant_id, $gidenIslem, $servisDurum);
+                // Eğer yeni aşama 'Konsinye Cihaz Geri Alındı' ise ve kategori 3 olanları al
+                if ($gidenIslem == 272) {
+                    $konsinyeCihazlar = StockAction::where('servisid', $servisId)
+                        ->where('planId', '<>', $planId)
+                        ->where('islem', 2)
+                        ->where('firma_id', $tenant_id)
+                        ->get();
+
+                    foreach ($konsinyeCihazlar as $cihaz) {
+                        $stok = Stock::find($cihaz->stokId);
+                        if ($stok && $stok->urunKategori == 3) {
+                            $this->geriAlConsignmentDevice($cihaz->stokId, $cihaz->adet, $servisId, $planId, $tenant_id);
+                        }
+                    }
+                }
+
 
                 // Tarih durumu kontrolü
                 $this->tarihDurumuKontrolEt($tenant_id);
-
-        
                 $currentStage = $servis->servisDurum; // veya hangi field'dan alıyorsanız
         
                 // Bu aşamaya ait alt aşamaları getir. Servis planı eklendikten sonra altAsamalar kısmını güncellemek için bunu yaptım.
@@ -898,6 +959,8 @@ class ServicesController extends Controller
               
                 $guncellenmisAsamaBilgisi = $servis->asamalar->asama;
                 return response()->json([
+                    'status' => 'success',
+                    'message' => 'Servis planı başarıyla kaydedildi.',
                     'asama' => $guncellenmisAsamaBilgisi,
                     'altAsamalar' => $altAsamalar,
                 ]);
@@ -913,15 +976,14 @@ class ServicesController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Bir hata oluştu: ' . $e->getMessage()]);
         }
     }
-
-     private function stokKontrolEt(Request $request, $gelenIslem)
-    {
-        foreach ($request->all() as $key => $value) {
-            if (strpos($key, 'soru') !== false && $value == "Parca") {
-                foreach ($request->all() as $stokKey => $stokValue) {
-                    if (strpos($stokKey, 'stokCheck') !== false) {
-                        $stokId = (int) filter_var($stokKey, FILTER_SANITIZE_NUMBER_INT);
-                        $adet = abs($request->input("stokAdet{$stokId}", 0));
+private function stokKontrolEt(Request $request, $gelenIslem)
+{
+    foreach ($request->all() as $key => $value) {
+        if (strpos($key, 'soru') !== false && $value == "Parca") {
+            if ($request->has('parca') && is_array($request->input('parca'))) {
+                foreach ($request->input('parca') as $stageId => $selectedParts) {
+                    foreach ($selectedParts as $stokId => $selectedStokValue) {
+                        $adet = abs($request->input("adet.{$stageId}.{$stokId}", 0));
 
                         // Stok durumunu kontrol et
                         $stokHareketleri = StockAction::where('stokId', $stokId)
@@ -930,13 +992,12 @@ class ServicesController extends Controller
                         if ($stokHareketleri->count() > 0) {
                             $toplam = 0;
                             foreach ($stokHareketleri as $hareket) {
-                                if ($hareket->islem == "1") {
+                                if ($hareket->islem == "1") { // Giriş işlemi
                                     $toplam += $hareket->adet;
-                                } elseif ($hareket->islem == "2") {
-                                    if ($hareket->planId == 0) {
-                                        $toplam -= $hareket->adet;
-                                    }
-                                } elseif ($hareket->islem == "3") {
+                                } elseif ($hareket->islem == "2") { // Çıkış işlemi (Serviste Kullanım, Teslimat vb.)
+                                    $toplam -= $hareket->adet;
+                                } elseif ($hareket->islem == "3") { // Farklı bir çıkış işlemi
+
                                     $toplam -= $hareket->adet;
                                 }
                             }
@@ -951,33 +1012,69 @@ class ServicesController extends Controller
                         }
                     }
                 }
+            }
 
-                // Parça teslim et işleminde stok seçimi zorunlu
-                if ($gelenIslem == "238") {
-                    $stokSecildi = false;
-                    foreach ($request->all() as $key => $value) {
-                        if (strpos($key, 'stokCheck') !== false) {
+            // Parça teslim et işleminde stok seçimi zorunlu
+            if ($gelenIslem == "238") {
+                $stokSecildi = false;
+                if ($request->has('parca') && is_array($request->input('parca'))) {
+                    foreach ($request->input('parca') as $stageId => $selectedParts) {
+                        if (!empty($selectedParts)) {
                             $stokSecildi = true;
                             break;
                         }
                     }
+                }
 
-                    if (!$stokSecildi) {
-                        return "STOKHATA: Parça Teslim Ederken Stok Seçmeni Zorunludur.";
-                    }
+                if (!$stokSecildi) {
+                    return "STOKHATA: Parça Teslim Ederken Stok Seçmeni Zorunludur.";
                 }
             }
         }
 
-        return null;
-    }
+        if (strpos($key, 'soru') !== false && $value == "Konsinye Cihaz") {
+            if ($request->has('konsinye_cihaz') && is_array($request->input('konsinye_cihaz'))) {
+                foreach ($request->input('konsinye_cihaz') as $stageId => $selectedConsignments) {
+                    foreach ($selectedConsignments as $consignmentId => $selectedConsignmentValue) {
+                        $consignmentAdet = abs($request->input("konsinye_adet.{$stageId}.{$consignmentId}", 0));
+                        if ($consignmentAdet > 0) { // Sadece adet girildiyse kontrol yap
+                            $girisAdet = StockAction::where('stokId', $consignmentId)
+                                ->whereIn('islem', [1, 4]) // 1: Alış, 4: Müşteriden İade (Konsinye için giriş)
+                                ->sum('adet');
+                            $cikisAdet = StockAction::where('stokId', $consignmentId)
+                                ->where('islem', 2) // 2: Serviste Kullanım (Konsinye için çıkış)
+                                ->sum('adet');
 
-    private function soruCevaplariniIsle(Request $request, $servisId, $planId, $tenantId, $gelenIslem)
-    {
-        if ($request->has('soru')) {
+                            $currentConsignmentStock = $girisAdet - $cikisAdet;
+                            if ($consignmentAdet > $currentConsignmentStock) {
+                                $consignmentStock = Stock::where('id', $consignmentId)->first();
+                                return "STOKHATA: " . mb_convert_case($consignmentStock->urun_adi, MB_CASE_TITLE, "UTF-8") . " Konsinye Cihaz Stok Adedi Yetersizdir.";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return null;
+}
+
+private function soruCevaplariniIsle(Request $request, $servisId, $planId, $tenantId, $gelenIslem)
+{
+         if ($request->has('soru')) {
             foreach ($request->input('soru') as $soruId => $cevap) {
                 if ($cevap == "Parca") {
                     $this->parcaIslemleriniYap($request, $servisId, $planId, $tenantId, $soruId, $gelenIslem);
+                } elseif ($cevap == "Konsinye Cihaz") {
+                    if ($request->has("konsinye_cihaz.{$soruId}")) {
+                    foreach ($request->input("konsinye_cihaz.{$soruId}") as $konsinyeId => $value) {
+                        $adet = abs($request->input("konsinye_adet.{$soruId}.{$konsinyeId}", 1));
+
+                        if ($adet > 0) { // Sadece adet girildiyse işlem yap
+                            $this->useConsignmentDevice($konsinyeId, $adet, $servisId, $planId, $tenantId,$soruId);
+                        }
+                    }
+                }
                 } else {
                     $kid = Auth()->user()->user_id;
                     if (is_array($cevap)) {
@@ -1012,43 +1109,115 @@ class ServicesController extends Controller
         }
     }
 
-    private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tenantId, $soruId, $gelenIslem)
-    {
-        $stokCevap = "";
+private function useConsignmentDevice($stokId, $adet, $servisId, $planId, $tenantId, $soruId)
+{
+    // Stok kaydını al
+    $stok = Stock::where('id', $stokId)->first();
 
-        foreach ($request->all() as $key => $value) {
-            if (strpos($key, 'stokCheck') !== false) {
-                $stokId = (int) filter_var($key, FILTER_SANITIZE_NUMBER_INT);
-                $adet = abs($request->input("stokAdet{$stokId}", 1));
+    if (!$stok || $stok->urunKategori != 3) {
+        throw new \Exception("Bu stok bir konsinye cihaz değildir.");
+    }
 
-                if (empty($stokCevap)) {
-                    $stokCevap = "{$stokId}---{$adet}";
-                } else {
-                    $stokCevap .= ", {$stokId}---{$adet}";
-                }
+    // Önce aynı planId, stokId için eski çıkış kayıtlarını sil
+    StockAction::where('firma_id', $tenantId)
+        ->where('stokId', $stokId)
+        ->where('planId', $planId)
+        ->where('islem', 2)  // çıkış işlemi
+        ->delete();
 
-                if ($gelenIslem == "238") {
-                    $this->parcaTeslimEt($stokId, $adet, $servisId, $planId, $tenantId);
-                } else {
-                    $this->parcaKullan($stokId, $adet, $servisId, $planId, $tenantId);
-                }
+
+    //StokAction ile çıkış işlemini kaydet
+    StockAction::create([
+        'firma_id' => $tenantId,
+        'kid' => auth()->id(),
+        'stokId' => $stokId,
+        'islem' => 2, // Konsinye cihaz kullanımı
+        'servisid' => $servisId,
+        'adet' => $adet,
+        'planId' => $planId,
+        'depo' => 1,
+        'created_at' => now(),
+        'updated_at' => now()
+    ]);
+
+    //ServiceStageAnswer kaydı
+    ServiceStageAnswer::create([
+        'firma_id' => $tenantId,
+        'servisid' => $servisId,
+        'planid' => $planId,
+        'soruid' => $soruId,
+        'cevap' => "{$stokId}---{$adet}", 
+        'kid' =>  auth()->user()->user_id,
+        'created_at' => now(),
+        'updated_at' => now()
+    ]);
+}
+private function geriAlConsignmentDevice($stokId, $adet, $servisId, $planId, $tenantId, $soruId = null)
+{
+
+    // Yeni giriş işlemi
+    StockAction::create([
+        'firma_id' => $tenantId,
+        'kid' => auth()->id(),
+        'stokId' => $stokId,
+        'islem' => 4, // Geri alma
+        'servisid' => $servisId,
+        'adet' => $adet,
+        'planId' => $planId,
+        'depo' => 1,
+        'created_at' => now(),
+        'updated_at' => now()
+    ]);
+
+
+    // Cevap olarak kaydet
+    if ($soruId) {
+        ServiceStageAnswer::create([
+            'firma_id' => $tenantId,
+            'servisid' => $servisId,
+            'planid' => $planId,
+            'soruid' => $soruId,
+            'cevap' => $cevapText,
+            'kid' => auth()->user()->user_id,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+    }
+}
+
+private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tenantId, $soruId, $gelenIslem)
+{
+    $stokCevapArray = [];
+    if ($request->has("parca.{$soruId}")) {
+        foreach ($request->input("parca.{$soruId}") as $stokId => $value) {
+            $adet = abs($request->input("adet.{$soruId}.{$stokId}", 1));
+
+            $stokCevapArray[] = "{$stokId}---{$adet}";
+            if ($gelenIslem == 238) { // "Parça Teslim Et" aşaması için varsayılan ID 238
+                $this->parcaTeslimEt($stokId, $adet, $servisId, $planId, $tenantId);
+            } else {
+                $this->parcaKullan($stokId, $adet, $servisId, $planId, $tenantId);
             }
-        }
-        $stokCevap = is_array($stokCevap) ? implode(', ', $stokCevap) : $stokCevap;
-        if (!empty($stokCevap)) {
-            ServiceStageAnswer::create([
-                'firma_id' => $tenantId,
-                'servisid' => $servisId,
-                'planid' => $planId,
-                'soruid' => $soruId,
-                'cevap' => $stokCevap,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
         }
     }
 
-    private function parcaTeslimEt($stokId, $adet, $servisId, $planId, $tenantId)
+    // Toplanan stok cevaplarını birleştirerek string oluşturun
+    $stokCevap = implode(', ', $stokCevapArray);
+
+    // Eğer birleştirilmiş cevap boş değilse, veritabanına kaydedin
+    if (!empty($stokCevap)) {
+        ServiceStageAnswer::create([
+            'firma_id' => $tenantId,
+            'servisid' => $servisId,
+            'planid' => $planId,
+            'soruid' => $soruId,
+            'cevap' => $stokCevap, 
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
+    }
+}
+ private function parcaTeslimEt($stokId, $adet, $servisId, $planId, $tenantId)
     {
         // Önceki planı bul
         $sonPlan = ServicePlanning::where('servisid', $servisId)
@@ -1057,29 +1226,28 @@ class ServicesController extends Controller
             ->first();
 
         // Personel stok ekle/güncelle
-        $perStok = DB::table('personel_stocks')
-            ->where('pid', $sonPlan->user_id)
-            ->where('stokid', $stokId)
-            ->first();
+            $perStok = PersonelStock::where('pid', $sonPlan->pid ?? $sonPlan->kid ?? auth()->id()) 
+                ->where('stokid', $stokId)
+                ->first();
 
-        if ($perStok) {
-            DB::table('personel_stocks')
-                ->where('id', $perStok->id)
-                ->update([
-                    'adet' => $perStok->adet + $adet,
+                if ($perStok) {
+                    PersonelStock::where('id', $perStok->id)
+                        ->update([
+                            'adet' => $perStok->adet + $adet,
+                            'updated_at' => now()
+                        ]);
+                    $perStokId = $perStok->id;
+                } else {
+                    $perStokId = PersonelStock::insertGetId([
+                    'firma_id' => $tenantId, 
+                    'pid' => $sonPlan->pid ?? $sonPlan->kid ?? auth()->id(),
+                    'stokid' => $stokId,
+                    'adet' => $adet,
+                    'created_at' => now(),
                     'updated_at' => now()
-                ]);
-            $perStokId = $perStok->id;
-        } else {
-            $perStokId = DB::table('personel_stocks')->insertGetId([
-                'firma_id' => $tenantId,
-                'pid' => $sonPlan->user_id,
-                'stokid' => $stokId,
-                'adet' => $adet,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-        }
+                    ]);
+                }
+
 
         // Stok hareketi kaydet
         StockAction::create([
@@ -1091,7 +1259,7 @@ class ServicesController extends Controller
             'fiyat' => 0,
             'fiyatBirim' => 1,
             'planId' => $planId,
-            'perStokId' => $perStokId,
+             //'personel_stok_id' => $perStokId,
             'personel' => $sonPlan->user_id,
             'pid' => auth()->id(),
             'created_at' => now(),
@@ -1123,17 +1291,16 @@ class ServicesController extends Controller
         ]);
 
         // Personel stoğundan düş
-        $perStok = PersonelStock::where('pid', auth()->id())
-            ->where('stokid', $stokId)
-            ->first();
-
-        if ($perStok) {
-            PersonelStock::where('id', $perStok->id)
-                ->update([
-                    'adet' => $perStok->adet - $adet,
-                    'updated_at' => now()
-                ]);
-        }
+            $perStok = PersonelStock::where('pid', auth()->user()->user_id)
+                ->where('stokid', $stokId) 
+                ->first();
+                if ($perStok) {
+                    PersonelStock::where('id', $perStok->id)
+                        ->update([
+                            'adet' => $perStok->adet - $adet,
+                            'updated_at' => now()
+                        ]);
+                }
 
         // Servis durumu bilgilerini al
         $servisDurum = Service::where('id', $servisId)->first();
@@ -1488,7 +1655,7 @@ class ServicesController extends Controller
         }
     }
 
-    //Servis planı düzenleme viewını açan fonksiyon
+      //Servis planı düzenleme viewını açan fonksiyon
     public function EditServicePlan($tenant_id, $planid) {
         $firma = Tenant::where('id', $tenant_id)->first();
         
@@ -1520,14 +1687,57 @@ class ServicesController extends Controller
             ->get();
 
         // Stokları al (eğer işlem parça teslim değilse)
+        $personel_id = Auth::user()->user_id;
         $stoklar = collect();
-        $personel_id = auth()->user()->user_id;
         if ($servisPlan->gidenIslem != "259") {
-            // $stoklar = Stock::whereHas('personelStoklar', function($query) use ($tenant_id, $personel_id) {
-            //     $query->where('kid', $tenant_id)
-            //         ->where('pid', $personel_id);
-            // })->orderBy('id', 'ASC')->get();
+            $stoklar = PersonelStock::where('firma_id', $tenant_id)
+                ->where('pid', $personel_id)
+                ->with('stok')
+                ->orderBy('id', 'ASC')
+                ->get()
+                ->filter(function($item) {
+                    return $item->stok !== null;
+                });
         }
+
+        // Personelin üzerindeki toplam stok adedini hesapla (PersonelStock tablosundan)
+        $toplamPersonelStokAdedi = PersonelStock::where('firma_id', $tenant_id)
+            ->where('pid', $personel_id)
+            ->sum('adet');
+
+         // Konsinye Cihaz Stok İşlemleri
+    $konsinyeKategoriId = 3; // İkinci fonksiyonda olduğu gibi konsinye kategori ID'si
+    $konsinyeCihazlar = Stock::where('firma_id', $tenant_id)
+        ->where('urunKategori', $konsinyeKategoriId)
+        ->get();
+
+    $toplamKonsinyeCihazAdedi = 0;
+
+    foreach ($konsinyeCihazlar as $device) {
+        // Giriş işlemleri (1: Alış, 4: Müşteriden İade)
+        $girisAdet = StockAction::where('stokId', $device->id)
+            ->whereIn('islem', [1, 4])
+            ->sum('adet');
+
+        // Çıkış işlemleri (2: Serviste Kullanım)
+        $cikisAdet = StockAction::where('stokId', $device->id)
+            ->where('islem', 2)
+            ->sum('adet');
+
+        // Güncel stok miktarını hesapla
+        $device->current_stock_quantity = $girisAdet - $cikisAdet;
+
+        // Sadece pozitif stokları toplama dahil et
+        if ($device->current_stock_quantity > 0) {
+            $toplamKonsinyeCihazAdedi += $device->current_stock_quantity;
+        }
+    }
+
+    // Sadece stoku olan cihazları filtrele
+    $konsinyeCihazlar = $konsinyeCihazlar->filter(function($device) {
+        return $device->current_stock_quantity > 0;
+    });   
+
 
         // Kullanıcı bilgilerini al
         $kullanici = auth()->user();
@@ -1538,13 +1748,17 @@ class ServicesController extends Controller
             'servis',
             'personellerAll',
             'stoklar',
+            'toplamPersonelStokAdedi',
             'kullanici',
-            'tenant_id'
+            'tenant_id',
+            'konsinyeCihazlar',
+            'toplamKonsinyeCihazAdedi'
+
         ));
     }
     //servis planı düzenleme viewını açma fonksiyonu SONU
 
-    //Servis plan aşama düzenleme güncelleme fonksiyonu
+ //Servis plan aşama düzenleme güncelleme fonksiyonu
     public function UpdateServicePlan(Request $request, $tenant_id)
     {
         $planid = $request->input('planid');
@@ -1573,12 +1787,14 @@ class ServicesController extends Controller
                 
                 if ($request->has($soruKey)) {
                     $yeniCevap = $request->input($soruKey);
-                    
                     // Eğer parça seçimi varsa, checkbox'ları işle
                     if ($yeniCevap == 'Parca') {
                         $parcaCevap = $this->processParcaSelection($request, $tenant_id);
                         $cevap->cevap = $parcaCevap;
-                    } else {
+                    }elseif ($yeniCevap == 'Konsinye Cihaz') {
+                    $konsinyeCevap = $this->processKonsinyeSelection($request, $tenant_id);
+                    $cevap->cevap = $konsinyeCevap;
+                    }else{
                         $cevap->cevap = $yeniCevap;
                     }
                     
@@ -1599,8 +1815,124 @@ class ServicesController extends Controller
             ], 500);
         }
     }
-    //servis plan aşaması güncelleme fonksiyonu SONU
+    
+private function processParcaSelection(Request $request, $tenant_id)
+{
+    $stokCevap = [];
+    $planid = $request->input('planid');
+    $servisPlan = ServicePlanning::where('id', $planid)
+        ->where('firma_id', $tenant_id)
+        ->first();
 
+    if (!$servisPlan) {
+        throw new \Exception("Servis planı bulunamadı");
+    }
+    $servisid = $servisPlan->servisid;
+
+    foreach ($request->all() as $key => $value) {
+        if (strpos($key, 'stokCheck') !== false) {
+            $stokId = (int) filter_var($key, FILTER_SANITIZE_NUMBER_INT);
+            $adet = abs($request->input("stokAdet{$stokId}", 1));
+
+            // stokCevap dizisine ekle
+            $stokCevap[] = "{$stokId}---{$adet}";
+
+            // Kullanım mı teslim mi kontrol et
+            if ($servisPlan->gelenIslem == "238") {
+                $this->parcaTeslimEt($stokId, $adet, $servisid, $planid, $tenant_id);
+            } else {
+                $this->parcaKullan($stokId, $adet, $servisid, $planid, $tenant_id);
+            }
+        }
+    }
+
+    return implode(', ', $stokCevap); // View'da input name="soru..." olan alanın cevabına atanır
+}
+private function processKonsinyeSelection(Request $request, $tenant_id)
+{
+    $konsinyeCevap = [];
+    $planid = $request->input('planid');
+    $servisPlan = ServicePlanning::where('id', $planid)
+        ->where('firma_id', $tenant_id)
+        ->first();
+
+    if (!$servisPlan) {
+        throw new \Exception("Servis planı bulunamadı");
+    }
+    $servisid = $servisPlan->servisid;
+
+    foreach ($request->all() as $key => $value) {
+        if (strpos($key, 'konsinyeCheck') !== false) {
+            $stokId = (int) filter_var($key, FILTER_SANITIZE_NUMBER_INT);
+            $adet = abs($request->input("konsinyeAdet{$stokId}", 1));
+
+            // konsinyeCevap dizisine ekle
+            $konsinyeCevap[] = "{$stokId}---{$adet}";
+
+            // Kullanım mı teslim mi kontrol et
+            if ($servisPlan->gelenIslem == "238") {
+                $this->konsinyeTeslimEt($stokId, $adet, $servisid, $planid, $tenant_id);
+            } else {
+                $this->konsinyeKullan($stokId, $adet, $servisid, $planid, $tenant_id);
+            }
+        }
+    }
+    return implode(', ', $konsinyeCevap); // View'da input name="soru..." olan alanın cevabına atanır
+}
+private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
+{
+    // Stok bilgilerini al
+    $stok = Stock::where('id', $stokId)->first();
+    if (!$stok) {
+        throw new \Exception("Stok bulunamadı (ID: $stokId)");
+    }
+    $fiyat = $adet * $stok->fiyat;
+
+    // Stok hareketi kaydet (islem=2: Serviste Kullanım)
+    $stokHareketId = StockAction::insertGetId([
+        'firma_id'    => $tenantId,
+        'kid'         => auth()->id(),
+        'stokId'      => $stokId,
+        'islem'       => 2, // Konsinye kullanımı
+        'servisid'    => $servisId,
+        'depo'        => 1,
+        'adet'        => $adet,
+        'fiyat'       => $fiyat,
+        'fiyatBirim'  => 1,
+        'planId'      => $planId,
+        'created_at'  => now(),
+        'updated_at'  => now()
+    ]);
+
+    // Servis bilgilerini al
+    $servisDurum = Service::find($servisId);
+
+    // Kasa hareketi tipi (parça gibi işleniyor)
+    $stokIslem = PaymentType::where('parca', '1')->first();
+
+    // Kasa ve servis para hareketleri örnek olarak bırakıldı, istersen aç
+    /*
+    DB::table('kasa_hareketleri')->insert([
+        'tenant_id'    => $tenantId,
+        'user_id'      => auth()->id(),
+        'personel_id'  => auth()->id(),
+        'islem_tarihi' => now(),
+        'odeme_yonu'   => 2,
+        'odeme_sekli'  => 178,
+        'odeme_turu'   => $stokIslem->id,
+        'odeme_durum'  => 1,
+        'fiyat'        => $fiyat,
+        'fiyat_birim'  => 1,
+        'aciklama'     => "Konsinye Cihaz: {$stok->urunAdi}",
+        'marka'        => $servisDurum->cihaz_marka,
+        'cihaz'        => $servisDurum->cihaz_tur,
+        'servis_id'    => $servisDurum->id,
+        'stok_islem'   => $stokHareketId,
+        'created_at'   => now(),
+        'updated_at'   => now()
+    ]);
+    */
+}
     //Servis Aşamalarının servis-information blade'inde görüntülenmesini sağlayan ajaxı çalıştıran fonksionlar
     public function getServiceStageHistory($tenant_id, $servisId)
     {
@@ -1737,7 +2069,23 @@ class ServicesController extends Controller
                 }
             }
             $result .= implode(', ', $parcaMetinler);
-        } elseif ($soru->cevapTuru == '[Bayi]') {
+        } elseif ($soru->cevapTuru == '[Konsinye Cihaz]') {
+            $parcalar = explode(', ', $cevap);
+            $parcaMetinler = [];
+            foreach ($parcalar as $parca) {
+                $parcaData = explode('---', $parca);
+                if (count($parcaData) >= 2) {
+                    $parcaId = $parcaData[0];
+                    $adet = $parcaData[1];
+                    $stok = Stock::find($parcaId);
+                    if ($stok) {
+                        $parcaMetinler[] = $stok->urunAdi . ' (' . $adet . ')';
+                    }
+                }
+            }
+            $result .= implode(', ', $parcaMetinler);
+        }
+        elseif ($soru->cevapTuru == '[Bayi]') {
             $bayi = User::find($cevap);
             $result .= $bayi->name ?? '';
         } else {
@@ -2844,5 +3192,5 @@ class ServicesController extends Controller
         return view('frontend.secure.all_services.customer_invoices', compact('servis','firma'));
     }
 
-
 }
+

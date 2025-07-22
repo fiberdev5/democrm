@@ -40,6 +40,11 @@ class Service extends Model
     {
         return $this->belongsTo(WarrantyPeriod::class, 'garantiSuresi', 'id');
     }
+    
+    public function anketler()
+    {
+        return $this->hasMany(Survey::class, 'servisid', 'id');
+    }
 
     public function cevaplar()
     {
@@ -64,4 +69,5 @@ class Service extends Model
     { 
         return $this->belongsTo(ServiceResource::class, 'servisKaynak', 'id'); 
     }
+
 }

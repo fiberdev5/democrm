@@ -1349,6 +1349,17 @@ div.dataTables_wrapper div.dataTables_filter input{border-radius: 0;}
 #customerTable .dropdown-menu.show{inset: 37px 0px auto auto!important;} /* servisler tablosundaki filtreleme menüsünde kayma olunca bunu ekledim */
 .servisRaporlaModalBtn{position: absolute;right: 325px;}
 
+
+
+/*Stok ve konsinye stok serviste kullanım yönlendirme linkleri*/
+a.link-stock {
+    color: black !important;
+    text-decoration: none !important;
+  }
+a.link-stock:hover {
+    text-decoration: underline !important;
+  }
+
 .servisPlanlaBtn{position: absolute;left: 209px;}
 .gelenCagriButon{position: absolute;left: 92px;background: #4285f4!important;border-color: #4285f4!important;}
 .gelenCagriButon:hover{background: #4285f4!important;border-color: #4285f4!important;}
@@ -1427,10 +1438,6 @@ div.dataTables_wrapper div.dataTables_filter input{border-radius: 0;}
     align-items: center;
     justify-content: flex-end;
 }
-
-
-
-
 
 
 

@@ -299,6 +299,7 @@ $(document).ready(function(){
 });
 </script>
 
+
 <script type="text/javascript">
 $(document).ready(function(){
   $(".servisRaporlaModalBtn").click(function(){
@@ -670,6 +671,36 @@ $(document).ready(function(){
       });
     }
   });
+</script>
+<script>
+  var getUrlParameter = function getUrlParameter(sParam) {
+      var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+      for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+      }
+    };
+    var servisid = getUrlParameter('did');
+    var firma_id = {{$firma->id}};
+     if(servisid){
+      $.ajax({
+        url: "/"+ firma_id + "/servis/duzenle/"+ servisid
+      }).done(function(data) { 
+        if($.trim(data)==="-1"){
+          window.location.reload(true);
+        }else{
+          $('#editServiceDescModal').modal('show');
+          $('#editServiceDescModal .modal-body').html(data);
+        }
+      });
+    }
+  
 </script>
 
 @endsection

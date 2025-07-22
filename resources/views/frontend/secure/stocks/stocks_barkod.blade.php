@@ -3,42 +3,47 @@
 <head>
   <meta charset="utf-8">
   <style>
-    @page {
+    @page { margin: 0; size: 50mm 25mm; }
+
+    body {
       margin: 0;
       padding: 0;
-    }
-    body {
       font-family: Arial, sans-serif;
-      width: 141.7pt;   /* 50mm */
-      height: 70.85pt;  /* 25mm */
-      margin: 0;
-      padding: 6pt;
-      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* Üst ve alt boşlukları eşitler */
+      align-items: center;
+      box-sizing: border-box;
+      padding: 2mm; /* Sağ ve sol boşluklar için */
     }
+
     .barcode-area {
-      width: 120px;
-      margin: 0 auto;
-    }
-    .barcode-area svg {
-      display: block;
       width: 100%;
-      height: 28px;
-      margin: 0 auto;
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      display: block; /* Yeni eklenen */
+      margin: 0 auto; /* Yeni eklenen */
     }
+
+    .barcode-area img {
+      width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
     .text-area {
-      font-size: 4pt;
-      font-weight: normal;
-      color: #333;
-      margin-top: 1pt;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      font-size: 8pt; /* Daha küçük yazı boyutu */
+      font-weight: bold;
+      text-align: center;
+      line-height: 1;
     }
   </style>
 </head>
 <body>
   <div class="barcode-area">
-    {!! DNS1D::getBarcodeHTML($stock->urunKodu, 'C128', 1.2, 28) !!}
+    <img src="data:image/png;base64,{{ DNS1D::getBarcodePNG($stock->urunKodu, 'C128', 2, 82) }}" alt="Barkod">
   </div>
   <div class="text-area">
     {{ $stock->urunKodu }}

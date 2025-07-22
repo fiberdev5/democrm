@@ -23,7 +23,7 @@ use Image;
 use Yajra\DataTables\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Milon\Barcode\Facades\DNS1D;
-
+use Illuminate\Support\Facades\Validator;
 
 class StockController extends Controller
 {
@@ -377,7 +377,7 @@ public function DeleteStock($tenant_id, $id) {
 
     if ($stokHareketSayisi > 0) {
         $notification = [
-            'message' => 'Ürün içerisinde stok hareket kaydı bulunduğundan dolayı silme işlemi gerçekleştirilemez.',
+            'message' => 'Ürün içerisinde stok hareket kaydı bulunurken  silme işlemi gerçekleştirilemez.',
             'alert-type' => 'warning'
         ];
         return redirect()->back()->with($notification);
@@ -410,30 +410,69 @@ public function StokActions($tenant_id, $stock_id)
         ->where('firma_id', $tenant_id)
         ->findOrFail($stock_id);
 
-    // Stok hareketlerini join ile getir
-    $stokHareketleri = StockAction::with(['musteri'])
-        ->select('stock_actions.*', 'stock_suppliers.tedarikci', 'tb_user.name')
-        ->leftJoin('stock_suppliers', 'stock_suppliers.id', '=', 'stock_actions.tedarikci')
-        ->leftJoin('tb_user', 'tb_user.user_id', '=', 'stock_actions.pid')
-        ->where('stock_actions.stokId', $stock_id)
-        ->orderBy('stock_actions.id', 'desc')
-        ->get();
+     $firma = Tenant::findOrFail($tenant_id);
 
-    return view('frontend.secure.stocks.action_stock', compact('stock', 'stokHareketleri'));
-}
+    // Stok hareketlerini join ile getir
+   $stokHareketleri = StockAction::with(['musteri'])
+            ->select(
+                'stock_actions.*',
+                'stock_suppliers.tedarikci',
+                'user_recipient.name as recipient_name', // islem=3 (Personel'e Gönder) için alıcı personel adı
+                'user_performer.name as performer_name'  // islem=2 (Serviste Kullanım) için işlemi yapan personel adı
+            )
+            // Tedarikçi tablosu ile birleştirme
+            ->leftJoin('stock_suppliers', 'stock_suppliers.id', '=', 'stock_actions.tedarikci')
+            // 'pid' sütunu üzerinden kullanıcı tablosu ile birleştirme (alıcı personel için)
+            ->leftJoin('tb_user as user_recipient', 'user_recipient.user_id', '=', 'stock_actions.pid')
+            // 'kid' sütunu üzerinden kullanıcı tablosu ile birleştirme (işlemi yapan personel için)
+            ->leftJoin('tb_user as user_performer', 'user_performer.user_id', '=', 'stock_actions.kid')
+            ->where('stock_actions.stokId', $stock_id)
+            ->orderBy('stock_actions.id', 'desc')
+            ->get();
+
+        return view('frontend.secure.stocks.action_stock', compact('stock', 'stokHareketleri','firma'));
+    }
 
 public function StoreStockAction(Request $request, $tenant_id)
 {
     $firma = Tenant::findOrFail($tenant_id);
 
-    $validated = $request->validate([
+    // Temel doğrulama kuralları
+    $rules = [
         'stok_id'    => 'required|integer',
         'islem'      => 'required|in:1,2,3',
         'adet'       => 'required|integer|min:1',
         'fiyat'      => $request->islem == 1 ? 'required' : 'nullable',
         'fiyatBirim' => 'nullable|numeric',
         'tedarikci'  => 'nullable|string|max:255',
-    ]);
+    ];
+
+    // Custom hata mesajları
+    $messages = [
+        'servisid.required' => 'Serviste kullanım işlemi için servis ID alanı zorunludur.',
+        'personel.required' => 'Personele gönderme işlemi için personel alanı zorunludur.',
+        'servisid.integer'  => 'Servis ID bir sayı olmalıdır.',
+        'personel.integer'  => 'Personel ID bir sayı olmalıdır.',
+    ];
+
+    // Doğrulayıcıyı oluştur
+    $validator = Validator::make($request->all(), $rules, $messages);
+
+    // islem 2 ise servisid zorunlu
+    $validator->sometimes('servisid', 'required|integer', function ($input) {
+        return $input->islem == 2;
+    });
+
+    // islem 2 için personel alanı zorunlu (stok düşürülecek personel)
+    $validator->sometimes('personel', 'required|integer', function ($input) {
+        return $input->islem == 2 || $input->islem == 3;
+    });
+
+    if ($validator->fails()) {
+        return redirect()->back()
+            ->withErrors($validator)
+            ->withInput();
+    }
 
     $personel_id = Auth::user()->user_id;
     $stokId = $request->stok_id;
@@ -441,59 +480,82 @@ public function StoreStockAction(Request $request, $tenant_id)
     // Fiyatı temizle (nokta ve virgül fix)
     $fiyat = null;
     if ($request->islem == 1 && $request->filled('fiyat')) {
-        $fiyat = floatval(str_replace(['.', ','], ['', '.'], $request->fiyat)); // 1.200,50 → 1200.50
+        $fiyat = floatval(str_replace(['.', ','], ['', '.'], $request->fiyat));
     }
 
-     // Serviste kullanım için yeterli stok var mı?
+    // --- Stok Kontrolleri ---
+
     if ($request->islem == 2) {
-        $mevcutStok = \App\Models\StockAction::where('stokId', $stokId)
-            ->where('firma_id', $firma->id)
-            ->selectRaw("SUM(CASE WHEN islem = 1 THEN adet ELSE 0 END) as giren, SUM(CASE WHEN islem = 2 THEN adet ELSE 0 END) as cikan")
+        // Serviste kullanım: Personel stoğundan kontrol et
+        $personelStok = PersonelStock::where('firma_id', $firma->id)
+            ->where('pid', $request->personel) // stok düşülecek personel
+            ->where('stokid', $stokId)
             ->first();
 
-        $kalanStok = ($mevcutStok->giren ?? 0) - ($mevcutStok->cikan ?? 0);
+        $kalanStok = $personelStok ? $personelStok->adet : 0;
 
         if ($request->adet > $kalanStok) {
             return redirect()->back()->with([
-                'message'    => "Yetersiz stok! Mevcut: {$kalanStok} adet.",
+                'message' => "Yetersiz personel stoğu! Mevcut: {$kalanStok} adet.",
                 'alert-type' => 'error',
             ]);
         }
     }
-    
-    // Yeterli stok var mı kontrolü (personele gönder)
+
     if ($request->islem == 3) {
-        $mevcutStok = \App\Models\StockAction::where('stokId', $stokId)
+        // Personele gönderme: Genel stoktan kontrol et
+        $mevcutStok = StockAction::where('stokId', $stokId)
             ->where('firma_id', $firma->id)
-            ->selectRaw("SUM(CASE WHEN islem = 1 THEN adet ELSE 0 END) as giren, SUM(CASE WHEN islem = 3 THEN adet ELSE 0 END) as cikan")
+            ->selectRaw("
+                SUM(CASE WHEN islem = 1 THEN adet ELSE 0 END) as giren,
+                SUM(CASE WHEN islem = 2 THEN adet ELSE 0 END) as serviste_kullanim,
+                SUM(CASE WHEN islem = 3 THEN adet ELSE 0 END) as personele_giden
+            ")
             ->first();
 
-        $kalanStok = ($mevcutStok->giren ?? 0) - ($mevcutStok->cikan ?? 0);
+        $kalanStok = ($mevcutStok->giren ?? 0) - ($mevcutStok->serviste_kullanim ?? 0) - ($mevcutStok->personele_giden ?? 0);
 
         if ($request->adet > $kalanStok) {
             return redirect()->back()->with([
-                'message'    => "Yetersiz stok! Mevcut: {$kalanStok} adet.",
+                'message' => "Yetersiz genel stok! Mevcut: {$kalanStok} adet.",
                 'alert-type' => 'error',
             ]);
         }
     }
 
+    // --- Stok Hareketi Kaydı ---
 
-    // Stok hareketi kaydı
     $stockAction = new StockAction();
     $stockAction->firma_id   = $firma->id;
-    $stockAction->pid        = $personel_id;
     $stockAction->stokId     = $stokId;
-    $stockAction->servisid = $request->servisid;
     $stockAction->islem      = $request->islem;
     $stockAction->adet       = $request->adet;
     $stockAction->fiyat      = $request->islem == 1 ? $fiyat : null;
     $stockAction->fiyatBirim = $request->islem == 1 ? $request->fiyatBirim : null;
     $stockAction->tedarikci  = $request->tedarikci;
+
+    if ($request->islem == 1) {
+        // Alış işlemi
+        $stockAction->pid = $personel_id; // işlemi yapan kişi
+        $stockAction->kid = $personel_id; // stoğa ekleyen personel
+        $stockAction->servisid = null;
+    } elseif ($request->islem == 2) {
+        // Serviste kullanım - personel stoğundan düşme
+        $stockAction->pid = $personel_id; // işlemi yapan kişi
+        $stockAction->kid = $request->personel; // stoğu düşülecek personel
+        $stockAction->servisid = $request->servisid; // servis id zorunlu
+    } elseif ($request->islem == 3) {
+        // Personele gönderme - genel stoktan düşme, personel stokuna ekleme
+        $stockAction->pid = $request->personel; // stoğu alan personel
+        $stockAction->kid = $personel_id;       // işlemi yapan kişi
+        $stockAction->servisid = null;
+    }
+
     $stockAction->save();
 
-    // Alış işlemi ise stok fiyatını güncelle
+    // --- Stok Güncellemeleri ---
     if ($request->islem == 1) {
+        // Alış işlemi: Genel stok fiyatını güncelle
         $stock = \App\Models\Stock::find($stokId);
         if ($stock) {
             $stock->fiyat += $fiyat;
@@ -501,68 +563,172 @@ public function StoreStockAction(Request $request, $tenant_id)
         }
     }
 
-    // Personel'e gönderme işlemi ise
-    if ($request->islem == 3) {
-        $personelStok = \App\Models\PersonelStock::create([
-            'stokid' => $stokId,
-            'kid'    => $firma->id,
-            'pid'    => $personel_id,
-            'adet'   => $request->adet,
-        ]);
-        $stockAction->perStokId = $personelStok->id;
-        $stockAction->personel  = $personel_id;
-        $stockAction->save();
+    if ($request->islem == 2) {
+        // Serviste kullanım: Personel stoğundan düş
+        $personelStok = PersonelStock::where('firma_id', $firma->id)
+            ->where('pid', $request->personel)
+            ->where('stokid', $stokId)
+            ->first();
+
+        if ($personelStok) {
+            $personelStok->adet -= $request->adet;
+            if ($personelStok->adet < 0) {
+                $personelStok->adet = 0; // Negatif stok olmasın
+            }
+            $personelStok->save();
+        }
     }
 
+    if ($request->islem == 3) {
+        // Personele gönderme: Personel stokuna ekle/güncelle
+        $personelStok = PersonelStock::where('firma_id', $firma->id)
+            ->where('pid', $request->personel)
+            ->where('stokid', $stokId)
+            ->first();
+
+        if ($personelStok) {
+            $personelStok->adet += $request->adet;
+            $personelStok->save();
+            $actionMessage = 'Stok başarıyla personele eklendi (mevcut stok güncellendi).';
+        } else {
+            $personelStok = PersonelStock::create([
+                'stokid'   => $stokId,
+                'kid'      => $firma->id,
+                'firma_id' => $firma->id,
+                'pid'      => $request->personel,
+                'adet'     => $request->adet,
+            ]);
+            $actionMessage = 'Stok başarıyla personele gönderildi (yeni kayıt oluşturuldu).';
+        }
+
+        // StockAction ile personel stok kaydını ilişkilendir
+        $stockAction->perStokId = $personelStok->id;
+        $stockAction->save();
+
+        return redirect()->back()->with([
+            'message' => $actionMessage,
+            'alert-type' => 'success',
+        ]);
+    }
+
+    // Eğer işlem 2 veya 1 ise başarılı mesajı döndür
     return redirect()->back()->with([
-        'message'    => 'Stok hareketi başarıyla eklendi.',
+        'message' => 'Stok hareketi başarıyla eklendi.',
         'alert-type' => 'success',
     ]);
 }
 
 
-public function DeleteStockAction($tenant_id, $id)
+public function DeleteStockAction(Request $request, $tenant_id, $id)
 {
     $firma = Tenant::findOrFail($tenant_id);
     $stockAction = StockAction::where('firma_id', $firma->id)->where('id', $id)->first();
 
     if (!$stockAction) {
-        $notification = [
-            'message' => 'Silmek istediğiniz stok hareketi bulunamadı.',
-            'alert-type' => 'danger'
-        ];
-        return redirect()->back()->with($notification);
-    }
-    // Stok hareketleri var mı kontrol et
-    $stokHareketSayisi = StockAction::where('stokId', $id)->count();
-
-    if ($stokHareketSayisi > 0) {
-        $notification = [
-            'message' => 'Ürün içerisinde stok hareket kaydı bulunduğundan dolayı silme işlemi gerçekleştirilemez.',
-            'alert-type' => 'warning'
-        ];
-        return redirect()->back()->with($notification);
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Silmek istediğiniz stok hareketi bulunamadı.'
+        ]);
     }
 
+    // İşlem 2 ve 4 serviste kullanım kontrolü
+    if (in_array($stockAction->islem,[2,4])) {
+         return response()->json([
+            'status' => 'warning',
+            'message' => 'Serviste kullanılmış bir parçayı silemezsiniz. Silmek için servis içerisinden işlem yapmanız gerekmektedir.'
+        ]);
+    }
+    // İşlem 3 (Personel'e Gönder) kontrolü - personel bu stoku serviste kullanmış mı?
+    if ($stockAction->islem == 3) {
+        $personelStokKullanimi = StockAction::where('stokId', $stockAction->stokId)
+            ->where('firma_id', $firma->id)
+            ->where('kid', $stockAction->pid) // stoğu alan personel
+            ->where('islem', 2) // serviste kullanım
+            ->where('created_at', '>', $stockAction->created_at) // bu gönderimden sonra
+            ->exists();
 
-    try {
-        if ($stockAction->islem == 3 && $stockAction->perStokId) {
-            \App\Models\PersonelStock::where('id', $stockAction->perStokId)->delete();
+        if ($personelStokKullanimi) {
+            return response()->json([
+                'status' => 'warning',
+                'message' => 'Stok personel tarafından serviste kullanıldığı için silinemez.'
+            ]);
+        }
+    }
+    
+    if ($stockAction->islem == 1) {
+        // Bu alış işleminden sonra çıkış yapılmış mı?
+        $girisTarihi = $stockAction->created_at;
+
+        $cikisVarMi = StockAction::where('stokId', $stockAction->stokId)
+            ->where('firma_id', $firma->id)
+            ->whereIn('islem', [2, 3]) // çıkış işlemleri
+            ->where('created_at', '>', $girisTarihi) // bu alıştan sonra yapılmış mı?
+            ->exists();
+
+        if ($cikisVarMi) {
+            return response()->json([
+                'status' => 'warning',
+                'message' => 'Alış işleminden sonra stok çıkışı yapıldığı için silinemez.'
+            ]);
+        }
+    }
+
+
+   try {
+     // İşlem 3 (Personele gönderme) ise personel stoğundan düş
+        if ($stockAction->islem == 3) {
+            $personelStok = PersonelStock::where('firma_id', $firma->id)
+                ->where('pid', $stockAction->pid) // stoğu alan personel
+                ->where('stokid', $stockAction->stokId)
+                ->first();
+
+            if ($personelStok) {
+                $personelStok->adet -= $stockAction->adet; // Sadece bu hareketin miktarını düş
+                
+                // Eğer stok 0 veya negatif olursa kaydı sil
+                if ($personelStok->adet <= 0) {
+                    $personelStok->delete();
+                } else {
+                    $personelStok->save();
+                }
+            }
+        }
+
+        // İşlem 2 (Serviste kullanım) ise personel stoğuna geri ekle
+        if ($stockAction->islem == 2) {
+            $personelStok = PersonelStock::where('firma_id', $firma->id)
+                ->where('pid', $stockAction->kid) // stoğu kullanılan personel
+                ->where('stokid', $stockAction->stokId)
+                ->first();
+
+            if ($personelStok) {
+                $personelStok->adet += $stockAction->adet; // Stoğu geri ekle
+                $personelStok->save();
+            } else {
+                // Eğer personel stok kaydı yoksa yeni oluştur
+                PersonelStock::create([
+                    'stokid'   => $stockAction->stokId,
+                    'kid'      => $firma->id,
+                    'firma_id' => $firma->id,
+                    'pid'      => $stockAction->kid,
+                    'adet'     => $stockAction->adet,
+                ]);
+            }
         }
 
         $stockAction->delete();
+    $stockAction->delete();
 
-        $notification = [
-            'message' => 'Stok hareketi başarıyla silindi.',
-            'alert-type' => 'success'
-        ];
-    } catch (\Exception $e) {
-        $notification = [
-            'message' => 'Silme işlemi sırasında bir hata oluştu.',
-            'alert-type' => 'danger'
-        ];
-    }
-
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Stok hareketi başarıyla silindi.'
+    ]);
+} catch (\Exception $e) {
+    return response()->json([
+        'status' => 'error',
+        'message' => 'Hata oluştu: ' . $e->getMessage(),
+    ]);
+}
     return redirect()->back()->with($notification);
 }
 
@@ -570,16 +736,31 @@ public function DeleteStockAction($tenant_id, $id)
 //////Personel Stok////////
 public function GetPersonelStocks($tenant_id, $stok_id)
 {
-    $firma = Tenant::findOrFail($tenant_id);
+     $firma = Tenant::findOrFail($tenant_id);
+     $hareketler = StockAction::with('aliciPersonel')
+    ->where('firma_id', $firma->id)
+    ->where('stokId', $stok_id)
+    ->where('islem', 3) // sadece personel'e gönderilenler
+    ->get()
+    ->groupBy(function ($hareket) {
+        return optional($hareket->aliciPersonel)->user_id;
+    })
+    ->map(function ($grouped) use ($stok_id) {
+        $hareket = $grouped->first(); // aynı personelin ilk hareketini al
+        $aliciId = $hareket->aliciPersonel->user_id ?? null;
 
-    $hareketler = StockAction::where('firma_id', $firma->id)
-        ->where('stokId', $stok_id)
-        ->where('islem', 3) // sadece personel'e gönderilenler
-        ->orderByDesc('created_at')
-        ->get();
+        $hareket->guncel_adet = $aliciId
+            ? PersonelStock::where('stokid', $stok_id)
+                ->where('pid', $aliciId)
+                ->sum('adet')
+            : 0;
 
+        return $hareket;
+    })
+    ->values(); // map sonrası index'leri düzeltir
     return view('frontend.secure.stocks.personel_stocks', compact('hareketler'));
 }
+
 
 //////Stok Fotoğrafları////////
 public function getPhotos($tenant_id, $stock_id)
@@ -673,19 +854,23 @@ public function deletePhoto(Request $request, $tenant_id)
 ///////////Barkod PDF Oluşturma///////////////////
 public function barkodPdf($tenant_id, $id) {
     $stock = Stock::where('firma_id', $tenant_id)->findOrFail($id);
-    
+
     $pdf = Pdf::loadView('frontend.secure.stocks.stocks_barkod', compact('stock'))
-        ->setPaper([0, 0, 141.7, 70.85], 'portrait')
+        // 50mm x 25mm boyutları piksel olarak:
+        ->setPaper('50mm', '25mm', 'portrait') // setPaper doğrudan mm değerlerini alabilir
         ->setOptions([
-            'isHtml5ParserEnabled' => true, 
+            'isHtml5ParserEnabled' => true,
             'isRemoteEnabled' => true,
             'dpi' => 300,
-            'defaultFont' => 'Arial'
+            'defaultFont' => 'Arial',
+            'margin-top' => 0,
+            'margin-right' => 0,
+            'margin-bottom' => 0,
+            'margin-left' => 0,
         ]);
-    
+
     return $pdf->stream("barkod-{$stock->urunKodu}.pdf");
 }
-
 //Ürün Adı Kontolü
 public function checkProductName(Request $request, $tenant_id)
 {
@@ -765,24 +950,20 @@ public function consignmentDeviceData(Request $request, $tenant_id)
     $toplamFiyat = 0;
 
     foreach ($stocksForTotal as $stock) {
-        $girisler = \App\Models\StockAction::where('stokId', $stock->id)
+    $girisAdet  = \App\Models\StockAction::where('stokId', $stock->id)
         ->whereIn('islem', [1, 4])
-        ->get();
+        ->sum('adet');
 
-        $toplamGirisAdet=0;
-        $toplamGirisFiyat = 0;
+    $cikisAdet = \App\Models\StockAction::where('stokId', $stock->id)
+        ->whereIn('islem', [2])
+        ->sum('adet');
 
-        foreach ($girisler as $giris) {
-            $toplamGirisAdet += $giris->adet;
-            $toplamGirisFiyat += $giris->fiyat;
-        }
-       
-        $kalanAdet = $toplamGirisAdet;
-        $kalanFiyat = $toplamGirisFiyat;
+    $kalanStok = $girisAdet - $cikisAdet;
 
-        $toplamAdet += max($kalanAdet, 0);
-        $toplamFiyat += max($kalanFiyat, 0);
-}
+    $toplamAdet += max($kalanStok, 0); // negatifse 0 yap
+    $toplamFiyat += max($stock->fiyat, 0);
+    }
+
 
     return DataTables::of($query)
         ->addIndexColumn()
@@ -793,19 +974,20 @@ public function consignmentDeviceData(Request $request, $tenant_id)
             return '<a href="javascript:void(0);" class="t-link editConsignment" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editConsignmentModal">' . e($row->urunAdi) . '</a>';
         })
         ->addColumn('adet', function($row) {
-            $toplamGiris = \App\Models\StockAction::where('stokId', $row->id)
+            $girisAdet = \App\Models\StockAction::where('stokId', $row->id)
                 ->whereIn('islem', [1, 4])->sum('adet');
-            return '<a href="javascript:void(0);" class="t-link editConsignment" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editConsignmentModal">' . $toplamGiris . '</a>';
+            $cikisAdet = \App\Models\StockAction::where('stokId', $row->id)
+                ->whereIn('islem', [2])->sum('adet');
+            $kalan = $girisAdet - $cikisAdet;
+            return '<a href="javascript:void(0);" class="t-link editConsignment" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editConsignmentModal">' . max($kalan, 0) . '</a>';
         })
         ->addColumn('toplamTutar', function($row) {
             $girisler = \App\Models\StockAction::where('stokId', $row->id)
                 ->whereIn('islem', [1, 4])->get();
 
-            $girisTutar = $girisler->sum(function($item) {
-                return $item->fiyat;
-            });
+            $tutar = $row->fiyat ?? 0;
 
-        return '<a href="javascript:void(0);" class="t-link editConsignment" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editConsignmentModal">' . number_format($girisTutar, 2, ',', '.') . ' ₺</a>';
+        return '<a href="javascript:void(0);" class="t-link editConsignment" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editConsignmentModal">' . number_format($tutar, 2, ',', '.') . ' ₺</a>';
         })
         ->addColumn('raf_adi', function($row) {
             $raf = $row->raf ? e($row->raf->raf_adi) : '-';
@@ -1036,37 +1218,79 @@ public function UpdateConsignmentDevice(Request $request, $tenant_id, $id)
 ///////////Konsinye Cihaz Stok Haraketleri/////////////////
 public function ConsignmentStockActions($tenant_id, $stock_id)
 {
+    $firma = Tenant::findOrFail($tenant_id);
     $stock = Stock::with(['marka', 'cihaz', 'raf'])
         ->where('firma_id', $tenant_id)
         ->where('urunKategori', 3) // konsinye cihaz
         ->findOrFail($stock_id);
 
+    // Stok hareketlerini join ile getir
     $stokHareketleri = StockAction::with(['musteri'])
-        ->select('stock_actions.*', 'stock_suppliers.tedarikci', 'tb_user.name')
-        ->leftJoin('stock_suppliers', 'stock_suppliers.id', '=', 'stock_actions.tedarikci')
-        ->leftJoin('tb_user', 'tb_user.user_id', '=', 'stock_actions.pid')
-        ->where('stock_actions.stokId', $stock_id)
-        ->orderBy('stock_actions.id', 'desc')
-        ->get();
-    return view('frontend.secure.stocks.consignment_stock_actions', compact('stock', 'stokHareketleri'));
+            ->select(
+                'stock_actions.*',
+                'stock_suppliers.tedarikci',
+                'user_recipient.name as recipient_name', // islem=3 (Personel'e Gönder) için alıcı personel adı
+                'user_performer.name as performer_name'  // islem=2 (Serviste Kullanım) için işlemi yapan personel adı
+            )
+            // Tedarikçi tablosu ile birleştirme
+            ->leftJoin('stock_suppliers', 'stock_suppliers.id', '=', 'stock_actions.tedarikci')
+            // 'pid' sütunu üzerinden kullanıcı tablosu ile birleştirme (alıcı personel için)
+            ->leftJoin('tb_user as user_recipient', 'user_recipient.user_id', '=', 'stock_actions.pid')
+            // 'kid' sütunu üzerinden kullanıcı tablosu ile birleştirme (işlemi yapan personel için)
+            ->leftJoin('tb_user as user_performer', 'user_performer.user_id', '=', 'stock_actions.kid')
+            ->where('stock_actions.stokId', $stock_id)
+            ->orderBy('stock_actions.id', 'desc')
+            ->get();
+    return view('frontend.secure.stocks.consignment_stock_actions', compact('stock', 'stokHareketleri','firma'));
 }
 
 public function StoreConsignmentStockAction(Request $request, $tenant_id)
 {
     $firma = Tenant::findOrFail($tenant_id);
 
-    $validated = $request->validate([
+    $rules = [
         'stok_id'    => 'required|integer',
-        'islem'      => 'required|in:1,4',
+        'islem'      => 'required|in:1,2,4',
         'adet'       => 'required|integer|min:1',
         'fiyat'      => 'nullable|numeric',
         'fiyatBirim' => 'nullable|numeric',
         'tedarikci'  => 'nullable|string|max:255',
+    ];
 
-    ]);
+  
+        $messages = [
+            'servisid.required' => 'Serviste kullanım işlemi için servis ID alanı zorunludur.',
+            'servisid.integer'  => 'Servis ID bir sayı olmalıdır.',
+
+        ];
+
+        // Laravel'in Validator sınıfını kullanarak doğrulayıcıyı oluştur
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        // islem değeri 2 ise 'servisid' alanını zorunlu yap
+        $validator->sometimes('servisid', 'required|integer', function ($input) {
+            return $input->islem == 2;
+        });
+
+
+        // Doğrulama başarısız olursa yönlendir
+        if ($validator->fails()) {
+            return redirect()->back()
+                        ->withErrors($validator)
+                        ->withInput(); // Formda girilen eski değerleri korur
+        }
+        // $validated = $validator->validated(); // Eğer validated verileri bir değişkene atmak istenirse kullanilabilir
+
 
     $stokId = $request->stok_id;
     $personel_id = Auth::user()->user_id;
+
+
+    // Fiyatı temizle (nokta ve virgül fix) 
+    $fiyat = null;
+    if ($request->islem == 1 && $request->filled('fiyat')) {
+        $fiyat = floatval(str_replace(['.', ','], ['', '.'], $request->fiyat));
+    }
 
     $toplamGiris = StockAction::where('stokId', $stokId) ->whereIn('islem', [1,4])->sum('adet'); //alış ve müşteriden iade
     $toplamCikis = StockAction::where('stokId', $stokId)->where('islem', 2)->sum('adet');  //serviste kullanım
@@ -1084,59 +1308,90 @@ public function StoreConsignmentStockAction(Request $request, $tenant_id)
     $stockAction->firma_id   = $firma->id;
     $stockAction->pid        = $personel_id;
     $stockAction->stokId     = $stokId;
-    $stockAction->servisid = $request->servisid; // Müşteri ID
+    $stockAction->servisid = $request->servisid; 
     $stockAction->islem      = $request->islem;
     $stockAction->adet       = $request->adet;
-    $stockAction->fiyat      = $request->fiyat;
-    $stockAction->fiyatBirim = $request->fiyatBirim;
+    $stockAction->fiyat      = $request->islem == 1 ? $fiyat : null; // Sadece alışta fiyat kaydet
+    $stockAction->fiyatBirim = $request->islem == 1 ? $request->fiyatBirim : null;
     $stockAction->tedarikci  = $request->tedarikci;
     $stockAction->save();
 
-
-if ($request->islem == 1) {
-    $stock = \App\Models\Stock::find($stokId);
+// Alış işlemi: Stock tablosundaki fiyatı güncelle 
+    if ($request->islem == 1 && $fiyat) {
+        $stock = Stock::find($stokId); // Stock modelini kullan
+        if ($stock) {
+            $stock->fiyat += $fiyat; // Fiyatı topla
+            $stock->save();
+        }
+    }
+ // Stok adedini güncelle
+    $stock = StockAction::find($stokId);
     if ($stock) {
-        $stock->fiyat += $request->fiyat;
+        if (in_array($request->islem, [1,4])) {
+            // Alış veya müşteriden geri alma stok artırır
+            $stock->adet += $request->adet;
+        } elseif ($request->islem == 2) {
+            // Serviste kullanım stok azaltır
+            $stock->adet -= $request->adet;
+        }
         $stock->save();
     }
-}
-
-
 
     return redirect()->back()->with([
         'message' => 'Stok hareketi başarıyla kaydedildi.',
         'alert-type' => 'success',
     ]);
 }
+
 public function DeleteConsignmentStockAction($tenant_id, $id)
 {
     $firma = Tenant::findOrFail($tenant_id);
     $stockAction = StockAction::where('firma_id', $firma->id)->where('id', $id)->first();
 
     if (!$stockAction) {
-        return redirect()->back()->with([
-            'message' => 'Stok hareketi bulunamadı.',
-            'alert-type' => 'danger',
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Silmek istediğiniz stok hareketi bulunamadı.'
         ]);
     }
 
+    // Stok hareketine ait işlem türü kontrolü
+    if (in_array($stockAction->islem,[2,4])) {
+         return response()->json([
+            'status' => 'warning',
+            'message' => 'Serviste kullanılmış bir parçayı silemezsiniz. Silmek için servis içerisinden işlem yapmanız gerekmektedir.'
+        ]);
+    }
+    
+    if ($stockAction->islem == 1) {
+        // Bu alış işleminden sonra çıkış yapılmış mı?
+        $girisTarihi = $stockAction->created_at;
+
+        $cikisVarMi = StockAction::where('stokId', $stockAction->stokId)
+            ->where('firma_id', $firma->id)
+            ->whereIn('islem', [2, 3]) // çıkış işlemleri
+            ->where('created_at', '>', $girisTarihi) // bu alıştan sonra yapılmış mı?
+            ->exists();
+            if ($cikisVarMi) {
+                        return response()->json([
+                            'status' => 'warning',
+                            'message' => 'Alış işleminden sonra stok çıkışı yapıldığı için silinemez.'
+                        ]);
+                    }
+    }
     try {
-        // if ($stockAction->islem == 2 && $stockAction->servisid) {
-        //     \App\Models\ServisStock::where('id', $stockAction->servisid)->delete();
-        // }
-
         $stockAction->delete();
-
-        return redirect()->back()->with([
-            'message' => 'Stok hareketi silindi.',
-            'alert-type' => 'success',
-        ]);
+        return response()->json([
+        'status' => 'success',
+        'message' => 'Stok hareketi başarıyla silindi.'
+    ]);
     } catch (\Exception $e) {
-        return redirect()->back()->with([
-            'message' => 'Silme sırasında hata oluştu.',
-            'alert-type' => 'danger',
-        ]);
+        return response()->json([
+        'status' => 'error',
+        'message' => 'Hata oluştu: ' . $e->getMessage(),
+    ]);
     }
+    
 }
 
 
