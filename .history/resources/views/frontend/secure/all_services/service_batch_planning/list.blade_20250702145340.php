@@ -1,0 +1,181 @@
+        <div class="card-header cardBaslik" style="padding: 5px 10px;font-size: 14px">
+    @if(!empty($persID))
+        @php $selectedPersonnel = $personnel->find($persID) @endphp
+        {{ $selectedPersonnel ? $selectedPersonnel->name . ' Servisleri' : 'Personel Servisleri' }}
+    @else
+        {{ request('planTarih') }} - Servisler
+    @endif
+    ({{ $services->count() }})
+</div>
+        <div class="card-body" style="padding: 0!important;height: 462px;overflow: auto;">
+            <table class="table table-hover table-striped" id="serviceTable" width="100%" cellspacing="0">
+                <thead class="title">
+                    <tr>
+                        <th>Seç</th>
+                        <th>ID</th>
+                        <th>Müşteri Adı</th>
+                        <th>İlçe</th>
+                        <th>Cihaz</th>
+                        <th>Arıza</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($services as $service)
+                    <tr>
+                        <td><input type="checkbox" class="selectService" value="{{ $service->id }}"></td>
+                        <td >{{ $service->id }}</td>
+                        <td style="vertical-align: middle;font-size: 11px; padding: 3px 10px;cursor:pointer;" class="personelServisDuzenle" data-id="{{$service->id}}" data-name=""><strong>{{ $service->musteri->adSoyad ?? '-' }}</strong></td>
+                        <td style="vertical-align: middle;font-size: 11px; padding: 3px 10px;cursor:pointer;" class="personelServisDuzenle" data-id="{{$service->id}}" data-name=""><strong>{{ $service->musteri->ilce }}</strong></td>
+                        <td style="vertical-align: middle;font-size: 11px; padding: 3px 10px;cursor:pointer;" class="personelServisDuzenle" data-id="{{$service->id}}" data-name=""><strong>{{ $service->markaCihaz->marka ?? '-'}}, {{$service->turCihaz->cihaz ?? '-'}}</strong></td>
+                        <td style="vertical-align: middle;font-size: 11px; padding: 3px 10px;cursor:pointer;" class="personelServisDuzenle" data-id="{{$service->id}}" data-name=""><strong>{{ $service->cihazAriza ?? '-' }}</strong></td>
+                    </tr>
+                    @empty
+                    <tr><td colspan="6" class="text-center">Kayıt bulunamadı</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="card-footer" style="padding: 5px 10px;font-size: 14px">
+          <div class="form-group row">
+              <label for="personel" class="col-md-2 col-form-label">Personel</label>
+              <div class="col-md-4">
+                <select id="personel" class="form-control personelList">
+                  @foreach ($personeller as $pers)
+                    @php
+                        $count = $personelAtamaSayilari[$pers->user_id] ?? 0;
+                    @endphp
+                    <option value="{{ $pers->user_id }}">
+                        {{ $pers->name }} ({{ $count }})
+                    </option>
+                  @endforeach
+                </select>
+              </div>
+              <div class="col-md-4">
+                <button type="button" class="btn btn-primary btn-block btn-sm personelServisListele">Servisleri Göster</button>
+              </div>
+          </div>
+          <button id="assignBtn" class="btn btn-success btn-sm mt-2">Atama Yap</button>
+
+        </div>
+
+
+<div id="servisPersonelAtamaModal" class="modal fade" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" >Servis Planlama</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Yükleniyor...
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade"  data-bs-backdrop="static" tabindex='-1' id="personelServisDuzenleModal">
+    <div class="modal-dialog modal-lg" style="width: 980px;">
+        <div class="modal-content">
+            <div class="modal-header">
+        <h6 class="modal-title" id="editCustomerLabel">Servis Bilgileri Düzenle</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Yükleniyor...
+      </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(function(){
+    // Personel servisleri listeleme
+    $('.personelServisListele').on('click', function () {
+        const persID = $('.personelList').val();
+        const firma_id = {{ $firma->id }};
+
+        if(!persID) {
+            alert('Lütfen bir personel seçin!');
+            return;
+        }
+
+        $('.servisListe').html('<div class="text-center p-3"><i class="fa fa-spinner fa-spin"></i> Yükleniyor...</div>');
+
+        $.ajax({
+            url: `/${firma_id}/servis-liste-getir/`,
+            method: 'GET',
+            data: { persID },
+            success: function(res) {
+                $('.servisListe').html(res);
+            },
+            error: function() {
+                $('.servisListe').html('<div class="alert alert-danger">Liste alınamadı. Lütfen tekrar deneyin.</div>');
+            }
+        });
+    });
+});
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Bu kısım, sayfa yüklendiğinde çalışır ve 'assignBtn' tıklamasını dinler.
+        $('#assignBtn').on('click', function() {
+            var selectedServiceIds = []; // Seçili servislerin ID'lerini tutacak dizi
+
+            // Tablodaki her bir servis için checkbox'ları kontrol et
+            // Bu selector'ı, servisleri seçmek için kullandığınız checkbox'lara göre ayarlayın.
+            // Örneğin, checkbox'larınızın class'ı 'service-checkbox' ve value'si servis ID'si ise:
+            $('.selectService:checked').each(function() {
+                selectedServiceIds.push($(this).val());
+            });
+
+            // Eğer hiç servis seçilmediyse kullanıcıyı uyar
+            if (selectedServiceIds.length === 0) {
+                alert('Lütfen atama yapmak için en az bir servis seçin.');
+                return; // Fonksiyonu burada sonlandır
+            }
+
+            var servisidler = selectedServiceIds.join(', '); // ID'leri virgülle ayrılmış string yap
+
+            // tenant_id değişkenini HTML'den alıyoruz (Blade tarafından basılmış olmalı)
+            // Örnek: const firma_id = {{ $firma->id }};
+            // VEYA URL'den alabilirsiniz: const firma_id = window.location.pathname.split('/')[1];
+            // Şu anki senaryoda, sayfa yüklenirken Blade tarafından $firma->id basılıyor olmalı.
+            const tenant_id = {{ $firma->id }}; // Bu satırın Blade dosyanızda olduğundan emin olun!
+
+
+            // PHP kodunuzdaki 'gelenDurum' ve 'gidenDurum' değerlerini buradan almanız gerekiyor.
+            // Bu değerler genelde bir dropdown'dan veya sabit bir değerden gelir.
+            // ÖRnek olarak sabit değerler verelim, siz kendi mantığınıza göre düzenleyin.
+            // Eğer "Atama Yap" her zaman belirli bir durumdan (örn: 235) belirli bir duruma (örn: 264) geçiş yapıyorsa:
+            var gelenDurum = '235'; // Mevcut servis durumu (seçili servislerin geldikleri durum)
+            var gidenDurum = '264'; // Atama yapılacak yeni durum/aşama ID'si (Örn: "Planlandı" aşaması ID'si)
+
+            // Atama formunu getirmek için AJAX isteği
+            // Bu isteğin başarılı olması durumunda modal açılacak ve formu gösterecek.
+            $.ajax({
+                url: `/${tenant_id}/servis-atama-formu`, // Laravel rotası
+                method: 'GET',
+                data: {
+                    servisidler: servisidler,
+                    gelenDurum: gelenDurum,
+                    gidenDurum: gidenDurum
+                },
+                beforeSend: function() {
+                    // Modal içeriği yüklenirken kullanıcıya bilgi ver
+                    $('#servisPersonelAtamaModal .modal-body').html('<div class="text-center p-3"><i class="fa fa-spinner fa-spin"></i> Atama formu yükleniyor...</div>');
+                    $('#servisPersonelAtamaModal').modal('show'); // Modalı hemen aç
+                },
+                success: function(response) {
+                    $('#servisPersonelAtamaModal .modal-body').html(response); // Modal içeriğini form ile doldur
+                    // Datepicker gibi JS eklentilerinin dinamik olarak yüklenen içerik için yeniden başlatılması gerekebilir.
+                    // Bu, Blade içinde `<script>` etiketleri arasına koyduğunuz datepicker kodunuzla otomatik halledilir.
+                },
+                error: function(xhr, status, error) {
+                    console.error("Atama formu yükleme hatası:", status, error, xhr.responseText);
+                    $('#servisPersonelAtamaModal .modal-body').html('<div class="alert alert-danger">Atama formu yüklenirken hata oluştu.</div>');
+                }
+            });
+        });
+    });
+</script>
