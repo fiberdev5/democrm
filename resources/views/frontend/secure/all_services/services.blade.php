@@ -5,6 +5,7 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
 <div class="page-content" id="customerTable">
   <div class="container-fluid">
@@ -15,19 +16,31 @@
             Servisler
           </div>
           <div class="card-body">
-            <table id="datatableService" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+            @if(auth()->user()->can('Tüm Servisleri Görebilir'))
                 <a class="btn btn-success btn-sm addService" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i class="fas fa-plus"></i><span>Servis Ekle</span></a> 
-                <a href="{{route('incoming.calls', $firma->id)}}" type="button" class="btn btn-success btn-sm gelenCagriButon"><div class="text">Gelen Çağrılar <i data-toggle="tooltip" title="" class="fas fa-info-circle" data-bs-original-title="Toplu servis yönlendirmeleri yapmak için kullanılır."></i></div></a>
-                <button type="button" class="btn btn-danger btn-sm servisPlanlaBtn"><div class="text">Servis Planlama <i data-toggle="tooltip" title="" class="fas fa-info-circle" data-bs-original-title="Toplu servis yönlendirmeleri yapmak için kullanılır."></i></div></button>
+                <a  type="button" class="btn btn-success btn-sm gelenCagriButon" data-bs-toggle="modal" data-bs-target="#gelenCagriModal"><div class="text">Gelen Çağrılar <i data-toggle="tooltip" title="Gereksiz çağrıları kaydetmek için kullanılır." class="fas fa-info-circle" data-bs-original-title=""></i></div></a>
+                <button type="button" class="btn btn-danger btn-sm servisPlanlaBtn"><div class="text">Servis Planlama <i data-toggle="tooltip" title="Toplu servis yönlendirmeleri yapmak için kullanılır." class="fas fa-info-circle" data-bs-original-title=""></i></div></button>
                 
                 <button type="button" class="btn btn-primary btn-sm servisRaporlaModalBtn" data-toggle="modal" data-target="#servisRaporlaModal">Raporlar</button>
+
                 <button type="button" class="btn btn-primary btn-sm anketModalBtn" data-toggle="modal" data-target="#anketModal">Anketler</button>
+
+               @endif
+              @if(auth()->user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
+                  <button type="button" class="btn btn-primary btn-sm teknisyenDepoGoster" 
+                          data-toggle="modal" data-target="#teknisyenDepoModal">
+                      Depo
+                  </button>
+              @endif
+
               <div class="searchWrap float-end">
 
               <div class="btn-group mb-2 ">
+                @if(auth()->user()->can('Tüm Servisleri Görebilir'))
                 <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Filtrele <i class="mdi mdi-chevron-down"></i>
                 </button>
+                @endif
                 <div class="dropdown-menu servisDrop">
                   <div class="item">
                     <div class="row">
@@ -128,6 +141,11 @@
                 </div>
               </div><!-- /btn-group -->
             </div>
+
+            <!-- Servisler Tablosu -->
+            <div id="servicesTableSection">
+
+            <table id="datatableService" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
               <thead class="title">
                 <tr>
                   <th style="width: 10px">ID</th>
@@ -142,6 +160,27 @@
                 
               </tbody>
             </table>
+            </div>
+
+            {{-- Burası raporlar modalında gelen çağrıları filtrelerken oluşturulan gelen çağrılar tablosu --}}
+            <div id="incomingCallsSection" class="" style="display: none;">
+              <table id="incomingCallsTable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                <thead class="title">
+                  <tr>
+                    <th>ID</th>
+                    <th>Tarih</th>
+                    <th>Telefon</th>
+                    <th>Marka</th>
+                    <th>Açıklama</th>
+                    <th>Personel</th>
+                    <th>İşlemler</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>     
+            </div>
+
           </div>
         </div>
       </div> <!-- end col -->
@@ -264,7 +303,48 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<div id="teknisyenDepoModal" class="modal fade" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" >Depo Stoklarım</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding: 5px!important;">
+        Yükleniyor...
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
+<div id="gelenCagriModal" class="modal fade" data-bs-backdrop="static" tabindex='-1'>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" >Yeni Çağrı Ekle</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Yükleniyor...
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+  
+  <!-- edit modal content -->
+  <div id="editIncomingCallModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title" id="myModalLabel">Çağrı Düzenle</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Yükleniyor...
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -282,7 +362,8 @@ $(document).ready(function(){
     });
   });
   $("#addServiceModal").on("hidden.bs.modal", function() {
-      $(".modal-body").html("");
+      $('#addServiceModal .modal-body').html("");
+
     });
 });
 </script>
@@ -299,18 +380,47 @@ $(document).ready(function(){
                 window.location.reload(true);
             } else {
               $('#editServiceDescModal .modal-body').html(data);
-                $('#editServiceDescModal').modal('show');
-                
-                
+                $('#editServiceDescModal').modal('show'); 
             }
         });
     });
     $("#editServiceDescModal").on("hidden.bs.modal", function() {
-      $(".modal-body").html("");
+        $('#editServiceDescModal .modal-body').html("");
+
     });
 });
 </script>
 
+<script>
+  var getUrlParameter = function getUrlParameter(sParam) {
+      var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+      for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+      }
+    };
+
+    var mid = getUrlParameter('did');
+    var firma_id = {{$firma->id}};
+    if(mid){
+      $.ajax({
+        url: "/" + firma_id + "/servis/duzenle/" + mid
+      }).done(function(data) { 
+        if($.trim(data)==="-1"){
+          window.location.reload(true);
+        }else{
+          $('#editServiceDescModal .modal-body').html(data);
+          $('#editServiceDescModal').modal('show'); 
+        }
+      });
+    }
+</script>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -328,7 +438,8 @@ $(document).ready(function(){
     });
   });
   $("#servisRaporlaModal").on("hidden.bs.modal", function() {
-      $(".modal-body").html("");
+      $('#servisRaporlaModal .modal-body').html("");
+
     });
 });
 </script>
@@ -374,7 +485,94 @@ $(document).ready(function(){
 });
 </script>
 
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".teknisyenDepoGoster").click(function(){
+    var firma_id = {{$firma->id}};
+    var personel_id = {{auth()->user()->user_id}}
+    $.ajax({
+      url: "/"+ firma_id + "/teknisyen-depo/" + personel_id
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#teknisyenDepoModal').modal('show');
+        $('#teknisyenDepoModal .modal-body').html(data);
+      }
+    });
+  });
+});
+</script>
 
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".gelenCagriButon").click(function(){
+    var firma_id = {{$firma->id}};
+    $.ajax({
+      url: "/"+ firma_id + "/yeni-cagri-ekle/"
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#gelenCagriModal').modal('show');
+        $('#gelenCagriModal .modal-body').html(data);
+      }
+    });
+  });
+});
+</script>
+  
+<script type="text/javascript">
+  // Çağrı düzenleme modalı
+  $(document).ready(function(){
+    $('#incomingCallsSection').on('click', '.editIncomingCall', function(e){
+      var id = $(this).attr("data-bs-id");
+      var firma_id = {{$firma->id}};
+      $.ajax({
+        url: "/"+ firma_id + "/yeni-cagri-duzenle/" + id
+      }).done(function(data) {
+        if ($.trim(data) === "-1") {
+          window.location.reload(true);
+        } else {
+          $('#editIncomingCallModal').modal('show');
+          $('#editIncomingCallModal .modal-body').html(data);
+        }
+      });
+    });
+    $("#editIncomingCallModal").on("hidden.bs.modal", function() {
+        $('#editIncomingCallModal .modal-body').html("");
+
+    });
+  
+    // Çağrı silme işlemi
+    $('#incomingCallsSection').on('click', '.deleteIncomingCall', function(e){
+      e.preventDefault();
+      var id = $(this).attr("data-bs-id");
+      var row = $(this).closest('tr');
+      var firma_id = {{$firma->id}};
+      if(confirm('Bu cihazı silmek istediğinize emin misiniz?')) {
+        $.ajax({
+          url: "/"+ firma_id + "/yeni-cagri-sil/" + id,
+          type: "DELETE",
+          data: {
+            "_token": "{{ csrf_token() }}", // CSRF koruması için token ekleyin
+          },
+          success: function(response) {
+            if(response.success) {
+              row.remove(); // Satırı tablodan kaldır
+              alert('Gelen çağrı başarıyla silindi.');
+            } else {
+              alert('Gelen çağrı silinirken bir hata oluştu.');
+            }
+          },
+          error: function(xhr) {
+            alert('Gelen çağrı silinirken bir hata oluştu.');
+          }
+        });
+      }
+    });
+  });
+  </script>
 
 <script>
   $(document).ready(function () {
@@ -568,30 +766,33 @@ $(document).ready(function(){
         { data: 'action', name:'action', orderable: false, searchable: false}           
       ],
       createdRow: function (row, data) {
-        // 5. sütundaki <strong> içeriği (0‑bazlı => 4. index)
-        const asama = $('td:eq(4) strong', row).text().trim();
+          // 5. sütundaki <strong> içeriği (0‑bazlı => 4. index)
+          const asama = $('td:eq(4) strong', row).text().trim();
 
-        /** Durum → Renk eşlemesi */
-        const renkHaritasi = {
-          'Şikayetçi':   '#e96464',   // kırmızımsı
-          'Yeni Servisler': '#87ff87', // yeşil
-          'Tekrar Aranacak': '#f2ff2a',// sarı
-          'Parça Takmak İçin Teknisyen Yönlendir': '#62daff' // mavi
-        };
+          // Veritabanından gelen özel renk (örneğin '#f0f0f0')
+          const dbRenk = data.asamalar.asama_renk;
 
-        // Eşleşme varsa satıra uygula
-        if (renkHaritasi[asama]) {
-          $(row).css('background-color', renkHaritasi[asama]);
-        }
+          /** Varsayılan Durum → Renk eşlemesi */
+          const varsayilanRenkHaritasi = {
+              'Şikayetçi': '#e96464',   // kırmızımsı
+              'Yeni Servisler': '#87ff87', // yeşil
+              'Tekrar Aranacak': '#f2ff2a',// sarı
+              'Parça Takmak İçin Teknisyen Yönlendir': '#62daff' // mavi
+          };
 
-        // Uzun metin sarması gereken sütunlara sınıf ekleyelim
-        $('td', row).eq(5).addClass('tdRowWrap');
-        $('td', row).eq(6).addClass('tdRowWrap');
+          // Öncelik: veritabanındaki renk varsa onu kullan, yoksa varsayılana bak
+          const arkaplanRenk = dbRenk?.trim() || varsayilanRenkHaritasi[asama];
+
+          if (arkaplanRenk) {
+              $(row).css('background-color', arkaplanRenk);
+          }
+          
+          // Uzun metin sarması gereken sütunlara sınıf ekleyelim
+          $('td', row).eq(5).addClass('tdRowWrap');
+          $('td', row).eq(6).addClass('tdRowWrap');
       },
       drawCallback: function() {
         $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
-        
-       
       },
       order: [[0, 'desc']],
       "columnDefs": [{
@@ -765,6 +966,107 @@ $(document).ready(function(){
 
   });
 </script>
+
+<script>
+  // Raporlar modalında gelen çağrıları filtreleme butonuna bastığımızda gelecek datatable ı getiren script. Bunu çalıştırırken servisler tablosu kısmını gizleyerek gelen çağrılar datatable ını görünür yapıyoruz.
+$(document).on('submit', '#gelenCagriArama', function(e){
+    e.preventDefault();
+
+    let personel = $('select[name="cagri_pers"]').val();
+    let marka = $('select[name="cagri_marka"]').val();
+    let kaynak = $('select[name="cagri_kaynak"]').val();
+    let tarih1 = $('.cagri_tarih1').val();
+    let tarih2 = $('.cagri_tarih2').val();
+
+    // Servisler tablosunu gizle
+    $('#servicesTableSection').hide();
+
+    // Gelen çağrılar tablosunu göster
+    $('#incomingCallsSection').show();
+    
+    // DataTable varsa destroy et
+    if ($.fn.DataTable.isDataTable('#incomingCallsTable')) {
+        $('#incomingCallsTable').DataTable().destroy();
+    }
+
+    // Yeni DataTable oluştur
+    var incomingCallsTable = $('#incomingCallsTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ordering: true,
+        language: {
+            paginate: {
+          previous: "<i class='mdi mdi-chevron-left'>",
+          next: "<i class='mdi mdi-chevron-right'>"
+        }
+        },
+        ajax: {
+            url: "{{ route('gelen-cagrilar.datatable', $firma->id) }}", // Bu route'u oluşturmanız gerekecek
+            type: 'GET',
+            data: {
+                personel: personel,
+                marka: marka,
+                kaynak: kaynak,
+                tarih1: tarih1,
+                tarih2: tarih2
+            }
+        },
+        'columns': [
+            { data: 'id', name: 'id', orderable: true },
+            { data: 'created_at', name: 'created_at', orderable: true },
+            { data: 'telefon', name: 'telefon', orderable: true },
+            { data: 'marka', name: 'marka', orderable: true },
+            { data: 'aciklama', name: 'aciklama', orderable: true },            
+            { data: 'personel', name: 'personel', orderable: true },
+            { data: 'action', name: 'action', orderable: false, searchable: false }
+        ],
+        drawCallback: function() {
+        $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+      },
+        order: [[0, 'desc']],
+      "columnDefs": [{
+        "targets": 0,
+        "className": "gizli"
+      }],
+      "oLanguage": {
+        "sDecimal":        ",",
+        "sEmptyTable":     "Tabloda herhangi bir veri mevcut değil",
+        "sInfo":           "Çağrı Sayısı: _TOTAL_",
+        "sInfoEmpty":      "Kayıt yok",
+        "sInfoFiltered":   "",
+        "sInfoPostFix":    "",
+        "sInfoThousands":  ".",
+        "sLengthMenu":     "_MENU_",
+        "sLoadingRecords": "Yükleniyor...",
+        "sProcessing":     "İşleniyor...",
+        "sSearch":         "Çağrı Ara:",
+        "sZeroRecords":    "Eşleşen kayıt bulunamadı",
+        "oPaginate": {
+          "sFirst":    "İlk",
+          "sLast":     "Son",
+          "sNext":     '<i class="fas fa-angle-double-right"></i>',
+          "sPrevious": '<i class="fas fa-angle-double-left"></i>'
+        },
+        "oAria": {
+          "sSortAscending":  ": artan sütun sıralamasını aktifleştir",
+          "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
+        },
+        "select": {
+          "rows": {
+            "_": "%d kayıt seçildi",
+            "0": "",
+            "1": "1 kayıt seçildi"
+          }
+        }
+      },
+      dom: '<"top"f>rt<"bottom"ilp><"clear">',
+      "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ], 
+    });
+
+    $('#servisRaporlaModal').modal('hide');
+});
+</script>
+
 <script>
  $(document).ready(function () {
     // Ülke seçildiğinde şehirleri getir
@@ -794,14 +1096,7 @@ $(document).ready(function(){
     }
   });
 </script>
-<script>
-  var getUrlParameter = function getUrlParameter(sParam) {
-      var sPageURL = window.location.search.substring(1),
-        sURLVariables = sPageURL.split('&'),
-        sParameterName,
-        i;
-      for (i = 0; i < sURLVariables.length; i++) {
-        sParameterName = sURLVariables[i].split('=');
+
 
         if (sParameterName[0] === sParam) {
             return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
@@ -824,5 +1119,6 @@ $(document).ready(function(){
     }
   
 </script>
+
 @endsection
 

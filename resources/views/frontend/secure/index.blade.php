@@ -337,6 +337,7 @@
                 </div>
             </div>
 
+
             <!-- Servis Özeti -->
             <div class="service-summary">
                 <h5><i class="fas fa-chart-bar"></i> Servis Sayıları</h5>
@@ -351,6 +352,7 @@
                         <div class="service-item yesterday">
                             <div class="service-count" id="yesterdayServices">0</div>
                             <div>DÜN Alınan Servis Sayısı</div>
+
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -373,6 +375,7 @@
                                 <button class="filter-btn" data-period="15" data-chart="daily">15 Gün</button>
                                 <button class="filter-btn" data-period="30" data-chart="daily">30 Gün</button>
                             </div>
+
                         </div>
                         <div class="loading"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</div>
                         <div class="chart-canvas">
@@ -389,6 +392,7 @@
                                 <button class="filter-btn active" data-period="7" data-chart="hourly">7 Gün</button>
                                 <button class="filter-btn" data-period="15" data-chart="hourly">15 Gün</button>
                                 <button class="filter-btn" data-period="30" data-chart="hourly">30 Gün</button>
+
                             </div>
                         </div>
                         <div class="loading"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</div>

@@ -1,0 +1,218 @@
+<form method="post" id="editDom" action="{{ route('update.cash.transaction', $firma->id) }}" enctype="multipart/form-data" class="needs-validation" novalidate>
+  @csrf
+  @php 
+    $sontarih = \Carbon\Carbon::parse($cash_transaction_id->created_at)->format('Y-m-d');
+  @endphp
+  <div class="row">
+    <label class="col-sm-4">İşlem Tarihi:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8">
+      <input name="islemTarihi" class="form-control datepicker kayitTarihi" value="{{$sontarih}}" type="date"  required>
+    </div>
+  </div>
+
+  <div class="row">
+    <label class="col-sm-4">Ödeme Yönü:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8">
+      <select name="odeme_yonu" class="form-select" required>
+        <option selected value="1" {{$cash_transaction_id->odemeYonu == 1 ? 'selected' : ''}}>Gelen Ödeme</option>
+        <option value="2" {{$cash_transaction_id->odemeYonu == 2 ? 'selected' : ''}}>Giden Ödeme</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <label class="col-sm-4">Ödeme Şekli:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8">
+      <select name="odeme_sekli" class="form-select odemeSekli" required> 
+        @foreach($payment_methods as $method)
+          <option value="{{$method->id}}" {{$method->id == $cash_transaction_id->odemeSekli ? 'selected' : ''}}>{{$method->odemeSekli}}</option>
+        @endforeach
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <label class="col-sm-4">Ödeme Türü:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8">
+      <select name="odeme_turu" class="form-select odemeTuru" required>
+        <option selected value="">-Seçiniz-</option>
+        @foreach($payment_types as $type)
+          <option value="{{$type->id}}"  {{$type->id == $cash_transaction_id->odemeTuru ? 'selected' : ''}}>{{$type->odemeTuru}}</option>
+        @endforeach
+      </select>
+    </div>
+  </div>
+
+  @if (strpos($cash_payment_id["cevaplar"], '6') !== false)
+    <div class="row form-group">
+      <label class="col-sm-4">Cihazlar<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-md-8">
+        <select class="form-select cihazlar" name="cihazlar" style="font-weight: 500">
+          <option value="">-Seçiniz-</option>
+          @foreach ($cihazlar as $item)
+            <option value="{{$item->id}}" {{$item->id == $cash_transaction_id->cihaz ? 'selected' : ''}}>{{$item->cihaz}}</option>
+          @endforeach
+        </select>
+      </div>
+    </div>
+  @endif
+
+  @if (strpos($cash_payment_id["cevaplar"], '5') !== false)
+    <div class="row form-group">
+      <label class="col-sm-4">Markalar<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-md-8">
+        <select class="form-select markalar" name="markalar" style="font-weight: 500">
+          <option value="">-Seçiniz-</option>
+          @foreach ($markalar as $item)
+            <option value="{{$item->id}}" {{$item->id == $cash_transaction_id->marka ? 'selected' : ''}}>{{$item->marka}}</option>
+          @endforeach
+        </select>
+      </div>
+    </div>
+  @endif
+
+  @if (strpos($cash_payment_id["cevaplar"], '4') !== false)
+    <div class="row form-group">
+      <label class="col-sm-4">Tedarikçiler<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-md-8">
+        <select class="form-select tedarikciler" name="tedarikciler" style="font-weight: 500">
+          <option value="">-Seçiniz-</option>
+          @foreach ($tedarikciler as $item)
+            <option value="{{$item->id}}" {{$item->id == $cash_transaction_id->tedarikci ? 'selected' : ''}}>{{$item->tedarikci}}</option>
+          @endforeach
+        </select>
+      </div>
+    </div>
+  @endif
+
+  @if (strpos($cash_payment_id["cevaplar"], '3') !== false)
+    <div class="row ">
+      <div class="col-sm-4"><label>Servis</label></div>
+      <div class="col-sm-8">
+        <input type="text" name="servis" class="form-control servis" data-id="" autocomplete="off" value="{{$cash_transaction_id->servis}}" disabled>
+        <div class="text-danger mt-1" id="servisHata"></div>
+      </div>
+    </div>
+  @endif
+
+  @if(strpos($cash_payment_id["cevaplar"], '2') !== false)
+    <div class="row">
+      <div class="col-sm-4"><label>Personeller</label></div>
+      <div class="col-sm-8">
+        <select class="form-select personeller" name="personeller" style="font-weight: 500">
+          <option value="">-Seçiniz-</option>
+          @foreach ($personeller as $personel)
+            <option value="{{$personel->user_id}}" {{$personel->user_id == $cash_transaction_id->personel ? 'selected' : ''}}>{{$personel->name}}</option>
+          @endforeach
+        </select>
+      </div>
+    </div>
+  @endif
+
+  @if (strpos($cash_payment_id["cevaplar"], '1') !== false)
+    <div class="row">
+      <div class="col-sm-4"><label>Açıklama</label></div>
+      <div class="col-sm-8">
+        <input type="text" name="aciklama" class="form-control aciklama" value="{{$cash_transaction_id->aciklama}}" autocomplete="off" style="font-weight: 500">
+      </div>
+    </div>
+  @endif
+
+  <div class="row">
+    <label class="col-sm-4">Ödeme Durumu:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8">
+      <select name="odeme_durum" class="form-select" required>
+        <option value="1" {{$cash_transaction_id->odemeDurumu == "1" ? 'selected': ''}}>Tamamlandı</option>
+        <option value="0" {{$cash_transaction_id->odemeDurumu == "0" ? 'selected' : ''}}>Tamamlanmadı</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-sm-4"><label>Tutar <span style="font-weight: bold; color: red;">*</span></label></div>
+    <div class="col-sm-4">
+      <input type="text" name="fiyat" class="form-control fiyat" value="{{$cash_transaction_id->fiyat}}" placeholder="0.00">
+    </div>
+    <div class="col-sm-4">
+      <select class="form-select paraBirimi" name="paraBirimi">
+          <option value="1" {{$cash_transaction_id->fiyatBirim == '1' ? 'selected' : ''}}>₺ (TL)</option>
+          <option value="2" {{$cash_transaction_id->fiyatBirim == '2' ? 'selected' : ''}}>$ (USD)</option>
+          <option value="3" {{$cash_transaction_id->fiyatBirim == '3' ? 'selected' : ''}}>€ (EURO)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-12 gonderBtn">
+      <input type="hidden" name="id" value="{{ $cash_transaction_id->id }}">
+      <input type="submit" class="btn btn-sm btn-info waves-effect waves-light" value="Kaydet">
+    </div>
+  </div>
+</form>
+
+<script>
+  $(document).ready(function () {
+    $('#editDom').submit(function (event) {
+      var formIsValid = true;
+      $(this).find('input, select').each(function () {
+        var isRequired = $(this).prop('required');
+        var isEmpty = !$(this).val();
+        if (isRequired && isEmpty) {
+          formIsValid = false;
+          return false;
+        }
+      });
+
+      if (!formIsValid) {
+        event.preventDefault();
+        alert('Lütfen zorunlu alanları doldurun.');
+        return false;
+      }
+    });
+  });
+</script>
+<script type="text/javascript">
+  $(document).ready(function () {
+    $(".phone").mask("9999-999-9999");
+    $(".saat").mask("00:00");
+  });
+  $(document).ready(function(e) {
+    $('.datepicker').datepicker({
+      language: 'tr',
+      autoclose: true,
+    });
+  });
+</script>
+
+<script>
+$(document).ready(function (e) {
+  $("#editDom").submit(function (event) {
+    event.preventDefault();
+    var formData = new FormData(this);
+    $.ajax({
+      url: $(this).attr("action"),
+      type: "POST",
+      data: formData,
+      contentType: false,
+      cache: false,
+      processData: false,
+      beforeSend: function () {
+        $(".btnWrap").html("Yükleniyor. Bekleyin..");
+      },
+      success: function (data) {
+        if (data === false) {
+          window.location.reload(true);
+        } else {
+          alert("Para hareketi güncellendi");
+          $('#datatableKasa').DataTable().ajax.reload();
+          $('#editCashTransactionsModal').modal('hide');  
+        }
+      },
+      error: function (xhr, status, error) {
+        alert("Güncelleme başarısız!");
+        window.location.reload(true);
+      },
+    });
+  });
+});
+</script>

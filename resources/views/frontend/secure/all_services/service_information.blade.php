@@ -205,7 +205,7 @@
               <input type="checkbox" style="display: none;" {{$service_id->acil !== 0 ? 'checked' : ''}}>
               <div class="checkmark"><i class="fas fa-check"></i></div>
             </label>
-            <input type="hidden" name="acil" class="acil" value="0"/>          
+            <input type="hidden" name="acil" class="acil" value="0"/>    
         </div>
         <div class="col-8 col-sm-6 right">
           <label>Yapılacak işlem: </label>
@@ -339,12 +339,12 @@ function renderServiceHistory(data) {
     // Acil durum
     if (data.acilIslem) {
         var acilRow = `
-            <tr style="background: #ffc107;">
-                <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 11px; padding: 5px;">${data.acilIslem.tarih}</td>
-                <td style="vertical-align: middle;font-size: 11px; padding: 5px;">${data.acilIslem.personel}</td>
-                <td style="vertical-align: middle;font-size: 11px; padding: 5px;"><strong>Servis Acil Aşamasındadır.</strong></td>
-                <td style="vertical-align: middle;font-size: 11px; padding: 5px;" colspan="3">Servis işlemi bittiğinde acil işaretini kaldırın.</td>
-            </tr>
+          <tr class="acilRow">
+            <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 11px; padding: 5px;">${data.acilIslem.tarih}</td>
+            <td style="vertical-align: middle;font-size: 11px; padding: 5px;"><strong>NOT</strong></td>
+            <td style="vertical-align: middle;font-size: 11px; padding: 5px;"><strong>Servis Acil Aşamasındadır.</strong></td>
+            <td style="vertical-align: middle;font-size: 11px; padding: 5px;" colspan="3">Servis işlemi bittiğinde acil işaretini kaldırın.</td>
+          </tr>
         `;
         tbody.append(acilRow);
     }

@@ -91,6 +91,7 @@ public function SurveyStore(Request $request, $tenant_id, $servisId)
         // Formdan manuel personel seçildiyse onu al
         if ($request->filled('personel')) {
             $personelId = $request->input('personel');
+
         }
 
         // Atamaları yap

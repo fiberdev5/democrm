@@ -42,6 +42,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
+use Image;
+use App\Models\IncomingCall;
 
 
 class ServicesController extends Controller
@@ -275,6 +277,7 @@ class ServicesController extends Controller
                         $data->where('acil', 1)
                         ->whereBetween('created_at', [$t1, $t2]);
                     break;
+
                     case 'yapilananketler':
                     $tarih1 = Carbon::parse($filters['yapilananket_tarih1'])->startOfDay();
                     $tarih2 = Carbon::parse($filters['yapilananket_tarih2'])->endOfDay();
@@ -318,6 +321,10 @@ class ServicesController extends Controller
                         }           
                         // Anketleri olmayan servisleri getir
                         $data->doesntHave('surveys');
+
+                    case 'gelen-cagrilar':
+                        
+
                     break;
                 }
             }
@@ -347,7 +354,11 @@ class ServicesController extends Controller
                     return '<a class="t-link serBilgiDuzenle address" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal"><span class="mobileTitle">Tarih:</span>'.$sontarih.'</a>';
                 })
                 ->addColumn('m_adi', function($row){ 
-                    return '<a class="t-link serBilgiDuzenle address" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal"><span class="mobileTitle">Müşteri:</span><strong>'.$row->musteri->adSoyad.'</strong><br><div style="font-size:12px;">'.$row->musteri->tel1.' - '.$row->musteri->tel2.'</div><div style="font-size:12px;">'.$row->musteri->adres.'</div></a>';
+                    $alarmIcon = '';
+                    if ($row->acil == 1) {
+                        $alarmIcon = "<img src='" . asset('frontend/img/alarm.gif') . "' style='width:12px;height:12px;margin-right:4px;margin-bottom:2px;' title='Acil Servis'>";
+                    }
+                    return '<a class="t-link serBilgiDuzenle address" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal"><span class="mobileTitle">Müşteri:</span><strong>'. $alarmIcon . $row->musteri->adSoyad.'</strong><br><div style="font-size:12px;">'.$row->musteri->tel1.' - '.$row->musteri->tel2.'</div><div style="font-size:12px;">'.$row->musteri->adres.'</div></a>';
                     
                 })
                 ->addColumn('cihaz', function($row){
@@ -418,11 +429,14 @@ class ServicesController extends Controller
                 })
                 ->addColumn('action', function($row){
                     $deleteUrl = route('delete.service', [$row->firma_id,$row->id]);
+                    
                     $editButton = '';
                     $deleteButton = '';
                         $editButton = '<a href="javascript:void(0);" data-bs-id="'.$row->id.'" class="btn btn-warning btn-sm serBilgiDuzenle mobilBtn mbuton1" data-bs-toggle="modal" data-bs-target="#editServiceDescModal" title="Düzenle" ><i class="fas fa-edit"></i><span> Düzenle</span></a>';
-                        $deleteButton = '<a href="'.$deleteUrl.'" class="btn btn-danger btn-sm mobilBtn" id="delete" title="Sil" ><i class="fas fa-trash-alt"></i> <span> Sil</span></a>';
-                    return $editButton. '  '.$deleteButton;
+                        if(Auth::user()->can('Servisleri Silebilir')){
+                            $deleteButton = '<a href="'.$deleteUrl.'" class="btn btn-danger btn-sm mobilBtn" id="delete" title="Sil" ><i class="fas fa-trash-alt"></i> <span> Sil</span></a>';
+                        }
+                        return $editButton. '  '.$deleteButton;
                 })
                 ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('search'))) {
@@ -478,7 +492,6 @@ class ServicesController extends Controller
 
                         if ($bugun == $tarih) {
                             // Zaman kontrolü - PHP kodundaki $kid değişkenini kullanıcının kid'i ile değiştiriyoruz
-                            // $kid değişkeni PHP kodunda nereden geldiğini bilmediğimiz için user_id kullanıyoruz
                             $zaman = ServiceTime::where('firma_id', $tenant_id)->first();
                             
                             if ($zaman) {
@@ -546,8 +559,10 @@ class ServicesController extends Controller
                             $zaman = ServiceTime::where('firma_id', $tenant_id)->first();
                             
                             if ($zaman) {
+
                                $ilksaat = strtotime(date("H:i"));
                                $sonsaat = strtotime(str_replace('.', ':', $zaman->zaman));
+
                                 
                                 if ($ilksaat >= $sonsaat) {
                                     if (!$user->hasRole('Depocu')) {
@@ -589,6 +604,13 @@ class ServicesController extends Controller
         }
 
         return array_unique($yetkiliServisIDler);
+    }
+
+    //teknisyene atanan depo stoklarını gösteren fonksiyon
+    public function StaffStocks($tenant_id, $personel_id) {
+        $firma = Tenant::where('id', $tenant_id)->first();
+        $staff_stocks = PersonelStock::with(['personel','stok'])->where('firma_id', $firma->id)->where('pid', $personel_id)->get();
+        return view('frontend.secure.all_services.staff_stocks', compact('staff_stocks'));
     }
 
     public function searchCustomer(Request $request, $firma_id)
@@ -1556,46 +1578,46 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
                 }
 
         // Servis durumu bilgilerini al
-        $servisDurum = Service::where('id', $servisId)->first();
+        $servisDurum = Service::where('firma_id', $tenantId)->where('id', $servisId)->first();
 
         // Kasa hareketi ekle
         $stokIslem = PaymentType::where('parca', '1')->first();
 
-        // DB::table('kasa_hareketleri')->insert([
-        //     'tenant_id' => $tenantId,
-        //     'user_id' => auth()->id(),
-        //     'personel_id' => auth()->id(),
-        //     'islem_tarihi' => now(),
-        //     'odeme_yonu' => 2,
-        //     'odeme_sekli' => 178,
-        //     'odeme_turu' => $stokIslem->id,
-        //     'odeme_durum' => 1,
-        //     'fiyat' => $fiyat,
-        //     'fiyat_birim' => 1,
-        //     'aciklama' => "Stok ID: {$stokId} ({$stok->urun_adi})",
-        //     'marka' => $servisDurum->cihaz_marka,
-        //     'cihaz' => $servisDurum->cihaz_tur,
-        //     'servis_id' => $servisDurum->id,
-        //     'stok_islem' => $stokHareketId,
-        //     'created_at' => now(),
-        //     'updated_at' => now()
-        // ]);
+        CashTransaction::create([
+            'firma_id' => $tenantId,
+            'kid' => auth()->id(),
+            'pid' => auth()->id(),
+            'odemeYonu' => 2,
+            'odemeSekli' => 1,
+            'odemeTuru' => $stokIslem->id,
+            'odemeDurum' => 1,
+            'fiyat' => $fiyat,
+            'fiyatBirim' => 1,
+            'personel' => auth()->user()->user_id,
+            'aciklama' => "Stok ID: {$stokId} ({$stok->urunAdi})",
+            'marka' => $servisDurum->cihazMarka,
+            'cihaz' => $servisDurum->cihazTur,
+            'servis' => $servisDurum->id,
+            'stokIslem' => $stokHareketId,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
 
-        // Servis para hareketi ekle
-        // DB::table('servis_para_hareketleri')->insert([
-        //     'tenant_id' => $tenantId,
-        //     'servis_id' => $servisId,
-        //     'tarih' => now(),
-        //     'odeme_sekli' => 178,
-        //     'odeme_durum' => 1,
-        //     'fiyat' => $fiyat,
-        //     'aciklama' => "Stok ID: {$stokId} ({$stok->urun_adi})",
-        //     'odeme_yonu' => 2,
-        //     'stok_islem' => $stokHareketId,
-        //     'user_id' => auth()->id(),
-        //     'created_at' => now(),
-        //     'updated_at' => now()
-        // ]);
+        //Servis para hareketi ekle
+        ServiceMoneyAction::create([
+            'firma_id' => $tenantId,
+            'servisid' => $servisId,
+            'odemeSekli' => 1,
+            'odemeDurum' => 1,
+            'fiyat' => $fiyat,
+            'aciklama' => "Stok ID: {$stokId} ({$stok->urunAdi})",
+            'odemeYonu' => 2,
+            'stokIslem' => $stokHareketId,
+            'kid' => auth()->id(),
+            'pid' => auth()->id(),
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
     }
 
     private function ozelDurumlariIsle(Request $request, $servisId, $planId, $tenantId, $gidenIslem, $servisDurum)
@@ -1681,86 +1703,90 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
 
     private function musteriIadeEdildiIslem(Request $request, $servisId, $planId, $tenantId, $servisDurum)
     {
-        $fiyat = $request->input('soru378');
-        $aciklama = $request->input('soru376');
+        $sorular = $request->input('soru'); // tüm dizi olarak al
+        $fiyat = $sorular['22'] ?? null;
+        $aciklama = $sorular['21'] ?? null;
 
-        // Servis para hareketi
-        // $paraHareketId = DB::table('servis_para_hareketleri')->insertGetId([
-        //     'tenant_id' => $tenantId,
-        //     'user_id' => auth()->id(),
-        //     'servis_id' => $servisId,
-        //     'tarih' => now(),
-        //     'odeme_yonu' => 2,
-        //     'odeme_sekli' => 178,
-        //     'odeme_durum' => 1,
-        //     'fiyat' => $fiyat,
-        //     'aciklama' => $aciklama,
-        //     'plan_islem' => $planId,
-        //     'created_at' => now(),
-        //     'updated_at' => now()
-        // ]);
+        //Servis para hareketi
+        $paraHareketId = ServiceMoneyAction::insertGetId([
+            'firma_id' => $tenantId,
+            'kid' => auth()->id(),
+            'pid' => auth()->id(),
+            'servisid' => $servisId,
+            'odemeYonu' => 2,
+            'odemeSekli' => 1,
+            'odemeDurum' => 1,
+            'fiyat' => $fiyat,
+            'aciklama' => $aciklama,
+            'planIslem' => $planId,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
 
-        // Kasa hareketi
-        // DB::table('kasa_hareketleri')->insert([
-        //     'tenant_id' => $tenantId,
-        //     'user_id' => auth()->id(),
-        //     'islem_tarihi' => now(),
-        //     'odeme_yonu' => 2,
-        //     'odeme_sekli' => 178,
-        //     'odeme_turu' => 214,
-        //     'odeme_durum' => 1,
-        //     'fiyat' => $fiyat,
-        //     'fiyat_birim' => 1,
-        //     'aciklama' => $aciklama,
-        //     'servis_id' => $servisId,
-        //     'marka' => $servisDurum->cihaz_marka,
-        //     'cihaz' => $servisDurum->cihaz_tur,
-        //     'servis_islem' => $paraHareketId,
-        //     'created_at' => now(),
-        //     'updated_at' => now()
-        // ]);
+        //Kasa hareketi
+        CashTransaction::create([
+            'firma_id' => $tenantId,
+            'kid' => auth()->id(),
+            'pid' => auth()->id(),
+            'odemeYonu' => 2,
+            'odemeSekli' => 1,
+            'odemeTuru' => 14,
+            'odemeDurum' => 1,
+            'fiyat' => $fiyat,
+            'fiyatBirim' => 1,
+            'aciklama' => $aciklama,
+            'servis' => $servisId,
+            'personel' => auth()->user()->user_id,
+            'marka' => $servisDurum->cihazMarka,
+            'cihaz' => $servisDurum->cihazTur,
+            'servisIslem' => $paraHareketId,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
     }
 
     private function fiyatYukseltildiIslem(Request $request, $servisId, $planId, $tenantId, $servisDurum)
     {
-        $fiyat = $request->input('soru380');
-        $aciklama = $request->input('soru379');
+        $sorular = $request->input('soru'); // tüm dizi olarak al
+        $fiyat = $sorular['12'] ?? null;
+        $aciklama = $sorular['11'] ?? null;
 
-        // Servis para hareketi
-        // $paraHareketId = DB::table('servis_para_hareketleri')->insertGetId([
-        //     'tenant_id' => $tenantId,
-        //     'user_id' => auth()->id(),
-        //     'servis_id' => $servisId,
-        //     'tarih' => now(),
-        //     'odeme_yonu' => 1,
-        //     'odeme_sekli' => 178,
-        //     'odeme_durum' => 2,
-        //     'fiyat' => $fiyat,
-        //     'aciklama' => $aciklama,
-        //     'plan_islem' => $planId,
-        //     'created_at' => now(),
-        //     'updated_at' => now()
-        // ]);
+        //Servis para hareketi
+        $paraHareketId = ServiceMoneyAction::insertGetId([
+            'firma_id' => $tenantId,
+            'kid' => auth()->id(),
+            'pid' => auth()->id(),
+            'servisid' => $servisId,
+            'odemeYonu' => 1,
+            'odemeSekli' => 1,
+            'odemeDurum' => 2,
+            'fiyat' => $fiyat,
+            'aciklama' => $aciklama,
+            'planIslem' => $planId,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
 
-        // Kasa hareketi
-        // DB::table('kasa_hareketleri')->insert([
-        //     'tenant_id' => $tenantId,
-        //     'user_id' => auth()->id(),
-        //     'islem_tarihi' => now(),
-        //     'odeme_yonu' => 1,
-        //     'odeme_sekli' => 178,
-        //     'odeme_turu' => 202,
-        //     'odeme_durum' => 2,
-        //     'fiyat' => $fiyat,
-        //     'fiyat_birim' => 2,
-        //     'aciklama' => $aciklama,
-        //     'servis_id' => $servisId,
-        //     'marka' => $servisDurum->cihaz_marka,
-        //     'cihaz' => $servisDurum->cihaz_tur,
-        //     'servis_islem' => $paraHareketId,
-        //     'created_at' => now(),
-        //     'updated_at' => now()
-        // ]);
+        //Kasa hareketi
+        CashTransaction::create([
+            'firma_id' => $tenantId,
+            'kid' => auth()->id(),
+            'pid' => auth()->id(),
+            'odemeYonu' => 1,
+            'odemeSekli' => 1,
+            'odemeTuru' => 2,
+            'odemeDurum' => 2,
+            'fiyat' => $fiyat,
+            'fiyatBirim' => 1,
+            'aciklama' => $aciklama,
+            'servis' => $servisId,
+            'personel' => auth()->user()->user_id,
+            'marka' => $servisDurum->cihazMarka,
+            'cihaz' => $servisDurum->cihazTur,
+            'servisIslem' => $paraHareketId,
+            'created_at' => now(),
+            'updated_at' => now()
+        ]);
     }
 
     private function tarihDurumuKontrolEt($tenant_id)
@@ -2162,28 +2188,6 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
     // Kasa hareketi tipi (parça gibi işleniyor)
     $stokIslem = PaymentType::where('parca', '1')->first();
 
-    // Kasa ve servis para hareketleri örnek olarak bırakıldı, istersen aç
-    /*
-    DB::table('kasa_hareketleri')->insert([
-        'tenant_id'    => $tenantId,
-        'user_id'      => auth()->id(),
-        'personel_id'  => auth()->id(),
-        'islem_tarihi' => now(),
-        'odeme_yonu'   => 2,
-        'odeme_sekli'  => 178,
-        'odeme_turu'   => $stokIslem->id,
-        'odeme_durum'  => 1,
-        'fiyat'        => $fiyat,
-        'fiyat_birim'  => 1,
-        'aciklama'     => "Konsinye Cihaz: {$stok->urunAdi}",
-        'marka'        => $servisDurum->cihaz_marka,
-        'cihaz'        => $servisDurum->cihaz_tur,
-        'servis_id'    => $servisDurum->id,
-        'stok_islem'   => $stokHareketId,
-        'created_at'   => now(),
-        'updated_at'   => now()
-    ]);
-    */
 }
     //Servis Aşamalarının servis-information blade'inde görüntülenmesini sağlayan ajaxı çalıştıran fonksionlar
     public function getServiceStageHistory($tenant_id, $servisId)
@@ -2197,17 +2201,14 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
             'paraHareketleri' => []
         ];
         
-        // Acil durum kontrolü - with kullan
-        if ($servis->bid == 0 && $servis->acil != 0) {
-            $acilIslem = EmergencyService::with('user:user_id,name')
-                ->where('firma_id', $tenant_id)
-                ->where('servisid', $servisId)
-                ->first();
+        // Acil durum kontrolü
+        if ( $servis->acil != 0) {
+            $acilIslem = $servis->acil;
                 
             if ($acilIslem) {
                 $data['acilIslem'] = [
-                    'tarih' => $acilIslem->created_at->format('d/m/Y'),
-                    'personel' => $acilIslem->user->name ?? ''
+                    'tarih' => $servis->updated_at->format('d/m/Y'),
+                    'personel' => auth()->user()->name ?? ''
                 ];
             }
         }
@@ -2260,8 +2261,8 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
             // Para hareketleri için tarih
             $tarih = $eskiIslem->created_at->format('Y-m-d');
             $paraHareketleri = ServiceMoneyAction::with([
-                'user:user_id,name',
-                'paymentMethod:id,sekli'
+                'personel:user_id,name',
+                'odemeSekliRelation:id,odemeSekli'
             ])->where('firma_id', $tenant_id)
             ->where('servisid', $servisId)
             ->where('odemeYonu', 1)
@@ -2442,7 +2443,7 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
             $data = [
                 'kid' => $user->user_id,
                 'cihazModel' => strip_tags(trim($request->cihazModel)),
-                'acil' => $request->acil,
+                'acil' => $request->acil ?: '0',
                 'updated_at' => now(),
             ];
             
@@ -2450,7 +2451,7 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
             if ($user->can('Tüm Servisleri Görebilir')) {
                 $data = array_merge($data, [
                     'kid' => $user->user_id,
-                    'acil' => $request->acil,
+                    'acil' => $request->acil ?: '0',
                     'servisKaynak' => $request->kaynak ?: null,
                     'musaitTarih' => $request->musaitTarih,
                     'musaitSaat1' => $request->musaitSaat1 ?: null,
@@ -3161,83 +3162,84 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
 
     public function StoreServicePhoto($tenant_id, Request $request) {
         try {
-            // Validasyon kuralları
-            $validator = Validator::make($request->all(), [
-                'belge' => 'required|file|mimes:jpg,jpeg,png|max:5120', // 5MB = 5120KB
-            ], [
-                'belge.required' => 'Lütfen bir dosya seçiniz.',
-                'belge.mimes' => 'Sadece JPG, JPEG ve PNG dosyaları yükleyebilirsiniz.',
-                'belge.max' => 'Dosya boyutu 5MB\'dan büyük olamaz.',
-            ]);
+        // Validasyon kuralları
+        $validator = Validator::make($request->all(), [
+            'belge' => 'required|file|mimes:jpg,jpeg,png|max:5120', // 5MB = 5120KB
+        ], [
+            'belge.required' => 'Lütfen bir dosya seçiniz.',
+            'belge.mimes' => 'Sadece JPG, JPEG ve PNG dosyaları yükleyebilirsiniz.',
+            'belge.max' => 'Dosya boyutu 5MB\'dan büyük olamaz.',
+        ]);
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => $validator->errors()->first()
-                ], 422);
-            }
-
-            // ➊ İlgili servisteki mevcut fotoğraf sayısını kontrol et
-            $currentCount = ServicePhoto::where('firma_id', $tenant_id)
-                            ->where('servisid', $request->servisid)
-                            ->count();
-
-            if ($currentCount >= 4) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Bu servise en fazla 4 fotoğraf yükleyebilirsiniz.'
-                ], 422);
-            }
-
-            // ➋ Devam eden paralel yüklemeler sırasında sınırı aşmamak için:
-            //    toplamdaki +1 kontrolü
-            if ($currentCount + 1 > 4) {            // sadece tek dosya geliyorsa yeterli
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Fotoğraf limiti aşıldı.'
-                ], 422);
-            }
-            
-            $firma = Tenant::where('id', $tenant_id)->first();
-
-            // Dosya işlemleri
-            $file     = $request->file('belge');
-            $original = $file->getClientOriginalName();
-            $ext      = $file->getClientOriginalExtension();
-            $uuid     = Str::uuid()->toString() . '.' . $ext;
-
-            $path = "service_photos/firma_{$firma->firma_slug}/servis_{$request->servisid}/" . now()->toDateString();
-
-            // Dosyayı kaydet
-            $storedPath = $file->storeAs($path, $uuid, 'public');  
-            
-            // Veritabanına kaydet
-            $photo = ServicePhoto::create([
-                'firma_id' => $tenant_id,
-                'kid' => auth()->user()->user_id ?? null,
-                'servisid' => $request->servisid,
-                'resimyol' => $storedPath,
-                'created_at' => Carbon::now(),
-            ]);
-
-            // Başarılı response
-            return response()->json([
-                'success' => true,
-                'message' => 'Fotoğraf başarıyla yüklendi.',
-                'photo' => [
-                    'id' => $photo->id,
-                    'url' => Storage::url($photo->resimyol),
-                    'created_at' => $photo->created_at->format('d/m/Y')
-                ]
-            ]);
-
-        } catch (\Exception $e) {
-            
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Dosya yüklenirken bir hata oluştu. Lütfen tekrar deneyiniz.'
-            ], 500);
+                'message' => $validator->errors()->first()
+            ], 422);
         }
+
+        // Fotoğraf sayısı kontrolü
+        $currentCount = ServicePhoto::where('firma_id', $tenant_id)
+            ->where('servisid', $request->servisid)
+            ->count();
+
+        if ($currentCount >= 4 || $currentCount + 1 > 4) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bu servise en fazla 4 fotoğraf yükleyebilirsiniz.'
+            ], 422);
+        }
+
+        $firma = Tenant::where('id', $tenant_id)->first();
+
+        // Dosya işlemleri
+        $file = $request->file('belge');
+        $ext = $file->getClientOriginalExtension();
+        $uuid = Str::uuid()->toString() . '.' . $ext;
+
+        $path = "service_photos/firma_{$firma->firma_slug}/servis_{$request->servisid}/" . now()->toDateString();
+        $fullPath = storage_path('app/public/' . $path);
+
+        // Klasörü oluştur
+        if (!file_exists($fullPath)) {
+            mkdir($fullPath, 0775, true);
+        }
+
+        // Resmi boyutlandır ve kaliteyi düşür (1024px genişlik, kalite: 75)
+        $image = Image::make($file)->resize(1024, null, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+
+        $image->save($fullPath . '/' . $uuid, 75); // kalite 0-100 arasında
+
+        $storedPath = $path . '/' . $uuid;
+
+        // Veritabanına kayıt
+        $photo = ServicePhoto::create([
+            'firma_id' => $tenant_id,
+            'kid' => auth()->user()->user_id ?? null,
+            'servisid' => $request->servisid,
+            'resimyol' => $storedPath,
+            'created_at' => Carbon::now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Fotoğraf başarıyla yüklendi.',
+            'photo' => [
+                'id' => $photo->id,
+                'url' => Storage::url($photo->resimyol),
+                'created_at' => $photo->created_at->format('d/m/Y')
+            ]
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Dosya yüklenirken bir hata oluştu. Lütfen tekrar deneyiniz.'
+        ], 500);
+    }
     }
 
     public function DeleteServicePhoto($tenant_id, $photo_id)

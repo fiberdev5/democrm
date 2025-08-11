@@ -36,6 +36,7 @@ use App\Http\Controllers\Backend\FeatureImagesController;
 use App\Http\Controllers\Backend\FeaturesController;
 use App\Http\Controllers\Backend\PricingController;
 use App\Http\Controllers\Frontend\CarController;
+use App\Http\Controllers\Frontend\CashTransactionsController;
 use App\Http\Controllers\Frontend\CustomerController;
 use App\Http\Controllers\Frontend\DeletedServicesController;
 use App\Http\Controllers\Frontend\DeviceBrandsController;
@@ -48,10 +49,12 @@ use App\Http\Controllers\Frontend\KatalogController;
 use App\Http\Controllers\Frontend\FrontendContactController;
 use App\Http\Controllers\Frontend\GenelAyarlarController;
 use App\Http\Controllers\Frontend\IncomingCallsController;
+use App\Http\Controllers\Frontend\InvoicesController;
 use App\Http\Controllers\Frontend\OfferController;
 use App\Http\Controllers\Frontend\PaymentMethodsController;
 use App\Http\Controllers\Frontend\PaymentTypesController;
 use App\Http\Controllers\Frontend\PersonelController;
+use App\Http\Controllers\Frontend\PrimController;
 use App\Http\Controllers\Frontend\ReceiptDesignController;
 use App\Http\Controllers\Frontend\RoleController;
 use App\Http\Controllers\Frontend\ServiceBatchPlanningController;
@@ -397,10 +400,11 @@ Route::controller(HomeController::class)->group(function() {
 
 });
 
-Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId']], function () {
+Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId','check.subscription']], function () {
     Route::controller(HomeController::class)->group(function() {
         Route::get('/dashboard', 'Dashboard')->name('secure.home');
     });
+
 
 Route::controller(SurveyController::class)->group(function() {
     Route::get('/anket/{servisId}/create', 'SurveyCreate')->name('survey.create');
@@ -441,6 +445,7 @@ Route::controller(StatisticController::class)->group(function() {
 
    
 });
+
 
     Route::controller(PersonelController::class)->group(function() {
         Route::get('/personeller', 'AllStaffs')->name('staffs');
@@ -542,6 +547,8 @@ Route::controller(StatisticController::class)->group(function() {
         Route::post('/firma-ayari/guncelle', 'UpdateCompanySet')->name('update.firma');
         Route::get('/sms-ayarlari', 'SmsSettings')->name('sms.settings');
         Route::post('/sms-ayari/guncelle', 'UpdateSms')->name('update.sms');
+        Route::get('/prim-ayarlari', 'PrimSettings')->name('prim.settings');
+        Route::post('/prim-ayari/guncelle', 'UpdateFirmPrim')->name('update.firm.prim');
     });
 
     Route::controller(DeviceBrandsController::class)->group(function() {
@@ -713,6 +720,9 @@ Route::controller(StatisticController::class)->group(function() {
 
         Route::get('/servis-bilgileri/tum/{id}', 'TumServiceDesc')->name('tum.service.desc');
         Route::get('/servis-bilgileri/kendi/{id}', 'KendiServiceDesc')->name('kendi.service.desc');
+        Route::get('/teknisyen-depo/{personel_id}', 'StaffStocks')->name('staff.stocks');
+        
+        
         Route::get('/servis-musteri/duzenle/{id}', 'EditServiceCustomer')->name('edit.service.customer');
         Route::get('/servis-asama-sorusu-getir/{asamaid}/{serviceid}', 'ServiceStageQuestionShow')->name('service.stage.question.show');
         Route::post('/servis-plan-kaydet', 'SaveServicePlan')->name('save.service.plan');
@@ -787,7 +797,7 @@ Route::controller(StatisticController::class)->group(function() {
     //GELEN ÇAĞRILAR MODÜLÜ
     Route::controller(IncomingCallsController::class)->group(function() { 
         //Servisler sayfasında sol üstteki gelen çağrılar butonuna tıklanınca açılan modal route u
-        Route::get('/gelen-cagrilar', 'IncomingCalls')->name('incoming.calls');
+        Route::get('/gelen-cagrilar-datatable', 'gelenCagrilarDatatable')->name('gelen-cagrilar.datatable');
         Route::get('/yeni-cagri-ekle', 'AddCall')->name('add.call');
         Route::post('/yeni-cagri-gonder', 'StoreCall')->name('store.call');
         Route::get('/yeni-cagri-duzenle/{call_id}', 'EditCall')->name('edit.call');
@@ -805,9 +815,67 @@ Route::controller(StatisticController::class)->group(function() {
     Route::controller(DeletedServicesController::class)->group(function() { 
         //Silinen servisler sayfası
         Route::get('/silinen-servisler', 'DeletedServices')->name('deleted.services');
-        Route::get('/servis-geri-al/{service_id}', 'RestoreService')->name('restore.service');
+        Route::post('/servis-geri-al/{service_id}', 'RestoreService')->name('restore.service');
     });
 
+    Route::controller(CashTransactionsController::class)->group(function () {
+        Route::get('/kasa-filtrele', 'Filter')->name('kasa.filter');
+        Route::get('/kasa-hareketi/ekle', 'AddCashTransaction')->name('add.cash.transaction');
+        Route::post('/kasa-hareketi/gonder', 'StoreCashTransaction')->name('store.cash.transaction');
+        Route::get('/kasa-hareketi/duzenle/{id}', 'EditCashTransaction')->name('edit.cash.transaction');
+        Route::post('/kasa-hareketi/guncelle', 'UpdateCashTransaction')->name('update.cash.transaction');
+        Route::get('/kasa-hareketi/sil/{id}', 'DeleteCashTransaction')->name('delete.cash.transaction');
+
+        Route::get('/kasa-odeme/getir/{id}', 'GetCashPayment')->name('get.cash.payment');
+        Route::get('/kasa-toplam', 'updateTotalValues');
+    });
+
+    Route::controller(InvoicesController::class)->group(function () {
+        Route::get('/faturalar', 'AllInvoice')->name('all.invoices');
+        Route::get('/fatura/ekle', 'AddInvoice')->name('add.invoices');
+        Route::post('/fatura/gonder', 'StoreInvoice')->name('store.invoices');
+        Route::get('/fatura/duzenle/{id}', 'EditInvoice')->name('edit.invoices');
+        Route::post('/fatura/guncelle', 'UpdateInvoice')->name('update.invoices');
+        Route::get('/fatura/sil/{id}', 'DeleteInvoice')->name('delete.invoices');
+
+        Route::get('/fatura/goruntule/{id}', 'ShowInvoice')->name('show.invoice');
+        Route::post('/fatura/yukle', 'UploadInvoice')->name('upload.invoices');
+        Route::post('/eArsiv/sil/{id}', 'DeleteEinvoice')->name('delete.einvoice');
+
+        Route::get('/fatura-sonuc', 'GetInvoices');
+        Route::post('/fatura/musteri-getir', 'musteriGetir')->name('fatura.musteri.getir');
+
+    });
+
+    Route::controller(PrimController::class)->group(function() { 
+        Route::get('/prim', 'index')->name('index');
+    
+    // Prim hesaplama işlemi (AJAX)
+    Route::post('/hesapla', 'hesapla')->name('prim.hesapla');
+    
+    // Prim ayarları sayfası
+    Route::get('/ayarlar', 'ayarlar')->name('prim.ayarlar');
+    
+    // Prim ayarlarını kaydet (AJAX)
+    Route::post('/ayarlar/kaydet', 'ayarlariKaydet')->name('ayarlari.kaydet');
+    
+    // Günlük prim detayı (AJAX)
+    Route::get('/detay', 'detay')->name('prim.detay');
+    
+    // Personel listesi (AJAX)
+    Route::get('/personel', 'getPersoneller')->name('personeller');
+    
+    // Prim raporları (gelecekte eklenebilir)
+    Route::get('/raporlar', 'raporlar')->name('raporlar');
+    
+    // Excel export (gelecekte eklenebilir)
+    Route::post('/export', 'exportExcel')->name('export');
+    
+    // Prim onay işlemleri (gelecekte eklenebilir)
+    Route::post('/onayla/{prim_id}','onayla')->name('onayla');
+    Route::post('/reddet/{prim_id}', 'reddet')->name('reddet');
+        
+    });
 });
 
 

@@ -30,7 +30,10 @@ class StockAction extends Model
         return $this->belongsTo(\App\Models\Service::class, 'servisid');
     }
     
-
+    public function stok()
+    {
+        return $this->belongsTo(Stock::class, 'stokId', 'id');
+    }
 
 
 }
