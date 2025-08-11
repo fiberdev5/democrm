@@ -41,9 +41,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+
 
 <link href="{{asset('backend/assets/libs/spectrum-colorpicker2/spectrum.min.css')}}" rel="stylesheet" type="text/css">
 <link rel="preload" as="image" href="{{ asset('frontend/img/alarm.gif') }}">
+
 </head>
 
 <body data-topbar="dark">
@@ -146,6 +150,12 @@
     <script src="{{ asset('backend/assets/js/code.js') }}"></script>
 
     <script src="{{asset('backend/assets/libs/dropzone/min/dropzone.min.js')}}"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+
 
 </body>
 </html>

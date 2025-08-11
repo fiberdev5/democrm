@@ -70,8 +70,8 @@ use App\Http\Controllers\Frontend\StockShelfController;
 use App\Http\Controllers\Frontend\StockSupplierController;
 use App\Http\Controllers\Frontend\StockController;
 use App\Http\Controllers\Frontend\WarrantyPeriodController;
-
 use App\Http\Controllers\Frontend\SurveyController;
+use App\Http\Controllers\Frontend\StatisticController;
 use Illuminate\Support\Facades\File;
 
 
@@ -405,13 +405,47 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::get('/dashboard', 'Dashboard')->name('secure.home');
     });
 
-    Route::controller(SurveyController::class)->group(function() {
-        Route::get('/anket/{servisId}/create', 'SurveyCreate')->name('survey.create');
-        Route::post('/anket/{servisId}/store', 'SurveyStore')->name('survey.store');
+
+Route::controller(SurveyController::class)->group(function() {
+    Route::get('/anket/{servisId}/create', 'SurveyCreate')->name('survey.create');
+    Route::post('/anket/{servisId}/store', 'SurveyStore')->name('survey.store');
+    Route::get('/anket-rapor-modal', 'SurveyReports')->name('survey.reports');
+});
+
+Route::controller(StatisticController::class)->group(function() {
+
+    //Service Statistics
+    Route::get('/istatistikler', 'ServiceStatistics')->name('statistics');
+    Route::get('/chart-data', 'getChartDataAjax')->name('statistics.chart.data');
+    Route::get('/hourly-data', 'getHourlyDataAjax')->name('statistics.hourly.data');
+    //Technician Statistics
+    Route::get('/teknisyen-istatistikleri', 'TechnicianStatistics')->name('technician.statistics');
+    Route::post('/teknisyen-istatistikleri/data', 'getTechnicianStatisticsData')->name('technician.statistics.data');
+    Route::post('/teknisyen-istatistikleri/detail', 'getTechnicianDetailStatistics')->name('technician.statistics.detail');
+    Route::post('/teknisyen-detay/data', 'getTechnicianDetailData');
+    //Operator Statistics
+    Route::get('/operator-istatistikleri', 'OperatorStatistics')->name('operator.statistics');
+    Route::post('/operator-istatistikleri/data', 'getOperatorStatisticsData')->name('operator.statistics.data');
+    //State Statistics
+    Route::get('/durum-istatistikleri', 'StateStatistics')->name('state.statistics');
+    //Stage Statistics
+    Route::get('/asama-istatistikleri', 'StageStatistics')->name('stage.statistics');
+    //Stocks Statistics
+    Route::get('/depo-istatistikleri', 'StockStatistics')->name('stock.statistics');
+    Route::post('/depo-istatistikleri/data', 'getPersonelDepoData')->name('stock.statistics.data');
+    //Ilce Statistics
+    Route::get('/ilçe-istatistikleri', 'IlceStatistics')->name('ilce.statistics');
+    //Survey Statistics
+    Route::get('/anket-istatistikleri', 'SurveyStatistics')->name('survey.statistics');
+    Route::post('/anket-istatistikleri/data', 'getSurveyStatisticsData')->name('survey.statistics.data');
+    Route::post('/anket-sonuclari/data',  'getSurveyResults')->name('survey.results.data');
+    //Cash Statistics
+    Route::get('/kasa-istatistikleri', 'CashStatistics')->name('cash.statistics');
 
 
-        
-    });
+   
+});
+
 
     Route::controller(PersonelController::class)->group(function() {
         Route::get('/personeller', 'AllStaffs')->name('staffs');
@@ -736,6 +770,9 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         
         //Servisler modalında faturalar Bölümü
         Route::get('/musteri-faturalari/{service_id}', 'CustomerInvoices')->name('customer.invoices');
+
+        //Servisler modalı kosinye cihaz bilgisi güncelleme
+        Route::get('/servis-konsinye-cihaz/{service_id}','getServicesKonsinyeCihaz');
         
     });
 

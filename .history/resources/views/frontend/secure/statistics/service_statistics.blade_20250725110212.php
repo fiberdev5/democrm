@@ -1,0 +1,615 @@
+@extends('frontend.secure.user_master')
+
+@section('user')
+<div class="page-content servis-istatistik">
+    <div class="container-fluid">
+        @include('frontend.secure.statistics.statistics_menu', ['tenant_id' => $tenant_id])
+           <!-- Modern Header Card -->
+            <div class="card shadow-sm mb-4 istatistik-card">
+                <div class="card-header sayfaBaslik d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Servis İstatistikleri</h4>
+                    <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#filterPanel">
+                        <i class="fas fa-filter me-1"></i>Filtrele
+                    </button>
+                </div>
+            </div>
+            <!-- Filter Panel -->
+            <div class="collapse" id="filterPanel">
+                <div class="card-body bg-light">
+                    <form id="istatistikAra" action="{{ route('statistics', $tenant_id) }}" method="get">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Personel</label>
+                                <select name="personeller" class="form-select">
+                                    <option value="0">Tüm Personeller</option>
+                                    @foreach($personeller as $personel)
+                                        <option value="{{ $personel->user_id }}" 
+                                            {{ (isset($request) && $request->personeller == $personel->user_id) ? 'selected' : '' }}>
+                                            {{ $personel->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Servis Kaynağı</label>
+                                <select name="servisKaynak" class="form-select">
+                                    <option value="0">Tüm Kaynaklar</option>
+                                    @foreach($servisKaynaklari as $kaynak)
+                                        <option value="{{ $kaynak->id }}" 
+                                            {{ (isset($request) && $request->servisKaynak == $kaynak->id) ? 'selected' : '' }}>
+                                            {{ $kaynak->kaynak }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Başlangıç Tarihi</label>
+                                <input type="date" name="tarih1" class="form-control"
+                                    value="{{ (isset($request->tarih1) ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->tarih1)->format('Y-m-d') : \Carbon\Carbon::now()->subDays(29)->format('Y-m-d')) }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Bitiş Tarihi</label>
+                                <input type="date" name="tarih2" class="form-control"
+                                    value="{{ (isset($request->tarih2) ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->tarih2)->format('Y-m-d') : \Carbon\Carbon::now()->format('Y-m-d')) }}">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="btn-group flex-wrap" role="group">
+                                    <button type="button" class="btn btn-outline-primary btn-sm quick-date" data-days="1">Bugün</button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm quick-date" data-days="7">Son 7 Gün</button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm quick-date" data-days="30">Son 30 Gün</button>
+                                    <button type="button" class="btn btn-outline-primary btn-sm quick-date" data-days="365">Son 1 Yıl</button>
+                                </div>
+                                <button type="submit" name="servisSayListele" class="btn btn-primary ms-3">
+                                    <i class="fas fa-search me-1"></i>Ara
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @if(isset($statistics))
+            <!-- Filtered Results -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="card-title mb-0">Arama Sonuçları</h5>
+                                <span class="badge bg-primary fs-6 istatistik-badge">Toplam: {{ $statistics['toplam'] }}</span>
+                            </div>
+                            
+                            <div class="row g-4">
+                                <!-- Markalar -->
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-header bg-info text-white">
+                                            <h6 class="mb-0"><i class="fas fa-tags me-1"></i>Markalar</h6>
+                                        </div>
+                                        <div class="card-body p-2">
+                                            @forelse($statistics['markalar'] as $marka)
+                                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                                    <span class="text-truncate">{{ $marka->marka }}</span>
+                                                    <span class="badge bg-info">{{ $marka->sayi }}</span>
+                                                </div>
+                                            @empty
+                                                <div class="text-muted text-center">Veri Yok</div>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Türler -->
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-header bg-success text-white">
+                                            <h6 class="mb-0"><i class="fas fa-cube me-1"></i>Türler</h6>
+                                        </div>
+                                        <div class="card-body p-2">
+                                            @forelse($statistics['turler'] as $tur)
+                                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                                    <span class="text-truncate">{{ $tur->cihaz }}</span>
+                                                    <span class="badge bg-success">{{ $tur->sayi }}</span>
+                                                </div>
+                                            @empty
+                                                <div class="text-muted text-center">Veri Yok</div>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Kaynaklar -->
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-header bg-warning text-dark">
+                                            <h6 class="mb-0"><i class="fas fa-source-branch me-1"></i>Kaynaklar</h6>
+                                        </div>
+                                        <div class="card-body p-2">
+                                            @forelse($statistics['kaynaklar'] as $kaynak)
+                                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                                    <span class="text-truncate">{{ $kaynak->kaynak }}</span>
+                                                    <span class="badge bg-warning text-dark">{{ $kaynak->sayi }}</span>
+                                                </div>
+                                            @empty
+                                                <div class="text-muted text-center">Veri Yok</div>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Operatörler -->
+                                <div class="col-lg-3 col-md-6">
+                                    <div class="card h-100 border-0 bg-light">
+                                        <div class="card-header bg-danger text-white">
+                                            <h6 class="mb-0"><i class="fas fa-users me-1"></i>Operatörler</h6>
+                                        </div>
+                                        <div class="card-body p-2">
+                                            @forelse($statistics['operatorler'] as $operator)
+                                                <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                                    <span class="text-truncate">{{ $operator->name }}</span>
+                                                    <span class="badge bg-danger">{{ $operator->sayi }}</span>
+                                                </div>
+                                            @empty
+                                                <div class="text-muted text-center">Veri Yok</div>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @else
+            <!-- Default Period Statistics -->
+            <div class="accordion" id="periodAccordion">
+                @foreach($periodStats as $key => $period)
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="heading{{ $key }}">
+                            <button class="accordion-button istatistik-button {{ $key !== 'bugun' ? 'collapsed' : '' }}" type="button" 
+                                data-bs-toggle="collapse" data-bs-target="#collapse{{ $key }}">
+                                <i class="fas fa-calendar-day me-2"></i>
+                                {{ $period['label'] }}: <span class="badge bg-primary ms-2">{{ $period['toplam'] }}</span>
+                            </button>
+                        </h2>
+                        <div id="collapse{{ $key }}" class="accordion-collapse collapse {{ $key === 'bugun' ? 'show' : '' }}" 
+                             data-bs-parent="#periodAccordion">
+                            <div class="accordion-body">
+                                <div class="row g-4">
+                                    <!-- Markalar -->
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="card border-info">
+                                            <div class="card-header bg-info text-white text-center">
+                                                <small><i class="fas fa-tags me-1"></i>Markalar</small>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                @forelse($period['markalar'] as $marka)
+                                                    <div class="d-flex justify-content-between py-1 border-bottom">
+                                                        <small class="text-truncate">{{ $marka->marka }}</small>
+                                                        <span class="badge bg-info">{{ $marka->sayi }}</span>
+                                                    </div>
+                                                @empty
+                                                    <small class="text-muted">Veri Yok</small>
+                                                @endforelse
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Türler -->
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="card border-success">
+                                            <div class="card-header bg-success text-white text-center">
+                                                <small><i class="fas fa-cube me-1"></i>Türler</small>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                @forelse($period['turler'] as $tur)
+                                                    <div class="d-flex justify-content-between py-1 border-bottom">
+                                                        <small class="text-truncate">{{ $tur->cihaz }}</small>
+                                                        <span class="badge bg-success">{{ $tur->sayi }}</span>
+                                                    </div>
+                                                @empty
+                                                    <small class="text-muted">Veri Yok</small>
+                                                @endforelse
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Kaynaklar -->
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="card border-warning">
+                                            <div class="card-header bg-warning text-dark text-center">
+                                                <small><i class="fas fa-source-branch me-1"></i>Kaynaklar</small>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                @forelse($period['kaynaklar'] as $kaynak)
+                                                    <div class="d-flex justify-content-between py-1 border-bottom">
+                                                        <small class="text-truncate">{{ $kaynak->kaynak }}</small>
+                                                        <span class="badge bg-warning text-dark">{{ $kaynak->sayi }}</span>
+                                                    </div>
+                                                @empty
+                                                    <small class="text-muted">Veri Yok</small>
+                                                @endforelse
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Operatörler -->
+                                    <div class="col-lg-3 col-md-6">
+                                        <div class="card border-danger">
+                                            <div class="card-header bg-danger text-white text-center">
+                                                <small><i class="fas fa-users me-1"></i>Operatörler</small>
+                                            </div>
+                                            <div class="card-body p-2">
+                                                @forelse($period['operatorler'] as $operator)
+                                                    <div class="d-flex justify-content-between py-1 border-bottom">
+                                                        <small class="text-truncate">{{ $operator->name }}</small>
+                                                        <span class="badge bg-danger">{{ $operator->sayi }}</span>
+                                                    </div>
+                                                @empty
+                                                    <small class="text-muted">Veri Yok</small>
+                                                @endforelse
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+ 
+        <!-- Grafik Bölümleri -->
+        <div class="row mt-4">
+            <!-- Servis Sayıları Grafiği -->
+            <div class="col-lg-7">
+                <div class="card shadow-sm servisSayilariChart" style="height: 300px;">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Servis Sayıları</h5>
+                        </div>
+                        <ul class="nav nav-tabs border-0" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active chart-tab" data-bs-toggle="tab" href="#gun7" data-days="7">7 Gün</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link chart-tab" data-bs-toggle="tab" href="#gun15" data-days="15">15 Gün</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link chart-tab" data-bs-toggle="tab" href="#gun30" data-days="30">30 Gün</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body" style="height: calc(100% - 70px);">
+                        <div class="tab-content h-100">
+                            <div id="gun7" class="tab-pane fade show active h-100">
+                                <canvas id="myAreaChart" style="height: 100% !important;"></canvas>
+                            </div>
+                            <div id="gun15" class="tab-pane fade h-100">
+                                <canvas id="myAreaChart2" style="height: 100% !important;"></canvas>
+                            </div>
+                            <div id="gun30" class="tab-pane fade h-100">
+                                <canvas id="myAreaChart3" style="height: 100% !important;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Saatlik Dağılım Grafiği -->
+            <div class="col-lg-5">
+                <div class="card shadow-sm servisSaatleriChart" style="height: 300px;">
+                    <div class="card-header  d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Saat Aralıkları</h5>
+                        </div>
+                        <input type="date" name="saatTarih" class="form-control form-control-sm saatTarih" style="max-width: 85px;" value="{{ date('Y-m-d') }}">
+                        <!-- Tab Navigation -->
+                        <ul class="nav nav-tabs border-0" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active hourly-tab" data-bs-toggle="tab" href="#saat7" data-type="7days">7 Gün</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link hourly-tab" data-bs-toggle="tab" href="#saat15" data-type="15days">15 Gün</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link hourly-tab" data-bs-toggle="tab" href="#saat30" data-type="30days">30 Gün</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body" style="height: calc(100% - 70px);">
+                        <div class="tab-content h-100">
+                            <div id="saat7" class="tab-pane fade show active h-100">
+                                <canvas id="saatArea7" style="height: 100% !important;"></canvas>
+                            </div>
+                            <div id="saat15" class="tab-pane fade h-100">
+                                <canvas id="saatArea15" style="height: 100% !important;"></canvas>
+                            </div>
+                            <div id="saat30" class="tab-pane fade h-100">
+                                <canvas id="saatArea30" style="height: 100% !important;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const tenantId = {{ $tenant_id }};
+    let chartInstances = {}; // Chart instance'larını saklamak için
+    let hourlyChartInstances = {}; // Saatlik chart instance'lar
+
+    // Chart.js defaults
+    Chart.defaults.font.family = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
+    Chart.defaults.color = '#292b2c';
+
+    // Quick date buttons
+    document.querySelectorAll('.quick-date').forEach(button => {
+        button.addEventListener('click', function() {
+            const days = parseInt(this.dataset.days);
+            const endDate = new Date();
+            const startDate = new Date();
+
+            if (days === 1) {
+                startDate.setDate(endDate.getDate());
+            } else {
+                startDate.setDate(endDate.getDate() - days + 1);
+            }
+
+            document.querySelector('input[name="tarih1"]').value = startDate.toISOString().split('T')[0];
+            document.querySelector('input[name="tarih2"]').value = endDate.toISOString().split('T')[0];
+        });
+    });
+
+    // Dinamik chart yükleme fonksiyonu (Servis Sayıları)
+    function loadChart(days, canvasId, colors) {
+        fetch(`/${tenantId}/chart-data?days=${days}`)
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                
+                // Eski chart instance'ını yok et
+                if (chartInstances[canvasId]) {
+                    chartInstances[canvasId].destroy();
+                }
+
+                const tarih = data.map(item => {
+                    const date = new Date(item.tarih);
+                    return String(date.getDate()).padStart(2, '0') + '/' + String(date.getMonth() + 1).padStart(2, '0');
+                });
+
+                const counts = data.map(item => item.count);
+
+                // Yeni chart oluştur
+                chartInstances[canvasId] = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: tarih,
+                        datasets: [{
+                            label: "Servis Sayısı",
+                            tension: 0.3,
+                            backgroundColor: colors.background,
+                            borderColor: colors.border,
+                            pointRadius: 5,
+                            pointBackgroundColor: colors.point,
+                            pointBorderColor: "rgba(255,255,255,0.8)",
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: colors.point,
+                            pointHitRadius: 50,
+                            pointBorderWidth: 2,
+                            data: counts,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: "rgba(0, 0, 0, .125)"
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Chart yüklenirken hata:', error);
+            });
+    }
+
+    // Saatlik chart yükleme fonksiyonu
+    function loadHourlyChart(type, canvasId, colors, date = null) {
+        let url = `/${tenantId}/hourly-data?type=${type}`;
+        if (date) {
+            url += `&date=${date}`;
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById(canvasId).getContext('2d');
+                
+                // Eski chart instance'ını yok et
+                if (hourlyChartInstances[canvasId]) {
+                    hourlyChartInstances[canvasId].destroy();
+                }
+
+                const labels = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'];
+
+                // Yeni chart oluştur
+                hourlyChartInstances[canvasId] = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Servis Sayısı",
+                            tension: 0.3,
+                            backgroundColor: colors.background,
+                            borderColor: colors.border,
+                            pointRadius: 5,
+                            pointBackgroundColor: colors.point,
+                            pointBorderColor: "rgba(255,255,255,0.8)",
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: colors.point,
+                            pointHitRadius: 50,
+                            pointBorderWidth: 2,
+                            data: data,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: "rgba(0, 0, 0, .125)"
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => {
+                console.error('Saatlik chart yüklenirken hata:', error);
+            });
+    }
+
+    // Chart renklerini tanımla
+    const chartColors = {
+        7: {
+            background: "rgba(2,117,216,0.2)",
+            border: "rgba(2,117,216,1)",
+            point: "rgba(2,117,216,1)"
+        },
+        15: {
+            background: "rgba(255,0,0,0.2)",
+            border: "rgba(255,0,0,0.7)",
+            point: "rgba(255,0,0,1)"
+        },
+        30: {
+            background: "rgba(84,177,47,0.2)",
+            border: "rgba(84,177,47,0.7)",
+            point: "rgba(84,177,47,1)"
+        }
+    };
+
+    // Saatlik chart renkleri
+    const hourlyColors = {
+        '7days': {
+            background: "rgba(2,117,216,0.2)",
+            border: "rgba(2,117,216,1)",
+            point: "rgba(2,117,216,1)"
+        },
+        '15days': {
+            background: "rgba(255,0,0,0.2)",
+            border: "rgba(255,0,0,0.7)",
+            point: "rgba(255,0,0,1)"
+        },
+        '30days': {
+            background: "rgba(255,165,0,0.2)",
+            border: "rgba(255,165,0,0.7)",
+            point: "rgba(255,165,0,1)"
+        }
+    };
+
+    // İlk chart'ları yükle
+    loadChart(7, 'myAreaChart', chartColors[7]);
+    loadHourlyChart('7days', 'saatArea7', hourlyColors['7days']);
+
+    // Tab değiştirildiğinde chart'ları yükle (Servis Sayıları)
+    document.querySelectorAll('.chart-tab').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(e) {
+            const days = parseInt(this.dataset.days);
+            let canvasId = '';
+            
+            switch(days) {
+                case 7:
+                    canvasId = 'myAreaChart';
+                    break;
+                case 15:
+                    canvasId = 'myAreaChart2';
+                    break;
+                case 30:
+                    canvasId = 'myAreaChart3';
+                    break;
+            }
+            
+            if (canvasId) {
+                loadChart(days, canvasId, chartColors[days]);
+            }
+        });
+    });
+
+    // Saatlik chart tab değişimi
+    document.querySelectorAll('.hourly-tab').forEach(tab => {
+        tab.addEventListener('shown.bs.tab', function(e) {
+            const type = this.dataset.type;
+            let canvasId = '';
+            let date = null;
+            
+            switch(type) {
+                case 'today':
+                    canvasId = 'saatArea';
+                    // Eğer tarih seçilmişse onu kullan
+                    const selectedDate = document.querySelector('.saatTarih').value;
+                    if (selectedDate && selectedDate !== new Date().toISOString().split('T')[0]) {
+                        date = new Date(selectedDate).toLocaleDateString('tr-TR');
+                    }
+                    break;
+                case '7days':
+                    canvasId = 'saatArea7';
+                    break;
+                case '15days':
+                    canvasId = 'saatArea15';
+                    break;
+                case '30days':
+                    canvasId = 'saatArea30';
+                    break;
+            }
+            
+            if (canvasId && hourlyColors[type]) {
+                loadHourlyChart(type, canvasId, hourlyColors[type], date);
+            }
+        });
+    });
+
+    // Tarih değiştirildiğinde - sadece bugün tab'ı aktifse güncelle
+    document.querySelector('.saatTarih').addEventListener('change', function() {
+        const dateValue = this.value;
+        const formattedDate = new Date(dateValue).toLocaleDateString('tr-TR');
+        
+        // Eğer bugün tabı aktifse chart'ı güncelle
+        const todayTab = document.querySelector('.hourly-tab[data-type="today"]');
+        if (todayTab.classList.contains('active')) {
+            loadHourlyChart('today', 'saatArea', hourlyColors.today, formattedDate);
+        }
+    });
+});
+</script>
+@endsection

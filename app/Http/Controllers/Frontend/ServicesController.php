@@ -45,6 +45,7 @@ use Illuminate\Support\Str;
 use Image;
 use App\Models\IncomingCall;
 
+
 class ServicesController extends Controller
 {
     public function AllServices($tenant_id, Request $request) {
@@ -64,8 +65,27 @@ class ServicesController extends Controller
         })->orderBy('asama', 'asc')->get();
         $service_resources = ServiceResource::where('firma_id', $tenant_id)->orderBy('kaynak', 'asc')->get();
         $states = Il::orderBy('name', 'ASC')->get();
-        
-
+        //Operatör istatistikleri 
+        $operator_id = $request->operator_id;
+        $opeator_istatistik_tarih1 = $request->opeator_istatistik_tarih1;
+        $opeator_istatistik_tarih2 = $request->opeator_istatistik_tarih2;
+        //Durum istatistikleri
+        $state_id = $request->state_id;
+        $state_istatistik_tarih1 = $request->state_istatistik_tarih1;
+        $state_istatistik_tarih2 = $request->state_istatistik_tarih2;
+        //Aşama İstatistikleri
+        $stage_id = $request->stage_id;
+        $stage_istatistik_tarih1 = $request->stage_istatistik_tarih1;
+        $stage_istatistik_tarih2 = $request->stage_istatistik_tarih2;
+        //İlçe İstatistikleri
+        $ilceArama= $request->ilceArama;
+        $ilce_istatistik_tarih1 = $request->ilce_istatistik_tarih1;
+        $ilce_istatistik_tarih2 = $request->ilce_istatistik_tarih2;
+        //Anket İstatistikleri
+        $personel_id= $request->personel_id;
+        $personel_istatistik_tarih1 = $request->personel_istatistik_tarih1;
+        $personel_istatistik_tarih2 = $request->personel_istatistik_tarih2;
+    
         if ($request->ajax()) {           
             $data = Service::with(['musteri', 'markaCihaz', 'turCihaz', 'asamalar','cevaplar'])
               ->where('firma_id', $firma->id)->where('durum', 1);
@@ -82,13 +102,90 @@ class ServicesController extends Controller
                 return $query->whereDate('services.created_at', '>=', $request->from_date)
                              ->whereDate('services.created_at', '<=', $request->to_date);
             });
-    
+        
+            //Operatör istatistiklerine göre filtre
+            if ($request->filled('operator_id')) {
+                $data->where('kayitAlan', $request->operator_id);
+            }
+            //Operatör istatistikleri tarih aralığı filtresi
+            if ($request->filled('opeator_istatistik_tarih1') && $request->filled('opeator_istatistik_tarih2')) {
+                $from = Carbon::createFromFormat('Y-m-d', $request->opeator_istatistik_tarih1)->startOfDay();
+                $to = Carbon::createFromFormat('Y-m-d', $request->opeator_istatistik_tarih2)->endOfDay();
+                $data->whereBetween('created_at', [$from, $to]);
+            }
+            //Durum istatistiklerine göre filtre
+            if ($request->filled('state_id')) {
+                $data->where('servisDurum', $request->state_id);
+            }
+            //Durum istatistikleri tarih aralığı filtresi
+            if ($request->filled('state_istatistik_tarih1') && $request->filled('state_istatistik_tarih2')) {
+                $from = Carbon::createFromFormat('Y-m-d', $request->state_istatistik_tarih1)->startOfDay();
+                $to = Carbon::createFromFormat('Y-m-d', $request->state_istatistik_tarih2)->endOfDay();
+                $data->whereBetween('created_at', [$from, $to]);
+            }
             if ($request->get('device_brands')) {
                 $data->where('cihazMarka', $request->get('device_brands'));
             }
-    
-            if ($request->get('device_types')) {
-                $data->where('cihazTur', $request->get('device_types'));
+            //Aşama istatistiklerine göre filtre (stage_id)
+            if ($request->filled('stage_id')) {
+                $stageId = $request->stage_id;
+                
+                $data->whereExists(function ($query) use ($stageId, $request) {
+                $query->select(DB::raw(1))
+                      ->from('service_plannings')
+                      ->whereColumn('service_plannings.servisid', 'services.id')
+                      ->where('service_plannings.gidenIslem', $stageId);
+            // Eğer aşama istatistik tarih aralığı varsa, onu da service_plannings tablosunda kontrol et
+            if ($request->filled('stage_istatistik_tarih1') && $request->filled('stage_istatistik_tarih2')) {
+                $from = Carbon::createFromFormat('Y-m-d', $request->stage_istatistik_tarih1)->startOfDay();
+                $to = Carbon::createFromFormat('Y-m-d', $request->stage_istatistik_tarih2)->endOfDay();
+                $query->whereBetween('service_plannings.created_at', [$from, $to]);
+                        }
+                    });
+            }
+            //Aşama istatistikleri tarih aralığı filtresi (sadece tarih filtresi için)
+            if ($request->filled('stage_istatistik_tarih1') && $request->filled('stage_istatistik_tarih2') && !$request->filled('stage_id')) {
+                    $from = Carbon::createFromFormat('Y-m-d', $request->stage_istatistik_tarih1)->startOfDay();
+                    $to = Carbon::createFromFormat('Y-m-d', $request->stage_istatistik_tarih2)->endOfDay();
+                    $data->whereBetween('created_at', [$from, $to]);
+            }
+            //İlçe istatistiklerine göre filtre
+            $ilceId = DB::table('ilces')->where('ilceName', $request->ilceArama)->value('id');
+            if ($ilceId) {
+                $data->whereHas('musteri', function ($query) use ($ilceId) {
+                    $query->where('ilce', $ilceId);
+                });
+            }
+            //İlçe istatistikleri tarih aralığı filtresi
+            if ($request->filled('ilce_istatistik_tarih1') && $request->filled('ilce_istatistik_tarih2')) {
+                $from = Carbon::createFromFormat('Y-m-d', $request->ilce_istatistik_tarih1)->startOfDay();
+                $to = Carbon::createFromFormat('Y-m-d', $request->ilce_istatistik_tarih2)->endOfDay();
+                $data->whereBetween('created_at', [$from, $to]);
+            }
+
+            //////////////////////Anket istatistikleri filtreleri///////////////////////////////////////////////
+            // Personel filtresi
+            if ($request->filled('personel_id')) {
+                $data->whereHas('surveys', function ($query) use ($request) {
+                    $query->where('ekleyen', $request->personel_id);
+                });
+            }
+            // Anket yapılan servisler
+            if ($request->has('anket_yapilan') && $request->anket_yapilan == '1') {
+                $data->whereHas('surveys');
+            }
+            // Tarih aralığı filtresi
+                if ($request->has('personel_istatistik_tarih1') && $request->has('personel_istatistik_tarih2')) {
+                    $startDate = $request->personel_istatistik_tarih1 . ' 00:00:00';
+                    $endDate = $request->personel_istatistik_tarih2 . ' 23:59:59';
+                    $data->whereBetween('created_at', [$startDate, $endDate]);
+            }
+            //////////////////////Anket istatistikleri filtreleri///////////////////////////////////////////////
+            if ($request->get('device_brands')) {
+                $data->where('cihazMarka', $request->get('device_brands'));
+            }
+           if ($request->get('device_types') || $request->filled('deviceType')) {
+                $data->where('cihazTur', $request->get('device_types') ?? $request->get('deviceType'));
             }
     
             if ($request->get('stages')) {
@@ -180,8 +277,54 @@ class ServicesController extends Controller
                         $data->where('acil', 1)
                         ->whereBetween('created_at', [$t1, $t2]);
                     break;
+
+                    case 'yapilananketler':
+                    $tarih1 = Carbon::parse($filters['yapilananket_tarih1'])->startOfDay();
+                    $tarih2 = Carbon::parse($filters['yapilananket_tarih2'])->endOfDay();
+
+                    $data->whereHas('surveys', function($query) use ($tarih1, $tarih2, $filters) {
+                        $query->whereBetween('created_at', [$tarih1, $tarih2]);
+                        //survey->personel
+                        if (!empty($filters['anketi_yapilan_personel']) && $filters['anketi_yapilan_personel'] != '0') {
+                            $query->where('personel', $filters['anketi_yapilan_personel']);
+                        }
+                        //survey->ekleyen
+                        if (!empty($filters['anketi_yapan_personel']) && $filters['anketi_yapan_personel'] != '0') {
+                            $query->where('ekleyen', $filters['anketi_yapan_personel']);
+                        }
+                        //survey->bayi
+                        if (!empty($filters['bayiler']) && $filters['bayiler'] != '0') {
+                            $query->where('bayi', $filters['bayiler']);
+                        }
+                    });
+                    break;
+                    case 'yapilmayanAnketler':
+                        $tarih1 = Carbon::parse($filters['yapilmayananket_tarih1'])->startOfDay();
+                        $tarih2 = Carbon::parse($filters['yapilmayananket_tarih2'])->endOfDay();
+                        $data->whereBetween('created_at', [$tarih1, $tarih2]);
+
+                        //Personel(soruid 45)
+                        if (!empty($filters['yapilmayan_personel']) && $filters['yapilmayan_personel'] != '0') {
+                            $personelIdToFilter = $filters['yapilmayan_personel'];
+                            $data->whereHas('cevaplar', function ($q) use ($personelIdToFilter) {
+                                $q->where('soruid', 45)
+                                ->where('cevap', (string) $personelIdToFilter); 
+                            });
+                        }
+                        //Bayi(soruid 3)
+                        if (!empty($filters['bayiler']) && $filters['bayiler'] != '0') {
+                            $bayiIdToFilter = $filters['bayiler'];
+                            $data->whereHas('cevaplar', function ($q) use ($bayiIdToFilter) {
+                                $q->where('soruid', 3)
+                                ->where('cevap', (string) $bayiIdToFilter);
+                            });
+                        }           
+                        // Anketleri olmayan servisleri getir
+                        $data->doesntHave('surveys');
+
                     case 'gelen-cagrilar':
                         
+
                     break;
                 }
             }
@@ -264,7 +407,16 @@ class ServicesController extends Controller
                                     $parcaHTML .= $stok?->urunAdi." (".$adet."), ";
                                 }
                                 $asamaHTML .= '<span>'.$soru->soru.': '.rtrim($parcaHTML, ", ").'</span>';
-                            } else {
+                            }elseif ($soru->cevapTuru == '[Konsinye Cihaz]') {
+                                $parcalar = explode(", ", $cevap->cevap);
+                                $parcaHTML = '';
+                                foreach ($parcalar as $parca) {
+                                    [$parcaId, $adet] = explode("---", $parca);
+                                    $stok = Stock::find($parcaId);
+                                    $parcaHTML .= $stok?->urunAdi." (".$adet."), ";
+                                }
+                                $asamaHTML .= '<span>'.$soru->soru.': '.rtrim($parcaHTML, ", ").'</span>';
+                            }else {
                                 $asamaHTML .= '<span>'.$soru->soru.': '.$cevap->cevap.'</span>';
                             }
                         }
@@ -303,7 +455,7 @@ class ServicesController extends Controller
                 ->make(true);                      
         }
     
-        return view('frontend.secure.all_services.services', compact('services', 'device_brands', 'device_types', 'service_stages','firma', 'service_resources','states'));
+        return view('frontend.secure.all_services.services', compact('services', 'device_brands', 'device_types', 'service_stages','firma', 'service_resources','states','operator_id','opeator_istatistik_tarih1','opeator_istatistik_tarih2'));
     }
 
     //Sadece kendine atanan servisleri gören kişilerin koşullarını kontrol eden fonksiyon.(üstteki AllServices fonksiyonunda kullandım)
@@ -407,8 +559,10 @@ class ServicesController extends Controller
                             $zaman = ServiceTime::where('firma_id', $tenant_id)->first();
                             
                             if ($zaman) {
-                                $ilksaat = strtotime(date("H:i"));
-                                $sonsaat = strtotime(str_replace('.', ':', $zaman->zaman));
+
+                               $ilksaat = strtotime(date("H:i"));
+                               $sonsaat = strtotime(str_replace('.', ':', $zaman->zaman));
+
                                 
                                 if ($ilksaat >= $sonsaat) {
                                     if (!$user->hasRole('Depocu')) {
@@ -708,6 +862,43 @@ class ServicesController extends Controller
         $device_types = DeviceType::where('firma_id', $firma->id)->orderBy('cihaz', 'asc')->get();
         $warranty_periods = WarrantyPeriod::orderBy('garanti', 'asc')->get();
         
+        $konsinyeKategoriId = 3;
+        $konsinyeCihazlar = Stock::where('firma_id', $firma->id)
+            ->where('urunKategori', $konsinyeKategoriId)
+            ->get();
+        // Konsinye cihaz verilerini parse et
+        $seciliKonsinyeCihazlar = [];
+        // ServiceStageAnswer tablosundan konsinye cevaplarını al
+        $konsinyeAnswers = ServiceStageAnswer::whereIn('planid', function($query) use ($service_id) {
+                $query->select('id')
+                    ->from('service_plannings')
+                    ->where('servisid', $service_id->id);
+            })
+            ->where('cevap', 'LIKE', '%---%')
+            ->get();
+        foreach ($konsinyeAnswers as $answer) {
+            // Cevabın "1---2, 3---1" formatında olup olmadığını kontrol et
+            if (preg_match('/\d+---\d+/', $answer->cevap)) {
+                $cevapParts = explode(', ', $answer->cevap);
+                
+                foreach ($cevapParts as $part) {
+                    if (strpos($part, '---') !== false) {
+                        $partData = explode('---', $part);
+                        if (count($partData) >= 2) {
+                            $cihazId = (int)$partData[0];
+                            $adet = (int)$partData[1];
+                            
+                            // Eğer bu cihaz konsinye kategorisindeyse ekle
+                            $cihaz = $konsinyeCihazlar->firstWhere('id', $cihazId);
+                            if ($cihaz) {
+                                $seciliKonsinyeCihazlar[$cihazId] = $adet;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         $altAsamaIDs = [];
         $altAsamalar = collect(); // boş koleksiyon
 
@@ -716,8 +907,75 @@ class ServicesController extends Controller
             $altAsamaIDs = explode(',', $service_id->asamalar->altAsamalar);
             $altAsamalar = ServiceStage::whereIn('id', $altAsamaIDs)->orderBy('asama')->get();
         }
-        return view('frontend.secure.all_services.service_information', compact('firma', 'service_id', 'service_resources', 'iller', 'device_brands', 'device_types', 'warranty_periods','altAsamalar'));
+        return view('frontend.secure.all_services.service_information', compact('firma', 'service_id', 'service_resources', 'iller', 'device_brands', 'device_types', 'warranty_periods','altAsamalar','seciliKonsinyeCihazlar', 'konsinyeCihazlar'));
     }
+    //Servisler modalında konsinye cihaz güncellemesi
+    public function getServicesKonsinyeCihaz($firma_id, $service_id)
+    {
+        $firma = Tenant::where('id', $firma_id)->first();
+        $service_id_obj = Service::where('firma_id', $firma->id)->findOrFail($service_id);
+        
+        if (!$service_id_obj) {
+            return response()->json(['error' => 'Servis bulunamadı'], 404);
+        }
+
+        // Konsinye cihazları getir (aynı mantıkla)
+        $konsinyeKategoriId = 3;
+        $konsinyeCihazlar = Stock::where('firma_id', $firma->id)
+            ->where('urunKategori', $konsinyeKategoriId)
+            ->get();
+            
+        // Konsinye cihaz verilerini parse et
+        $seciliKonsinyeCihazlar = [];
+        
+        // ServiceStageAnswer tablosundan konsinye cevaplarını al
+        $konsinyeAnswers = ServiceStageAnswer::whereIn('planid', function($query) use ($service_id_obj) {
+                $query->select('id')
+                    ->from('service_plannings')
+                    ->where('servisid', $service_id_obj->id);
+            })
+            ->where('cevap', 'LIKE', '%---%')
+            ->get();
+            
+        foreach ($konsinyeAnswers as $answer) {
+            // Cevabın "1---2, 3---1" formatında olup olmadığını kontrol et
+            if (preg_match('/\d+---\d+/', $answer->cevap)) {
+                $cevapParts = explode(', ', $answer->cevap);
+                
+                foreach ($cevapParts as $part) {
+                    if (strpos($part, '---') !== false) {
+                        $partData = explode('---', $part);
+                        if (count($partData) >= 2) {
+                            $cihazId = (int)$partData[0];
+                            $adet = (int)$partData[1];
+                            
+                            // Eğer bu cihaz konsinye kategorisindeyse ekle
+                            $cihaz = $konsinyeCihazlar->firstWhere('id', $cihazId);
+                            if ($cihaz) {
+                                $seciliKonsinyeCihazlar[$cihazId] = $adet;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        $html = '';
+        
+        if (count($seciliKonsinyeCihazlar) > 0) {
+            foreach ($seciliKonsinyeCihazlar as $konsinyeId => $adet) {
+                $urun = $konsinyeCihazlar->firstWhere('id', $konsinyeId);
+                if ($urun) {
+                    $html .= '<div><strong style="color:red;">' . $urun->urunAdi . '</strong></div>';
+                }
+            }
+        } else {
+            $html = '<span>Konsinye cihaz atanmadı.</span>';
+        }
+        
+        return response($html);
+    }
+
 
     //servis-bilgileri2 kısmı(Sadece kendine atanan servisleri görebildiği ekran)
     public function KendiServiceDesc($tenant_id, $id) {
@@ -1727,39 +1985,38 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
             ->sum('adet');
 
          // Konsinye Cihaz Stok İşlemleri
-    $konsinyeKategoriId = 3; // İkinci fonksiyonda olduğu gibi konsinye kategori ID'si
-    $konsinyeCihazlar = Stock::where('firma_id', $tenant_id)
-        ->where('urunKategori', $konsinyeKategoriId)
-        ->get();
+        $konsinyeKategoriId = 3; // İkinci fonksiyonda olduğu gibi konsinye kategori ID'si
+        $konsinyeCihazlar = Stock::where('firma_id', $tenant_id)
+            ->where('urunKategori', $konsinyeKategoriId)
+            ->get();
 
-    $toplamKonsinyeCihazAdedi = 0;
+        $toplamKonsinyeCihazAdedi = 0;
 
-    foreach ($konsinyeCihazlar as $device) {
-        // Giriş işlemleri (1: Alış, 4: Müşteriden İade)
-        $girisAdet = StockAction::where('stokId', $device->id)
-            ->whereIn('islem', [1, 4])
-            ->sum('adet');
+        foreach ($konsinyeCihazlar as $device) {
+            // Giriş işlemleri (1: Alış, 4: Müşteriden İade)
+            $girisAdet = StockAction::where('stokId', $device->id)
+                ->whereIn('islem', [1, 4])
+                ->sum('adet');
 
-        // Çıkış işlemleri (2: Serviste Kullanım)
-        $cikisAdet = StockAction::where('stokId', $device->id)
-            ->where('islem', 2)
-            ->sum('adet');
+            // Çıkış işlemleri (2: Serviste Kullanım)
+            $cikisAdet = StockAction::where('stokId', $device->id)
+                ->where('islem', 2)
+                ->sum('adet');
 
-        // Güncel stok miktarını hesapla
-        $device->current_stock_quantity = $girisAdet - $cikisAdet;
+            // Güncel stok miktarını hesapla
+            $device->current_stock_quantity = $girisAdet - $cikisAdet;
 
-        // Sadece pozitif stokları toplama dahil et
-        if ($device->current_stock_quantity > 0) {
-            $toplamKonsinyeCihazAdedi += $device->current_stock_quantity;
+            // Sadece pozitif stokları toplama dahil et
+            if ($device->current_stock_quantity > 0) {
+                $toplamKonsinyeCihazAdedi += $device->current_stock_quantity;
+            }
         }
-    }
 
-    // Sadece stoku olan cihazları filtrele
-    $konsinyeCihazlar = $konsinyeCihazlar->filter(function($device) {
-        return $device->current_stock_quantity > 0;
-    });   
-
-
+        // Sadece stoku olan cihazları filtrele
+        $konsinyeCihazlar = $konsinyeCihazlar->filter(function($device) {
+            return $device->current_stock_quantity > 0;
+        });   
+        
         // Kullanıcı bilgilerini al
         $kullanici = auth()->user();
 

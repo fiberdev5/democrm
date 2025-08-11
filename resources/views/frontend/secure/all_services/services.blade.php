@@ -22,6 +22,9 @@
                 <button type="button" class="btn btn-danger btn-sm servisPlanlaBtn"><div class="text">Servis Planlama <i data-toggle="tooltip" title="Toplu servis yönlendirmeleri yapmak için kullanılır." class="fas fa-info-circle" data-bs-original-title=""></i></div></button>
                 
                 <button type="button" class="btn btn-primary btn-sm servisRaporlaModalBtn" data-toggle="modal" data-target="#servisRaporlaModal">Raporlar</button>
+
+                <button type="button" class="btn btn-primary btn-sm anketModalBtn" data-toggle="modal" data-target="#anketModal">Anketler</button>
+
                @endif
               @if(auth()->user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
                   <button type="button" class="btn btn-primary btn-sm teknisyenDepoGoster" 
@@ -29,6 +32,7 @@
                       Depo
                   </button>
               @endif
+
               <div class="searchWrap float-end">
 
               <div class="btn-group mb-2 ">
@@ -137,6 +141,7 @@
                 </div>
               </div><!-- /btn-group -->
             </div>
+
             <!-- Servisler Tablosu -->
             <div id="servicesTableSection">
 
@@ -262,6 +267,19 @@
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title" >Servis Raporları</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Yükleniyor...
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div id="anketModal" class="modal fade" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">Anket Raporları</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -425,6 +443,29 @@ $(document).ready(function(){
     });
 });
 </script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".anketModalBtn").click(function(){
+    var firma_id = {{$firma->id}};
+    $.ajax({
+      url: "/"+ firma_id + "/anket-rapor-modal/"
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#anketModal').modal('show');
+        $('#anketModal .modal-body').html(data);
+      }
+    });
+  });
+  
+  $("#anketModal").on("hidden.bs.modal", function() {
+    $(".modal-body").html("");
+  });
+});
+</script>
+
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -610,6 +651,51 @@ $(document).ready(function(){
       table.draw();
     });
 
+    //Operatör istatistikleride istenilen filtreye göre datatbale güncelleme
+    var operator_id = getUrlParameter('operator_id');
+    var opeator_istatistik_tarih1 = getUrlParameter('opeator_istatistik_tarih1');
+    var opeator_istatistik_tarih2 = getUrlParameter('opeator_istatistik_tarih2');
+    if (operator_id && opeator_istatistik_tarih1 && opeator_istatistik_tarih2) {
+        $('#daterange').data('daterangepicker').setStartDate(moment(opeator_istatistik_tarih1));
+        $('#daterange').data('daterangepicker').setEndDate(moment(opeator_istatistik_tarih2));
+    }
+
+    //Durum istatistikleride istenilen filtreye göre datatbale güncelleme
+    var state_id = getUrlParameter('state_id');
+    var state_istatistik_tarih1 = getUrlParameter('state_istatistik_tarih1');
+    var state_istatistik_tarih2 = getUrlParameter('state_istatistik_tarih2');
+    if (state_id && state_istatistik_tarih1 && state_istatistik_tarih2) {
+        $('#daterange').data('daterangepicker').setStartDate(moment(state_istatistik_tarih1));
+        $('#daterange').data('daterangepicker').setEndDate(moment(state_istatistik_tarih2));
+    }
+
+    //Aşama istatistikleride istenilen filtreye göre datatbale güncelleme
+    var stage_id = getUrlParameter('stage_id');
+    var stage_istatistik_tarih1 = getUrlParameter('stage_istatistik_tarih1');
+    var stage_istatistik_tarih2 = getUrlParameter('stage_istatistik_tarih2');
+    if (stage_id && state_istatistik_tarih1 && state_istatistik_tarih2) {
+        $('#daterange').data('daterangepicker').setStartDate(moment(stage_istatistik_tarih1));
+        $('#daterange').data('daterangepicker').setEndDate(moment(stage_istatistik_tarih2));
+    }
+
+    //İlçe istatistikleride istenilen filtreye göre datatbale güncelleme
+    var ilceArama = getUrlParameter('ilceArama');
+    var ilce_istatistik_tarih1 = getUrlParameter('ilce_istatistik_tarih1');
+    var ilce_istatistik_tarih2 = getUrlParameter('ilce_istatistik_tarih2');
+    if (ilceArama && ilce_istatistik_tarih1 && ilce_istatistik_tarih2) {
+        $('#daterange').data('daterangepicker').setStartDate(moment(ilce_istatistik_tarih1));
+        $('#daterange').data('daterangepicker').setEndDate(moment(ilce_istatistik_tarih2));
+    }
+    //Anket istatistikleride istenilen filtreye göre datatbale güncelleme
+    var personel_id = getUrlParameter('personel_id');
+    var deviceType = getUrlParameter('deviceType');
+    var personel_istatistik_tarih1 = getUrlParameter('personel_istatistik_tarih1');
+    var personel_istatistik_tarih2 = getUrlParameter('personel_istatistik_tarih2');
+    if (personel_id && personel_istatistik_tarih1 && personel_istatistik_tarih2) {
+        $('#daterange').data('daterangepicker').setStartDate(moment(personel_istatistik_tarih1));
+        $('#daterange').data('daterangepicker').setEndDate(moment(personel_istatistik_tarih2));
+    }
+
     var firma_id = {{$firma->id}};
     let activeFilters    = {};
     let activeFilterType = '';
@@ -642,6 +728,33 @@ $(document).ready(function(){
           //Raporlama filtreleri
           data.filters    = activeFilters;
           data.filterType = activeFilterType;
+
+         //Operatör istatistikleri filtreleme için URL parametresi aktarma
+          data.operator_id = getUrlParameter('operator_id');
+          data.opeator_istatistik_tarih1 = getUrlParameter('opeator_istatistik_tarih1');
+          data.opeator_istatistik_tarih2 = getUrlParameter('opeator_istatistik_tarih2');
+
+          //Durum istatistikleri filtreleme için URL parametresi aktarma
+          data.state_id = getUrlParameter('state_id');
+          data.state_istatistik_tarih1 = getUrlParameter('state_istatistik_tarih1');
+          data.state_istatistik_tarih2 = getUrlParameter('state_istatistik_tarih2');
+
+          //Aşama istatistikleri filtreleme için URL parametresi aktarma
+          data.stage_id = getUrlParameter('stage_id');
+          data.stage_istatistik_tarih1 = getUrlParameter('stage_istatistik_tarih1');
+          data.stage_istatistik_tarih2 = getUrlParameter('stage_istatistik_tarih2');
+
+          //İlçe istatistikleri filtreleme için URL parametresi aktarma
+          data.ilceArama = getUrlParameter('ilceArama');
+          data.ilce_istatistik_tarih1 = getUrlParameter('ilce_istatistik_tarih1');
+          data.ilce_istatistik_tarih1 = getUrlParameter('ilce_istatistik_tarih2');
+
+          //Anket istatistikleri filtreleme için URL parametresi aktarma
+          data.personel_id = getUrlParameter('personel_id');
+          data.deviceType = getUrlParameter('deviceType');
+          data.personel_istatistik_tarih1 = getUrlParameter('personel_istatistik_tarih1');
+          data.personel_istatistik_tarih2 = getUrlParameter('personel_istatistik_tarih2');
+
         }
       },
       'columns': [
@@ -748,7 +861,6 @@ $(document).ready(function(){
     }); 
 
      /* ---------- FORM SUBMIT HANDLER'LARI ---------- */
-
      function formToObj($form) {
     return $form.serializeArray().reduce((acc, f) => {
       acc[f.name] = f.value;
@@ -762,6 +874,22 @@ $(document).ready(function(){
     activeFilters = formToObj($(this)); //form verilerini objeye çevir
     table.draw(); // datatable’ı güncelle
     $('#servisRaporlaModal').modal('hide');
+  });
+
+  $(document).on('submit', '#yapilanAnketler', function (e) {
+    e.preventDefault();
+    activeFilterType = 'yapilananketler';
+    activeFilters = formToObj($(this)); //form verilerini objeye çevir
+    table.draw(); // datatable’ı güncelle
+    $('#anketModal').modal('hide');
+  });
+
+  $(document).on('submit', '#yapilmayanAnketler', function (e) {
+    e.preventDefault();
+    activeFilterType = 'yapilmayanAnketler';
+    activeFilters = formToObj($(this)); //form verilerini objeye çevir
+    table.draw(); // datatable’ı güncelle
+    $('#anketModal').modal('hide');
   });
 
   $(document).on('submit', '#teknisyenArama', function (e) {
@@ -969,6 +1097,28 @@ $(document).on('submit', '#gelenCagriArama', function(e){
   });
 </script>
 
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+      }
+    };
+    var servisid = getUrlParameter('did');
+    var firma_id = {{$firma->id}};
+     if(servisid){
+      $.ajax({
+        url: "/"+ firma_id + "/servis/duzenle/"+ servisid
+      }).done(function(data) { 
+        if($.trim(data)==="-1"){
+          window.location.reload(true);
+        }else{
+          $('#editServiceDescModal').modal('show');
+          $('#editServiceDescModal .modal-body').html(data);
+        }
+      });
+    }
+  
+</script>
 
 @endsection
 

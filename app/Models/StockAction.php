@@ -19,7 +19,7 @@ class StockAction extends Model
     // StockAction tablosundaki 'kid' sütunu, User tablosundaki 'user_id' sütununa bağlanır.
     public function actionPerformer()
     {
-        return $this->belongsTo(\App\Models\User::class, 'kid', 'user_id');
+        return $this->belongsTo(\App\Models\User::class, 'pid', 'user_id');
     }
     public function aliciPersonel()
     {

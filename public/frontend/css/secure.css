@@ -1306,7 +1306,7 @@ div.dataTables_wrapper div.dataTables_filter input{border-radius: 0;}
 
 .btn-primary {
   color: #fff;
-  background-color: #343a40 !important;
+  background-color: #070c11 !important;
   border-color: #212529 !important;
 }
 #servisFotoEkle .custom-file {
@@ -1486,5 +1486,734 @@ b, strong {font-weight: 900;color: #000000;}
 
 
 
+.anketModalBtn{
+    position: absolute;
+    left: 833px;
+    top: 43px;
+}
+.statistic-btn {
+    min-width: 120px; 
+    height: 70px; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    text-align: center; 
+    padding: 5px 10px; 
+    white-space: normal!important;
+    font-size: 0.85rem; 
+    transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+@media (max-width: 576px) {
+  .statistic-btn {
+    width: 100%;
+  }
+}
 
+.statistic-btn:hover {
+    text-decoration: underline !important; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: scale(1.03);
+}
+
+.servis-istatistik-genel .statistic-btn i {
+    margin-bottom: 4px;
+    font-size: 1.2rem; 
+}
+.servis-istatistik .statistic-btn i {
+    margin-bottom: 4px;
+    font-size: 1.2rem; 
+}
+
+.servis-istatistik-genel .bg-gradient-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.servis-istatistik-genel .istatistik-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.servis-istatistik-genel .istatistik-card:hover {
+    transform: translateY(-2px);
+}
+
+.servis-istatistik-genel .accordion-button {
+    font-weight: 500;
+}
+
+.servis-istatistik-genel .istatistik-badge {
+    font-size: 0.75em;
+}
+
+.period-tabs-compact {
+    border: 1px solid #dee2e6;
+}
+
+.period-tabs-compact .period-tab-compact {
+    border-radius: 0;
+    font-size: 0.85rem;
+    padding: 5px;
+    border: none;
+    border-right: 1px solid #dee2e6;
+    background: #fff;
+    color: #6c757d;
+    transition: all 0.2s ease; /* Hızlandırıldı */
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.period-tabs-compact .period-tab-compact:last-child {
+    border-right: none;
+}
+
+.period-tabs-compact .period-tab-compact:hover {
+    background: #e3f2fd;
+    color: #343a40;
+    transform: translateY(-1px);
+}
+
+.period-tabs-compact .period-tab-compact.active,
+.period-tabs-compact .period-tab-compact[aria-expanded="true"] {
+    background: #343a40;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: inset 0 -3px 0 #343a40;
+}
+
+.period-tabs-compact .period-tab-compact.active .badge,
+.period-tabs-compact .period-tab-compact[aria-expanded="true"] .badge {
+    background: rgba(255,255,255,0.2) !important;
+    color: #fff !important;
+}
+
+/* Collapse animasyonlarını kaldır - ÖNEMLI GÜNCELLEME */
+.period-statistics .collapse {
+    transition: none !important; /* Tüm transition'ları kaldır */
+}
+
+.period-statistics .collapse.show {
+    display: block;
+}
+
+.period-statistics .collapse:not(.show) {
+    display: none;
+}
+
+/* Bootstrap'ın varsayılan collapse animasyonlarını override et */
+.period-statistics .collapsing {
+    transition: none !important;
+    height: auto !important;
+}
+
+.period-accordion .card-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    background-color: #343a40 !important;
+    color: #fff !important;
+}
+
+.period-accordion .card-body {
+    padding: 0.75rem !important;
+}
+
+.period-accordion .card-body .border-bottom {
+    padding: 0.3rem 0 !important;
+}
+
+.period-accordion .card-body .text-truncate,
+.period-accordion .card-body small {
+    font-size: 0.80rem !important;
+}
+
+.period-accordion .card-body .badge {
+    font-size: 0.75rem !important;
+    padding: 0.25em 0.5em !important;
+}
+
+.period-statistics .card {
+    border: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+/* Fade efekti için alternatif çözüm */
+.period-accordion .collapse {
+    opacity: 1;
+    transition: opacity 0.15s ease-in-out;
+}
+
+.period-accordion .collapse:not(.show) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.period-accordion .collapse.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@media (max-width: 768px) {
+    .period-tabs-compact {
+        justify-content: center;
+    }
+    
+    .period-tabs-compact .period-tab-compact {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+}
+
+/* İstatistik Filtre Sonuçları */
+.statistics-filter-section .card-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 0.75rem 1rem;
+    background-color: #343a40 !important;
+    color: #fff !important;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.statistics-filter-section .card-body {
+    padding: 0.75rem !important;
+    background-color: #f8f9fa !important;
+}
+
+.statistics-filter-section .card-body .border-bottom {
+    padding: 0.3rem 0 !important;
+}
+
+.statistics-filter-section .card-body .text-truncate,
+.statistics-filter-section .card-body span,
+.statistics-filter-section .card-body .badge {
+    font-size: 0.80rem !important;
+}
+
+.statistics-filter-section .card-body .badge {
+    padding: 0.25em 0.5em !important;
+    background-color: #6c757d !important;
+    color: #fff !important;
+}
+
+
+/* İstatsitik Tabloları Genel */
+.servis-istatistik .table-modern {
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    border: 1px solid #f0f0f0;
+    margin-bottom: 0;
+}
+
+/* Tablo Başlığı */
+.servis-istatistik .table-modern thead {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+}
+
+.servis-istatistik .table-modern thead th {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    padding: 10px 14px;
+    border: none;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+/* Tablo Satırları */
+.servis-istatistik .table-modern tbody tr {
+    border-bottom: 1px solid #f8f9fa;
+    transition: all 0.2s ease;
+}
+
+.servis-istatistik .table-modern tbody tr:hover {
+    background: #f8f9fa !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.servis-istatistik .table-modern tbody tr:last-child {
+    border-bottom: none;
+}
+
+.servis-istatistik .table-modern tbody td {
+    padding: 10px 14px;
+    vertical-align: middle;
+    border: none;
+    font-size: 13px;
+}
+
+/* Aksiyon Butonları */
+.servis-istatistik .btn-action {
+    background: #6c757d;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    color: white !important;
+    transition: all 0.2s ease;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.servis-istatistik .btn-action:hover {
+    background: #5a6268;
+    color: white !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+    text-decoration: none;
+}
+
+.servis-istatistik .btn-action:focus {
+    color: white !important;
+    box-shadow: 0 0 0 0.15rem rgba(108, 117, 125, 0.25);
+}
+
+/* Avatar Stilleri */
+.servis-istatistik .avatar, .servis-istatistik .status-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+    margin-right: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border: 2px solid rgba(255,255,255,0.9);
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.servis-istatistik .avatar:hover, .servis-istatistik .status-avatar:hover {
+    transform: scale(1.05);
+    box-shadow: 0 3px 8px rgba(108, 117, 125, 0.3);
+}
+
+/* Badge Stilleri */
+.servis-istatistik .badge.bg-primary {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-weight: 500;
+    font-size: 11px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border: none;
+}
+
+.servis-istatistik .badge.bg-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(108, 117, 125, 0.2);
+}
+
+/* Kart Tasarımı */
+.servis-istatistik .card-header {
+    background: #ffffff;
+    padding: 14px 18px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 16px;
+    margin-bottom: 0;
+}
+
+.servis-istatistik .card-body {
+    padding: 0;
+}
+
+/* DataTable Genel Ayarları */
+.servis-istatistik .datatable-common {
+    background: none !important;
+    color: #2c3e50 !important;
+}
+
+.servis-istatistik .datatable-common thead.title {
+    color: white !important;
+}
+
+.servis-istatistik .datatable-common thead.title th {
+    color: white !important;
+}
+
+/* DataTable Length Seçimi */
+.servis-istatistik .dataTables_length select {
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 3px 6px;
+    background: #f8f9fa;
+    color: #6c757d;
+    font-size: 12px;
+}
+
+.servis-istatistik .dataTables_length label {
+    font-weight: 100;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+}
+
+/* Flex Düzeni */
+.servis-istatistik .d-flex.align-items-center {
+    display: flex;
+    align-items: center;
+}
+
+/* Text Stilleri */
+.servis-istatistik .fw-bold {
+    font-weight: 600 !important;
+    color: #2c3e50;
+    font-size: 13px;
+}
+
+.servis-istatistik .text-muted {
+    color: #6c757d !important;
+    font-size: 11px;
+}
+
+/* İkon boyutları */
+.servis-istatistik .fas {
+    font-size: 11px;
+}
+
+.servis-istatistik .dropdown-menu {
+    font-size: 12px;
+    position: absolute;
+    
+}
+
+.servis-istatistik .dropdown-menu .btn {
+    font-size: 11px;
+    padding: 4px 8px;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+    .servis-istatistik .table-modern thead th,
+    .servis-istatistik .table-modern tbody td {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+    
+    .servis-istatistik .card-header {
+        padding: 12px 16px;
+        font-size: 14px;
+        gap: 8px;
+    }
+    
+    .servis-istatistik .avatar, .servis-istatistik .status-avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+        margin-right: 8px;
+    }
+    
+    .servis-istatistik .btn-action {
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+
+    .servis-istatistik .fw-bold {
+        font-size: 12px;
+    }
+
+    .servis-istatistik .text-muted {
+        font-size: 10px;
+    }
+}
+
+/****************İlçe İstatsitikleri****************/
+.location-statistic-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(13, 110, 253, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/****************************Teknisyen İstatsitikleri*********************/
+.teknisyen-detay-btn {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+.teknisyen-detay-btn:hover {
+    background-color: rgba(0, 123, 255, 0.08) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+/* Detay gösterge ikonu */
+.detay-icon {
+    color: #6c757d;
+    font-size: 0.8rem;
+    margin-left: 8px;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+.teknisyen-detay-btn.clicked .detay-icon {
+    transform: rotate(90deg);
+    color: #007bff;
+}
+/* Aktif satır */
+.teknisyen-detay-btn.clicked {
+    background-color: rgba(0, 123, 255, 0.12) !important;
+    border-left: 3px solid #007bff;
+}
+.table-container::before {
+    content: "💡 Teknisyen detaylarını görmek için satırlara tıklayabilirsiniz";
+    display: block;
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: rgba(0, 123, 255, 0.05);
+    border-radius: 4px;
+    border-left: 3px solid #007bff;
+}
+@media (max-width: 768px) {
+    .teknisyen-detay-btn:hover {
+        transform: none;
+        background-color: rgba(0, 123, 255, 0.1) !important;
+    }
+    
+    .table-container::before {
+        font-size: 0.75rem;
+        padding: 6px 8px;
+    }
+}
+
+.detay-satir {
+    background-color: #f8f9fa;
+}
+
+.detay-satir td {
+    padding: 0;
+}
+
+.teknisyen-dropdown {
+    margin-left: auto; /* sağa yaslar */
+    position: relative;
+}
+
+/* Tüm tarih butonlarının varsayılan yazı rengi kırmızı */
+.teknisyen-dropdown .tarih-butonlari .btn {
+    color: red;
+      border: none;
+}
+
+/* Aktif (tıklanmış) buton stili */
+.teknisyen-dropdown .tarih-butonlari .btn.active {
+    background-color: #5c636a !important;
+    color: white !important;
+}
+
+/* Hover durumunda (aktif değilse) */
+.teknisyen-dropdown .tarih-butonlari .btn:not(.active):hover {
+    background-color: #e9ecef;
+    color: red; /* Hover'da da yazı rengi kırmızı kalır */
+}
+
+/****************************İstatsitk Menü*********************************/
+.statistics-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 0.75rem;
+    width: 100%;
+}
+
+@media (max-width: 1400px) {
+            .statistics-menu {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+        }
+
+@media (max-width: 1200px) {
+            .statistics-menu {
+                grid-template-columns: repeat(3, 1fr);
+            }
+       }
+
+@media (max-width: 992px) {
+            .statistics-menu {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+         }
+            
+.statistic-btn {
+                font-size: 0.85rem;
+                padding: 0.6rem 0.8rem;
+            }
+        }
+
+ @media (max-width: 768px) {
+            .statistics-menu {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .statistic-btn {
+                justify-content: flex-start;
+                padding: 0.75rem;
+            }
+        }
+
+@media (max-width: 576px) {
+            .statistic-btn {
+                font-size: 0.8rem;
+                padding: 0.6rem;
+            }
+            
+            .statistic-btn i {
+                margin-right: 0.4rem;
+                font-size: 0.9rem;
+            }
+        }
+.statistic-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    min-height: 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/********************** Personel anket filtresi için dropdown menü ************************/
+.dropdown-menu-personel_anket {
+            position: absolute !important;
+            right: 0 !important;
+            left: auto !important;
+            top: 100% !important;
+            z-index: 1000 !important;
+            display: none !important; /* Başlangıçta gizli */
+            min-width: 300px;
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            font-size: 13px;
+        }
+.dropdown-menu-personel_anket.show {
+            display: block !important;
+        }
+
+.dropdown-menu-personel_anket .btn {
+            font-size: 11px;
+            padding: 6px 12px;
+            margin: 2px;
+        }
+
+.dropdown-menu-personel_anket .form-select,
+.dropdown-menu-personel_anket .form-control {
+            font-size: 12px;
+            padding: 6px 10px;
+        }
+ /* Responsive düzenlemeler */
+@media (max-width: 767px) {
+            .dropdown-menu-personel_anket {
+                min-width: 280px !important;
+                right: -20px !important;
+            }
+}
+
+/********************** Anketler için menü ************************/
+/* Özet kartları */
+.servis-istatistik .bg-primary,
+.servis-istatistik .bg-success,
+.servis-istatistik .bg-warning,
+.servis-istatistik .bg-danger {
+    background: linear-gradient(135deg, #495057 0%, #6c757d 100%) !important;
+    color: #ffffff !important;
+}
+
+.servis-istatistik .badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 500;
+    min-width: 40px;
+    display: inline-block;
+}
+
+/* Grafik konteyneri */
+.servis-istatistik #surveyChart {
+    max-height: 300px;
+}
+
+/* Animasyonlar */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.servis-istatistik .pageDetail {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.servis-istatistik .pageDetail:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+    .servis-istatistik .card-body {
+        padding: 1rem;
+    }
+    
+    .servis-istatistik #surveyChart {
+        max-height: 250px;
+    }
+    
+}
+/* Loading animasyonu */
+.servis-istatistik .fa-spinner.fa-spin {
+    animation: spin 1s linear infinite;
+    color: #667eea;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Başarı mesajları */
+.servis-istatistik .alert {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
 

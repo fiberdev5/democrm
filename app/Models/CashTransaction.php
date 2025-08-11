@@ -11,6 +11,7 @@ class CashTransaction extends Model
 
     protected $guarded = [];
 
+
     public function servisler()
     {
         return $this->belongsTo(Service::class, 'servis', 'id');
@@ -40,4 +41,5 @@ class CashTransaction extends Model
     {
         return $this->belongsTo(StockAction::class, 'stokIslem', 'id');
     }
+
 }

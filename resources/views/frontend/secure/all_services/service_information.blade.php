@@ -74,16 +74,29 @@
               </select>
             </div>
           </div>
-        
+        <!--Konsinye Cihaz-->
         <div class="row form-group" style="border: 0;margin-bottom:0;">
           <div class="col-md-4 rw1"><label>Konsinye Cihaz</label></div>
           <div class="col-md-8 rw2">
-              <select class="form-control form-select konsinye" name="konsinye">
-                <option value="">-Seçiniz-</option>
-              </select>
+            <div class="konsinye-cihaz-container">
+              @if(count($seciliKonsinyeCihazlar) > 0)
+              @foreach($seciliKonsinyeCihazlar as $konsinyeId => $adet)
+                  @php
+                      $urun = $konsinyeCihazlar->firstWhere('id', $konsinyeId);
+                  @endphp
+                  @if($urun)
+                      <div>
+                          <strong style="color:red;">{{ $urun->urunAdi }}</strong> 
+                      </div>
+                  @endif
+              @endforeach
+              @else
+                  <span>Konsinye cihaz atanmadı.</span>
+              @endif
+            </div>
           </div>
         </div>
-        
+
         <div class="row form-group" style="border: 0;margin-bottom:0;">
           <div class="col-md-4 rw1"><label>Fatura Numarası</label></div>
           <div class="col-md-8 rw2">
@@ -256,7 +269,7 @@
         <h5 class="modal-fade-title">Müşteri Anketi</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
       </div>
-      <div class="modal-body" style="max-height: 80vh; overflow-y: auto;"id="anketModalContent">
+      <div class="modal-body" style="max-height: 80vh; overflow-y: auto; overflow-x: hidden;"id="anketModalContent">
         <!-- Form buraya yüklenecek -->
         <div class="text-center">
           <span class="spinner-border text-primary"></span>
@@ -283,6 +296,16 @@ function loadServiceHistory(service_id) {
         },
         error: function() {
             alert('Veriler yüklenirken hata oluştu.');
+        }
+    });
+    // Konsinye cihaz bilgilerini güncelleme
+    $.ajax({
+        url: "/" + firma_id + '/servis-konsinye-cihaz/' + service_id,
+        method: 'GET',
+        success: function(data) {
+            $('.konsinye-cihaz-container').html(data);
+        },
+        error: function() {
         }
     });
 }
@@ -463,8 +486,14 @@ function renderServiceHistory(data) {
       }).done(function(data) {
         if($.trim(data)==="-1"){
           window.location.reload(true);
-        }else{
+        }else{ //Konsinye cihaz modal güncelleme
           $('.altSecenekler').html(data);
+           // Eğer yüklenen form konsinye ile ilgiliyse, submit sonrasında güncelle
+                $('.altSecenekler form').on('submit', function() {
+                    setTimeout(function() {
+                        loadServiceHistory(service); // Mevcut fonksiyonunu kullan
+                    }, 1500);
+                });
         }
       });
     }else{
