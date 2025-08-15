@@ -399,6 +399,11 @@ Route::controller(HomeController::class)->group(function() {
     Route::get('/get-states/{countryId}', 'getStatesByCountry')->name('get.states');
 
 });
+// API routes - AJAX istekleri için
+Route::prefix('api')->group(function () {
+    Route::get('/dashboard/stats', [HomeController::class, 'getStats'])->name('dashboard.stats');
+    Route::get('/dashboard/chart-data', [HomeController::class, 'getChartData'])->name('dashboard.chart');
+});
 
 // API routes - AJAX istekleri için
 Route::prefix('api')->group(function () {
@@ -410,7 +415,6 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
     Route::controller(HomeController::class)->group(function() {
         Route::get('/dashboard', 'Dashboard')->name('secure.home');
     });
-
 
 Route::controller(SurveyController::class)->group(function() {
     Route::get('/anket/{servisId}/create', 'SurveyCreate')->name('survey.create');
@@ -447,6 +451,14 @@ Route::controller(StatisticController::class)->group(function() {
     Route::post('/anket-sonuclari/data',  'getSurveyResults')->name('survey.results.data');
     //Cash Statistics
     Route::get('/kasa-istatistikleri', 'CashStatistics')->name('cash.statistics');
+    Route::post('/gelir-tablo/getir', 'kasaFilteredData')->name('cash.income.data');
+    Route::post('/gider-tablo/getir', 'giderTabloGetir')->name('cash.expense.table');
+    Route::post('/gelir-grafik/getir', 'gelirGrafikGetir')->name('cash.income.chart');
+    Route::post('/gider-grafik/getir', 'giderGrafikGetir')->name('cash.expense.chart');
+
+    
+        
+    
 
 
    
@@ -469,6 +481,11 @@ Route::controller(StatisticController::class)->group(function() {
         Route::post('/bayi/guncelle/{id}', 'UpdateDealer')->name('update.dealer');
         Route::get('/bayi-sil/{id}', 'DeleteDealer')->name('delete.dealer');
         Route::get('/bayiler/data', 'GetDealersData')->name('dealers.data');
+        Route::get('/dealer-document/{user_id}/{index?}','ShowDealerDocument')
+    ->name('dealer.document');
+
+
+        
 
 
     });

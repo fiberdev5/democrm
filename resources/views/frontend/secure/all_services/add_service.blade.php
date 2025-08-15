@@ -88,7 +88,7 @@
                 <div class="row form-group" id="vergiBox" style="border: 0;margin-bottom: 0">
                   <div class="col-md-4 rw1"><label>Vergi No/Dairesi</label></div>
                   <div class="col-md-4 rw2">
-                    <input type="number" name="vergiNo" class="form-control vergiNo" placeholder="Vergi No" autocomplete="off">
+                    <input type="number" name="vergiNo" id="vergiNo" class="form-control vergiNo" placeholder="Vergi No" autocomplete="off">
                   </div>
                   <div class="col-md-4 rw2">
                     <input type="text" name="vergiDairesi" class="form-control buyukYaz vergiDairesi" style="text-transform: uppercase;" placeholder="Vergi Dairesi" autocomplete="off">
@@ -257,6 +257,13 @@
     $('.phone').mask('000 000 0000');
   });
 </script>
+
+<script>
+    $(document).ready(function(){
+    $("#vergiNo").mask("9999999999");
+  });
+</script>
+
 
 <script>
     $(document).ready(function () {

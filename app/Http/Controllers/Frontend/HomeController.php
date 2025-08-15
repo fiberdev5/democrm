@@ -38,6 +38,8 @@ class HomeController extends Controller
         return view('frontend.index', compact('slide','references','features' ,'faqs','pricing' ,'home_about','settings', 'home_section','products'));
     }
 
+
+
     public function Pricing() {
         $prices = Pricing::orderBy('id','asc')->get();
         return view('frontend.pages.pricing', compact('prices'));

@@ -1,6 +1,8 @@
 <div class="table-responsive" style="margin: 0">
+
   @if(!is_null($customer_invoices) && count($customer_invoices) > 0)
-  <table class="table table-hover table-striped" width="100%" cellspacing="0" style="margin: 0">
+  <table class="table table-hover table-striped" id="teklifTablo" width="100%" cellspacing="0" style="margin: 0; display: none;">
+
     <thead class="title">
       <tr>
         <th style="padding: 5px 10px;font-size: 12px;width: 70px">Tarih</th>
@@ -10,6 +12,11 @@
       </tr>
     </thead>
     <tbody>
+
+      <!-- Teklif verileri buraya gelecek -->
+    </tbody>
+  </table>
+
       @foreach($customer_invoices as $invoice)  
         @php 
           $sontarih = \Carbon\Carbon::parse($invoice->faturaTarihi)->format('d/m/Y');
@@ -33,6 +40,46 @@
     </tbody>
   </table>
   @else
-    <div style="color: black;text-align:center;">Fatura bulunmamaktadır</div>
+    <!-- Boş durum mesajı -->
+  <div id="noTeklif" class="text-center text-muted" style="padding: 20px;">
+    <i class="fas fa-file-invoice-dollar fa-3x mb-3" style="font-size: 2.5em; color: #ddd;"></i>
+    <p style="font-size: 14px; color: #6c757d; margin: 0;">Henüz fatura eklenmemiş</p>
+  </div>
   @endif
+
 </div>
+
+<script>
+$(document).ready(function() {
+  // Teklif sayısını kontrol eden fonksiyon
+  function checkTeklifCount() {
+    const teklifCount = $('#teklifTablo tbody tr').length;
+    if (teklifCount === 0) {
+      $('#teklifTablo').hide();
+      $('#noTeklif').show();
+    } else {
+      $('#teklifTablo').show();
+      $('#noTeklif').hide();
+    }
+  }
+
+  // Sayfa yüklendikten sonra kontrol et
+  checkTeklifCount();
+
+  // AJAX ile teklif eklendikten sonra tekrar kontrol et
+  // Örnek: Teklif ekleme işlemi başarılı olduğunda
+  $(document).on('teklifEklendi', function() {
+    checkTeklifCount();
+  });
+
+  // Teklif silme işlemi örneği
+  $(document).on('click', '.teklifSil', function() {
+    // Silme işlemi kodunuz
+    // Başarılı silme işlemi sonrası:
+    $(this).closest('tr').fadeOut(300, function() {
+      $(this).remove();
+      checkTeklifCount();
+    });
+  });
+});
+</script>

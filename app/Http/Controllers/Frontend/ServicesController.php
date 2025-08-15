@@ -565,37 +565,51 @@ class ServicesController extends Controller
         return implode(', ', $out);
     }
 
+
     private function colSonlandirAction($row): string
     {
-        $sonlandirabilir_asamalar = [
-            'Yerinde Bakım Yapıldı','Fiyatta Anlaşılamadı','Ürün Garantili Çıktı','Müşteriye Ulaşılamadı',
-            'Müşteri İptal Etti','Cihaz Tamir Edilemiyor','Haber Verecek','Cihaz Teslim Edildi','Şikayetçi',
-            'Cihaz Satışı Yapıldı','Tahsilata Gönder','Cihaz Teslim Edildi (Parça Takıldı)','Müşteri Para İade Edilecek',
-            'Müşteri Para İade Edildi','Fiyat Yükseltildi','Deneme Aşaması','Konsinye Cihaz Ata','Konsinye Cihaz Geri Alındı'
-        ];
-        $zaten_sonlanmis_asama_adi = 'Servisi Sonlandır';
+        // Servisi "Sonlandırıldı" durumuna geçirmek için kullanılacak buton.
+                    $sonlandirabilir_asamalar = 
+                        ['Yerinde Bakım Yapıldı', 'Fiyatta Anlaşılamadı','Ürün Garantili Çıktı','Müşteriye Ulaşılamadı',
+                        'Müşteri İptal Etti','Cihaz Tamir Edilemiyor','Haber Verecek','Cihaz Teslim Edildi','Şikayetçi','Cihaz Satışı Yapıldı',
+                        'Tahsilata Gönder','Cihaz Teslim Edildi (Parça Takıldı)','Müşteri Para İade Edilecek','Müşteri Para İade Edildi',
+                        'Fiyat Yükseltildi','Deneme Aşaması','Konsinye Cihaz Ata','Konsinye Cihaz Geri Alındı'
+                        ];
+                    $zaten_sonlanmis_asama_adi = 'Servisi Sonlandır';
 
-        if ($row->asamalar) {
-            if (in_array($row->asamalar->asama, $sonlandirabilir_asamalar)) {
-                $hedef_sonlanmis_asama_id = 255; // mevcut ID’n
-                return '
-                    <div class="form-check form-switch d-flex justify-content-center">
-                        <input class="form-check-input servis-sonlandir-switch" type="checkbox" role="switch"
-                            style="cursor:pointer;"
-                            data-servis-id="' . $row->id . '" 
-                            data-gelen-islem-id="' . $row->servisDurum . '"
-                            data-giden-islem-id="' . $hedef_sonlanmis_asama_id . '"
-                            title="Servisi tamamlandı olarak işaretlemek için tıklayın">
-                    </div>';
-            }
-            if ($row->asamalar->asama == $zaten_sonlanmis_asama_adi) {
-                return '
-                    <div class="form-check form-switch d-flex justify-content-center">
-                        <input class="form-check-input" type="checkbox" role="switch" checked disabled>
-                    </div>';
-            }
-        }
-        return '';
+                    if ($row->asamalar) {
+                        // DURUM 1: Servis, sonlandırılabilecek bir aşamadaysa (Switch 'OFF' ve tıklanabilir durumda)
+                        if (in_array($row->asamalar->asama, $sonlandirabilir_asamalar)) {
+                            $hedef_sonlanmis_asama_id = 255;
+                            return '
+                                <div class="form-check form-switch d-flex justify-content-center">
+                                    <input class="form-check-input servis-sonlandir-switch" type="checkbox" role="switch"
+                                        style="cursor:pointer; width: 2.7em; height: 1.2em;"
+                                        data-servis-id="' . $row->id . '" 
+                                        data-gelen-islem-id="' . $row->servisDurum . '"
+                                        data-giden-islem-id="' . $hedef_sonlanmis_asama_id . '"
+                                        title="Servisi tamamlandı olarak işaretlemek için tıklayın">
+                                </div>';
+                        }
+                        
+                        // DURUM 2: Servis zaten sonlanmış bir aşamadaysa (Switch 'ON' ve tıklanabilir durumda - servis modalı açılacak)
+                        if ($row->asamalar->asama == $zaten_sonlanmis_asama_adi) {
+                            return '
+                                <div class="form-check form-switch d-flex justify-content-center">
+                                    <input class="form-check-input servis-sonlanmis-switch serBilgiDuzenle" type="checkbox" role="switch" 
+                                        checked 
+                                        style="cursor:pointer; width: 2.7em; height: 1.2em;"
+                                        data-bs-id="' . $row->id . '"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editServiceDescModal"
+                                        title="Servis tamamlanmış - Detayları görüntülemek için tıklayın">
+                                </div>';
+                        }
+                    }
+                    // Diğer tüm durumlar için hücre boş kalacaktır.
+                    return '';
+
+      
     }
 
     private function colActions($row): string
@@ -608,6 +622,7 @@ class ServicesController extends Controller
         }
         return $editButton . ' ' . $deleteButton;
     }
+    
 
 
     //Sadece kendine atanan servisleri gören kişilerin koşullarını kontrol eden fonksiyon.(üstteki AllServices fonksiyonunda kullandım)

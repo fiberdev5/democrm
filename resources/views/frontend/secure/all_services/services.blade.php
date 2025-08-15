@@ -776,6 +776,16 @@ $(document).ready(function(){
         $('#daterange').data('daterangepicker').setStartDate(moment(personel_istatistik_tarih1));
         $('#daterange').data('daterangepicker').setEndDate(moment(personel_istatistik_tarih2));
     }
+    // Dashboard istatistiklerinden gelen filtreyi kontrol et
+    var dashboard_filter = getUrlParameter('dashboard_filter');
+    var dashboard_istatistik_tarih1 = getUrlParameter('dashboard_istatistik_tarih1');
+    var dashboard_istatistik_tarih2 = getUrlParameter('dashboard_istatistik_tarih2');
+
+    if (dashboard_filter && dashboard_istatistik_tarih1 && dashboard_istatistik_tarih2) {
+        $('#daterange').data('daterangepicker').setStartDate(moment(dashboard_istatistik_tarih1));
+        $('#daterange').data('daterangepicker').setEndDate(moment(dashboard_istatistik_tarih2));
+    }
+
 
     var firma_id = {{$firma->id}};
     let activeFilters    = {};
@@ -835,6 +845,11 @@ $(document).ready(function(){
           data.deviceType = getUrlParameter('deviceType');
           data.personel_istatistik_tarih1 = getUrlParameter('personel_istatistik_tarih1');
           data.personel_istatistik_tarih2 = getUrlParameter('personel_istatistik_tarih2');
+          // Dashboard filtreleri
+          data.dashboard_filter = getUrlParameter('dashboard_filter');
+          data.dashboard_istatistik_tarih1 = getUrlParameter('dashboard_istatistik_tarih1');
+          data.dashboard_istatistik_tarih2 = getUrlParameter('dashboard_istatistik_tarih2');
+
 
         }
       },
@@ -844,7 +859,7 @@ $(document).ready(function(){
         { data: 'm_adi',name:'m_adi', orderable: true },
         { data: 'cihaz',name: 'cihaz', orderable:true },
         { data: 'asama_id',name:'durum', orderable: true },
-        { data: 'sonlandir_action', name:'sonlandir_action', orderable: false, searchable: false},
+        { data: 'sonlandir_action', name:'sonlandir_action', orderable: false, searchable: false}, 
         { data: 'action', name:'action', orderable: false, searchable: false}           
       ],
       createdRow: function (row, data) {
@@ -1237,6 +1252,89 @@ $(document).on('submit', '#gelenCagriArama', function(e){
       });
     }
   });
+</script>
+<script>
+// Servisi Sonlandır radio button handler'ı
+$(document).ready(function() {
+  // Aktif servisleri sonlandırmak için kullanılan switch
+  $('#datatableService').on('click', '.servis-sonlandir-switch', function(e) {
+        // Switch'in hemen durum değiştirmesini engelliyoruz.
+        e.preventDefault(); 
+        
+        var aSwitch = $(this); // Tıklanan switch elemanı
+
+
+        // Eğer switch zaten pasifse (örn: işlem sırasında) hiçbir şey yapma.
+        if (aSwitch.is(':disabled')) {
+            return;
+        }
+
+        // Gerekli verileri data-* etiketlerinden alıyoruz.
+        var servisId = aSwitch.data('servis-id');
+        var gelenIslemId = aSwitch.data('gelen-islem-id');
+        var gidenIslemId = aSwitch.data('giden-islem-id');
+        var firmaId = '{{ $firma->id }}';
+
+        // Kullanıcıdan onay alıyoruz.
+        if (confirm('Bu servisi sonlandırmak istediğinizden emin misiniz?')) {
+            
+            // İşlem sırasında switch'i pasif hale getiriyoruz.
+            aSwitch.prop('disabled', true);
+
+            $.ajax({
+                url: `/${firmaId}/servis-plan-kaydet`,
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    servis: servisId,
+                    gelenIslem: JSON.stringify({ id: gelenIslemId }),
+                    gidenIslem: gidenIslemId
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // İşlem başarılı olursa DataTables'ı yeniden çizdiriyoruz.
+                        // Tablo yenilendiğinde switch, PHP tarafında doğru (checked ve disabled) halde gelecektir.
+                        $('#datatableService').DataTable().ajax.reload(null, false);
+                    } else {
+                        alert('Hata: ' + response.message);
+                        // Hata durumunda switch'i tekrar aktif hale getiriyoruz.
+                        aSwitch.prop('disabled', false);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Servis sonlandırılırken bir sunucu hatası oluştu.');
+                    console.error('AJAX Hatası:', xhr.responseText);
+                    // Hata durumunda switch'i tekrar aktif hale getiriyoruz.
+                    aSwitch.prop('disabled', false);
+                }
+            });
+
+        } 
+        // Kullanıcı onay vermezse hiçbir şey yapmıyoruz. 
+        // e.preventDefault() sayesinde switch kapalı kalmaya devam eder.
+    });
+
+    // Sonlandırılmış servislerin switch'ine tıklandığında modal açma
+    $('#datatableService').on('click', '.servis-sonlanmis-switch', function(e) {
+        // Checkbox'ın durumunu değiştirmesini engelle
+        e.preventDefault();
+        
+        var servisId = $(this).data('bs-id');
+        var firmaId = '{{ $firma->id }}';
+        
+        // Modal açma işlemi (serBilgiDuzenle)
+        $.ajax({
+            url: "/" + firmaId + "/servis/duzenle/" + servisId
+        }).done(function(data) {
+            if ($.trim(data) === "-1") {
+                window.location.reload(true);
+            } else {
+                $('#editServiceDescModal .modal-body').html(data);
+                $('#editServiceDescModal').modal('show'); 
+            }
+        });
+    });
+});
 </script>
 
 @endsection

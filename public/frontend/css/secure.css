@@ -2203,3 +2203,126 @@ b, strong {font-weight: 900;color: #000000;}
 
 
 
+.servis-istatistik strong{
+    color: #fff;
+}
+#datatableSurveyStats td div strong{color: black!important;}
+#teknisyenTable td strong{color: #000;}
+#surveyResultsTable td strong{color: black!important;}
+
+/********************** Kasa İstatistikleri ************************/
+    /* Gelir-Gider Başlıkları */
+.gelir-gider-header {
+    text-align: center;
+    padding: 10px 0;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.gelir-gider-header h5 {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+/* Chart Container - Larger charts */
+.chart-container-cash {
+    height: 280px;
+    position: relative;
+}
+
+/* Gelir Listesi - Compact */
+.gelir-listesi {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.gelir {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    padding: 4px 0;
+}
+
+.gelir .renk {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.gelir .adi {
+    flex: 1;
+    font-size: 14px;
+    color: #333;
+}
+
+.gelir .para {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+    flex-shrink: 0;
+}
+
+
+/* Gider Listesi - Compact */
+.gider-listesi {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.gider {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+    padding: 4px 0;
+}
+
+.gider .renk {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.gider .adi {
+    flex: 1;
+    font-size: 14px;
+    color: #333;
+}
+
+.gider .para {
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+    flex-shrink: 0;
+}
+
+.toplam-satir {
+    border-top: 1px solid #ddd;
+    padding-top: 6px !important;
+    margin-top: 6px;
+    font-weight: bold;
+}
+
+.toplam-satir .adi,
+.toplam-satir .para {
+    font-weight: bold;
+    color: #000;
+}
+
+/* Responsive düzenlemeler */
+@media (max-width: 768px) {
+    .chart-container-cash {
+        height: 220px;
+    }
+    
+    .gelir .adi,
+    .gelir .para,
+    .gider .adi,
+    .gider .para {
+        font-size: 10px;
+    }
+}

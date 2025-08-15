@@ -11,7 +11,7 @@
                 <!-- Filtre Dropdown -->
                 <div class="dropdown teknisyen-dropdown">
                 <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" id="filtreDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    FİLTRELE <i class="mdi mdi-chevron-down"></i>
+                    Filtrele <i class="mdi mdi-chevron-down"></i>
                 </button>
                 <div class="dropdown-menu teknisyen-dropdown-menu p-3 dropdown-menu-end" style="min-width: 300px;">
                         <form id="filtreForm">

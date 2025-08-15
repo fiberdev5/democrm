@@ -2,14 +2,14 @@
   @csrf
 
   <div class="row">
-    <label class="col-sm-4">Başlama Tarihi*</label>
+    <label class="col-sm-4">Başlama Tarihi<span style="font-weight: bold; color: red;">*</span></label>
     <div class="col-sm-8">
       <input name="baslamaTarihi" class="form-control datepicker" type="date" value="{{ $bayi->baslamaTarihi }}" required>
     </div>
   </div>
 
   <div class="row">
-      <label class="col-sm-4">Bayi Durumu: </label>
+      <label class="col-sm-4">Bayi Durumu:<span style="font-weight: bold; color: red;">*</span></label>
       <div class="col-sm-8">
         <select name="status" class="form-select durum" required>
           <option value="1" {{ $bayi->status == "1" ? 'selected' : ''}}>Çalışıyor</option>
@@ -19,43 +19,78 @@
   </div> <!--end row-->
   
   <div class="row ayrilmaTarihi">
-      <label class="col-sm-4">Ayrılma Tarihi:</label>
+      <label class="col-sm-4">Ayrılma Tarihi:<span style="font-weight: bold; color: red;">*</span></label>
       <div class="col-sm-8">
           <input name="ayrilmaTarihi" class="form-control datepicker ayrilmaTarihi" type="date" value="{{$bayi->ayrilmaTarihi}}" style="border: 1px solid #ced4da;">
       </div>
   </div>
 
   <div class="row">
-    <label class="col-sm-4">Ad Soyad*</label>
+    <label class="col-sm-4">Ad Soyad<span style="font-weight: bold; color: red;">*</span></label>
     <div class="col-sm-8">
       <input name="name" class="form-control" type="text" value="{{ $bayi->name }}" required>
     </div>
   </div>
 
   <div class="row">
-    <label class="col-sm-4">Vergi No*</label>
+    <label class="col-sm-4">Vergi No<span style="font-weight: bold; color: red;">*</span></label>
     <div class="col-sm-8">
       <input name="vergiNo" class="form-control" type="text" value="{{ $bayi->vergiNo }}" required>
     </div>
   </div>
 
   <div class="row">
-    <label class="col-sm-4">Vergi Dairesi*</label>
+    <label class="col-sm-4">Vergi Dairesi<span style="font-weight: bold; color: red;">*</span></label>
     <div class="col-sm-8">
       <input name="vergiDairesi" class="form-control" type="text" value="{{ $bayi->vergiDairesi }}" required>
     </div>
   </div>
 
-  <div class="row">
-    <label class="col-sm-4">Telefon</label>
+  
+ <div class="row">
+    <label class="col-sm-4">Bayi Belgesi</label>
     <div class="col-sm-8">
-      <input name="tel" class="form-control phone" type="text" value="{{ $bayi->tel }}">
+      @if($bayi->belgePdf)
+        @php
+          $belgeler = json_decode($bayi->belgePdf, true) ?: [$bayi->belgePdf];
+        @endphp
+        
+        <div class="mb-2">
+          <small class="text-success">Mevcut belgeler:</small>
+          @foreach($belgeler as $index => $belge)
+            @if(Storage::disk('local')->exists($belge))
+              @php
+                $fileExtension = pathinfo($belge, PATHINFO_EXTENSION);
+                $documentUrl = route('dealer.document', [$firma->id, $bayi->user_id, $index]);
+              @endphp
+              
+              <div class="mt-1 p-2 border rounded">
+                @if(in_array(strtolower($fileExtension), ['jpg', 'jpeg', 'png']))
+                  <i class="fas fa-image text-success"></i> Resim {{ $index + 1 }}
+                @else
+                  <i class="fas fa-file-pdf text-danger"></i> PDF {{ $index + 1 }}
+                @endif
+                <a href="{{ $documentUrl }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">
+                  <i class="fas fa-eye"></i> Görüntüle
+                </a>
+              </div>
+            @endif
+          @endforeach
+        </div>
+      @else
+        <small class="text-warning">Bu bayinin belgesi bulunamadı.</small>
+      @endif
+      
+      <input name="belgePdf[]" id="belgePdfEdit" class="form-control mt-2" type="file" accept=".pdf,.jpg,.jpeg,.png,.svg" multiple>
+      <small class="text-muted">Yeni belgeler yüklerseniz eskiler değiştirilir. Maksimum 2 dosya. PDF, JPG, PNG, SVG kabul edilir.</small>
     </div>
   </div>
+
+
     <div class="row">
-        <div class="col-sm-4"><label>İl/İlçe</label></div>
+        <div class="col-sm-4"><label>İl/İlçe<span style="font-weight: bold; color: red;">*</span></label></div>
         <div class="col-sm-4">
-          <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;">
+          <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;" required>
             <option value="" selected disabled>-Seçiniz-</option>
             @foreach($countries as $item)
               <option value="{{ $item->id }}" {{ $bayi->il == $item->id ? 'selected' : ''}}>{{ $item->name}}</option>
@@ -63,12 +98,19 @@
           </select>
         </div>
         <div class="col-sm-4">
-          <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;">
+          <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;" required>
             <option value="" selected disabled>-Seçiniz-</option>                              
           </select>
         </div>
       </div> 
-  
+
+
+    <div class="row">
+      <label class="col-sm-4">Telefon<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-sm-8">
+        <input name="tel" id="tel" class="form-control phone" type="text" value="{{ $bayi->tel }}" required>
+      </div>
+    </div>
 
     <div class="row">
       <label class="col-sm-4">Adress:</label>
@@ -78,14 +120,14 @@
     </div>
 
   <div class="row">
-    <label class="col-sm-4">Kullanıcı Adı*</label>
+    <label class="col-sm-4">Kullanıcı Adı<span style="font-weight: bold; color: red;">*</span></label>
     <div class="col-sm-8">
       <input name="username" class="form-control" type="text" value="{{ $bayi->username }}" required>
     </div>
   </div>
 
   <div class="row">
-    <label class="col-sm-4">Yeni Şifre:</label>
+    <label class="col-sm-4">Yeni Şifre:<span style="font-weight: bold; color: red;">*</span></label>
     <div class="col-sm-8">
       <input name="password" class="form-control" type="password" placeholder="Şifre değiştirmek istemiyorsan boş bırak">
     </div>
@@ -120,6 +162,17 @@
     } else if (getDurum == 0) {
       $(".ayrilmaTarihi").show();
     }
+  });
+</script>
+<script>
+  // Düzenleme formunda maksimum 2 dosya kontrolü
+  $(document).ready(function() {
+    $('#belgePdfEdit').on('change', function() {
+      if (this.files.length > 2) {
+        alert('Maksimum 2 dosya seçebilirsiniz!');
+        this.value = '';
+      }
+    });
   });
 </script>
 
