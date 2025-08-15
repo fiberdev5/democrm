@@ -336,8 +336,8 @@ public function StoreDealer(Request $request, $tenant_id)
     $user->il = $request->il;
     $user->ilce = $request->ilce;
     $user->address = $request->address;
-    // $user->vergiNo = $request->vergiNo; 
-    // $user->vergiDairesi = $request->vergiDairesi; 
+    $user->vergiNo = $request->vergiNo; 
+    $user->vergiDairesi = $request->vergiDairesi; 
     $user->password = Hash::make($request->password);
     $user->status = 1;
     $user->save();
