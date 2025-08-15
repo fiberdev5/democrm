@@ -30,8 +30,8 @@
                             <div class="row mb-3">
                                 <label class="col-4 col-form-label">Tarih Aralığı</label>
                                 <div class="col-8">
-                                    <input type="text" name="tarih1" id="tarih1" class="form-control datepicker mb-2" readonly value="{{ date('d/m/Y', strtotime('-31 days')) }}" style="background:#fff;">
-                                    <input type="text" name="tarih2" id="tarih2" class="form-control datepicker mb-2" readonly value="{{ date('d/m/Y') }}" style="background:#fff;">
+                                    <input type="text" name="tarih1" id="tarih1" class="form-control datepickerStatistic mb-2" readonly value="{{ date('d/m/Y', strtotime('-31 days')) }}" style="background:#fff;">
+                                    <input type="text" name="tarih2" id="tarih2" class="form-control datepickerStatistic mb-2" readonly value="{{ date('d/m/Y') }}" style="background:#fff;">
                                 </div>
                             </div>
                               <div class="tarih-butonlari d-flex flex-wrap gap-1">
@@ -86,7 +86,7 @@ $(document).ready(function() {
     let dataTable = null;
 
     // Datepicker initialize
-    $('.datepicker').datepicker({
+    $('.datepickerStatistic').datepicker({
         language: 'tr',
         autoclose: true,
         format: 'dd/mm/yyyy',

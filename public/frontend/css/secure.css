@@ -1207,7 +1207,7 @@ div.dataTables_wrapper div.dataTables_filter input{border-radius: 0;}
 .modal-body{padding: 5px;}
 #addServiceModal .c1{padding-right: 5px;}
 #addServiceModal .c2{padding-left: 5px;}
-.datepicker {border: 1px solid #ced4da;}
+.datepicker {border: 1px solid #ced4da;width: 118px !important; display: inline-block!important; background:#fff}
 #addServiceModal .form-group {
     padding-bottom: 3px;
     margin-bottom: 3px;
@@ -1449,46 +1449,14 @@ b, strong {font-weight: 900;color: #000000;}
 .satirSil strong{color: #fff;}
 #accordion strong{color: #505d69;}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .anketModalBtn{
     position: absolute;
-    left: 833px;
+    left: 1216px;
+    top: 43px;
+}
+.primModalBtn {
+    position: absolute;
+    left: 1155px;
     top: 43px;
 }
 .statistic-btn {
@@ -2216,6 +2184,24 @@ b, strong {font-weight: 900;color: #000000;}
     border: none;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
+.servis-istatistik strong{
+    color: #fff;
+}
+#datatableSurveyStats td div strong{color: black!important;}
+#teknisyenTable td strong{color: #000;}
+.kullaniciPrimGoster{
+    position: absolute;
+    left: 60px;
+}
+#surveyResultsTable td strong{color: black!important;}
+
+
+
+
+
+
+
+
 
 .servis-istatistik strong{
     color: #fff;

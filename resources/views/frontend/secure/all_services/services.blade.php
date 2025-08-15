@@ -24,7 +24,14 @@
                 <button type="button" class="btn btn-primary btn-sm servisRaporlaModalBtn" data-toggle="modal" data-target="#servisRaporlaModal">Raporlar</button>
 
                 <button type="button" class="btn btn-primary btn-sm anketModalBtn" data-toggle="modal" data-target="#anketModal">Anketler</button>
-
+                @if(Auth::check() && Auth::user()->hasAnyRole(['Operatör',]))
+                <button type="button" class="btn btn-primary btn-sm kullaniciPrimGoster"  style="position:absolute!important;left: 1141px!important;"
+                          data-toggle="modal" data-target="#kullaniciPrimModal">
+                      Primlerim
+                  </button>
+                  @else
+                <button type="button" class="btn btn-primary btn-sm primModalBtn" data-toggle="modal" data-target="#primModal">Primler</button>
+                  @endif
                @endif
               @if(auth()->user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
                   <button type="button" class="btn btn-primary btn-sm teknisyenDepoGoster" 
@@ -32,6 +39,13 @@
                       Depo
                   </button>
               @endif
+
+              @if(Auth::check() && Auth::user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
+                <button type="button" class="btn btn-primary btn-sm kullaniciPrimGoster" 
+                          data-toggle="modal" data-target="#kullaniciPrimModal">
+                      Primlerim
+                  </button>
+              @endif 
 
               <div class="searchWrap float-end">
 
@@ -276,11 +290,26 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
 <div id="anketModal" class="modal fade" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title">Anket Raporları</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Yükleniyor...
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="primModal" class="modal fade" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
+  <div class="modal-dialog modal-lg" style="max-width: 1000px!important;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title">Prim Hesaplama</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -309,6 +338,20 @@
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title" >Depo Stoklarım</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding: 5px!important;">
+        Yükleniyor...
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div id="kullaniciPrimModal" class="modal fade" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
+  <div class="modal-dialog " style="max-width: 800px!important;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" >Primlerim</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body" style="padding: 5px!important;">
@@ -462,8 +505,28 @@ $(document).ready(function(){
   });
   
   $("#anketModal").on("hidden.bs.modal", function() {
-    $(".modal-body").html("");
+    $("#anketModal .modal-body").html("");
   });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".primModalBtn").click(function(){
+    var firma_id = {{$firma->id}};
+    $.ajax({
+      url: "/"+ firma_id + "/prim/"
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#primModal').modal('show');
+        $('#primModal .modal-body').html(data);
+      }
+    });
+  });
+  
+  
 });
 </script>
 
@@ -499,6 +562,23 @@ $(document).ready(function(){
       } else {
         $('#teknisyenDepoModal').modal('show');
         $('#teknisyenDepoModal .modal-body').html(data);
+      }
+    });
+  });
+});
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".kullaniciPrimGoster").click(function(){
+    var firma_id = {{$firma->id}};
+    $.ajax({
+      url: "/"+ firma_id + "/primlerim/"
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#kullaniciPrimModal').modal('show');
+        $('#kullaniciPrimModal .modal-body').html(data);
       }
     });
   });
@@ -629,7 +709,7 @@ $(document).ready(function(){
 
 <script>
   $(document).ready(function () {
-    var start_date = '01-01-2024';
+    var start_date = '01-01-2025';
     var end_date = moment().add(1, 'day');
 
     $('#daterange').daterangepicker({
@@ -983,6 +1063,66 @@ $(document).ready(function(){
 
   });
 </script>
+<script>
+// Servisi Sonlandır radio button handler'ı
+$(document).ready(function() {
+  $('#datatableService').on('click', '.servis-sonlandir-switch', function(e) {
+        // Switch'in hemen durum değiştirmesini engelliyoruz.
+        e.preventDefault(); 
+        
+        var aSwitch = $(this); // Tıklanan switch elemanı
+
+        // Eğer switch zaten pasifse (örn: işlem sırasında) hiçbir şey yapma.
+        if (aSwitch.is(':disabled')) {
+            return;
+        }
+
+        // Gerekli verileri data-* etiketlerinden alıyoruz.
+        var servisId = aSwitch.data('servis-id');
+        var gelenIslemId = aSwitch.data('gelen-islem-id');
+        var gidenIslemId = aSwitch.data('giden-islem-id');
+        var firmaId = '{{ $firma->id }}';
+
+        // Kullanıcıdan onay alıyoruz.
+        if (confirm('Bu servisi sonlandırmak istediğinizden emin misiniz?')) {
+            
+            // İşlem sırasında switch'i pasif hale getiriyoruz.
+            aSwitch.prop('disabled', true);
+
+            $.ajax({
+                url: `/${firmaId}/servis-plan-kaydet`,
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    servis: servisId,
+                    gelenIslem: JSON.stringify({ id: gelenIslemId }),
+                    gidenIslem: gidenIslemId
+                },
+                success: function(response) {
+                    if (response.status === 'success') {
+                        // İşlem başarılı olursa DataTables'ı yeniden çizdiriyoruz.
+                        // Tablo yenilendiğinde switch, PHP tarafında doğru (checked ve disabled) halde gelecektir.
+                        $('#datatableService').DataTable().ajax.reload(null, false);
+                    } else {
+                        alert('Hata: ' + response.message);
+                        // Hata durumunda switch'i tekrar aktif hale getiriyoruz.
+                        aSwitch.prop('disabled', false);
+                    }
+                },
+                error: function(xhr) {
+                    alert('Servis sonlandırılırken bir sunucu hatası oluştu.');
+                    console.error('AJAX Hatası:', xhr.responseText);
+                    // Hata durumunda switch'i tekrar aktif hale getiriyoruz.
+                    aSwitch.prop('disabled', false);
+                }
+            });
+
+        } 
+        // Kullanıcı onay vermezse hiçbir şey yapmıyoruz. 
+        // e.preventDefault() sayesinde switch kapalı kalmaya devam eder.
+    });
+});
+</script>
 
 <script>
   // Raporlar modalında gelen çağrıları filtreleme butonuna bastığımızda gelecek datatable ı getiren script. Bunu çalıştırırken servisler tablosu kısmını gizleyerek gelen çağrılar datatable ını görünür yapıyoruz.
@@ -1123,6 +1263,7 @@ $(document).ready(function() {
         
         var aSwitch = $(this); // Tıklanan switch elemanı
 
+
         // Eğer switch zaten pasifse (örn: işlem sırasında) hiçbir şey yapma.
         if (aSwitch.is(':disabled')) {
             return;
@@ -1195,8 +1336,6 @@ $(document).ready(function() {
     });
 });
 </script>
-
-
 
 @endsection
 

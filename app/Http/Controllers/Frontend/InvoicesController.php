@@ -422,7 +422,8 @@ class InvoicesController extends Controller
         return response()->json(['success' => $notification]);
     }
 
-   public function DeleteInvoice($tenant_id,$id) {
+
+    public function DeleteInvoice($tenant_id,$id) {
          // Önce faturayı bul
         $fatura = Invoice::where('firma_id', $tenant_id)->findOrFail($id);
 

@@ -114,6 +114,7 @@ class HomeController extends Controller
             'tenant_id' => $tenant_id,
             'password' => Hash::make($request->password),
             'status' => '1',
+            'baslamaTarihi' => Carbon::now()->format('Y-m-d'),
         ]);
         $user->save();
         $user->syncRoles("Patron");
@@ -145,6 +146,10 @@ class HomeController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
+            'g-recaptcha-response' => 'required|recaptcha',
+        ], [
+            'g-recaptcha-response.required' => 'Güvenlik doğrulaması zorunludur.',
+            'g-recaptcha-response.recaptcha' => 'Güvenlik doğrulaması doğrulaması başarısız. Lütfen tekrar deneyin.',
         ]);
     
         // E-posta adresinden domain'i al
@@ -372,7 +377,6 @@ class HomeController extends Controller
             ]
         ]);
     }
-
 
     public function logout(Request $request)
     {

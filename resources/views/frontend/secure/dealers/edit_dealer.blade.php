@@ -4,7 +4,7 @@
   <div class="row">
     <label class="col-sm-4">Başlama Tarihi<span style="font-weight: bold; color: red;">*</span></label>
     <div class="col-sm-8">
-      <input name="baslamaTarihi" class="form-control" type="date" value="{{ $bayi->baslamaTarihi }}" required>
+      <input name="baslamaTarihi" class="form-control datepicker" type="date" value="{{ $bayi->baslamaTarihi }}" required>
     </div>
   </div>
 

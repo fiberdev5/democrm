@@ -424,7 +424,7 @@ $(document).ready(function () {
                         <span class="badge badge-secondary" style="font-size: 0.75em;">${customerType}</span>
                         <br>
                         <small class="text-muted">
-                            📞 ${customer.tel1}
+                          📲 ${customer.tel1}
                             <br>
                             📍 ${customer.adres} - ${customer.ilce}/${customer.il}
                         </small>

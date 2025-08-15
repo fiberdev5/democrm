@@ -405,6 +405,12 @@ Route::prefix('api')->group(function () {
     Route::get('/dashboard/chart-data', [HomeController::class, 'getChartData'])->name('dashboard.chart');
 });
 
+// API routes - AJAX istekleri için
+Route::prefix('api')->group(function () {
+    Route::get('/dashboard/stats', [HomeController::class, 'getStats'])->name('dashboard.stats');
+    Route::get('/dashboard/chart-data', [HomeController::class, 'getChartData'])->name('dashboard.chart');
+});
+
 Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId','check.subscription']], function () {
     Route::controller(HomeController::class)->group(function() {
         Route::get('/dashboard', 'Dashboard')->name('secure.home');
@@ -867,30 +873,15 @@ Route::controller(StatisticController::class)->group(function() {
     Route::controller(PrimController::class)->group(function() { 
         Route::get('/prim', 'index')->name('index');
     
-    // Prim hesaplama işlemi (AJAX)
-    Route::post('/hesapla', 'hesapla')->name('prim.hesapla');
-    
-    // Prim ayarları sayfası
-    Route::get('/ayarlar', 'ayarlar')->name('prim.ayarlar');
-    
-    // Prim ayarlarını kaydet (AJAX)
-    Route::post('/ayarlar/kaydet', 'ayarlariKaydet')->name('ayarlari.kaydet');
-    
-    // Günlük prim detayı (AJAX)
-    Route::get('/detay', 'detay')->name('prim.detay');
-    
-    // Personel listesi (AJAX)
-    Route::get('/personel', 'getPersoneller')->name('personeller');
-    
-    // Prim raporları (gelecekte eklenebilir)
-    Route::get('/raporlar', 'raporlar')->name('raporlar');
-    
-    // Excel export (gelecekte eklenebilir)
-    Route::post('/export', 'exportExcel')->name('export');
-    
-    // Prim onay işlemleri (gelecekte eklenebilir)
-    Route::post('/onayla/{prim_id}','onayla')->name('onayla');
-    Route::post('/reddet/{prim_id}', 'reddet')->name('reddet');
+        // Prim hesaplama işlemi (AJAX)
+        Route::post('/hesapla', 'hesapla')->name('prim.hesapla');
+        
+        // Günlük prim detayı (AJAX)
+        Route::get('/detay', 'detay')->name('prim.detay');
+        
+        Route::get('/primlerim', 'kullaniciPrimSayfasi')->name('prim.kullanici');
+        Route::post('/primlerim/hesapla', 'kullaniciHesapla')->name('prim.kullanici.hesapla');
+        Route::get('/primlerim/detay', 'kullaniciDetay')->name('prim.kullanici.detay');
         
     });
 });
