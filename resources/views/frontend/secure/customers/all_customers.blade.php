@@ -157,6 +157,12 @@ $(document).ready(function(){
 
 <script>
 $(document).ready(function () {
+   // Dashboard'dan gelen URL parametrelerini oku
+  const urlParams = new URLSearchParams(window.location.search);
+  const startDate = urlParams.get('dashboard_istatistik_tarih1');
+  const endDate = urlParams.get('dashboard_istatistik_tarih2');
+
+
   var table = $('#datatableCustomer').DataTable({
       processing: true,
       serverSide: true,
@@ -173,6 +179,12 @@ $(document).ready(function () {
           data.tip = $('#musteriTipi').val();
           data.il = $('#countrySelect').val();
           data.ilce = $('#citySelect').val();
+
+          // Eğer URL'den tarih parametreleri geldiyse, onları da ajax isteğine ekle
+          if (startDate && endDate) {
+              data.dashboard_istatistik_tarih1 = startDate;
+              data.dashboard_istatistik_tarih2 = endDate;
+          }
         }
       },
       'columns': [

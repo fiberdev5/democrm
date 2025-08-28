@@ -8,201 +8,179 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
 
 <div class="page-content" id="customerTable">
-  <div class="container-fluid">
-    <div class="row pageDetail">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-header sayfaBaslik">
-            Servisler
-          </div>
-          <div class="card-body">
-            @if(auth()->user()->can('Tüm Servisleri Görebilir'))
-                <a class="btn btn-success btn-sm addService" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i class="fas fa-plus"></i><span>Servis Ekle</span></a> 
-                <a  type="button" class="btn btn-success btn-sm gelenCagriButon" data-bs-toggle="modal" data-bs-target="#gelenCagriModal"><div class="text">Gelen Çağrılar <i data-toggle="tooltip" title="Gereksiz çağrıları kaydetmek için kullanılır." class="fas fa-info-circle" data-bs-original-title=""></i></div></a>
-                <button type="button" class="btn btn-danger btn-sm servisPlanlaBtn"><div class="text">Servis Planlama <i data-toggle="tooltip" title="Toplu servis yönlendirmeleri yapmak için kullanılır." class="fas fa-info-circle" data-bs-original-title=""></i></div></button>
-                
-                <button type="button" class="btn btn-primary btn-sm servisRaporlaModalBtn" data-toggle="modal" data-target="#servisRaporlaModal">Raporlar</button>
-
-                <button type="button" class="btn btn-primary btn-sm anketModalBtn" data-toggle="modal" data-target="#anketModal">Anketler</button>
-                @if(Auth::check() && Auth::user()->hasAnyRole(['Operatör',]))
-                <button type="button" class="btn btn-primary btn-sm kullaniciPrimGoster"  style="position:absolute!important;left: 1141px!important;"
-                          data-toggle="modal" data-target="#kullaniciPrimModal">
-                      Primlerim
-                  </button>
-                  @else
-                <button type="button" class="btn btn-primary btn-sm primModalBtn" data-toggle="modal" data-target="#primModal">Primler</button>
-                  @endif
-               @endif
-              @if(auth()->user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
-                  <button type="button" class="btn btn-primary btn-sm teknisyenDepoGoster" 
-                          data-toggle="modal" data-target="#teknisyenDepoModal">
-                      Depo
-                  </button>
-              @endif
-
-              @if(Auth::check() && Auth::user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
-                <button type="button" class="btn btn-primary btn-sm kullaniciPrimGoster" 
-                          data-toggle="modal" data-target="#kullaniciPrimModal">
-                      Primlerim
-                  </button>
-              @endif 
-
-              <div class="searchWrap float-end">
-
-              <div class="btn-group mb-2 ">
-                @if(auth()->user()->can('Tüm Servisleri Görebilir'))
-                <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                  Filtrele <i class="mdi mdi-chevron-down"></i>
-                </button>
-                @endif
-                <div class="dropdown-menu servisDrop">
-                  <div class="item">
-                    <div class="row">
-                      <label class="col-sm-5">Cihaz Marka:</label>
-                      <div class="col-sm-7">
-                        <select name="device_brands" id="device_brands" class="form-select">
-                          <option value="">Hepsi</option>
-                          @foreach($device_brands as $brand)
-                            <option value="{{$brand->id}}">{{$brand->marka}}</option>
-                          @endforeach
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="item">
-                    <div class="row">
-                      <label class="col-sm-5">Cihaz Türü:</label>
-                      <div class="col-sm-7">
-                        <select name="device_types" id="device_types" class="form-select">
-                          <option value="">Hepsi</option>
-                          @foreach($device_types as $type)
-                            <option value="{{$type->id}}">{{$type->cihaz}}</option>
-                          @endforeach
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="item">
-                    <div class="row">
-                      <label class="col-sm-5">Servis Durumu:</label>
-                      <div class="col-sm-7">
-                        <select name="stages" id="stages" class="form-select">
-                          <option value="">Hepsi</option>
-                          @foreach($service_stages as $stage)
-                            <option value="{{$stage->id}}">{{$stage->asama}}</option>
-                          @endforeach
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="item">
-                    <div class="row">
-                      <label class="col-sm-5">Servis Kaynağı:</label>
-                      <div class="col-sm-7">
-                        <select name="service_resource" id="service_resource" class="form-select">
-                          <option value="">Hepsi</option>
-                          @foreach($service_resources as $resource)
-                            <option value="{{$resource->id}}">{{$resource->kaynak}}</option>
-                          @endforeach
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="item">
-                    <div class="row">
-                      <label class="col-sm-5">İl:</label>
-                      <div class="col-sm-7">
-                        <select name="il" id="country2" class="form-control form-select" style="width:100%!important;">
-                          <option value="" selected>-Seçiniz-</option>
-                          @foreach($states as $item)
-                            <option value="{{ $item->id }}">{{ $item->name}}</option>
-                          @endforeach
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="item">
-                    <div class="row">
-                      <label class="col-sm-5">İlçe:</label>
-                      <div class="col-sm-7">
-                        <select name="ilce" id="city2" class="form-control form-select" style="width:100%!important;">
-                          <option value="" selected disabled>-Seçiniz-</option>                              
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="item">
-                      <div class="row">
-                        <label class="col-sm-5">Tarih Aralığı:</label>
-                        <div class="col-sm-7">
-                          <input id="daterange" class="tarih-araligi">
-                          <div class="tarihAraligi mt-2 mb-2">
-                            <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
-                            <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
-                            <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
-                            <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
-                            <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
-                          </div>
+    <div class="container-fluid">
+        <div class="row pageDetail">
+            <div class="col-12">
+                <div class="card">
+                    {{-- Başlık ve Butonlar burada --}}
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="sayfaBaslik mb-0">Servisler</h5>
+                        <div class="header-buttons d-flex gap-1">
+                          @if(auth()->user()->can('Tüm Servisleri Görebilir'))
+                            <button type="button" class="btn btn-primary btn-sm servisRaporlaModalBtn" data-toggle="modal" data-target="#servisRaporlaModal">Raporlar</button>
+                            <button type="button" class="btn btn-primary btn-sm anketModalBtn" data-toggle="modal" data-target="#anketModal">Anketler</button>
+                            @if(Auth::check() && Auth::user()->hasAnyRole(['Operatör',]))
+                                <button type="button" class="btn btn-primary btn-sm kullaniciPrimGoster" data-toggle="modal" data-target="#kullaniciPrimModal"> Primlerim </button>
+                            @else
+                                <button type="button" class="btn btn-primary btn-sm primModalBtn" data-toggle="modal" data-target="#primModal">Primler</button>
+                            @endif
+                            @endif
                         </div>
-                      </div>
                     </div>
-                  
-                  
+
+                    <div class="card-body">
+                        @if(auth()->user()->can('Tüm Servisleri Görebilir'))
+                            <a class="btn btn-success btn-sm addService" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i class="fas fa-plus"></i><span>Servis Ekle</span></a>
+                            <a type="button" class="btn btn-success btn-sm gelenCagriButon" data-bs-toggle="modal" data-bs-target="#gelenCagriModal"><div class="text">Gelen Çağrılar <i data-toggle="tooltip" title="Gereksiz çağrıları kaydetmek için kullanılır." class="fas fa-info-circle" data-bs-original-title=""></i></div></a>
+                            <button type="button" class="btn btn-danger btn-sm servisPlanlaBtn"><div class="text">Servis Planlama <i data-toggle="tooltip" title="Toplu servis yönlendirmeleri yapmak için kullanılır." class="fas fa-info-circle" data-bs-original-title=""></i></div></button>
+                            {{-- Raporlar, Anketler, Primler butonları taşındı--}}
+                        @endif
+                        @if(auth()->user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
+                            <button type="button" class="btn btn-primary btn-sm teknisyenDepoGoster" data-toggle="modal" data-target="#teknisyenDepoModal"> Depo </button>
+                        @endif
+                        @if(Auth::check() && Auth::user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
+                            <button type="button" class="btn btn-primary btn-sm kullanici_teknisyenPrimGoster" data-toggle="modal" data-target="#kullaniciPrimModal"> Primlerim </button>
+                        @endif
+                        <div class="searchWrap float-end">
+                            <div class="btn-group mb-2 ">
+                                @if(auth()->user()->can('Tüm Servisleri Görebilir'))
+                                <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false"> Filtrele <i class="mdi mdi-chevron-down"></i> </button>
+                                @endif
+                                <div class="dropdown-menu servisDrop">
+                                    <div class="item">
+                                        <div class="row">
+                                            <label class="col-sm-5">Cihaz Marka:</label>
+                                            <div class="col-sm-7">
+                                                <select name="device_brands" id="device_brands" class="form-select">
+                                                    <option value="">Hepsi</option>
+                                                    @foreach($device_brands as $brand)
+                                                    <option value="{{$brand->id}}">{{$brand->marka}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="row">
+                                            <label class="col-sm-5">Cihaz Türü:</label>
+                                            <div class="col-sm-7">
+                                                <select name="device_types" id="device_types" class="form-select">
+                                                    <option value="">Hepsi</option>
+                                                    @foreach($device_types as $type)
+                                                    <option value="{{$type->id}}">{{$type->cihaz}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="row">
+                                            <label class="col-sm-5">Servis Durumu:</label>
+                                            <div class="col-sm-7">
+                                                <select name="stages" id="stages" class="form-select">
+                                                    <option value="">Hepsi</option>
+                                                    @foreach($service_stages as $stage)
+                                                    <option value="{{$stage->id}}">{{$stage->asama}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="row">
+                                            <label class="col-sm-5">Servis Kaynağı:</label>
+                                            <div class="col-sm-7">
+                                                <select name="service_resource" id="service_resource" class="form-select">
+                                                    <option value="">Hepsi</option>
+                                                    @foreach($service_resources as $resource)
+                                                    <option value="{{$resource->id}}">{{$resource->kaynak}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="row">
+                                            <label class="col-sm-5">İl:</label>
+                                            <div class="col-sm-7">
+                                                <select name="il" id="country2" class="form-control form-select" style="width:100%!important;">
+                                                    <option value="" selected>-Seçiniz-</option>
+                                                    @foreach($states as $item)
+                                                    <option value="{{ $item->id }}">{{ $item->name}}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="row">
+                                            <label class="col-sm-5">İlçe:</label>
+                                            <div class="col-sm-7">
+                                                <select name="ilce" id="city2" class="form-control form-select" style="width:100%!important;">
+                                                    <option value="" selected disabled>-Seçiniz-</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item">
+                                        <div class="row">
+                                            <label class="col-sm-5">Tarih Aralığı:</label>
+                                            <div class="col-sm-7">
+                                                <input id="daterange" class="tarih-araligi">
+                                                <div class="tarihAraligi mt-2 mb-2">
+                                                    <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
+                                                    <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                                                    <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                                                    <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
+                                                    <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!-- /btn-group -->
+                        </div> <!-- Servisler Tablosu -->
+                        <div id="servicesTableSection">
+                            <table id="datatableService" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="title">
+                                    <tr>
+                                        <th style="width: 10px">ID</th>
+                                        <th style="width: 10px">Tarih</th>
+                                        <th style="width: 250px">Müşteri</th>
+                                        <th style="">Cihaz</th>
+                                        <th>Servis Durumu</th>
+                                        <th data-priority="1" style="width: 96px;">Servisi Sonlandır</th>
+                                        <th data-priority="1" style="width: 96px;">Düzenle</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                        {{-- Burası raporlar modalında gelen çağrıları filtrelerken oluşturulan gelen çağrılar tablosu --}}
+                        <div id="incomingCallsSection" class="" style="display: none;">
+                            <table id="incomingCallsTable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                <thead class="title">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Tarih</th>
+                                        <th>Telefon</th>
+                                        <th>Marka</th>
+                                        <th>Açıklama</th>
+                                        <th>Personel</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-              </div><!-- /btn-group -->
-            </div>
-
-            <!-- Servisler Tablosu -->
-            <div id="servicesTableSection">
-
-            <table id="datatableService" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-              <thead class="title">
-                <tr>
-                  <th style="width: 10px">ID</th>
-                  <th style="width: 10px">Tarih</th>
-                  <th style="width: 250px">Müşteri</th>
-                  <th style="">Cihaz</th>
-                  <th>Servis Durumu</th>
-                  <th data-priority="1" style="width: 96px;">Servisi Sonlandır</th>
-                  <th data-priority="1" style="width: 96px;">Düzenle</th>
-                </tr>
-              </thead>
-              <tbody>
-                
-              </tbody>
-            </table>
-            </div>
-
-            {{-- Burası raporlar modalında gelen çağrıları filtrelerken oluşturulan gelen çağrılar tablosu --}}
-            <div id="incomingCallsSection" class="" style="display: none;">
-              <table id="incomingCallsTable" class="table table-striped table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                <thead class="title">
-                  <tr>
-                    <th>ID</th>
-                    <th>Tarih</th>
-                    <th>Telefon</th>
-                    <th>Marka</th>
-                    <th>Açıklama</th>
-                    <th>Personel</th>
-                    <th>İşlemler</th>
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>     
-            </div>
-
-          </div>
-        </div>
-      </div> <!-- end col -->
-    </div> <!-- end row -->
-  </div>
+            </div> <!-- end col -->
+        </div> <!-- end row -->
+    </div>
 </div>
-
 <!-- add modal content -->
 <div id="addServiceModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addCustomerLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" style="width: 930px;">
@@ -276,6 +254,21 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<!-- Anket Modalı -->
+<div class="modal fade" id="anketModal"  aria-labelledby="anketModalLabel" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-fade-title">Müşteri Anketi</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+      </div>
+      <div class="modal-body" style="max-height: 80vh; overflow-y: auto; overflow-x: hidden;"id="anketModalContent">
+        <!-- Form buraya yüklenecek -->
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div id="servisRaporlaModal" class="modal fade" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
   <div class="modal-dialog ">
@@ -584,7 +577,23 @@ $(document).ready(function(){
   });
 });
 </script>
-
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".kullanici_teknisyenPrimGoster").click(function(){
+    var firma_id = {{$firma->id}};
+    $.ajax({
+      url: "/"+ firma_id + "/primlerim/"
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#kullaniciPrimModal').modal('show');
+        $('#kullaniciPrimModal .modal-body').html(data);
+      }
+    });
+  });
+});
+</script>
 <script type="text/javascript">
 $(document).ready(function(){
   $(".gelenCagriButon").click(function(){
@@ -780,7 +789,7 @@ $(document).ready(function(){
     var dashboard_filter = getUrlParameter('dashboard_filter');
     var dashboard_istatistik_tarih1 = getUrlParameter('dashboard_istatistik_tarih1');
     var dashboard_istatistik_tarih2 = getUrlParameter('dashboard_istatistik_tarih2');
-
+    var status_group = getUrlParameter('status_group');
     if (dashboard_filter && dashboard_istatistik_tarih1 && dashboard_istatistik_tarih2) {
         $('#daterange').data('daterangepicker').setStartDate(moment(dashboard_istatistik_tarih1));
         $('#daterange').data('daterangepicker').setEndDate(moment(dashboard_istatistik_tarih2));
@@ -847,6 +856,7 @@ $(document).ready(function(){
           data.personel_istatistik_tarih2 = getUrlParameter('personel_istatistik_tarih2');
           // Dashboard filtreleri
           data.dashboard_filter = getUrlParameter('dashboard_filter');
+          data.status_group = getUrlParameter('status_group');
           data.dashboard_istatistik_tarih1 = getUrlParameter('dashboard_istatistik_tarih1');
           data.dashboard_istatistik_tarih2 = getUrlParameter('dashboard_istatistik_tarih2');
 

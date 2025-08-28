@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\StockShelf;
 use App\Models\DeviceBrand;
 use App\Models\DeviceType;
+use App\Models\StockSupplier;
 use App\Models\Stock;
 use App\Models\StockAction;
 use App\Models\PersonelStock;
@@ -87,7 +88,7 @@ public function AllStocks($tenant_id, Request $request)
 
         foreach ($stocksForTotal as $stock) {
             $toplamGiris = \App\Models\StockAction::where('stokId', $stock->id)->where('islem', 1)->sum('adet'); //alış
-            $toplamCikis = \App\Models\StockAction::where('stokId', $stock->id)->where('islem', 3)->sum('adet');  //personele gonder
+            $toplamCikis = \App\Models\StockAction::where('stokId', $stock->id)->where('islem', 2)->sum('adet');  //serviste kullanım
             $kalanAdet = $toplamGiris - $toplamCikis;
 
             $toplamAdet += max($kalanAdet, 0);
@@ -105,7 +106,7 @@ public function AllStocks($tenant_id, Request $request)
             })
             ->addColumn('adet', function($row) {
                 $toplamGiris = \App\Models\StockAction::where('stokId', $row->id)->where('islem', 1)->sum('adet');
-                $toplamCikis = \App\Models\StockAction::where('stokId', $row->id)->where('islem', 3)->sum('adet');
+                $toplamCikis = \App\Models\StockAction::where('stokId', $row->id)->where('islem', 2)->sum('adet');
                 $kalanAdet = $toplamGiris - $toplamCikis;
                 return '<a href="javascript:void(0);" class="t-link editStock" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editStockModal">' . $kalanAdet . '</a>';
             })
@@ -171,9 +172,6 @@ public function AllStocks($tenant_id, Request $request)
 
     return view('frontend.secure.stocks.all_stocks', compact('firma', 'personeller', 'markalar', 'cihazlar', 'rafListesi'));
 }
-
-
-
     public function AddStock($tenant_id){
 
             $firma = Tenant::findOrFail($tenant_id);
@@ -181,10 +179,13 @@ public function AllStocks($tenant_id, Request $request)
             $markalar = DeviceBrand::where('firma_id', $tenant_id)->get();
             $cihazlar = DeviceType::where('firma_id', $tenant_id)->get();
 
-            $kategoriler = StockCategory::where('firma_id', $tenant_id)
-                ->where('id', '!=', 3)  // konsinye kategori hariç
-                ->get();
-
+             // Konsinye kategori (global) + firmaya özel kategoriler
+            $kategoriler = StockCategory::where(function($query) use ($tenant_id) {
+                $query->where('firma_id', $tenant_id) // firmaya özel kategoriler
+                    ->orWhere('firma_id', null); // global kategoriler (konsinye)
+            })
+            ->where('kategori', '!=', 'Konsinye Cihaz') // konsinye kategoriyi hariç tut
+            ->get();
 
 
             return view('frontend.secure.stocks.add_stock', compact('firma','rafListesi', 'markalar', 'cihazlar', 'kategoriler','tenant_id'));
@@ -263,47 +264,256 @@ public function AllStocks($tenant_id, Request $request)
                
             $stock->save();
 
-            // İlk stok hareketini kaydet
-            $action = new \App\Models\StockAction(); 
-            $action->firma_id   = $firma->id;
-            $action->pid   = $personel_id; 
-            $action->stokId     = $stock->id;
-            $action->adet       = $request->adet;
-            $action->fiyat      = $request->fiyat;
-            $stock->fiyatBirim = $request->fiyatBirim;
-            $action->islem      = 1; // 1 = giriş
-            $action->save();
-
             $notification = [
-                'message' => 'Stok başarıyla kaydedildi.',
+                'message' => 'Stok başarıyla oluşturuldu.',
                 'alert-type' => 'success'
             ];
 
             return redirect()->route('stocks', $tenant_id)->with($notification);
         }
 
+
         public function EditStock($tenant_id, $id) {
             $firma = Tenant::findOrFail($tenant_id);
             $stock = Stock::with(['raf', 'marka', 'cihaz', 'sonHareket'])->findOrFail($id);
 
-            $rafListesi = StockShelf::where('firma_id', $tenant_id)->get();
-            $markalar = DeviceBrand::where('firma_id', $tenant_id)->get();
-            $cihazlar = DeviceType::where('firma_id', $tenant_id)->get();
 
-            $kategoriler = StockCategory::where('firma_id', $tenant_id)->get();
-            $html = view('frontend.secure.stocks.edit_stock', compact('firma', 'stock', 'rafListesi', 'markalar','kategoriler', 'cihazlar'))->render();
+    $rafListesi = StockShelf::where('firma_id', $tenant_id)->get();
+    $markalar = DeviceBrand::where('firma_id', $tenant_id)->get();
+    $cihazlar = DeviceType::where('firma_id', $tenant_id)->get();
+
+    // Konsinye kategori (global) + firmaya özel kategoriler
+    $kategoriler = StockCategory::where(function($query) use ($tenant_id) {
+        $query->where('firma_id', $tenant_id) // firmaya özel kategoriler
+              ->orWhere('firma_id', null); // global kategoriler
+    })
+    ->where('kategori', '!=', 'Konsinye Cihaz') // konsinye kategoriyi hariç tut
+    ->get();
+
+    // 1. STOK HAREKETLERİNİ ÇEK
+    $stokHareketleri = StockAction::with(['musteri'])
+        ->select(
+            'stock_actions.*',
+            'stock_suppliers.tedarikci',
+            'user_recipient.name as recipient_name',
+            'user_performer.name as performer_name'
+        )
+        ->leftJoin('stock_suppliers', 'stock_suppliers.id', '=', 'stock_actions.tedarikci')
+        ->leftJoin('tb_user as user_recipient', 'user_recipient.user_id', '=', 'stock_actions.pid')
+        ->leftJoin('tb_user as user_performer', 'user_performer.user_id', '=', 'stock_actions.pid')
+        ->where('stock_actions.stokId', $id)
+        ->orderBy('stock_actions.id', 'desc')
+        ->get();
+
+    // 2. PERSONEL STOKLARINI ÇEKME
+    $hareketler = StockAction::with('aliciPersonel')
+        ->where('firma_id', $tenant_id)
+        ->where('stokId', $id)
+        ->where('islem', 3) // Sadece personele gönderilenler
+        ->get()
+        ->groupBy(function ($hareket) {
+            return optional($hareket->aliciPersonel)->user_id;
+        })
+        ->map(function ($grouped) use ($id) {
+            $hareket = $grouped->first();
+            $aliciId = optional($hareket->aliciPersonel)->user_id;
+            
+            $hareket->guncel_adet = $aliciId
+                ? PersonelStock::where('stokid', $id)->where('pid', $aliciId)->value('adet')
+                : 0;
+            
+            return $hareket;
+        })
+        ->filter(function($item) { // Stoğu 0 olan personeli göstermeyebiliriz
+            return $item->guncel_adet > 0;
+        })
+        ->values();
+
+    // 3. FOTOĞRAFLARI ÇEK
+    $photos = stock_photos::where('kid', $tenant_id)
+                          ->where('stock_id', $id)
+                          ->latest()
+                          ->get();
+
+    //Hareket Ekle Modal'ı için son 5 tedarikçi
+    $sonTedarikciler =StockSupplier::where('firma_id', $tenant_id) 
+                                                ->latest() // En son eklenene göre sırala
+                                                ->take(5) // Sadece 5 tane al
+                                                ->get();
+
+    // Hareket Ekle Modal'ı için son 5 personel
+    $sonPersoneller = User::where('tenant_id', $tenant_id)
+    ->whereHas('roles', function ($query) {
+        $query->whereIn('name', ['Teknisyen', 'Atölye Ustası']);
+    })
+    ->latest('created_at')
+    ->take(5)
+    ->get();
+
+    $html = view('frontend.secure.stocks.edit_stock', compact('firma', 'stock', 'rafListesi', 'markalar',
+        'kategoriler', 'cihazlar','stokHareketleri',
+        'hareketler',  
+        'photos'  ,'tenant_id','sonTedarikciler','sonPersoneller'))->render();
 
 
-            return response()->json([
+    return response()->json([
                 'html' => $html,
                 'urunAdi' => $stock->urunAdi,
             ]);
         }
+//Tedarikçi Arama
+public function searchSuppliers(Request $request, $tenant_id)
+{
+    $search = $request->input('q');
+    $data =StockSupplier::where('firma_id', $tenant_id)
+                                     ->where('tedarikci', 'LIKE', "%{$search}%")
+                                     ->latest()
+                                     ->take(5) // Arama sonucunda en fazla 5 sonuç göster
+                                     ->get(['id', 'tedarikci as text']); // Select2 formatına uygun
+    return response()->json($data);
+}
+//Marka Arama
+public function searchBrands(Request $request, $tenant_id)
+    {
+        $search = $request->input('q');
+        $data = DeviceBrand::where('firma_id', $tenant_id) 
+                                      ->where('marka', 'LIKE', "%{$search}%")
+                                      ->latest()
+                                      ->take(5)
+                                      ->get(['id', 'marka as text']);
+        return response()->json($data);
+    }
+//Cihaz türü arama
+public function searchDevices(Request $request, $tenant_id)
+{
+        $search = $request->input('q');
+        $data = DeviceType::where('firma_id', $tenant_id)
+                                       ->where('cihaz', 'LIKE', "%{$search}%")
+                                       ->latest()
+                                       ->take(5)
+                                       ->get(['id', 'cihaz as text']);
+        return response()->json($data);
+}
+//Kategori Arama
+// Kategori arama fonksiyonu - konsinye hariç
+public function searchCategories(Request $request, $tenant_id)
+{
+    $search = $request->input('q');
+    $data = StockCategory::where(function($query) use ($tenant_id) {
+        $query->where('firma_id', $tenant_id) // firmaya özel kategoriler
+              ->orWhere('firma_id', null); // global kategoriler
+    })
+    ->where('kategori', '!=', 'Konsinye Cihaz') // konsinye kategoriyi hariç tut
+    ->where('kategori', 'LIKE', "%{$search}%")
+    ->latest()
+    ->take(5)
+    ->get(['id', 'kategori as text']);
+    
+    return response()->json($data);
+}
+//Raf Arama
+public function searchShelves(Request $request, $tenant_id)
+    {
+        $search = $request->input('q');
+        $data = StockShelf::where('firma_id', $tenant_id)
+                                      ->where('raf_adi', 'LIKE', "%{$search}%")
+                                      ->latest()
+                                      ->take(5)
+                                      ->get(['id', 'raf_adi as text']);
+        return response()->json($data);
+    }
+//Personel Arama
+public function searchPersonnel(Request $request, $tenant_id)
+{
+    $search = $request->input('q');
+    $data = User::where('tenant_id', $tenant_id)
+                            ->where('name', 'LIKE', "%{$search}%")
+                            ->whereHas('roles', function ($query) {
+                                    $query->whereIn('name', ['Teknisyen', 'Atölye Ustası']);
+                                })
+                            ->latest('user_id')
+                              ->take(5)
+                              ->get(['user_id as id', 'name as text']); // Select2 formatına uygun
+    return response()->json($data);
+}
+//Marka ekleme
+public function storeBrandAjax(Request $request, $tenant_id)
+{
+    $request->validate(['marka' => 'required|string|max:255']);
 
+    $brand = DeviceBrand::create([
+        'firma_id' => $tenant_id,
+        'marka' => $request->marka,
+    ]);
+
+    return response()->json(['id' => $brand->id, 'text' => $brand->marka]);
+}
+//Cihaz Türü ekleme
+public function storeDeviceTypeAjax(Request $request, $tenant_id)
+{
+    $request->validate(['cihaz' => 'required|string|max:255']);
+
+    $deviceType = DeviceType::create([
+        'firma_id' => $tenant_id,
+        'cihaz' => $request->cihaz,
+    ]);
+
+    return response()->json(['id' => $deviceType->id, 'text' => $deviceType->cihaz]);
+}
+// Kategori ekleme - konsinye kontrolü
+public function storeCategoryAjax(Request $request, $tenant_id)
+{
+    $request->validate([
+        'kategori' => [
+            'required',
+            'string',
+            'max:255',
+            function ($attribute, $value, $fail) {
+                // "Konsinye" kategorisinin eklenmesini engelle
+                if (strcasecmp($value, 'konsinye') == 0) {
+                    $fail('Konsinye kategorisi bu alandan eklenemez.');
+                }
+            }
+        ]
+    ]);
+    
+    $kullanici_id = Auth::user()->user_id;
+
+    $category = StockCategory::create([
+        'firma_id' => $tenant_id,
+        'kategori' => $request->kategori,
+        'kid' => $kullanici_id,
+    ]);
+
+    return response()->json(['id' => $category->id, 'text' => $category->kategori]);
+}
+// Raf ekleme
+public function storeShelfAjax(Request $request, $tenant_id)
+{
+    $request->validate(['raf_adi' => 'required|string|max:255']);
+    $kullanici_id = Auth::user()->user_id;
+
+    $shelf = StockShelf::create([
+        'firma_id' => $tenant_id,
+        'raf_adi' => $request->raf_adi,
+        'kid'=> $kullanici_id,
+    ]);
+
+    return response()->json(['id' => $shelf->id, 'text' => $shelf->raf_adi]);
+}
 public function UpdateStock(Request $request, $tenant_id, $id){
     $firma = Tenant::findOrFail($tenant_id);
     $personel_id = Auth::user()->user_id;
     $stock = Stock::findOrFail($id);
+
+    // Kategori kontrolü - konsinye kategorisi seçilememeli
+    if ($request->urunKategori == 3) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Konsinye kategorisi bu alandan seçilemez.'
+        ], 400);
+    }
+
 
     // Ürün kodu kontrolü
     $existingStock = Stock::where('firma_id', $tenant_id)
@@ -357,12 +567,14 @@ public function UpdateStock(Request $request, $tenant_id, $id){
     $stock->stok_cihaz  = $request->cihaz_id;
     $stock->save();
 
-    $notification = [
-        'message' => 'Ürün bilgileri başarıyla güncellendi.',
-        'alert-type' => 'success'
-    ];
 
-    return redirect()->back()->with($notification);
+    // Başarı yanıtı
+    return response()->json([
+            'status' => 'success',
+            'message' => 'Ürün bilgileri başarıyla güncellendi.'
+        ]);
+
+
 }
 
 
@@ -474,9 +686,11 @@ public function StoreStockAction(Request $request, $tenant_id)
     });
 
     if ($validator->fails()) {
-        return redirect()->back()
-            ->withErrors($validator)
-            ->withInput();
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Doğrulama hatası',
+            'errors' => $validator->errors()
+        ], 422); // 422 Unprocessable Entity
     }
 
     $personel_id = Auth::user()->user_id;
@@ -499,11 +713,11 @@ public function StoreStockAction(Request $request, $tenant_id)
 
         $kalanStok = $personelStok ? $personelStok->adet : 0;
 
-        if ($request->adet > $kalanStok) {
-            return redirect()->back()->with([
+         if ($request->adet > $kalanStok) {
+            return response()->json([
+                'status' => 'error',
                 'message' => "Yetersiz personel stoğu! Mevcut: {$kalanStok} adet.",
-                'alert-type' => 'error',
-            ]);
+            ], 400); // 400 Bad Request
         }
     }
 
@@ -521,10 +735,10 @@ public function StoreStockAction(Request $request, $tenant_id)
         $kalanStok = ($mevcutStok->giren ?? 0) - ($mevcutStok->serviste_kullanim ?? 0) - ($mevcutStok->personele_giden ?? 0);
 
         if ($request->adet > $kalanStok) {
-            return redirect()->back()->with([
+            return response()->json([
+                'status' => 'error',
                 'message' => "Yetersiz genel stok! Mevcut: {$kalanStok} adet.",
-                'alert-type' => 'error',
-            ]);
+            ], 400);
         }
     }
 
@@ -560,10 +774,8 @@ public function StoreStockAction(Request $request, $tenant_id)
 
     // --- Stok Güncellemeleri ---
     if ($request->islem == 1) {
-        // Alış işlemi: Genel stok fiyatını güncelle
         $stock = \App\Models\Stock::find($stokId);
         if ($stock) {
-            $stock->fiyat += $fiyat;
             $stock->save();
         }
     }
@@ -609,17 +821,17 @@ public function StoreStockAction(Request $request, $tenant_id)
         // StockAction ile personel stok kaydını ilişkilendir
         $stockAction->perStokId = $personelStok->id;
         $stockAction->save();
+        
 
-        return redirect()->back()->with([
-            'message' => $actionMessage,
-            'alert-type' => 'success',
-        ]);
+        return response()->json([
+        'status' => 'success',
+        'message' => $actionMessage
+    ]);
     }
-
     // Eğer işlem 2 veya 1 ise başarılı mesajı döndür
-    return redirect()->back()->with([
-        'message' => 'Stok hareketi başarıyla eklendi.',
-        'alert-type' => 'success',
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Stok hareketi başarıyla kaydedildi.',
     ]);
 }
 
@@ -722,7 +934,6 @@ public function DeleteStockAction(Request $request, $tenant_id, $id)
         }
 
         $stockAction->delete();
-    $stockAction->delete();
 
     return response()->json([
         'status' => 'success',
@@ -734,7 +945,7 @@ public function DeleteStockAction(Request $request, $tenant_id, $id)
         'message' => 'Hata oluştu: ' . $e->getMessage(),
     ]);
 }
-    return redirect()->back()->with($notification);
+   
 }
 
 
@@ -784,6 +995,7 @@ public function uploadPhoto(Request $request, $tenant_id)
         'resim' => 'required|file|mimes:jpg,jpeg,png|max:5120',
         'stock_id' => 'required|integer'
     ]);
+    
 
 
     $image = $request->file('resim');
@@ -805,7 +1017,7 @@ public function uploadPhoto(Request $request, $tenant_id)
         ->resize(665, null, function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
-        })->encode($extension, 85); // kalite düşürmek istersen burayı değiştir
+        })->encode($extension, 75); // kalite 
 
     // Storage'a kaydet (public disk)
     Storage::disk('public')->put($fullPath, $resizedImage);
@@ -826,34 +1038,32 @@ public function uploadPhoto(Request $request, $tenant_id)
     ]);
 } 
 
-
-
-
 public function deletePhoto(Request $request, $tenant_id)
 {
-    try {
-        $photo = stock_photos::where('id', $request->id)
-                            ->where('kid', $tenant_id)
-                            ->firstOrFail();
+    $photo = stock_photos::where('id', $request->id)
+                        ->where('kid', $tenant_id)
+                        ->first(); // firstOrFail() yerine first() kullanıldı
 
-        $dosyaYolu = public_path($photo->resimyol);
-
-        if (file_exists($dosyaYolu)) {
-            unlink($dosyaYolu);
-        }
-
-        $photo->delete();
-
+    if (!$photo) {
+        // Fotoğraf bulunamadıysa hata mesajı döndür
         return response()->json([
-            'message' => 'Fotoğraf başarıyla silindi.',
-            'alert_type' => 'success'
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Fotoğraf silme işlemi sırasında hata oluştu.',
-            'alert_type' => 'danger'
-        ], 500);
+            'message' => 'Fotoğraf bulunamadı veya silme yetkiniz yok.',
+            'alert_type' => 'error'
+        ], 404); // 404 Not Found durum kodu gönderilir
     }
+
+    // Dosyanın varlığını kontrol et ve sil
+    if (Storage::disk('public')->exists($photo->resimyol)) {
+        Storage::disk('public')->delete($photo->resimyol);
+    }
+
+    // Veritabanından kaydı sil
+    $photo->delete();
+
+    return response()->json([
+        'message' => 'Fotoğraf başarıyla silindi.',
+        'alert_type' => 'success'
+    ]);
 }
 
 ///////////Barkod PDF Oluşturma///////////////////
@@ -1072,7 +1282,7 @@ public function StoreConsignmentDevice(Request $request, $tenant_id)
         'urunKodu' => ['required', 'digits:13', 'unique:stocks,urunKodu,NULL,id,firma_id,'.$tenant_id],
         // 'digits:13' => tam 13 rakam olmalı,
         // unique kontrolü firma_id bazlı, yani aynı firmada tekrar olmasın
-        // diğer alanlar için istersen validation ekleyebilirsin
+        
     ],[
         'urunKodu.required' => 'Ürün kodu zorunludur.',
         'urunKodu.digits' => 'Ürün kodu tam 13 haneli olmalıdır.',
@@ -1116,15 +1326,7 @@ public function StoreConsignmentDevice(Request $request, $tenant_id)
     $stock->stok_cihaz = $request->cihaz_id;
     $stock->save();
 
-    // İlk stok hareketi giriş
-    $action = new \App\Models\StockAction();
-    $action->firma_id = $firma->id;
-    $action->pid = $personel_id;
-    $action->stokId = $stock->id;
-    $action->adet = $request->adet;
-    $action->fiyat = $request->fiyat;
-    $action->islem = 1; // giriş
-    $action->save();
+
 
     return redirect()->route('consignmentdevice', $tenant_id)
                      ->with(['message' => 'Konsinye cihaz başarıyla kaydedildi.', 'alert-type' => 'success']);
@@ -1133,26 +1335,61 @@ public function StoreConsignmentDevice(Request $request, $tenant_id)
 public function EditConsignmentDevice($tenant_id, $id)
 {
     $firma = Tenant::findOrFail($tenant_id);
-    $stock = Stock::with(['raf', 'marka', 'cihaz', 'sonHareket'])->findOrFail($id);
 
- 
-    if ($stock->urunKategori != 3) {  // 3 = konsinye kategori ID'si
-        abort(404, "Konsinye cihaz değil.");
-    }
+   $stock = Stock::with(['raf', 'marka', 'cihaz', 'sonHareket'])->findOrFail($id);
 
     $rafListesi = StockShelf::where('firma_id', $tenant_id)->get();
     $markalar = DeviceBrand::where('firma_id', $tenant_id)->get();
     $cihazlar = DeviceType::where('firma_id', $tenant_id)->get();
-    $kategoriler = StockCategory::where('firma_id', $tenant_id)->get();
 
-    $consignmentDevice = $stock;
-    $html = view('frontend.secure.stocks.edit_consignment_device', compact('firma', 'consignmentDevice', 'rafListesi', 'markalar', 'kategoriler', 'cihazlar'))->render();
+    
+    if ($stock->urunKategori != 3) {
+        abort(404, "Bu ürün bir konsinye cihazı olarak kayıtlı değil.");
+    }
 
+    //Konsinyeye Özel Stok Hareketlerini Çek
+    $stokHareketleri = StockAction::with(['servis.musteri'])
+        ->select(
+            'stock_actions.*',
+            'ss.tedarikci as tedarikci_adi',
+            'up.name as performer_name'  // pid alanından kullanıcı adını al
+        )
+        ->leftJoin('stock_suppliers as ss', 'ss.id', '=', 'stock_actions.tedarikci')
+        ->leftJoin('tb_user as up', 'up.user_id', '=', 'stock_actions.pid') // pid ile JOIN
+        ->where('stock_actions.stokId', $id)
+        ->whereIn('stock_actions.islem', [1, 2, 4]) // 1: Alış, 2: Serviste Kullanım, 4: Müşteriden Geri Alma
+        ->orderBy('stock_actions.id', 'desc')
+        ->get();
+
+    // Ürüne Ait Fotoğraflar
+    $photos = stock_photos::where('kid', $tenant_id)
+                          ->where('stock_id', $id)
+                          ->latest()
+                          ->get();
+
+    // 5. "Hareket Ekle" modali için son kullanılan tedarikçileri çek
+    $sonTedarikciler = StockSupplier::where('firma_id', $tenant_id)
+                                    ->latest() // En son eklenene göre
+                                    ->take(5)    // Sadece 5 tane al
+                                    ->get();
+
+    // 6. Tüm verileri view'e göndererek HTML'i oluştur
+    $html = view('frontend.secure.stocks.edit_consignment_device', compact(
+        'firma',
+        'markalar',
+        'cihazlar',
+        'rafListesi',
+        'stock',
+        'stokHareketleri',
+        'photos',
+        'sonTedarikciler'
+    ))->render();
+
+    // 7. Oluşturulan HTML'i ve ürün adını JSON olarak döndür
     return response()->json([
         'html' => $html,
         'urunAdi' => $stock->urunAdi,
     ]);
-
 }
 public function UpdateConsignmentDevice(Request $request, $tenant_id, $id)
 {
@@ -1161,7 +1398,10 @@ public function UpdateConsignmentDevice(Request $request, $tenant_id, $id)
     $stock = Stock::findOrFail($id);
 
     if ($stock->urunKategori != 3) {
-        abort(404, "Konsinye cihaz değil.");
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Bu ürün konsinye cihaz değil.'
+        ], 404);
     }
 
     // Ürün kodu kontrolü
@@ -1171,10 +1411,10 @@ public function UpdateConsignmentDevice(Request $request, $tenant_id, $id)
         ->first();
 
     if ($existingStock) {
-        return redirect()->back()->withInput()->with([
-            'message' => 'Bu ürün kodu zaten mevcut. Lütfen farklı bir ürün kodu girin.',
-            'alert-type' => 'warning',
-        ]);
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Bu ürün kodu zaten mevcut. Lütfen farklı bir ürün kodu girin.'
+        ], 400);
     }
 
     // Ürün adı benzersiz mi?
@@ -1184,10 +1424,10 @@ public function UpdateConsignmentDevice(Request $request, $tenant_id, $id)
         ->first();
 
     if ($existingName) {
-        return redirect()->back()->withInput()->with([
-            'message' => 'Bu ürün adı zaten mevcut. Lütfen farklı bir ürün adı girin.',
-            'alert-type' => 'warning',
-        ]);
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Bu ürün adı zaten mevcut. Lütfen farklı bir ürün adı girin.'
+        ], 400);
     }
 
     // Validation
@@ -1213,9 +1453,9 @@ public function UpdateConsignmentDevice(Request $request, $tenant_id, $id)
     $stock->stok_cihaz = $request->cihaz_id;
     $stock->save();
 
-    return redirect()->back()->with([
-        'message' => 'Konsinye cihaz başarıyla güncellendi.',
-        'alert-type' => 'success',
+   return response()->json([
+            'status' => 'success',
+            'message' => 'Konsinye cihaz başarıyla güncellendi.'
     ]);
 }
 
@@ -1251,25 +1491,23 @@ public function ConsignmentStockActions($tenant_id, $stock_id)
 
 public function StoreConsignmentStockAction(Request $request, $tenant_id)
 {
-    $firma = Tenant::findOrFail($tenant_id);
+    try {
+        $firma = Tenant::findOrFail($tenant_id);
 
-    $rules = [
-        'stok_id'    => 'required|integer',
-        'islem'      => 'required|in:1,2,4',
-        'adet'       => 'required|integer|min:1',
-        'fiyat'      => 'nullable|numeric',
-        'fiyatBirim' => 'nullable|numeric',
-        'tedarikci'  => 'nullable|string|max:255',
-    ];
+        $rules = [
+            'stok_id'    => 'required|integer',
+            'islem'      => 'required|in:1,2,4',
+            'adet'       => 'required|integer|min:1',
+            'fiyat'      => 'nullable|numeric',
+            'fiyatBirim' => 'nullable|numeric',
+            'tedarikci'  => 'nullable|string|max:255',
+        ];
 
-  
         $messages = [
             'servisid.required' => 'Serviste kullanım işlemi için servis ID alanı zorunludur.',
             'servisid.integer'  => 'Servis ID bir sayı olmalıdır.',
-
         ];
 
-        // Laravel'in Validator sınıfını kullanarak doğrulayıcıyı oluştur
         $validator = Validator::make($request->all(), $rules, $messages);
 
         // islem değeri 2 ise 'servisid' alanını zorunlu yap
@@ -1277,78 +1515,68 @@ public function StoreConsignmentStockAction(Request $request, $tenant_id)
             return $input->islem == 2;
         });
 
-
-        // Doğrulama başarısız olursa yönlendir
         if ($validator->fails()) {
-            return redirect()->back()
-                        ->withErrors($validator)
-                        ->withInput(); // Formda girilen eski değerleri korur
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Doğrulama hatası: ' . $validator->errors()->first(),
+                'errors' => $validator->errors()
+            ], 422);
         }
-        // $validated = $validator->validated(); // Eğer validated verileri bir değişkene atmak istenirse kullanilabilir
 
+        $stokId = $request->stok_id;
+        $personel_id = Auth::user()->user_id;
 
-    $stokId = $request->stok_id;
-    $personel_id = Auth::user()->user_id;
+        // Fiyatı temizle (nokta ve virgül fix) 
+        $fiyat = null;
+        if ($request->islem == 1 && $request->filled('fiyat')) {
+            $fiyat = floatval(str_replace(['.', ','], ['', '.'], $request->fiyat));
+        }
 
+        $toplamGiris = StockAction::where('stokId', $stokId)->whereIn('islem', [1,4])->sum('adet');
+        $toplamCikis = StockAction::where('stokId', $stokId)->where('islem', 2)->sum('adet');
+        $kalanStok = $toplamGiris - $toplamCikis;
 
-    // Fiyatı temizle (nokta ve virgül fix) 
-    $fiyat = null;
-    if ($request->islem == 1 && $request->filled('fiyat')) {
-        $fiyat = floatval(str_replace(['.', ','], ['', '.'], $request->fiyat));
-    }
+        // Serviste kullanım için yeterli stok var mı?
+        if ($request->islem == 2 && $request->adet > $kalanStok) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Yetersiz stok! Mevcut: ' . $kalanStok . ' adet.'
+            ], 400);
+        }
 
-    $toplamGiris = StockAction::where('stokId', $stokId) ->whereIn('islem', [1,4])->sum('adet'); //alış ve müşteriden iade
-    $toplamCikis = StockAction::where('stokId', $stokId)->where('islem', 2)->sum('adet');  //serviste kullanım
-    $kalanStok = $toplamGiris - $toplamCikis;
+        $stockAction = new StockAction();
+        $stockAction->firma_id   = $firma->id;
+        $stockAction->pid        = $personel_id;
+        $stockAction->stokId     = $stokId;
+        $stockAction->servisid   = $request->servisid; 
+        $stockAction->islem      = $request->islem;
+        $stockAction->adet       = $request->adet;
+        $stockAction->fiyat      = $request->islem == 1 ? $fiyat : null;
+        $stockAction->fiyatBirim = $request->islem == 1 ? $request->fiyatBirim : null;
+        $stockAction->tedarikci  = $request->tedarikci;
+        $stockAction->save();
 
-    // Serviste kullanım için yeterli stok var mı?
-    if ($request->islem == 2 && $request->adet > $kalanStok) {
-        return redirect()->back()->with([
-            'message'    => 'Yetersiz stok! Mevcut: ' . $kalanStok . ' adet.',
-            'alert-type' => 'error',
+        // Alış işlemi: Stock tablosundaki fiyatı güncelle 
+        if ($request->islem == 1 && $fiyat) {
+            $stock = Stock::find($stokId);
+            if ($stock) {
+                $stock->save();
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Stok hareketi başarıyla kaydedildi.'
         ]);
-    }
 
-    $stockAction = new StockAction();
-    $stockAction->firma_id   = $firma->id;
-    $stockAction->pid        = $personel_id;
-    $stockAction->stokId     = $stokId;
-    $stockAction->servisid = $request->servisid; 
-    $stockAction->islem      = $request->islem;
-    $stockAction->adet       = $request->adet;
-    $stockAction->fiyat      = $request->islem == 1 ? $fiyat : null; // Sadece alışta fiyat kaydet
-    $stockAction->fiyatBirim = $request->islem == 1 ? $request->fiyatBirim : null;
-    $stockAction->tedarikci  = $request->tedarikci;
-    $stockAction->save();
-
-// Alış işlemi: Stock tablosundaki fiyatı güncelle 
-    if ($request->islem == 1 && $fiyat) {
-        $stock = Stock::find($stokId); // Stock modelini kullan
-        if ($stock) {
-            $stock->fiyat += $fiyat; // Fiyatı topla
-            $stock->save();
-        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Stok hareketi kaydedilirken hata oluştu: ' . $e->getMessage()
+        ], 500);
     }
- // Stok adedini güncelle
-    $stock = StockAction::find($stokId);
-    if ($stock) {
-        if (in_array($request->islem, [1,4])) {
-            // Alış veya müşteriden geri alma stok artırır
-            $stock->adet += $request->adet;
-        } elseif ($request->islem == 2) {
-            // Serviste kullanım stok azaltır
-            $stock->adet -= $request->adet;
-        }
-        $stock->save();
-    }
-
-    return redirect()->back()->with([
-        'message' => 'Stok hareketi başarıyla kaydedildi.',
-        'alert-type' => 'success',
-    ]);
 }
-
-public function DeleteConsignmentStockAction($tenant_id, $id)
+public function DeleteConsignmentStockAction(Request $request, $tenant_id, $id) 
 {
     $firma = Tenant::findOrFail($tenant_id);
     $stockAction = StockAction::where('firma_id', $firma->id)->where('id', $id)->first();
@@ -1360,43 +1588,46 @@ public function DeleteConsignmentStockAction($tenant_id, $id)
         ]);
     }
 
-    // Stok hareketine ait işlem türü kontrolü
-    if (in_array($stockAction->islem,[2,4])) {
-         return response()->json([
+    // İşlem 2 ve 4 serviste kullanım kontrolü
+    if (in_array($stockAction->islem, [2, 4])) {
+        return response()->json([
             'status' => 'warning',
             'message' => 'Serviste kullanılmış bir parçayı silemezsiniz. Silmek için servis içerisinden işlem yapmanız gerekmektedir.'
         ]);
     }
     
+    // İşlem 1 (Alış) kontrolü - Bu alıştan sonra çıkış yapılmış mı?
     if ($stockAction->islem == 1) {
-        // Bu alış işleminden sonra çıkış yapılmış mı?
         $girisTarihi = $stockAction->created_at;
 
         $cikisVarMi = StockAction::where('stokId', $stockAction->stokId)
             ->where('firma_id', $firma->id)
-            ->whereIn('islem', [2, 3]) // çıkış işlemleri
-            ->where('created_at', '>', $girisTarihi) // bu alıştan sonra yapılmış mı?
+            ->whereIn('islem', [2]) // Konsinye için sadece serviste kullanım çıkışı
+            ->where('created_at', '>', $girisTarihi)
             ->exists();
-            if ($cikisVarMi) {
-                        return response()->json([
-                            'status' => 'warning',
-                            'message' => 'Alış işleminden sonra stok çıkışı yapıldığı için silinemez.'
-                        ]);
-                    }
+
+        if ($cikisVarMi) {
+            return response()->json([
+                'status' => 'warning',
+                'message' => 'Alış işleminden sonra stok çıkışı yapıldığı için silinemez.'
+            ]);
+        }
     }
+
     try {
         $stockAction->delete();
+
         return response()->json([
-        'status' => 'success',
-        'message' => 'Stok hareketi başarıyla silindi.'
-    ]);
+            'status' => 'success',
+            'message' => 'Stok hareketi başarıyla silindi.'
+        ]);
+
     } catch (\Exception $e) {
         return response()->json([
-        'status' => 'error',
-        'message' => 'Hata oluştu: ' . $e->getMessage(),
-    ]);
+            'status' => 'error',
+            'message' => 'Hata oluştu: ' . $e->getMessage(),
+        ]);
     }
-    
 }
 
 
@@ -1438,7 +1669,7 @@ public function UploadConsignmentPhoto(Request $request, $tenant_id)
         ->resize(665, null, function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
-        })->encode($extension, 85); // kalite düşürmek istersen burayı değiştir
+        })->encode($extension, 75); // kalite 
 
     // Storage'a kaydet (public disk)
     Storage::disk('public')->put($fullPath, $resizedImage);
@@ -1458,28 +1689,36 @@ public function UploadConsignmentPhoto(Request $request, $tenant_id)
         'message' => 'Fotoğraf başarıyla yüklendi.'
     ]);
 } 
-public function DeleteConsignmentPhoto(Request $request, $tenant_id)
+public function DeleteConsignmentPhoto(Request $request, $tenant_id) 
 {
     try {
         $photo = stock_photos::where('id', $request->id)
                             ->where('kid', $tenant_id)
-                            ->firstOrFail();
+                            ->first(); // firstOrFail() yerine first() kullan
 
-        $dosyaYolu = public_path($photo->resimyol);
-
-        if (file_exists($dosyaYolu)) {
-            unlink($dosyaYolu);
+        if (!$photo) {
+            return response()->json([
+                'message' => 'Fotoğraf bulunamadı veya silme yetkiniz yok.',
+                'alert_type' => 'error'
+            ], 404);
         }
 
+        // Dosyanın varlığını kontrol et ve sil (Storage kullan)
+        if (Storage::disk('public')->exists($photo->resimyol)) {
+            Storage::disk('public')->delete($photo->resimyol);
+        }
+
+        // Veritabanından kaydı sil
         $photo->delete();
 
         return response()->json([
             'message' => 'Fotoğraf başarıyla silindi.',
             'alert_type' => 'success'
         ]);
+
     } catch (\Exception $e) {
         return response()->json([
-            'message' => 'Fotoğraf silme işlemi sırasında hata oluştu.',
+            'message' => 'Fotoğraf silme işlemi sırasında hata oluştu: ' . $e->getMessage(),
             'alert_type' => 'danger'
         ], 500);
     }

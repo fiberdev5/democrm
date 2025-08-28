@@ -67,6 +67,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'checkTenantId' => \App\Http\Middleware\CheckTenantId::class,
         'check.subscription' => \App\Http\Middleware\CheckCompanySubscription::class,
+        'redirect_after_login' => \App\Http\Middleware\HandleRedirectAfterLogin::class,
         'check.tenant.subscription' => \App\Http\Middleware\CheckTenantSubscription::class,
+
     ];
 }

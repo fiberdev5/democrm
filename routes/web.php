@@ -406,21 +406,12 @@ Route::controller(HomeController::class)->group(function() {
     Route::get('/get-states/{countryId}', 'getStatesByCountry')->name('get.states');
 
 });
-// API routes - AJAX istekleri için
-Route::prefix('api')->group(function () {
-    Route::get('/dashboard/stats', [HomeController::class, 'getStats'])->name('dashboard.stats');
-    Route::get('/dashboard/chart-data', [HomeController::class, 'getChartData'])->name('dashboard.chart');
-});
 
-// API routes - AJAX istekleri için
-Route::prefix('api')->group(function () {
-    Route::get('/dashboard/stats', [HomeController::class, 'getStats'])->name('dashboard.stats');
-    Route::get('/dashboard/chart-data', [HomeController::class, 'getChartData'])->name('dashboard.chart');
-});
-
-Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId','check.subscription']], function () {
+Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId','check.subscription','redirect_after_login']], function () {
     Route::controller(HomeController::class)->group(function() {
         Route::get('/dashboard', 'Dashboard')->name('secure.home');
+        Route::get('/dashboard/stats',  'getStats')->name('dashboard.stats');
+        Route::get('/dashboard/chart-data',  'getChartData')->name('dashboard.chart');
     });
 
     Route::controller(SurveyController::class)->group(function() {
@@ -493,6 +484,18 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::post('/stok/guncelle/{id}', 'UpdateStock')->name('update.stock');
         Route::get('/stok-sil/{id}', 'DeleteStock')->name('delete.stock');
 
+        //Arama İnputları
+        Route::get('/search-suppliers','searchSuppliers')->name('search.suppliers');
+        Route::get('/search-personnel',  'searchPersonnel')->name('search.personnel');
+        Route::get('/search-brands','searchBrands')->name('search.brands');
+        Route::get('/search-devices', 'searchDevices')->name('search.devices');
+        Route::get('/search-categories',  'searchCategories')->name('search.categories');
+        Route::get('/search-shelves', 'searchShelves')->name('search.shelves');
+        //Marka, kategori,cihaz tüür ve raf ekleme 
+        Route::post('/stock/add-brand-ajax', 'storeBrandAjax')->name('store.brand.ajax');
+        Route::post('/stock/add-device-type-ajax', 'storeDeviceTypeAjax')->name('store.device.type.ajax');
+        Route::post('/stock/add-category-ajax',  'storeCategoryAjax')->name('store.category.ajax');
+        Route::post('/stock/add-shelf-ajax','storeShelfAjax')->name('store.shelf.ajax');
         //Stok haraketeri
         Route::get('/stok-haraketleri/{id}', 'StokActions')->name('stock.actions');
         Route::post('/stok-haraket-kaydet', 'StoreStockAction')->name('store.stock.action');
