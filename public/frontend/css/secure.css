@@ -2194,15 +2194,6 @@ b, strong {font-weight: 900;color: #000000;}
     left: 60px;
 }
 #surveyResultsTable td strong{color: black!important;}
-
-
-
-
-
-
-
-
-
 .servis-istatistik strong{
     color: #fff;
 }
@@ -2327,6 +2318,7 @@ b, strong {font-weight: 900;color: #000000;}
     }
 }
 
+
  .select2-container--bootstrap-5 .select2-selection {
     width: 100%;
     min-height: 2px!important;
@@ -2385,3 +2377,50 @@ b, strong {font-weight: 900;color: #000000;}
 #editConsignmentModal .card-body {
     padding: 10px 0px !important;
 }
+
+.fullwidth-app-alert {
+    display: flex;
+    justify-content: space-between; /* Sol ve sağa yay */
+    align-items: center;
+    position: relative;   /* Artık fixed değil */
+    width: 97%;          /* Tam genişlik */
+    padding: 15px 20px;
+    border-radius: 0;     /* Köşe yuvarlaklığını kaldır */
+    font-size: 16px;
+    line-height: 1.5;
+    box-shadow: none;     /* Gölge istemiyorsanız */
+    font-family: Arial, sans-serif;
+    top: 60px;
+    margin: 10px 20px;
+    left: 5px;
+}
+.alert-left {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* ikon ile metin arasında boşluk */
+}
+.warning-app-alert {
+    background-color: #df0029;
+    color: white;
+    border: 1px solid #ffeeba;
+}
+
+.close-app-alert-button {
+    float: right;   /* Sağ köşeye kapatma butonu */
+    background: none;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 5px;
+}
+
+
+.alert-icon {
+    color: white; /* metin ile aynı renk */
+    display: flex;
+    align-items: center;
+}
+

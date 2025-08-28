@@ -72,6 +72,8 @@ use App\Http\Controllers\Frontend\StockController;
 use App\Http\Controllers\Frontend\WarrantyPeriodController;
 use App\Http\Controllers\Frontend\SurveyController;
 use App\Http\Controllers\Frontend\StatisticController;
+use App\Http\Controllers\Frontend\SubscriptionController;
+use App\Http\Controllers\Frontend\TenantsController;
 use Illuminate\Support\Facades\File;
 
 
@@ -392,6 +394,11 @@ Route::controller(HomeController::class)->group(function() {
     Route::get('/kullanici-kaydi', 'Register')->name('kayit');
     Route::post('/register-action', 'RegisterAction')->name('kayit.action');
 
+    // Yeni SMS doğrulama rotaları
+    Route::get('/sms-dogrulama', 'showSmsVerificationForm')->name('sms.verification.form');
+    Route::post('/sms-dogrulama', 'verifySmsCode')->name('sms.verification.verify');
+    Route::get('/kayit-basarili', 'RegisterSuccess')->name('register.success');
+
     Route::get('/kullanici-girisi', 'Login')->name('giris');
     Route::post('/login-action', 'LoginAction')->name('giris.action');
 
@@ -407,53 +414,46 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::get('/dashboard/chart-data',  'getChartData')->name('dashboard.chart');
     });
 
-Route::controller(SurveyController::class)->group(function() {
-    Route::get('/anket/{servisId}/create', 'SurveyCreate')->name('survey.create');
-    Route::post('/anket/{servisId}/store', 'SurveyStore')->name('survey.store');
-    Route::get('/anket-rapor-modal', 'SurveyReports')->name('survey.reports');
-});
+    Route::controller(SurveyController::class)->group(function() {
+        Route::get('/anket/{servisId}/create', 'SurveyCreate')->name('survey.create');
+        Route::post('/anket/{servisId}/store', 'SurveyStore')->name('survey.store');
+        Route::get('/anket-rapor-modal', 'SurveyReports')->name('survey.reports');
+    });
 
-Route::controller(StatisticController::class)->group(function() {
+    Route::controller(StatisticController::class)->group(function() {
 
-    //Service Statistics
-    Route::get('/istatistikler', 'ServiceStatistics')->name('statistics');
-    Route::get('/chart-data', 'getChartDataAjax')->name('statistics.chart.data');
-    Route::get('/hourly-data', 'getHourlyDataAjax')->name('statistics.hourly.data');
-    //Technician Statistics
-    Route::get('/teknisyen-istatistikleri', 'TechnicianStatistics')->name('technician.statistics');
-    Route::post('/teknisyen-istatistikleri/data', 'getTechnicianStatisticsData')->name('technician.statistics.data');
-    Route::post('/teknisyen-istatistikleri/detail', 'getTechnicianDetailStatistics')->name('technician.statistics.detail');
-    Route::post('/teknisyen-detay/data', 'getTechnicianDetailData');
-    //Operator Statistics
-    Route::get('/operator-istatistikleri', 'OperatorStatistics')->name('operator.statistics');
-    Route::post('/operator-istatistikleri/data', 'getOperatorStatisticsData')->name('operator.statistics.data');
-    //State Statistics
-    Route::get('/durum-istatistikleri', 'StateStatistics')->name('state.statistics');
-    //Stage Statistics
-    Route::get('/asama-istatistikleri', 'StageStatistics')->name('stage.statistics');
-    //Stocks Statistics
-    Route::get('/depo-istatistikleri', 'StockStatistics')->name('stock.statistics');
-    Route::post('/depo-istatistikleri/data', 'getPersonelDepoData')->name('stock.statistics.data');
-    //Ilce Statistics
-    Route::get('/ilçe-istatistikleri', 'IlceStatistics')->name('ilce.statistics');
-    //Survey Statistics
-    Route::get('/anket-istatistikleri', 'SurveyStatistics')->name('survey.statistics');
-    Route::post('/anket-istatistikleri/data', 'getSurveyStatisticsData')->name('survey.statistics.data');
-    Route::post('/anket-sonuclari/data',  'getSurveyResults')->name('survey.results.data');
-    //Cash Statistics
-    Route::get('/kasa-istatistikleri', 'CashStatistics')->name('cash.statistics');
-    Route::post('/gelir-tablo/getir', 'kasaFilteredData')->name('cash.income.data');
-    Route::post('/gider-tablo/getir', 'giderTabloGetir')->name('cash.expense.table');
-    Route::post('/gelir-grafik/getir', 'gelirGrafikGetir')->name('cash.income.chart');
-    Route::post('/gider-grafik/getir', 'giderGrafikGetir')->name('cash.expense.chart');
-
-    
-        
-    
-
-
-   
-});
+        //Service Statistics
+        Route::get('/istatistikler', 'ServiceStatistics')->name('statistics');
+        Route::get('/chart-data', 'getChartDataAjax')->name('statistics.chart.data');
+        Route::get('/hourly-data', 'getHourlyDataAjax')->name('statistics.hourly.data');
+        //Technician Statistics
+        Route::get('/teknisyen-istatistikleri', 'TechnicianStatistics')->name('technician.statistics');
+        Route::post('/teknisyen-istatistikleri/data', 'getTechnicianStatisticsData')->name('technician.statistics.data');
+        Route::post('/teknisyen-istatistikleri/detail', 'getTechnicianDetailStatistics')->name('technician.statistics.detail');
+        Route::post('/teknisyen-detay/data', 'getTechnicianDetailData');
+        //Operator Statistics
+        Route::get('/operator-istatistikleri', 'OperatorStatistics')->name('operator.statistics');
+        Route::post('/operator-istatistikleri/data', 'getOperatorStatisticsData')->name('operator.statistics.data');
+        //State Statistics
+        Route::get('/durum-istatistikleri', 'StateStatistics')->name('state.statistics');
+        //Stage Statistics
+        Route::get('/asama-istatistikleri', 'StageStatistics')->name('stage.statistics');
+        //Stocks Statistics
+        Route::get('/depo-istatistikleri', 'StockStatistics')->name('stock.statistics');
+        Route::post('/depo-istatistikleri/data', 'getPersonelDepoData')->name('stock.statistics.data');
+        //Ilce Statistics
+        Route::get('/ilçe-istatistikleri', 'IlceStatistics')->name('ilce.statistics');
+        //Survey Statistics
+        Route::get('/anket-istatistikleri', 'SurveyStatistics')->name('survey.statistics');
+        Route::post('/anket-istatistikleri/data', 'getSurveyStatisticsData')->name('survey.statistics.data');
+        Route::post('/anket-sonuclari/data',  'getSurveyResults')->name('survey.results.data');
+        //Cash Statistics
+        Route::get('/kasa-istatistikleri', 'CashStatistics')->name('cash.statistics');
+        Route::post('/gelir-tablo/getir', 'kasaFilteredData')->name('cash.income.data');
+        Route::post('/gider-tablo/getir', 'giderTabloGetir')->name('cash.expense.table');
+        Route::post('/gelir-grafik/getir', 'gelirGrafikGetir')->name('cash.income.chart');
+        Route::post('/gider-grafik/getir', 'giderGrafikGetir')->name('cash.expense.chart');
+    });
 
 
     Route::controller(PersonelController::class)->group(function() {
@@ -472,13 +472,7 @@ Route::controller(StatisticController::class)->group(function() {
         Route::post('/bayi/guncelle/{id}', 'UpdateDealer')->name('update.dealer');
         Route::get('/bayi-sil/{id}', 'DeleteDealer')->name('delete.dealer');
         Route::get('/bayiler/data', 'GetDealersData')->name('dealers.data');
-        Route::get('/dealer-document/{user_id}/{index?}','ShowDealerDocument')
-    ->name('dealer.document');
-
-
-        
-
-
+        Route::get('/dealer-document/{user_id}/{index?}','ShowDealerDocument')->name('dealer.document');
     });
     
     Route::controller(StockController::class)->group(function() {
@@ -541,9 +535,6 @@ Route::controller(StatisticController::class)->group(function() {
 
         //Konsinye Cihaz Barkod
         Route::get('/konsinye-cihaz-barkod/{id}', 'ConsignmentBarcode')->name('consignment.device.barcode.pdf');
-
-
-
     });
 
     Route::controller(CustomerController::class)->group(function() {
@@ -625,8 +616,6 @@ Route::controller(StatisticController::class)->group(function() {
     Route::controller(ServiceTimeController::class)->group(function() {
         Route::get('/servis-zamanlama', 'ServiceTime')->name('service.time');
         Route::post('/servis-zamani/yukle', 'UpdateServiceTime')->name('update.service.time');
-    
-        
     });
 
     Route::controller(ServiceResourceController::class)->group(function() {
@@ -817,7 +806,6 @@ Route::controller(StatisticController::class)->group(function() {
         Route::post('/servis-atama', 'assignService')->name('service.assign');
         Route::get('/servis-atama-guncelle-formu','getServicePlanUpdateForm')->name('service.plan.update.form');
         Route::post('/servis-personel-atama-guncelleme', 'updatePersonelBatch')->name('update.personel.batch');
-        
     });
 
     //GELEN ÇAĞRILAR MODÜLÜ
@@ -887,9 +875,42 @@ Route::controller(StatisticController::class)->group(function() {
         Route::get('/primlerim/detay', 'kullaniciDetay')->name('prim.kullanici.detay');
         
     });
+
+    Route::controller(TenantsController::class)->group(function() { 
+        //Admin rollü kişiye gözükecek firmalar modülü routeları
+        Route::get('/firmalar', 'AllTenants')->name('all.tenants');
+        Route::get('/firma-duzenle/{firma_id}', 'EditTenant')->name('edit.tenant');
+        Route::post('/firma-guncelle', 'UpdateTenant')->name('update.tenant');
+        Route::get('/firma-sil/{id}', 'DeleteTenant')->name('delete.tenant');
+
+        // Bu rotayı diğer tenant rotalarınızın yanına ekleyebilirsiniz.
+        Route::post('/tenants/change-status/{id}', 'changeTenantStatus')->name('tenant.changeStatus');
+
+    });
+
+    
+});
+Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId']], function () {
+    Route::prefix('subscription')->name('subscription.')->group(function () {
+        Route::get('/plans', [SubscriptionController::class, 'plans'])->name('plans');
+        Route::get('/subscribe/{plan}', [SubscriptionController::class, 'subscribe'])->name('subscribe');
+        Route::post('/subscribe/{plan}', [SubscriptionController::class, 'processSubscription'])->name('process');
+        Route::get('/payment/{plan}', [SubscriptionController::class, 'payment'])->name('payment');
+        Route::post('/payment/{plan}', [SubscriptionController::class, 'completePayment'])->name('payment.complete');
+        Route::get('/success', [SubscriptionController::class, 'success'])->name('success');
+        Route::get('/fail', [SubscriptionController::class, 'fail'])->name('fail');
+        Route::post('/cancel', [SubscriptionController::class, 'cancel'])->name('cancel');
+        Route::get('/upgrade', [SubscriptionController::class, 'upgrade'])->name('upgrade');
+        Route::get('/expired', [SubscriptionController::class, 'expired'])->name('expired');
+        Route::get('/invoices', [SubscriptionController::class, 'invoices'])->name('invoices');
+    });
 });
 
-
+Route::prefix('subscription')->name('subscription.')->group(function () {
+        Route::post('/success', [SubscriptionController::class, 'success'])->name('success');
+        Route::get('/success', [SubscriptionController::class, 'showSuccess'])->name('show.success');
+        Route::post('/fail', [SubscriptionController::class, 'fail'])->name('fail');
+    });
 
 Route::get('/logs', function () {
         $logFiles = File::files(storage_path('logs'));

@@ -87,9 +87,6 @@
             <span>Raporlar</span>
           </a>
         </li>
-        
- 
-
         @endif
 
         @if(auth()->user()->can('Kasayı Görebilir'))
@@ -97,6 +94,15 @@
           <a href="{{ route('kasa.filter', $user->tenant_id)}}" class="waves-effect">
             <i class="ri-money-dollar-circle-fill"></i><span class="badge rounded-pill bg-success float-end"></span>
             <span>Kasa</span>
+          </a>
+        </li>
+        @endif
+
+        @if(auth()->user()->can('Firmaları Görebilir'))
+         <li>
+          <a href="{{ route('all.tenants',$user->tenant_id)}}" class="waves-effect">
+            <i class="ri-account-circle-line"></i><span class="badge rounded-pill bg-success float-end"></span>
+            <span>Firmalar</span>
           </a>
         </li>
         @endif

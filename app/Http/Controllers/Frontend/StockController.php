@@ -272,9 +272,11 @@ public function AllStocks($tenant_id, Request $request)
             return redirect()->route('stocks', $tenant_id)->with($notification);
         }
 
- public function EditStock($tenant_id, $id) {
-    $firma = Tenant::findOrFail($tenant_id);
-    $stock = Stock::with(['raf', 'marka', 'cihaz', 'sonHareket'])->findOrFail($id);
+
+        public function EditStock($tenant_id, $id) {
+            $firma = Tenant::findOrFail($tenant_id);
+            $stock = Stock::with(['raf', 'marka', 'cihaz', 'sonHareket'])->findOrFail($id);
+
 
     $rafListesi = StockShelf::where('firma_id', $tenant_id)->get();
     $markalar = DeviceBrand::where('firma_id', $tenant_id)->get();

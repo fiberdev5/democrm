@@ -57,7 +57,7 @@
 
 <body data-topbar="dark">
     <!-- <body data-layout="horizontal" data-topbar="dark"> -->
-
+        
     <!-- Begin page -->
     <div id="layout-wrapper">
 
@@ -75,9 +75,28 @@
         <!-- ============================================================== -->
         <!-- Start right Content here -->
         <!-- ============================================================== -->
+        
         <div class="main-content">
 
+           <!-- Firmanın deneme süresine son 5 gün kala verdiğim uyarı    -->
+           @if (session('warning'))
+                <div class="fullwidth-app-alert warning-app-alert">
+                    <div class="alert-left">
+                        <span class="alert-icon" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.964 0L.165 13.233c-.457.778.091 1.767.982 1.767h13.706c.89 0 1.438-.99.982-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1-2 .001 1 1 0 0 1 2-.001z"/>
+                            </svg>
+                        </span>
+                        <span>{{ session('warning') }}</span>
+                    </div>
+
+                    <button type="button" class="close-app-alert-button" onclick="this.parentElement.style.display='none';">&times;</button>
+                </div>
+            @endif
+
             @yield('user')
+
+           
             <!-- End Page-content -->
 
             @include('frontend.secure.body.footer')
@@ -116,6 +135,10 @@
     <!--toastr messages js-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
+
+        toastr.options = {
+            "positionClass": "toast-top-center" // En üstte ortada
+        };
         @if (Session::has('message'))
             var type = "{{ Session::get('alert-type', 'info') }}"
             switch (type) {

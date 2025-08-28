@@ -36,6 +36,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\CheckTrialStatus::class,
         ],
 
         'api' => [
@@ -67,5 +68,7 @@ class Kernel extends HttpKernel
         'checkTenantId' => \App\Http\Middleware\CheckTenantId::class,
         'check.subscription' => \App\Http\Middleware\CheckCompanySubscription::class,
         'redirect_after_login' => \App\Http\Middleware\HandleRedirectAfterLogin::class,
+        'check.tenant.subscription' => \App\Http\Middleware\CheckTenantSubscription::class,
+
     ];
 }

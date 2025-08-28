@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Mail\UserRegisteredMail;
 use Illuminate\Http\Request;
 use App\Models\HomeSlide;
 use App\Models\Faq;
@@ -12,6 +13,7 @@ use App\Models\Clients;
 use App\Models\Feature;
 use App\Models\Pricing;
 use App\Models\Reference;
+use App\Models\ServiceTime;
 use App\Models\Settings;
 use App\Models\Tenant;
 use App\Models\TenantPrim;
@@ -22,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
@@ -69,9 +72,10 @@ class HomeController extends Controller
     }
 
     public function RegisterAction(Request $request) {
-        $request->validate([
+        $validatedData = $request->validate([
             'name' => 'required|string|max:255',
-            'firma_adi' => 'required|string|max:255',
+            'firma_adi' => 'required|string|max:30',
+            'vergiNo' => 'required|max:10',
             'tel' => 'required',
             'email' => 'required|email|max:255|unique:tenants,eposta',
             'password' => 'required|min:6',
@@ -79,39 +83,137 @@ class HomeController extends Controller
             // Özel hata mesajları
             'name.required' => 'Ad Soyad alanı zorunludur.',
             'firma_adi.required' => 'Firma Adı alanı zorunludur.',
+            'firma_adi.max' => 'Firma Adı alanı en fazla 30 karakter olnalıdır.',
+            'vergiNo.required' => 'Vergi numarası alanı zorunludur.',
+            'vergiNo.max' => 'Vergi numarası alanı en fazla 10 karakter olnalıdır.',
             'tel.required' => 'Telefon alanı zorunludur.',
-            'tel.regex' => 'Telefon formatı hatalıdır (örn: 0234 567 8901).',
+            'tel.regex' => 'Telefon formatı hatalıdır (örn: 234 567 89 01).',
             'email.required' => 'E-posta alanı zorunludur.',
             'email.email' => 'Geçerli bir e-posta adresi giriniz.',
             'email.unique' => 'Bu e-posta adresi zaten kayıtlı.',
             'password.required' => 'Şifre alanı zorunludur.',
             'password.min' => 'Şifre en az 6 karakter olmalıdır.',
         ]);
-        $baslik = $request->firma_adi;
-        $username = $this->Seo($baslik);
+       // 6 haneli rastgele bir doğrulama kodu oluştur
+        $verificationCode = rand(100000, 999999);
 
-        $firmaAdiSlug = Str::slug($request->firma_adi, '-');
+        // Kullanıcı verilerini ve kodu session'a kaydet
+        $request->session()->put('registration_data', $validatedData);
+        $request->session()->put('sms_verification_code', $verificationCode);
+        $request->session()->put('sms_code_created_at', now());
+        // // SMS Gönderme İşlemi
+        
+
+        // SMS gönderimi başarılıysa, doğrulama sayfasına yönlendir
+        return redirect()->route('sms.verification.form')->with('phone_number', $request->tel);
+
+    }
+
+    /**
+     * SMS doğrulama formunu gösterir.
+     */
+    public function showSmsVerificationForm() {
+        // Session'da veri yoksa kullanıcıyı kayıt sayfasına geri gönder
+        if (!session()->has('registration_data')) {
+            return redirect()->route('register');
+        }
+        return view('frontend.auth.register_sms');
+    }
+
+    /**
+     * Adım 2: Girilen SMS kodunu doğrular ve kaydı tamamlar.
+     */
+    public function verifySmsCode(Request $request) {
+        $request->validate(['code' => 'required|numeric']);
+
+        $storedCode = $request->session()->get('sms_verification_code');
+        $registrationData = $request->session()->get('registration_data');
+        $codeCreatedAt = $request->session()->get('sms_code_created_at');
+
+        // Session'da veri yoksa veya kod eşleşmiyorsa
+        // if (!$storedCode || !$registrationData || $request->code != $storedCode) {
+        //     return redirect()->back()->withErrors(['code' => 'Doğrulama kodu hatalı.']);
+        // }
+
+        // 3 dakika sınırını kontrol et
+        // if (now()->diffInMinutes($codeCreatedAt) >= 3) {
+        //     // Session’ı temizle ve kullanıcıyı geri yönlendir
+        //     $request->session()->forget(['registration_data', 'sms_verification_code', 'sms_code_created_at']);
+        //     return redirect()->route('register')->withErrors(['code' => 'Doğrulama kodu süresi doldu. Lütfen yeniden kayıt olun.']);
+        // }
+
+        // Kod eşleşmiyorsa
+        // if ($request->code != $storedCode) {
+        //     return redirect()->back()->withErrors(['code' => 'Doğrulama kodu hatalı.']);
+        // }
+
+        // Kod doğruysa, asıl kayıt işlemini yap
+        $this->createTenantAndUser($registrationData);
+
+        // İşlem bittikten sonra session'daki verileri temizle
+        $request->session()->forget(['registration_data', 'sms_verification_code', 'sms_code_created_at']);
+
+
+        return redirect()->route('register.success')->with([
+            'message' => 'Hesabınız başarıyla oluşturuldu. ServisSoft demo hesap bilgilerinizi en kısa süre içerisinde e-posta adresinize göndereceğiz..',
+            'alert-type' => 'success'
+        ]);
+    }
+    
+    /**
+     * Tenant ve User oluşturma mantığını içeren özel bir metod.
+     * Bu, kodu tekrar etmemek için iyi bir yöntemdir.
+     */
+    private function createTenantAndUser(array $data) {
+        $baslik = $data['firma_adi'];
+        $username = $this->Seo($baslik); // Seo metodunuzun bu class içinde olduğunu varsayıyorum.
+        // 🔹 Kullanıcı adı çakışıyorsa sonuna rakam ekle
+        $original = $username;
+        $counter = 1;
+
+        while (User::where('username', $username)->exists()) {
+            $username = $original . '-' . $counter;
+            $counter++;
+        }
+
+        $firmaAdiSlug = Str::slug($data['firma_adi'], '-');
+        // 🔹 Tenant username (firma alan adı gibi düşünülen kısım)
+        $tenantUsername = strtolower(str_replace(' ', '', $data['firma_adi'])) . '.com';
+        $originalTenantUsername = $tenantUsername;
+        $counterTenant = 1;
+
+        while (Tenant::where('username', $tenantUsername)->exists()) {
+            // Eğer aynı tenant username varsa sonuna -1, -2 ekle
+            $tenantUsername = strtolower(str_replace(' ', '', $data['firma_adi'])) . '-' . $counterTenant . '.com';
+            $counterTenant++;
+        }
         $tenant = new Tenant([
-            'name' => $request->name,
-            'firma_adi' => $request->firma_adi,
+            'name' => $data['name'],
+            'firma_adi' => $data['firma_adi'],
+            'vergiNo' => $data['vergiNo'],
             'firma_slug' => $firmaAdiSlug,
-            'tel1' => $request->tel,
-            'eposta' => $request->email,
-            'username' => strtolower(str_replace(' ', '', $request->firma_adi)) . '.com',
+            'tel1' => $data['tel'],
+            'eposta' => $data['email'],
+            'username' => $tenantUsername,
             'kayitTarihi' => Carbon::now(),
-            'bitisTarihi' => Carbon::now()->addYear(),
+            'bitisTarihi' => Carbon::now()->addDays(14),
+            'status' => 0,
+            'trial_starts_at' => Carbon::now(),
+            'trial_ends_at' => Carbon::now()->addDays(14),
+            'subscription_ends_at' => Carbon::now()->addDays(14),
+            'trial_used' => 1,
         ]);
         $tenant->save();
 
         $tenant_id = $tenant->id;
 
         $user = new User([
-            'name' => $request->name,
+            'name' => $data['name'],
             'username' => $username,
-            'tel' => $request->tel,
-            'eposta' => $this->generateUserEmail($username, $tenant->username),
+            'tel' => $data['tel'],
+            'eposta' => $this->generateUserEmail($username, $tenant->username), // Bu metodunuzun da burada olduğunu varsayıyorum
             'tenant_id' => $tenant_id,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($data['password']),
             'status' => '1',
             'baslamaTarihi' => Carbon::now()->format('Y-m-d'),
         ]);
@@ -128,13 +230,17 @@ class HomeController extends Controller
             'atolyePrimTutari' => 0,
         ]);
 
-        $notification = array(
-            'message' => 'Hesabınız başarıyla oluşturuldu',
-            'alert-type' => 'success'
-        );
+        ServiceTime::create([
+            'firma_id' => $tenant_id,
+            'zaman' => '08:30',
+            'created_at' => Carbon::now(),
+        ]);
 
-        return redirect()->route('giris')->with($notification);
+        
+    }
 
+    public function RegisterSuccess() {
+        return view('frontend.auth.register_success');
     }
 
     public function Login(){

@@ -891,7 +891,11 @@ $(document).ready(function(){
           const arkaplanRenk = dbRenk?.trim() || varsayilanRenkHaritasi[asama];
 
           if (arkaplanRenk) {
-              $(row).css('background-color', arkaplanRenk);
+            //eski renklendirme
+            //$(row).css('background-color', arkaplanRenk);
+            
+            // Tüm hücrelere uygula, ancak son sütun hariç
+            $('td', row).not(':last').css('background-color', arkaplanRenk);
           }
           
           // Uzun metin sarması gereken sütunlara sınıf ekleyelim

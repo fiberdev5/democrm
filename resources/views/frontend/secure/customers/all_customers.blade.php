@@ -129,7 +129,7 @@ $(document).ready(function(){
   });
   $("#addCustomerModal").on("hidden.bs.modal", function() {
       $('#addCustomerModal .modal-body').html("");
-    });
+  });
 });
 </script>
 
