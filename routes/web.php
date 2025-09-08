@@ -75,7 +75,11 @@ use App\Http\Controllers\Frontend\StatisticController;
 use App\Http\Controllers\Frontend\SubscriptionController;
 use App\Http\Controllers\Frontend\TenantsController;
 use Illuminate\Support\Facades\File;
-
+use App\Http\Controllers\Frontend\ImpersonationController;
+use App\Http\Controllers\Frontend\SuperAdminController;
+use App\Http\Controllers\Frontend\SupportTicketController;
+use App\Http\Controllers\Frontend\AdminSupportController;
+use App\Http\Controllers\Frontend\DestekController;
 
 Route::get('/secure', function () {
     return view('backend.index');
@@ -89,7 +93,75 @@ Route::controller(UserController::class)->group(function () {
     Route::get('/login', 'login')->name('login');
     Route::post('/login', 'login_action')->name('login.action');
 });
+// Kullanıcı destek talepleri
+Route::middleware(['auth'])->prefix('{tenant_id}')->group(function () {
+    Route::get('/support', [SupportTicketController::class, 'index'])->name('support.index');
+    Route::get('/support/create', [SupportTicketController::class, 'create'])->name('support.create');
+    Route::post('/support', [SupportTicketController::class, 'store'])->name('support.store');
+    Route::get('/support/{ticket}', [SupportTicketController::class, 'show'])->name('support.show');
+    Route::post('/support/{ticket}/reply', [SupportTicketController::class, 'reply'])->name('support.reply');
+    Route::get('/support/{ticket}/download/{fileName}', [SupportTicketController::class, 'downloadAttachment'])->name('support.download');
+});
 
+Route::middleware(['auth'])->prefix('super-admin')->name('super.admin.')->group(function () {
+    Route::get('/destek', [AdminSupportController::class, 'index'])->name('destek.index');
+    Route::get('/destek/dashboard', [AdminSupportController::class, 'dashboard'])->name('destek.dashboard');
+    Route::get('/destek/{ticket}', [AdminSupportController::class, 'show'])->name('destek.show');
+    Route::post('/destek/{ticket}/reply', [AdminSupportController::class, 'reply'])->name('destek.reply');
+    Route::patch('/destek/{ticket}/close', [AdminSupportController::class, 'close'])->name('destek.close');
+    Route::patch('/destek/{ticket}/reopen', [AdminSupportController::class, 'reopen'])->name('destek.reopen');
+    Route::get('/destek/{ticket}/download/{fileName}', [AdminSupportController::class, 'downloadAttachment'])->name('destek.download');
+});
+//Route::get('super-admin/destek', [DestekController::class, 'index'])->name('destek.index');
+//İmpersonation 
+    // Impersonation Routes
+    Route::prefix('impersonation')->name('impersonation.')->group(function () {
+        // Kullanıcı kimliğini kullanmaya başla
+        Route::post('/start/{user_id}', [ImpersonationController::class, 'start'])
+             ->name('start');
+        // Impersonation'ı sonlandır
+        Route::post('/stop', [ImpersonationController::class, 'stop'])
+             ->name('stop');
+        // Impersonate edilebilir kullanıcıları getir (AJAX)
+        Route::get('/users/{tenant_id}', [ImpersonationController::class, 'getUsersForImpersonation'])
+             ->name('users');
+        // Impersonation geçmişi (AJAX)
+        Route::get('/history', [ImpersonationController::class, 'getImpersonationHistory'])
+             ->name('history');
+        // Mevcut impersonation durumunu kontrol et (AJAX)
+        Route::get('/status', [ImpersonationController::class, 'checkStatus'])
+             ->name('status');
+    });
+// Super Admin Routes
+Route::middleware(['auth', 'superadmin'])->group(function () {
+    Route::prefix('super-admin')->name('super.admin.')->group(function () {
+        
+        // Dashboard
+        Route::get('/dashboard', [SuperAdminController::class, 'dashboard'])
+             ->name('dashboard');
+        
+        // Tüm firmalar yönetimi
+        Route::get('/tenants', [SuperAdminController::class, 'allTenants'])
+             ->name('tenants');
+        
+        // Firma düzenleme
+        Route::get('/tenant/{id}/edit', [SuperAdminController::class, 'editTenant'])
+             ->name('tenant.edit');
+        
+        Route::post('/tenant/{id}/update', [SuperAdminController::class, 'updateTenant'])
+             ->name('tenant.update');
+        
+        // Firma durum değiştirme
+        Route::post('/tenant/{id}/toggle-status', [SuperAdminController::class, 'changeTenantStatus'])
+             ->name('tenant.toggle.status');
+
+        // Firma silme (pasif hale getirme)
+        Route::get('/tenant/{id}/delete', [SuperAdminController::class, 'deleteTenant'])
+             ->name('tenant.delete');
+
+       
+    });
+});
 
 Route::middleware(['auth'])->group(function () {
 
@@ -878,20 +950,37 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         
     });
 
-    Route::controller(TenantsController::class)->group(function() { 
-        //Admin rollü kişiye gözükecek firmalar modülü routeları
-        Route::get('/firmalar', 'AllTenants')->name('all.tenants');
-        Route::get('/firma-duzenle/{firma_id}', 'EditTenant')->name('edit.tenant');
-        Route::post('/firma-guncelle', 'UpdateTenant')->name('update.tenant');
-        Route::get('/firma-sil/{id}', 'DeleteTenant')->name('delete.tenant');
+    // Route::controller(TenantsController::class)->group(function() { 
+    //     //Admin rollü kişiye gözükecek firmalar modülü routeları
+    //     Route::get('/firmalar', 'AllTenants')->name('all.tenants');
+    //     Route::get('/firma-duzenle/{firma_id}', 'EditTenant')->name('edit.tenant');
+    //     Route::post('/firma-guncelle', 'UpdateTenant')->name('update.tenant');
+    //     Route::get('/firma-sil/{id}', 'DeleteTenant')->name('delete.tenant');
 
-        // Bu rotayı diğer tenant rotalarınızın yanına ekleyebilirsiniz.
-        Route::post('/tenants/change-status/{id}', 'changeTenantStatus')->name('tenant.changeStatus');
+    //     // Bu rotayı diğer tenant rotalarınızın yanına ekleyebilirsiniz.
+    //     Route::post('/tenants/change-status/{id}', 'changeTenantStatus')->name('tenant.changeStatus');
 
-    });
+    // });
 
     
 });
+
+
+Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId']], function () {
+    Route::prefix('subscription')->name('subscription.')->group(function () {
+        Route::get('/plans', [SubscriptionController::class, 'plans'])->name('plans');
+        Route::get('/subscribe/{plan}', [SubscriptionController::class, 'subscribe'])->name('subscribe');
+        Route::post('/subscribe/{plan}', [SubscriptionController::class, 'processSubscription'])->name('process');
+        Route::get('/payment/{plan}', [SubscriptionController::class, 'payment'])->name('payment');
+        Route::post('/payment/{plan}', [SubscriptionController::class, 'completePayment'])->name('payment.complete');
+        Route::get('/success', [SubscriptionController::class, 'success'])->name('success');
+        Route::get('/fail', [SubscriptionController::class, 'fail'])->name('fail');
+        Route::post('/cancel', [SubscriptionController::class, 'cancel'])->name('cancel');
+        Route::get('/upgrade', [SubscriptionController::class, 'upgrade'])->name('upgrade');
+        Route::get('/expired', [SubscriptionController::class, 'expired'])->name('expired');
+        Route::get('/invoices', [SubscriptionController::class, 'invoices'])->name('invoices');
+    });
+
 Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth']], function () {
     Route::get('/abonelik-paketleri', [SubscriptionController::class, 'subscriptionPlans'])->name('abonelikler');
     Route::get('/subscription/plans', [SubscriptionController::class, 'plans'])->name('subscription.plans');
@@ -904,6 +993,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth']], function () 
     Route::get('/subscription/upgrade/{planid}', [SubscriptionController::class, 'updateSubscription'])->name('subscription.upgrade');
     
     Route::post('/subscription/payment/check-status', [SubscriptionController::class, 'checkPaymentStatus'])->name('subscription.payment.check');
+
 });
 
 Route::get('/payment/success', [SubscriptionController::class, 'paymentSuccess'])

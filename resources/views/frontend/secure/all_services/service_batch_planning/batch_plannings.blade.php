@@ -161,25 +161,26 @@
     // *** YENİ EKLENEN KOD - MODAL SORUNU ÇÖZÜMÜ ***
     // Modal kontrol fonksiyonu
     function checkAndRestoreServiceList() {
-  // Eğer herhangi bir modal açıksa servis listesini yenileme
-  if ($('.modal.show').length > 0) {
-    return;
+
+    // Eğer herhangi bir modal açıksa servis listesini yenileme
+    if ($('.modal.show').length > 0) {
+      return;
+    }
+    
+    // Özellikle bu modallar açıksa kesinlikle yenileme
+    if ($('#personelServisDuzenleModal').hasClass('show') || 
+        $('#servisPersonelAtamaModal').hasClass('show') ||
+        $('#addServiceModal').hasClass('show') ||
+        $('#editServiceDescModal').hasClass('show')) {
+      return;
+    }
+    
+    if ($('.servisListe').children().length === 0 || 
+        $('.servisListe').html().trim() === '' ||
+        $('.servisListe').html().includes('Yükleniyor...')) {
+      loadServiceList();
+    }
   }
-  
-  // Özellikle bu modallar açıksa kesinlikle yenileme
-  if ($('#personelServisDuzenleModal').hasClass('show') || 
-      $('#servisPersonelAtamaModal').hasClass('show') ||
-      $('#addServiceModal').hasClass('show') ||
-      $('#editServiceDescModal').hasClass('show')) {
-    return;
-  }
-  
-  if ($('.servisListe').children().length === 0 || 
-      $('.servisListe').html().trim() === '' ||
-      $('.servisListe').html().includes('Yükleniyor...')) {
-    loadServiceList();
-  }
-}
 
     // Toplu planlama modal açılmadan önce kontrol
     $(document).on('click', '.servisPlanlaBtn', function() {

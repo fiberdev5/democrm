@@ -2,6 +2,7 @@
 
 @section('user')
 <div class="page-content">
+
   <div class="container-fluid py-8">
     <h2 class="text-2xl font-bold text-gray-800 mb-6">Ödeme</h2>
 
@@ -16,6 +17,7 @@
               <h4 class="font-medium mb-2">Paket Bilgileri</h4>
               <p><strong>{{ $planData['name'] }}</strong></p>
               <p>{{ $planData['price'] }} TL / {{ $planData['billing_cycle'] == 'monthly' ? 'Aylık' : 'Yıllık' }}</p>
+
             </div>
             <div>
               <h4 class="font-medium mb-2">Fatura Bilgileri</h4>

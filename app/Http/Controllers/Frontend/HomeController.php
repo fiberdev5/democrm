@@ -322,6 +322,16 @@ class HomeController extends Controller
         
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
+
+            // Super Admin kontrolü
+            if ($user->isSuperAdmin()) {
+                $notification = [
+                    'message' => 'Super Admin olarak giriş yaptınız.',
+                    'alert-type' => 'success'
+                ];
+                return redirect()->route('super.admin.dashboard')->with($notification);
+            }
+            
             $tenantId = $user->tenant->id;
             $notification = array(
                 'message' => 'Başarıyla giriş yapıldı.',
@@ -462,6 +472,7 @@ private function getLastServices($tenant_id)
             's.servisDurum as status_id' 
         )
         ->where('s.firma_id', $tenant_id)
+        ->where('s.durum', 1)
         ->orderBy('s.created_at', 'desc')
         ->take(4)
         ->get();

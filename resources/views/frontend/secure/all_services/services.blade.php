@@ -42,7 +42,7 @@
                             <button type="button" class="btn btn-primary btn-sm kullanici_teknisyenPrimGoster" data-toggle="modal" data-target="#kullaniciPrimModal"> Primlerim </button>
                         @endif
                         <div class="searchWrap float-end">
-                            <div class="btn-group mb-2 ">
+                           <div class="btn-group mb-2" id="servisFilterDropdownContainer">
                                 @if(auth()->user()->can('Tüm Servisleri Görebilir'))
                                 <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false"> Filtrele <i class="mdi mdi-chevron-down"></i> </button>
                                 @endif
@@ -666,6 +666,38 @@ $(document).ready(function(){
 
 <script>
   $(document).ready(function () {
+     let preventDropdownHide = false;
+    // Dropdown'ın kapanma olayını dinliyoruz
+    $('#servisFilterDropdownContainer').on('hide.bs.dropdown', function(e) {
+        // Eğer bayrak 'true' ise, yani tıklama daterangepicker'dan geldiyse...
+        if (preventDropdownHide) {
+            e.preventDefault(); // Bootstrap'ın dropdown'ı kapatmasını engelle.
+        }
+        // Olay kontrol edildikten sonra bayrağı her zaman sıfırla ki bir sonraki normal tıklamada dropdown kapanabilsin.
+        preventDropdownHide = false;
+    });
+    // daterangepicker'ın takvim arayüzü içindeki herhangi bir tıklamayı yakala
+    $(document).on('mousedown', function(e) {
+        // Eğer tıklama .daterangepicker sınıfına sahip bir elementin içindeyse...
+        if ($(e.target).closest('.daterangepicker').length) {
+            preventDropdownHide = true; // Bayrağı ayarla.
+        }
+    });
+    // Dropdown içindeki daterangepicker input alanına tıklandığında bayrağı ayarla
+    $('#servisFilterDropdownContainer').find('#daterange').on('focus mousedown', function() {
+        preventDropdownHide = true;
+    });
+    // Dropdown içindeki tarih kısayol butonlarına tıklandığında bayrağı ayarla
+    $('#servisFilterDropdownContainer').find('.tarihAraligi button').on('mousedown', function() {
+        preventDropdownHide = true;
+    });
+    // daterangepicker "Uygula", "İptal" butonlarına basıldığında veya kapandığında bayrağı sıfırla.
+    // Bu, daterangepicker ile işimiz bittikten sonra dropdown'ın normal şekilde kapanabilmesini sağlar.
+    $('#daterange').on('apply.daterangepicker cancel.daterangepicker hide.daterangepicker', function() {
+        preventDropdownHide = false;
+    });
+
+    
     // Tarih aralığı seçenekleri
     var lastYear = moment().subtract(1, 'year');
     var lastMonth = moment().subtract(1, 'month');

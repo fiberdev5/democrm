@@ -3,13 +3,54 @@
  $siteurl= App\Models\Settings::find(1);
  $user = Auth::user();
  @endphp
+
+
  
  <div class="vertical-menu" style="width:186px;">
    <div data-simplebar class="h-100">
+
      <!--- Sidebar -->
      <div id="sidebar-menu">
-       
        <ul class="metismenu list-unstyled" id="side-menu" style="padding-top: 2px;"> 
+              @if(Auth::user()->isSuperAdmin())
+              <li>
+                  <a href="{{ route('super.admin.tenants') }}" class="waves-effect">
+                      <i class="fas fa-building"></i><span class="badge rounded-pill bg-success float-end"></span>
+                      <span>Tüm Firmalar</span>
+                  </a>
+              </li>
+              {{-- Destek Talepleri Ana Menüsü --}}
+              <li>
+                  <a href="{{ route('super.admin.destek.dashboard') }}" class="waves-effect">
+                      <i class="fas fa-life-ring"></i>
+                      <span>Destek Talepleri</span>
+                  </a>
+              </li>
+              <li>
+                  <a href="{{ route('super.admin.destek.index') }}" class="waves-effect" style="padding-left: 40px;"> {{-- İçeride görünmesi için boşluk --}}
+                      <i class="fas fa-list-alt"></i> 
+                      <span>Tüm Talepler</span>
+                  </a>
+              </li>
+              <li>
+                  <a href="{{ route('super.admin.destek.index', ['status' => 'acik']) }}" class="waves-effect" style="padding-left: 40px;">
+                      <i class="fas fa-folder-open"></i> 
+                      @php
+                          $openTicketsCount = \App\Models\SupportTicket::where('status', 'acik')->count();
+                      @endphp
+                      @if($openTicketsCount > 0)
+                          <span class="badge rounded-pill bg-danger float-end">{{ $openTicketsCount }}</span>
+                      @endif
+                      <span>Açık Talepler</span>
+                  </a>
+              </li>
+              <li>
+                  <a href="{{ route('super.admin.destek.index', ['priority' => 'acil']) }}" class="waves-effect" style="padding-left: 40px;">
+                      <i class="fas fa-exclamation-triangle"></i>
+                      <span>Acil Talepler</span>
+                  </a>
+              </li>
+          @endif
 
         @if(auth()->user()->can('Anasayfayı Görebilir'))
          <li>
@@ -20,12 +61,16 @@
          </li>
          @endif
 
-         <li>
-           <a href="{{ route('all.services', $user->tenant_id)}}" class="waves-effect">
-             <i class="ri-file-paper-2-line"></i><span class="badge rounded-pill bg-success float-end"></span>
-             <span>Servisler</span>
-           </a>
-         </li>
+@cannot('Servisleri Göremez')
+    <li>
+        <a href="{{ route('all.services', $user->tenant_id)}}" class="waves-effect">
+            <i class="ri-file-paper-2-line"></i>
+            <span class="badge rounded-pill bg-success float-end"></span>
+            <span>Servisler</span>
+        </a>
+    </li>
+@endcannot
+
 
          @if(auth()->user()->can('Müşterileri Görebilir'))
         <li>
