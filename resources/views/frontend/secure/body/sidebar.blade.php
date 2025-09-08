@@ -124,8 +124,9 @@
             <span>Teklifler</span>
           </a>
         </li>
+        @endif
 
-
+        @if(auth()->user()->can('İstatistikleri Görebilir') && ($user->tenant->isOnTrial() || $user->tenant->hasFeature('basic_reports')))
         <li>
           <a href="{{route('statistics', $user->tenant_id)}}" class="waves-effect">
             <i class="fas fa-chart-pie"></i><span class="badge rounded-pill bg-success float-end"></span>

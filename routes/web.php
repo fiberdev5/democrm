@@ -462,6 +462,8 @@ Route::middleware(['auth'])->group(function () {
 Route::controller(HomeController::class)->group(function() {
     Route::get('/', 'Index')->name('home');
     Route::get('/pricing', 'Pricing')->name('pricing');
+    
+    Route::get('/select-plan/{plan}', 'select')->name('plan.select');
 
     Route::get('/kullanici-kaydi', 'Register')->name('kayit');
     Route::post('/register-action', 'RegisterAction')->name('kayit.action');
@@ -963,6 +965,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
     
 });
 
+
 Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId']], function () {
     Route::prefix('subscription')->name('subscription.')->group(function () {
         Route::get('/plans', [SubscriptionController::class, 'plans'])->name('plans');
@@ -977,13 +980,28 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::get('/expired', [SubscriptionController::class, 'expired'])->name('expired');
         Route::get('/invoices', [SubscriptionController::class, 'invoices'])->name('invoices');
     });
+
+Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth']], function () {
+    Route::get('/abonelik-paketleri', [SubscriptionController::class, 'subscriptionPlans'])->name('abonelikler');
+    Route::get('/subscription/plans', [SubscriptionController::class, 'plans'])->name('subscription.plans');
+    Route::get('/subscription/{planid}', [SubscriptionController::class, 'subscribe'])->name('subscription.subscribe');
+    Route::post('/subscription/{planid}', [SubscriptionController::class, 'processSubscription'])->name('subscription.process');
+    Route::get('/subscription/{planid}/payment', [SubscriptionController::class, 'payment'])->name('subscription.payment');
+    
+    // Paytr ödeme rotaları
+    Route::get('/subscription/{planid}/payment/initiate', [SubscriptionController::class, 'initiatePayment'])->name('subscription.payment.initiate');
+    Route::get('/subscription/upgrade/{planid}', [SubscriptionController::class, 'updateSubscription'])->name('subscription.upgrade');
+    
+    Route::post('/subscription/payment/check-status', [SubscriptionController::class, 'checkPaymentStatus'])->name('subscription.payment.check');
+
 });
 
-Route::prefix('subscription')->name('subscription.')->group(function () {
-        Route::post('/success', [SubscriptionController::class, 'success'])->name('success');
-        Route::get('/success', [SubscriptionController::class, 'showSuccess'])->name('show.success');
-        Route::post('/fail', [SubscriptionController::class, 'fail'])->name('fail');
-    });
+Route::get('/payment/success', [SubscriptionController::class, 'paymentSuccess'])
+    ->name('subscription.payment.success');
+
+Route::get('/payment/fail', [SubscriptionController::class, 'paymentFail'])
+    ->name('subscription.payment.fail');
+Route::post('/subscription/payment/callback', [SubscriptionController::class, 'paymentCallback'])->name('subscription.payment.callback')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
 
 Route::get('/logs', function () {
         $logFiles = File::files(storage_path('logs'));

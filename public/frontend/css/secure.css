@@ -1441,7 +1441,7 @@ a.link-stock:hover {
 .teknisyenDepoGoster{position: absolute;}
 .acilRow > td{--bs-table-accent-bg: #ffc107!important;
   background-color: var(--bs-table-accent-bg) !important;}
-.btn-primary2{color: #fff;background-color: #0f9cf3;border-color: #0f9cf3;}
+.btn-primary2{color: #fff;background-color: #0f9cf3!important;border-color: #0f9cf3;}
 .btn-primary2:hover {color: #fff;background-color: #0d85cf;border-color: #0c7dc2}
 .btn-check:focus+.btn-primary2,.btn-primary2:focus {color: #fff;background-color: #0d85cf;border-color: #0c7dc2;-webkit-box-shadow: 0 0 0 .15rem rgba(51,171,245,.5);box-shadow: 0 0 0 .15rem rgba(51,171,245,.5)}
 #editInvo .card .card-body .kisaMusteriBil span {display: block;padding: 1px 5px;font-size: 14px;}
@@ -3705,6 +3705,7 @@ b, strong {font-weight: 900;color: #000000;}
     z-index: 10;
 }
 
+
 .usersupport-create-page .file-remove-btn:hover {
     background: #c82333;
 }
@@ -3716,4 +3717,18 @@ b, strong {font-weight: 900;color: #000000;}
 #datatableService_wrapper {
     min-height: 250px; 
     transition: min-height 0.2s ease-in-out; /* Daha yumuşak bir geçiş için */
+
+.btn-outline-primary,
+.btn-outline-info,
+.btn-outline-warning,
+.btn-outline-secondary,
+.btn-outline-success,
+.btn-outline-danger {
+    border: none !important;
+}
+.btn-outline-warning:hover {
+    color: #00000085;
+    background-color: #fb4;
+    border-color: #fb4;
+
 }

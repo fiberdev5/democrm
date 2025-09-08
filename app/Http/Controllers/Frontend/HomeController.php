@@ -15,6 +15,7 @@ use App\Models\Pricing;
 use App\Models\Reference;
 use App\Models\ServiceTime;
 use App\Models\Settings;
+use App\Models\SubscriptionPlan;
 use App\Models\Tenant;
 use App\Models\TenantPrim;
 use App\Models\User;
@@ -34,7 +35,7 @@ class HomeController extends Controller
         $home_section = Misyon::find(1);
         $products = Category::orderBy('id', 'desc')->take(8)->get();
         $settings = Settings::find(1);
-        $pricing = Pricing::orderBy('id','asc')->get();
+        $pricing = SubscriptionPlan::active()->ordered()->get();
         $references = Reference::get();
         $faqs = Clients::orderBy('job','asc')->get();
         $features = Feature::orderBy('sira','asc')->get();
@@ -46,6 +47,12 @@ class HomeController extends Controller
     public function Pricing() {
         $prices = Pricing::orderBy('id','asc')->get();
         return view('frontend.pages.pricing', compact('prices'));
+    }
+
+        public function select($planId)
+    {
+        session(['selected_plan' => $planId]);
+        return redirect()->route('giris');
     }
 
     public function Seo($s) {
@@ -101,11 +108,16 @@ class HomeController extends Controller
         $request->session()->put('registration_data', $validatedData);
         $request->session()->put('sms_verification_code', $verificationCode);
         $request->session()->put('sms_code_created_at', now());
+        session(['phone_number' => $request->tel]);
         // // SMS Gönderme İşlemi
         
 
         // SMS gönderimi başarılıysa, doğrulama sayfasına yönlendir
-        return redirect()->route('sms.verification.form')->with('phone_number', $request->tel);
+        return response()->json([
+            'success' => true,
+            'message' => 'SMS başarıyla gönderildi',
+            'csrf_token' => csrf_token()
+        ]);
 
     }
 
@@ -147,8 +159,18 @@ class HomeController extends Controller
         //     return redirect()->back()->withErrors(['code' => 'Doğrulama kodu hatalı.']);
         // }
 
-        // Kod doğruysa, asıl kayıt işlemini yap
-        $this->createTenantAndUser($registrationData);
+        
+
+        $planId = $request->input('plan_id') ?? session('selected_plan');
+
+        try {
+            $this->createTenantAndUser($registrationData, $planId); // $planId'yi burdan gönderin
+            // Başarılı kayıt sonrası yönlendirme
+            return redirect()->route('register.success')->with('success', 'Kaydınız başarıyla tamamlandı!');
+        } catch (\Exception $e) {
+            // Hata yönetimi
+            return back()->withInput()->with('error', 'Kayıt sırasında bir hata oluştu: ' . $e->getMessage());
+        }
 
         // İşlem bittikten sonra session'daki verileri temizle
         $request->session()->forget(['registration_data', 'sms_verification_code', 'sms_code_created_at']);
@@ -164,7 +186,7 @@ class HomeController extends Controller
      * Tenant ve User oluşturma mantığını içeren özel bir metod.
      * Bu, kodu tekrar etmemek için iyi bir yöntemdir.
      */
-    private function createTenantAndUser(array $data) {
+    private function createTenantAndUser(array $data, $planId = null) {
         $baslik = $data['firma_adi'];
         $username = $this->Seo($baslik); // Seo metodunuzun bu class içinde olduğunu varsayıyorum.
         // 🔹 Kullanıcı adı çakışıyorsa sonuna rakam ekle
@@ -187,6 +209,22 @@ class HomeController extends Controller
             $tenantUsername = strtolower(str_replace(' ', '', $data['firma_adi'])) . '-' . $counterTenant . '.com';
             $counterTenant++;
         }
+
+        $determinedPlanId  = $planId ?? session('selected_plan');
+        $plan   = SubscriptionPlan::find($determinedPlanId);
+
+        if (!$plan) {
+            // Loglama yapabilirsiniz
+            \Illuminate\Support\Facades\Log::warning("SubscriptionPlan not found for ID: {$determinedPlanId}. Using default plan.");
+            // Varsayılan bir plan ID'si ile tekrar denenebilir veya uygun bir hata fırlatılabilir.
+            // Örneğin:
+            $plan = SubscriptionPlan::find(1); // Varsayılan bir plan ID'si (örn: ücretsiz deneme planı)
+            if (!$plan) {
+                // Hala plan bulunamadıysa, daha ciddi bir hata var demektir.
+                throw new \Exception("Default SubscriptionPlan (ID: 1) not found. Cannot create tenant.");
+            }
+        }
+
         $tenant = new Tenant([
             'name' => $data['name'],
             'firma_adi' => $data['firma_adi'],
@@ -202,6 +240,10 @@ class HomeController extends Controller
             'trial_ends_at' => Carbon::now()->addDays(14),
             'subscription_ends_at' => Carbon::now()->addDays(14),
             'trial_used' => 1,
+            'personelSayisi'  => $plan->limits['users'] ?? '3',
+            'bayiSayisi' => $plan->limits['dealers'] ?? '0',
+            'stokSayisi' => $plan->limits['stocks'] ?? '10',
+            'konsinyeSayisi' => $plan->limits['konsinye'] ?? '1',
         ]);
         $tenant->save();
 
@@ -236,7 +278,7 @@ class HomeController extends Controller
             'created_at' => Carbon::now(),
         ]);
 
-        
+        session()->forget('selected_plan');
     }
 
     public function RegisterSuccess() {

@@ -161,6 +161,7 @@
     // *** YENİ EKLENEN KOD - MODAL SORUNU ÇÖZÜMÜ ***
     // Modal kontrol fonksiyonu
     function checkAndRestoreServiceList() {
+
     // Eğer herhangi bir modal açıksa servis listesini yenileme
     if ($('.modal.show').length > 0) {
       return;
@@ -180,6 +181,7 @@
       loadServiceList();
     }
   }
+
     // Toplu planlama modal açılmadan önce kontrol
     $(document).on('click', '.servisPlanlaBtn', function() {
       checkAndRestoreServiceList();

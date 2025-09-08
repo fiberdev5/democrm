@@ -147,9 +147,9 @@
                                         <th style="width: 10px">ID</th>
                                         <th style="width: 10px">Tarih</th>
                                         <th style="width: 250px">Müşteri</th>
-                                        <th style="">Cihaz</th>
+                                        <th style="width: 250px">Cihaz</th>
                                         <th>Servis Durumu</th>
-                                        <th data-priority="1" style="width: 96px;">Servisi Sonlandır</th>
+                                        <th style="max-width: 40px!important;">Kapat</th>
                                         <th data-priority="1" style="width: 96px;">Düzenle</th>
                                     </tr>
                                 </thead>
@@ -299,7 +299,7 @@
 </div><!-- /.modal -->
 
 <div id="primModal" class="modal fade" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
-  <div class="modal-dialog modal-lg" style="max-width: 1000px!important;">
+  <div class="modal-dialog modal-lg" style="max-width: 800px!important;">
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title">Prim Hesaplama</h6>
@@ -927,7 +927,7 @@ $(document).ready(function(){
             //$(row).css('background-color', arkaplanRenk);
             
             // Tüm hücrelere uygula, ancak son sütun hariç
-            $('td', row).not(':last').css('background-color', arkaplanRenk);
+            $('td', row).not(':last').not(':nth-last-child(2)') .css('background-color', arkaplanRenk);
           }
           
           // Uzun metin sarması gereken sütunlara sınıf ekleyelim
