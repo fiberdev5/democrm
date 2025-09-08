@@ -1,0 +1,596 @@
+{{-- resources/views/frontend/secure/support/index.blade.php --}}
+
+@extends('frontend.secure.user_master')
+@section('user')
+<div class="page-content  usersupport-index-page">
+    <div class="container-fluid">
+        <!-- Başlık -->
+        <div class="row">
+            <div class="col-12">
+                <div class="page-title-box d-sm-flex align-items-center justify-content-between">
+                    <h4 class="mb-sm-0">
+                        <i class="fas fa-headset text-primary me-2"></i>
+                        Destek Taleplerim
+                    </h4>
+                    <div class="page-title-right">
+                        <ol class="breadcrumb m-0">
+                            <li class="breadcrumb-item"><a href="{{ route('secure.home', Auth::user()->tenant_id) }}">Ana Sayfa</a></li>
+                            <li class="breadcrumb-item active">Destek Taleplerim</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Özet Kartları -->
+        @if($tickets->count() > 0)
+        <div class="row summary-ticket-cards">
+            @php
+                $statusCounts = [
+                    'acik' => $tickets->where('status', 'acik')->count(),
+                    'cevaplandi' => $tickets->where('status', 'cevaplandi')->count(),
+                    'kapali' => $tickets->where('status', 'kapali')->count()
+                ];
+                $totalTickets = $tickets->count();
+            @endphp
+            
+            <div class="col-xl-4 col-md-6">
+                <div class="card bg-ticket-total text-white border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="avatar-sm rounded-circle bg-white bg-opacity-25 p-2">
+                                    <i class="fas fa-ticket-alt fa-lg text-white"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="mb-0 text-white">{{ $totalTickets }}</h5>
+                                <p class="mb-0">Toplam Talep</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-4 col-md-6">
+                <div class="card bg-ticket-active text-white border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="avatar-sm rounded-circle bg-white bg-opacity-25 p-2">
+                                    <i class="fas fa-clock fa-lg text-white"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="mb-0 text-white">{{ $statusCounts['acik'] + $statusCounts['cevaplandi'] }}</h5>
+                                <p class="mb-0">Aktif Talep</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-xl-4 col-md-6">
+                <div class="card bg-ticket-solved text-white border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                <div class="avatar-sm rounded-circle bg-white bg-opacity-25 p-2">
+                                    <i class="fas fa-check-circle fa-lg text-white"></i>
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h5 class="mb-0 text-white">{{ $statusCounts['kapali'] }}</h5>
+                                <p class="mb-0">Çözülen Talep</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
+        <!-- Ana Kart -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-0 py-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0 d-flex align-items-center">
+                                Destek Taleplerim
+                                @if($tickets->count() > 0)
+                                    <span class="badge bg-light text-dark ms-2">{{ $tickets->total() ?? $tickets->count() }}</span>
+                                @endif
+                            </h5>
+                            <a href="{{ route('support.create', Auth::user()->tenant_id) }}" class="btn btn-secondary  shadow-sm">
+                                <i class="fas fa-plus me-1"></i> Yeni Destek Talebi
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-0">
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissible fade show m-3 border-0 shadow-sm" role="alert">
+                                <div class="d-flex align-items-center">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    {{ session('success') }}
+                                </div>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+                            </div>
+                        @endif
+
+                        @if($tickets->count() > 0)
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th class="border-0 fw-bold">Talep No</th>
+                                            <th class="border-0 fw-bold">Konu</th>
+                                            <th class="border-0 fw-bold">Kategori</th>
+                                            <th class="border-0 fw-bold">Öncelik</th>
+                                            <th class="border-0 fw-bold">Durum</th>
+                                            <th class="border-0 fw-bold">Oluşturma</th>
+                                            <th class="border-0 fw-bold">Son Yanıt</th>
+                                            <th class="border-0 fw-bold text-center">İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($tickets as $ticket)
+                                            <tr class="align-middle">
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="avatar-xs me-2">
+                                                            <div class="avatar-title rounded-circle bg-light text-primary">
+                                                                <i class="fas fa-hashtag"></i>
+                                                            </div>
+                                                        </div>
+                                                        <span class="fw-bold">{{ $ticket->ticket_number }}</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <h6 class="mb-0">{{ Str::limit($ticket->subject, 40) }}</h6>
+                                                        <small class="text-muted">
+                                                            {{ Str::limit(strip_tags($ticket->description), 50) }}
+                                                        </small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @switch($ticket->category)
+                                                        @case('teknik_sorun')
+                                                            <span class="badge bg-soft-danger text-danger border border-danger border-opacity-25">
+                                                                <i class="fas fa-cog me-1"></i>Teknik Sorun
+                                                            </span>
+                                                            @break
+                                                        @case('faturalandirma')
+                                                            <span class="badge bg-soft-warning text-warning border border-warning border-opacity-25">
+                                                                <i class="fas fa-credit-card me-1"></i>Faturalandırma
+                                                            </span>
+                                                            @break
+                                                        @case('ozellik_talebi')
+                                                            <span class="badge bg-soft-info text-info border border-info border-opacity-25">
+                                                                <i class="fas fa-lightbulb me-1"></i>Özellik Talebi
+                                                            </span>
+                                                            @break
+                                                        @case('genel_destek')
+                                                            <span class="badge bg-soft-primary text-primary border border-primary border-opacity-25">
+                                                                <i class="fas fa-question-circle me-1"></i>Genel Destek
+                                                            </span>
+                                                            @break
+                                                        @case('hesap_sorunu')
+                                                            <span class="badge bg-soft-secondary text-secondary border border-secondary border-opacity-25">
+                                                                <i class="fas fa-user-cog me-1"></i>Hesap Sorunu
+                                                            </span>
+                                                            @break
+                                                        @default
+                                                            <span class="badge bg-soft-secondary text-secondary">
+                                                                {{ $ticket->category }}
+                                                            </span>
+                                                    @endswitch
+                                                </td>
+                                                <td>
+                                                    @switch($ticket->priority)
+                                                        @case('acil')
+                                                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
+                                                                <i class="fas fa-exclamation-circle me-1"></i>Acil
+                                                            </span>
+                                                            @break
+                                                        @case('kritik')
+                                                            <span class="badge bg-dark bg-opacity-10 text-dark border border-dark border-opacity-25">
+                                                                <i class="fas fa-shield-alt me-1"></i>Kritik
+                                                            </span>
+                                                            @break
+                                                        @case('yuksek')
+                                                            <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25">
+                                                                <i class="fas fa-exclamation-triangle me-1"></i>Yüksek
+                                                            </span>
+                                                            @break
+                                                        @case('orta')
+                                                            <span class="badge bg-info bg-opacity-10 text-info border border-info border-opacity-25">
+                                                                <i class="fas fa-clock me-1"></i>Orta
+                                                            </span>
+                                                            @break
+                                                        @case('dusuk')
+                                                            <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">
+                                                                <i class="fas fa-chevron-down me-1"></i>Düşük
+                                                            </span>
+                                                            @break
+                                                        @default
+                                                            <span class="badge bg-secondary bg-opacity-10 text-secondary">
+                                                                {{ ucfirst($ticket->priority) }}
+                                                            </span>
+                                                    @endswitch
+                                                </td>
+
+                                                <td>
+                                                    @php
+                                                        $statusConfig = [
+                                                            'acik' => ['color' => 'primary', 'icon' => 'fas fa-spinner', 'text' => 'Açık'],
+                                                            'cevaplandi' => ['color' => 'warning', 'icon' => 'fas fa-check-circle', 'text' => 'Cevaplandı'],
+                                                            'kapali' => ['color' => 'danger', 'icon' => 'fas fa-times-circle', 'text' => 'Kapatıldı']
+                                                        ];
+                                                        $currentStatus = $statusConfig[$ticket->status] ?? ['color' => 'secondary', 'icon' => 'fas fa-question', 'text' => $ticket->status];
+                                                    @endphp
+                                                    
+                                                    <span class="badge bg-{{ $currentStatus['color'] }} bg-opacity-10 text-{{ $currentStatus['color'] }} border border-{{ $currentStatus['color'] }} border-opacity-25">
+                                                        <i class="{{ $currentStatus['icon'] }} me-1"></i>{{ $currentStatus['text'] }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div class="text-nowrap">
+                                                        <div class="fw-medium">{{ $ticket->created_at->format('d.m.Y') }}</div>
+                                                        <small class="text-muted">{{ $ticket->created_at->format('H:i') }}</small>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="text-nowrap">
+                                                        @if($ticket->last_reply_at)
+                                                            <div class="fw-medium">{{ $ticket->last_reply_at->format('d.m.Y') }}</div>
+                                                            <small class="text-muted">{{ $ticket->last_reply_at->format('H:i') }}</small>
+                                                        @else
+                                                            <span class="text-muted">-</span>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="d-flex gap-1 justify-content-center">
+                                                        <a href="{{ route('support.show', [$ticket->tenant_id, $ticket->id]) }}" 
+                                                           class="btn btn-sm btn-outline-primary rounded-pill px-3"  title="Detay">
+                                                            <i class="fas fa-eye me-1"></i>
+                                                        </a>
+                                                        
+                                                        @if(in_array($ticket->status, ['waiting_customer', 'open']))
+                                                            <a href="{{ route('support.show', [$ticket->tenant_id, $ticket->id]) }}#reply" 
+                                                               class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                                                <i class="fas fa-reply me-1"></i> Yanıtla
+                                                            </a>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <!-- Sayfalama -->
+                            @if ($tickets instanceof \Illuminate\Pagination\LengthAwarePaginator && $tickets->hasPages())
+                                <div class="card-footer bg-white border-0 py-3">
+                                    <div class="d-flex justify-content-center">
+                                        {{ $tickets->links('vendor.pagination.bootstrap-5') }}
+                                    </div>
+                                </div>
+                            @endif
+                        @else
+                            <div class="text-center py-5 mx-3">
+                                <div class="empty-state">
+                                    <div class="empty-state-icon mb-4">
+                                        <div class="avatar-xl mx-auto">
+                                            <div class="avatar-title rounded-circle bg-light">
+                                                <i class="fas fa-ticket-alt fa-2x text-muted"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <h5 class="text-muted mb-3">Henüz bir destek talebiniz bulunmuyor</h5>
+                                    <p class="text-muted mb-4">İlk destek talebinizi oluşturmak için yukarıdaki butona tıklayın.</p>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yardım Kartı -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card border-0 bg-gradient-light">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-lg-8">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <div class="avatar-sm">
+                                            <div class="avatar-title rounded-circle bg-primary bg-opacity-10 text-primary">
+                                                <i class="fas fa-info-circle"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-1">Hızlı yardıma mı ihtiyacınız var?</h6>
+                                        <p class="mb-0 text-muted">Sık sorulan sorularımızı inceleyerek hızlı çözüm bulabilirsiniz.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                                <a href="#" class="btn btn-outline-primary">
+                                    <i class="fas fa-question-circle me-1"></i> SSS Sayfası
+                                </a>
+                                <a href="#" class="btn btn-outline-secondary ms-2">
+                                    <i class="fas fa-book me-1"></i> Kılavuz
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* .bg-ticket-total {
+    background: linear-gradient(135deg, #6c7ae0 0%, #8b9dc3 100%) !important;
+    border-radius: 15px;
+    color: white !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+
+.bg-ticket-active {
+    background: linear-gradient(135deg, #ff8a80 0%, #ffab91 100%) !important;
+    border-radius: 15px;
+    color: white !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.bg-ticket-solved {
+    background: linear-gradient(135deg, #4fc3f7 0%, #81d4fa 100%) !important;
+    border-radius: 15px;
+    color: white !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+
+/* Kart içi yazılar ve ikonlar */
+/* .summary-ticket-cards .card h5,
+.summary-ticket-cards .card p,
+.summary-ticket-cards .card .fa-lg {
+    color: #fff !important;
+} */ 
+
+.bg-ticket-total {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 15px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.bg-ticket-active {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 15px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.bg-ticket-solved {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 15px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+/* Yazılar ve ikonlar için koyu renk */
+.summary-ticket-cards .card h5,
+.summary-ticket-cards .card p {
+    color: #495057 !important;
+}
+
+.summary-ticket-cards .card .fa-lg {
+    color: #6c757d !important;
+}
+
+/* Avatar arka planları için farklı pastel renkler */
+.bg-ticket-total .avatar-sm .avatar-title {
+    background-color: rgba(13, 110, 253, 0.1) !important;
+    color: #0d6efd !important;
+}
+
+.bg-ticket-active .avatar-sm .avatar-title {
+    background-color: rgba(255, 193, 7, 0.1) !important;
+    color: #ffc107 !important;
+}
+
+.bg-ticket-solved .avatar-sm .avatar-title {
+    background-color: rgba(25, 135, 84, 0.1) !important;
+    color: #198754 !important;
+}
+
+/* Hover efekti */
+.bg-ticket-total:hover,
+.bg-ticket-active:hover, 
+.bg-ticket-solved:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+
+
+/* Soft Background Colors */
+.bg-soft-primary {
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.bg-soft-success {
+    background-color: rgba(25, 135, 84, 0.1);
+}
+
+.bg-soft-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.bg-soft-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.bg-soft-info {
+    background-color: rgba(13, 202, 240, 0.1);
+}
+
+.bg-soft-secondary {
+    background-color: rgba(108, 117, 125, 0.1);
+}
+
+/* Avatar Sizes */
+.avatar-xs {
+    height: 1.5rem;
+    width: 1.5rem;
+}
+
+.avatar-sm {
+    height: 2rem;
+    width: 2rem;
+}
+
+.avatar-xl {
+    height: 4rem;
+    width: 4rem;
+}
+
+.avatar-title {
+    align-items: center;
+    display: flex;
+    font-size: 1rem;
+    font-weight: 500;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Table Improvements - Daha yumuşak hover efekti */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+    transition: background-color 0.15s ease-in-out;
+}
+
+.table td, .table th {
+    vertical-align: middle;
+    border-color: #f1f3f4;
+    padding: 1rem 0.75rem;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+/* Card Improvements - Daha stabil hover */
+.card {
+    border-radius: 12px;
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important;
+}
+
+/* Badge Improvements */
+.badge {
+    font-weight: 500;
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 6px;
+}
+
+/* Button Improvements - Daha stabil hover */
+.btn {
+    transition: all 0.15s ease-in-out;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn-sm.rounded-pill {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+}
+
+/* Sayfalama düzeltmeleri */
+.card-footer {
+    border-top: 1px solid #f1f3f4;
+}
+
+/* Empty State */
+.empty-state {
+    padding: 2rem 1rem;
+}
+
+.empty-state-icon {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Loading Animation for Status */
+.fa-spinner {
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Improvements */
+@media (max-width: 768px) {
+    .table-responsive table {
+        font-size: 0.875rem;
+    }
+    
+    .badge {
+        font-size: 0.65rem;
+        padding: 0.25rem 0.5rem;
+    }
+    
+    .btn-sm {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+    
+    .table td, .table th {
+        padding: 0.75rem 0.5rem;
+    }
+}
+
+/* Tablonun alt kısmını düzenleme */
+.table-responsive {
+    border-radius: 0;
+    border: none;
+}
+
+/* Card body içindeki table için özel stil */
+.card-body .table-responsive {
+    margin: 0;
+}
+</style>
+
+@endsection
