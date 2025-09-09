@@ -1,23 +1,186 @@
 <style>
-  .custom-icon {
-    font-size: 14px;
-  }
-  .fa-angle-down{display:inline-block!important;}
-  
-  .dropdown {
-    position: relative!important;
-    z-index: 1050!important;
-  }
-  
-  .dropdown-menu {
-    position: absolute!important;
-    z-index: 1050!important; /* Yeterince yüksek bir z-index değeri kullanın */
-  }
-  
+        /* Ana konteyner için temel ayarlar */
+        .kasaSubMenu {
+            position: relative;
+            z-index: 1000;
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Dropdown container için güçlendirilmiş z-index */
+        .kasaSubMenu .dropdown {
+            position: relative !important;
+            z-index: 1060 !important; /* Bootstrap modal'ından daha yüksek */
+        }
+
+        /* Dropdown menu için geliştirilmiş stil */
+        .kasaSubMenu .dropdown-menu {
+            position: absolute !important;
+            top: 100% !important;
+            left: 0 !important;
+            z-index: 1070 !important; /* En yüksek öncelik */
+            min-width: 250px;
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transform: translateY(2px);
+            margin-top: 0;
+        }
+
+        /* Dropdown açık olduğunda ek ayarlar */
+        .kasaSubMenu .dropdown.show .dropdown-menu {
+            display: block !important;
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        /* Dropdown item'lar için stil */
+        .kasaSubMenu .dropdown-item {
+            padding: 10px 15px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .kasaSubMenu .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .kasaSubMenu .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #495057;
+        }
+
+        .kasaSubMenu .dropdown-item.active {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Nav pills için özelleştirilmiş stil */
+        .kasaSubMenu .nav-pills .nav-link {
+            border-radius: 6px;
+            margin: 0 2px;
+            padding: 8px 16px;
+            transition: all 0.2s ease;
+        }
+
+        .kasaSubMenu .nav-pills .nav-link.dropdown-toggle::after {
+            margin-left: 8px;
+        }
+
+        /* Custom icon boyutu */
+        .custom-icon {
+            font-size: 14px;
+            margin-right: 8px;
+        }
+
+        .fa-angle-down {
+            display: inline-block !important;
+            transition: transform 0.2s ease;
+        }
+
+        /* Dropdown açık olduğunda ok döndürme */
+        .dropdown.show .fa-angle-down {
+            transform: rotate(180deg);
+        }
+
+        /* Tab content için stil */
+        .tab-content {
+            margin-top: 20px;
+            min-height: 400px;
+            background: #fff;
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .tab-pane {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .tab-pane.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Responsive tasarım için */
+        @media (max-width: 768px) {
+            .kasaSubMenu .nav-pills {
+                flex-direction: column;
+            }
+            
+            .kasaSubMenu .nav-item {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            
+            .kasaSubMenu .dropdown-menu {
+                position: static !important;
+                width: 100%;
+                box-shadow: none;
+                border: 1px solid #dee2e6;
+                margin-top: 5px;
+            }
+        }
+
+        /* Scroll bar için özel stil */
+        .kasaSubMenu .dropdown-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .kasaSubMenu .dropdown-menu::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 3px;
+        }
+
+        .kasaSubMenu .dropdown-menu::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+
+        .kasaSubMenu .dropdown-menu::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Loading state için */
+        .tab-content.loading {
+            position: relative;
+        }
+
+        .tab-content.loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.8);
+            z-index: 100;
+        }
+
+        .tab-content.loading::after {
+            content: 'Yükleniyor...';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 101;
+            padding: 10px 20px;
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
 </style>
 
-
 <div class="kasaSubMenu"  > {{-- Genel ayarlarda dropdown altta kaldığı zaman bu css'i eklemiştim. Daha sonra modalları bozmaktaydı. style="margin-top:15px;position:relative;z-index:10;"  --}}
+
   <ul class="nav nav-pills nav-justified" role="tablist" style="margin-bottom: 5px">
     <li class="nav-item" style="font-size: 14px;">
       <div class="dropdown">
@@ -30,6 +193,9 @@
           </a>
           <a class="dropdown-item nav2" data-bs-toggle="pill" href="#tab2" data-id="" role="tab">
             <i class="fas fa-money custom-icon"></i>Sms Ayarları
+          </a>
+          <a class="dropdown-item nav24" data-bs-toggle="pill" href="#tab24" data-id="" role="tab">
+            <i class="fas fa-money custom-icon"></i>Prim Ayarları
           </a>
         </div>
       </div>
@@ -65,13 +231,13 @@
           <a class="dropdown-item nav10" data-bs-toggle="pill" href="#tab10" data-id="" role="tab">
             <i class="fas fa-money custom-icon"></i>Servis Kaynakları
           </a>
-          <a class="dropdown-item " data-bs-toggle="pill" href="#tab11" data-id="" role="tab">
+          {{-- <a class="dropdown-item " data-bs-toggle="pill" href="#tab11" data-id="" role="tab">
             <i class="fas fa-money custom-icon"></i>Servis Palanlama Personel Ayarları
           </a>
           <a class="dropdown-item " data-bs-toggle="pill" href="#tab12" data-id="" role="tab">
             <i class="fas fa-money custom-icon"></i>Servis Planlama Durumları
-          </a>
-          <a class="dropdown-item " data-bs-toggle="pill" href="#tab13" data-id="" role="tab">
+          </a> --}}
+          <a class="dropdown-item nav13" data-bs-toggle="pill" href="#tab13" data-id="" role="tab">
             <i class="fas fa-money custom-icon"></i>Silinen Servisler
           </a>
         </div>
@@ -172,6 +338,7 @@
     <div id="tab20" class="tab-pane fade in" style="padding: 0" role="tabpanel"></div>
     <div id="tab22" class="tab-pane fade in" style="padding: 0" role="tabpanel"></div>
     <div id="tab23" class="tab-pane fade in" style="padding: 0" role="tabpanel"></div>
+    <div id="tab24" class="tab-pane fade in" style="padding: 0" role="tabpanel"></div>
 
   </div>
 </div>
@@ -193,6 +360,13 @@
   
 <script>
   $(document).ready(function () {
+    // Dropdown'ların düzgün kapanması için
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('.dropdown-menu').removeClass('show');
+                    $('.dropdown-toggle').attr('aria-expanded', 'false');
+                }
+            });
     function loadData(url, tabId) {
       $.ajax({
         url: url,
@@ -220,7 +394,7 @@
         "nav10": "/{{$firma->id}}/servis-kaynaklari",
         "nav11": "",
         "nav12": "",
-        "nav13": "",
+        "nav13": "/{{$firma->id}}/silinen-servisler",
         "nav14": "/{{$firma->id}}/izinler",
         "nav15": "/{{$firma->id}}/roller",
         "nav16": "/{{$firma->id}}/stok-kategorileri",
@@ -230,6 +404,7 @@
         "nav20": "/{{$firma->id}}/odeme-sekilleri",
         "nav22": "/{{$firma->id}}/servis-form/ayarlari",
         "nav23": "/{{$firma->id}}/yazici-fis/tasarimi",
+        "nav24": "/{{$firma->id}}/prim-ayarlari",
       };
   
       var id = $(this).attr("class").split(' ')[1];
@@ -256,7 +431,7 @@
         "nav10": "/{{$firma->id}}/servis-kaynaklari",
         "nav11": "",
         "nav12": "",
-        "nav13": "",
+        "nav13": "/{{$firma->id}}/silinen-servisler",
         "nav14": "/{{$firma->id}}/izinler",
         "nav15": "/{{$firma->id}}/roller",
         "nav16": "/{{$firma->id}}/stok-kategorileri",
@@ -266,6 +441,7 @@
         "nav20": "/{{$firma->id}}/odeme-sekilleri",
         "nav22": "/{{$firma->id}}/servis-form/ayarlari",
         "nav23": "/{{$firma->id}}/yazici-fis/tasarimi",
+        "nav24": "/{{$firma->id}}/prim-ayarlari",
       };
   
       var id = $(this).attr("class").split(' ')[1]; // dropdown-item'in ikinci class'ını alır
