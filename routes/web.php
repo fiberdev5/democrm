@@ -467,7 +467,7 @@ Route::controller(HomeController::class)->group(function() {
 
     Route::get('/kullanici-kaydi', 'Register')->name('kayit');
     Route::post('/register-action', 'RegisterAction')->name('kayit.action');
-
+    Route::post('/validate-step', 'validateStep')->name('validate.step');
     // Yeni SMS doğrulama rotaları
     Route::get('/sms-dogrulama', 'showSmsVerificationForm')->name('sms.verification.form');
     Route::post('/sms-dogrulama', 'verifySmsCode')->name('sms.verification.verify');
@@ -963,6 +963,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
     // });
 
 });
+
 
 Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth']], function () {
     Route::get('/abonelik-paketleri', [SubscriptionController::class, 'subscriptionPlans'])->name('abonelikler');
