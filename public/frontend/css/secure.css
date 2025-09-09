@@ -3710,9 +3710,6 @@ b, strong {font-weight: 900;color: #000000;}
     background: #c82333;
 }
 /****************** Kullanıcı Talep Ekleme Sayfası sonu *******************/
-
-
-
 /*Servislerdeki ilk filtrelemden snraki filtrelemelerde olan sorun için uygulandı*/
 #datatableService_wrapper {
     min-height: 250px; 

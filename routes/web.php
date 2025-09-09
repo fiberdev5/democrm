@@ -962,7 +962,6 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
 
     // });
 
-    
 });
 
 
@@ -986,6 +985,7 @@ Route::get('/payment/success', [SubscriptionController::class, 'paymentSuccess']
 Route::get('/payment/fail', [SubscriptionController::class, 'paymentFail'])
     ->name('subscription.payment.fail');
 Route::post('/subscription/payment/callback', [SubscriptionController::class, 'paymentCallback'])->name('subscription.payment.callback')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+
 
 Route::get('/logs', function () {
         $logFiles = File::files(storage_path('logs'));
@@ -1068,4 +1068,6 @@ Route::controller(FeatureController::class)->group(function() {
     Route::get('/features/{slug}', 'FeatureDetails' )->name('feature.details');
 
 });
+
+
 
