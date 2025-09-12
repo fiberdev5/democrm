@@ -14,6 +14,13 @@
        <ul class="metismenu list-unstyled" id="side-menu" style="padding-top: 2px;"> 
               @if(Auth::user()->isSuperAdmin())
               <li>
+                  <a href="{{ route('super.admin.dashboard') }}" class="waves-effect">
+                      <i class="ri-dashboard-line"></i><span class="badge rounded-pill bg-success float-end"></span>
+                      <span>Ana Sayfa</span>
+                  </a>
+              </li>
+              
+              <li>
                   <a href="{{ route('super.admin.tenants') }}" class="waves-effect">
                       <i class="fas fa-building"></i><span class="badge rounded-pill bg-success float-end"></span>
                       <span>Tüm Firmalar</span>
@@ -61,16 +68,15 @@
          </li>
          @endif
 
-@cannot('Servisleri Göremez')
-    <li>
-        <a href="{{ route('all.services', $user->tenant_id)}}" class="waves-effect">
-            <i class="ri-file-paper-2-line"></i>
-            <span class="badge rounded-pill bg-success float-end"></span>
-            <span>Servisler</span>
-        </a>
-    </li>
-@endcannot
-
+        @cannot('Servisleri Göremez')
+            <li>
+                <a href="{{ route('all.services', $user->tenant_id)}}" class="waves-effect">
+                    <i class="ri-file-paper-2-line"></i>
+                    <span class="badge rounded-pill bg-success float-end"></span>
+                    <span>Servisler</span>
+                </a>
+            </li>
+        @endcannot  
 
          @if(auth()->user()->can('Müşterileri Görebilir'))
         <li>
