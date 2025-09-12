@@ -15,12 +15,12 @@ class SuperAdminSeeder extends Seeder
     {
         // Super Admin için özel tenant oluştur (eğer yoksa)
         $superAdminTenant = Tenant::firstOrCreate([
-            'username' => 'fibermedia.com',
+            'username' => 'example.com',
             'firma_slug' => 'superadmin'
         ], [
             'firma_adi' => 'Super Admin Panel',
              'name'       => 'Super Admin', // ← zorunlu alan eklendi
-            'eposta' => 'superadmin@fibermedia.com',
+            'eposta' => 'superadmin@example.com',
             //'tel1' => '0000000000',
             'status' => 1,
             //'musteriTipi' => 2, // Kurumsal
@@ -50,11 +50,11 @@ class SuperAdminSeeder extends Seeder
 
         // Super Admin kullanıcısı oluştur
         $superAdmin = User::firstOrCreate([
-            'username' => 'fibermedia'
+            'username' => 'example'
         ], [
             'name' => 'Super Administrator',
-            'password' => Hash::make('Fiber155.'),
-            'eposta' => 'superadmin@fibermedia.com',
+            'password' => Hash::make('deneme'),
+            'eposta' => 'superadmin@example.com',
             'tenant_id' => $superAdminTenant->id,
             'status' => 1,
             'il' => 1,
@@ -66,8 +66,8 @@ class SuperAdminSeeder extends Seeder
         $superAdmin->assignRole($superAdminRole);
 
         $this->command->info('Super Admin created successfully!');
-        $this->command->info('Username: fibermedia');
-        $this->command->info('Password: Fiber155.');
-        $this->command->info('Email: superadmin@fibermedia.com');
+        $this->command->info('Username: example');
+        $this->command->info('Password: deneme');
+        $this->command->info('Email: superadmin@example.com');
     }
 }
