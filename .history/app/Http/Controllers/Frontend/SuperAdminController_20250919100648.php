@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Mail;
 
 class SuperAdminController extends Controller
 {
-    
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -771,6 +770,4 @@ public function getPaymentStatistics($tenantId)
         ], 500);
     }
 }
-
-
 }

@@ -563,69 +563,62 @@ public function changeTenantStatus($id)
 
 public function getTenantPayments($id)
 {
+    \Log::info('getTenantPayments çağrıldı', ['tenant_id' => $id]);
+    
     try {
         $tenant = Tenant::findOrFail($id);
+        \Log::info('Tenant bulundu', ['tenant' => $tenant->firma_adi]);
         
-        // Tüm ödemeleri getir (Tenant modelindeki getAllPayments metodunu kullan)
+        // Direkt sorgu ile kontrol et
+        $subscriptionPaymentsCount = \DB::table('subscription_payments')
+            ->where('tenant_id', $id)
+            ->count();
+            
+        $storagePurchasesCount = \DB::table('storage_purchases')
+            ->where('tenant_id', $id)
+            ->count();
+            
+        \Log::info('Ödeme sayıları', [
+            'subscription_payments' => $subscriptionPaymentsCount,
+            'storage_purchases' => $storagePurchasesCount
+        ]);
+        
+        // Model ilişkisi ile kontrol et
+        $modelSubscriptionCount = $tenant->subscriptionPayments()->count();
+        $modelStorageCount = $tenant->storagePurchases()->count();
+        
+        \Log::info('Model ilişkisi sayıları', [
+            'model_subscription' => $modelSubscriptionCount,
+            'model_storage' => $modelStorageCount
+        ]);
+        
+        // getAllPayments metodunu test et
         $allPayments = $tenant->getAllPayments();
-        
-        // Ödeme özetini hesapla
-        $summary = [
-            'completed' => 0,
-            'pending' => 0,
-            'failed' => 0,
-            'refunded' => 0,
-            'canceled' => 0,
-            'total_amount' => 0
-        ];
-        
-        foreach ($allPayments as $payment) {
-            $amount = floatval($payment['amount'] ?? 0);
-            $status = $payment['status'];
-            
-            // Toplam tutarı hesapla (sadece completed ödemeler)
-            if ($status === 'completed') {
-                $summary['total_amount'] += $amount;
-            }
-            
-            // Durum bazlı toplamları hesapla
-            if (isset($summary[$status])) {
-                $summary[$status] += $amount;
-            }
-        }
-        
-        // Para birimini formatla
-        foreach ($summary as $key => $value) {
-            if ($key !== 'total_amount') {
-                $summary[$key] = number_format($value, 2, ',', '.');
-            }
-        }
-        $summary['total_amount'] = number_format($summary['total_amount'], 2, ',', '.');
-        
-        // Ödemeleri tarih sırasına göre sırala (en yeni önce)
-        $sortedPayments = $allPayments->sortByDesc('created_at')->values();
+        \Log::info('getAllPayments sonucu', [
+            'count' => $allPayments->count(),
+            'first_payment' => $allPayments->first()
+        ]);
         
         return response()->json([
-            'success' => true,
-            'summary' => $summary,
-            'payments' => $sortedPayments,
-            'tenant_info' => [
-                'id' => $tenant->id,
-                'name' => $tenant->firma_adi,
-                'email' => $tenant->eposta
-            ]
+            'debug' => true,
+            'tenant_id' => $id,
+            'direct_subscription_count' => $subscriptionPaymentsCount,
+            'direct_storage_count' => $storagePurchasesCount,
+            'model_subscription_count' => $modelSubscriptionCount,
+            'model_storage_count' => $modelStorageCount,
+            'all_payments_count' => $allPayments->count(),
+            'all_payments' => $allPayments->toArray()
         ]);
         
     } catch (\Exception $e) {
-        \Log::error('Tenant ödeme bilgileri getirme hatası: ' . $e->getMessage(), [
-            'tenant_id' => $id,
-            'error' => $e->getTraceAsString()
+        \Log::error('getTenantPayments hatası', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
         ]);
         
         return response()->json([
-            'success' => false,
-            'message' => 'Ödeme bilgileri yüklenirken bir hata oluştu.',
-            'error' => $e->getMessage()
+            'error' => true,
+            'message' => $e->getMessage()
         ], 500);
     }
 }

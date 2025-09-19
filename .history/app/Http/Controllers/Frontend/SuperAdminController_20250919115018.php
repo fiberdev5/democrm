@@ -772,5 +772,65 @@ public function getPaymentStatistics($tenantId)
     }
 }
 
-
+public function getTenantPayments($id)
+{
+    \Log::info('getTenantPayments çağrıldı', ['tenant_id' => $id]);
+    
+    try {
+        $tenant = Tenant::findOrFail($id);
+        \Log::info('Tenant bulundu', ['tenant' => $tenant->firma_adi]);
+        
+        // Direkt sorgu ile kontrol et
+        $subscriptionPaymentsCount = \DB::table('subscription_payments')
+            ->where('tenant_id', $id)
+            ->count();
+            
+        $storagePurchasesCount = \DB::table('storage_purchases')
+            ->where('tenant_id', $id)
+            ->count();
+            
+        \Log::info('Ödeme sayıları', [
+            'subscription_payments' => $subscriptionPaymentsCount,
+            'storage_purchases' => $storagePurchasesCount
+        ]);
+        
+        // Model ilişkisi ile kontrol et
+        $modelSubscriptionCount = $tenant->subscriptionPayments()->count();
+        $modelStorageCount = $tenant->storagePurchases()->count();
+        
+        \Log::info('Model ilişkisi sayıları', [
+            'model_subscription' => $modelSubscriptionCount,
+            'model_storage' => $modelStorageCount
+        ]);
+        
+        // getAllPayments metodunu test et
+        $allPayments = $tenant->getAllPayments();
+        \Log::info('getAllPayments sonucu', [
+            'count' => $allPayments->count(),
+            'first_payment' => $allPayments->first()
+        ]);
+        
+        return response()->json([
+            'debug' => true,
+            'tenant_id' => $id,
+            'direct_subscription_count' => $subscriptionPaymentsCount,
+            'direct_storage_count' => $storagePurchasesCount,
+            'model_subscription_count' => $modelSubscriptionCount,
+            'model_storage_count' => $modelStorageCount,
+            'all_payments_count' => $allPayments->count(),
+            'all_payments' => $allPayments->toArray()
+        ]);
+        
+    } catch (\Exception $e) {
+        \Log::error('getTenantPayments hatası', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return response()->json([
+            'error' => true,
+            'message' => $e->getMessage()
+        ], 500);
+    }
+}
 }

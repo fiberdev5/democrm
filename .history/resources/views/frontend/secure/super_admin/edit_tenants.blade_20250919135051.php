@@ -586,6 +586,11 @@
         
         <!-- Sayfalama -->
         <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <small class="text-muted">
+              Toplam <span id="total-payments-count">0</span> ödeme kaydı
+            </small>
+          </div>
           <nav>
             <ul class="pagination pagination-sm mb-0" id="payments-pagination">
               <!-- Dinamik sayfalama -->
@@ -670,297 +675,6 @@
 // Modül pattern kullanarak namespace çakışmalarını önle
 window.PaymentModule = (function() {
   'use strict';
-
-  // // Ödeme detayını göster - Updated implementation
-  // function showPaymentDetail(type, paymentId) {
-  //   console.log('Ödeme detayı isteniyor:', type, paymentId, 'Tenant ID:', currentTenantId);
-    
-  //   if (!currentTenantId || !paymentId) {
-  //     console.error('Geçersiz parametreler');
-  //     return;
-  //   }
-    
-  //   // Modal'ı aç
-  //   const modal = new bootstrap.Modal(document.getElementById('paymentDetailModal'));
-  //   modal.show();
-    
-  //   // Loading durumunu göster
-  //   $('#paymentDetailLoading').show();
-  //   $('#paymentDetailData').hide();
-  //   $('#paymentDetailError').hide();
-    
-  //   // AJAX ile detayları getir
-  //   $.ajax({
-  //     url: `/super-admin/tenant/${currentTenantId}/payment-detail/${type}/${paymentId}`,
-  //     method: 'GET',
-  //     headers: {
-  //       'X-Requested-With': 'XMLHttpRequest',
-  //       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-  //     },
-  //     success: function(response) {
-  //       console.log('Ödeme detayı başarılı:', response);
-  //       if (response.success) {
-  //         displayPaymentDetail(response.payment);
-  //       } else {
-  //         showPaymentDetailError();
-  //       }
-  //     },
-  //     error: function(xhr, status, error) {
-  //       console.error('Ödeme detayı hatası:', {
-  //         status: status,
-  //         error: error,
-  //         response: xhr.responseText
-  //       });
-  //       showPaymentDetailError();
-  //     }
-  //   });
-  // }
-  
-  // // Ödeme detayını göster
-  // function displayPaymentDetail(payment) {
-  //   const detailHtml = createPaymentDetailHtml(payment);
-  //   $('#paymentDetailData').html(detailHtml).show();
-  //   $('#paymentDetailLoading').hide();
-  //   $('#paymentDetailError').hide();
-  // }
-  
-  // // Ödeme detay HTML'i oluştur
-  // function createPaymentDetailHtml(payment) {
-  //   const statusBadge = getStatusBadge(payment.status);
-  //   const typeBadge = getTypeBadge(payment.type, payment.type_label);
-    
-  //   return `
-  //     <div class="row">
-  //       <div class="col-md-6">
-  //         <div class="card mb-3">
-  //           <div class="card-header bg-light">
-  //             <h6 class="mb-0">Genel Bilgiler</h6>
-  //           </div>
-  //           <div class="card-body">
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Ödeme ID:</strong></div>
-  //               <div class="col-7">#${payment.id}</div>
-  //             </div>
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Tür:</strong></div>
-  //               <div class="col-7">${typeBadge}</div>
-  //             </div>
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Durum:</strong></div>
-  //               <div class="col-7">${statusBadge}</div>
-  //             </div>
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Tutar:</strong></div>
-  //               <div class="col-7"><span class="fw-bold">₺${formatMoney(payment.amount || 0)}</span></div>
-  //             </div>
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Açıklama:</strong></div>
-  //               <div class="col-7">${payment.description || '-'}</div>
-  //             </div>
-  //             ${payment.plan_name ? `
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Plan:</strong></div>
-  //               <div class="col-7">${payment.plan_name}</div>
-  //             </div>
-  //             ` : ''}
-  //           </div>
-  //         </div>
-  //       </div>
-        
-  //       <div class="col-md-6">
-  //         <div class="card mb-3">
-  //           <div class="card-header bg-light">
-  //             <h6 class="mb-0">Ödeme Bilgileri</h6>
-  //           </div>
-  //           <div class="card-body">
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Ödeme Yöntemi:</strong></div>
-  //               <div class="col-7">${payment.payment_method || 'Belirtilmemiş'}</div>
-  //             </div>
-  //             ${payment.gateway ? `
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Gateway:</strong></div>
-  //               <div class="col-7">${payment.gateway}</div>
-  //             </div>
-  //             ` : ''}
-  //             ${payment.transaction_id ? `
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>İşlem ID:</strong></div>
-  //               <div class="col-7">${payment.transaction_id}</div>
-  //             </div>
-  //             ` : ''}
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Oluşturulma:</strong></div>
-  //               <div class="col-7">${formatDate(payment.created_at)}</div>
-  //             </div>
-  //             ${payment.paid_at ? `
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Ödenme Tarihi:</strong></div>
-  //               <div class="col-7">${formatDate(payment.paid_at)}</div>
-  //             </div>
-  //             ` : ''}
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-      
-  //     ${payment.storage_gb ? `
-  //     <div class="row">
-  //       <div class="col-12">
-  //         <div class="card">
-  //           <div class="card-header bg-light">
-  //             <h6 class="mb-0">Depolama Bilgileri</h6>
-  //           </div>
-  //           <div class="card-body">
-  //             <div class="row">
-  //               <div class="col-md-4">
-  //                 <strong>Depolama Miktarı:</strong><br>
-  //                 <span class="badge bg-success">${payment.storage_gb} GB</span>
-  //               </div>
-  //               ${payment.expires_at ? `
-  //               <div class="col-md-4">
-  //                 <strong>Bitiş Tarihi:</strong><br>
-  //                 ${formatDate(payment.expires_at)}
-  //               </div>
-  //               ` : ''}
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //     ` : ''}
-  //   `;
-  // }
-  
-  // // Ödeme detay hatasını göster
-  // function showPaymentDetailError() {
-  //   $('#paymentDetailLoading').hide();
-  //   $('#paymentDetailData').hide();
-  //   $('#paymentDetailError').show();
-  // }
-  
-  // // Ödeme detayını göster
-  // function displayPaymentDetail(payment) {
-  //   const detailHtml = createPaymentDetailHtml(payment);
-  //   $('#paymentDetailData').html(detailHtml).show();
-  //   $('#paymentDetailLoading').hide();
-  //   $('#paymentDetailError').hide();
-  // }
-  
-  // // Ödeme detay HTML'i oluştur
-  // function createPaymentDetailHtml(payment) {
-  //   const statusBadge = getStatusBadge(payment.status);
-  //   const typeBadge = getTypeBadge(payment.type, payment.type_label);
-    
-  //   return `
-  //     <div class="row">
-  //       <div class="col-md-6">
-  //         <div class="card mb-3">
-  //           <div class="card-header bg-light">
-  //             <h6 class="mb-0">Genel Bilgiler</h6>
-  //           </div>
-  //           <div class="card-body">
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Ödeme ID:</strong></div>
-  //               <div class="col-7">#${payment.id}</div>
-  //             </div>
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Tür:</strong></div>
-  //               <div class="col-7">${typeBadge}</div>
-  //             </div>
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Durum:</strong></div>
-  //               <div class="col-7">${statusBadge}</div>
-  //             </div>
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Tutar:</strong></div>
-  //               <div class="col-7"><span class="fw-bold">₺${formatMoney(payment.amount || 0)}</span></div>
-  //             </div>
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Açıklama:</strong></div>
-  //               <div class="col-7">${payment.description || '-'}</div>
-  //             </div>
-  //             ${payment.plan_name ? `
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Plan:</strong></div>
-  //               <div class="col-7">${payment.plan_name}</div>
-  //             </div>
-  //             ` : ''}
-  //           </div>
-  //         </div>
-  //       </div>
-        
-  //       <div class="col-md-6">
-  //         <div class="card mb-3">
-  //           <div class="card-header bg-light">
-  //             <h6 class="mb-0">Ödeme Bilgileri</h6>
-  //           </div>
-  //           <div class="card-body">
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Ödeme Yöntemi:</strong></div>
-  //               <div class="col-7">${payment.payment_method || 'Belirtilmemiş'}</div>
-  //             </div>
-  //             ${payment.gateway ? `
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Gateway:</strong></div>
-  //               <div class="col-7">${payment.gateway}</div>
-  //             </div>
-  //             ` : ''}
-  //             ${payment.transaction_id ? `
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>İşlem ID:</strong></div>
-  //               <div class="col-7">${payment.transaction_id}</div>
-  //             </div>
-  //             ` : ''}
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Oluşturulma:</strong></div>
-  //               <div class="col-7">${formatDate(payment.created_at)}</div>
-  //             </div>
-  //             ${payment.paid_at ? `
-  //             <div class="row mb-2">
-  //               <div class="col-5"><strong>Ödenme Tarihi:</strong></div>
-  //               <div class="col-7">${formatDate(payment.paid_at)}</div>
-  //             </div>
-  //             ` : ''}
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-      
-  //     ${payment.storage_gb ? `
-  //     <div class="row">
-  //       <div class="col-12">
-  //         <div class="card">
-  //           <div class="card-header bg-light">
-  //             <h6 class="mb-0">Depolama Bilgileri</h6>
-  //           </div>
-  //           <div class="card-body">
-  //             <div class="row">
-  //               <div class="col-md-4">
-  //                 <strong>Depolama Miktarı:</strong><br>
-  //                 <span class="badge bg-success">${payment.storage_gb} GB</span>
-  //               </div>
-  //               ${payment.expires_at ? `
-  //               <div class="col-md-4">
-  //                 <strong>Bitiş Tarihi:</strong><br>
-  //                 ${formatDate(payment.expires_at)}
-  //               </div>
-  //               ` : ''}
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //     ` : ''}
-  //   `;
-  // }
-  
-  // // Ödeme detay hatasını göster
-  // function showPaymentDetailError() {
-  //   $('#paymentDetailLoading').hide();
-  //   $('#paymentDetailData').hide();
-  //   $('#paymentDetailError').show();
-  // }
   
   // Private değişkenler
   let currentTenantId = null;
@@ -978,7 +692,7 @@ window.PaymentModule = (function() {
       return;
     }
     
-    
+    console.log('AJAX isteği başlatılıyor, tenant ID:', tenantId);
     showPaymentLoading();
     
     $.ajax({
@@ -989,6 +703,7 @@ window.PaymentModule = (function() {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
       },
       success: function(response) {
+        console.log('AJAX başarılı:', response);
         if (response.success) {
           allPayments = response.payments || [];
           updatePaymentSummary(response.summary);
@@ -1152,9 +867,9 @@ window.PaymentModule = (function() {
     }
     
     // Detay butonu
-    // buttons += `<button class="btn btn-outline-info btn-sm" onclick="PaymentModule.showPaymentDetail('${payment.type}', ${payment.id})" title="Detayları Görüntüle">
-    //               <i class="fas fa-info-circle"></i>
-    //             </button>`;
+    buttons += `<button class="btn btn-outline-info btn-sm" onclick="PaymentModule.showPaymentDetail('${payment.type}', ${payment.id})" title="Detayları Görüntüle">
+                  <i class="fas fa-info-circle"></i>
+                </button>`;
     
     return buttons || '<span class="text-muted">-</span>';
   }
@@ -1207,6 +922,10 @@ window.PaymentModule = (function() {
     updatePagination();
   }
 
+  // Ödeme detayını göster
+  function showPaymentDetail(type, paymentId) {
+    console.log('Ödeme detayı:', type, paymentId);
+  }
 
   // Yardımcı fonksiyonlar
   function formatDate(dateString) {
@@ -1240,21 +959,23 @@ window.PaymentModule = (function() {
       // Farklı yöntemlerle tenant ID'yi almaya çalış
       tenantId = button.data('bs-id') || button.attr('data-bs-id') || button.data('id') || button.attr('data-id');
       
-    
+      console.log('Modal açılıyor, buton:', button);
+      console.log('Buton attributes:', button.get(0).attributes);
+      console.log('Tenant ID bulundu:', tenantId);
       
       if (tenantId && tenantId !== 'null' && tenantId !== null) {
         currentTenantId = tenantId;
         $('#current-tenant-id').val(tenantId);
-        
+        console.log('Tenant ID set edildi:', currentTenantId);
       } else {
-        
+        console.error('Tenant ID bulunamadı, button data:', button.data());
       }
     });
 
     // Alternatif olarak, editTenant class'ına sahip elementlere click event'i ekle
     $(document).off('click', '.editTenant').on('click', '.editTenant', function() {
       const tenantId = $(this).data('bs-id') || $(this).attr('data-bs-id');
-     
+      console.log('EditTenant clicked, tenant ID:', tenantId);
       
       if (tenantId) {
         currentTenantId = tenantId;
@@ -1264,12 +985,12 @@ window.PaymentModule = (function() {
 
     // Payment tab'ına tıklandığında
     $(document).off('shown.bs.tab', '#payment-info-tab').on('shown.bs.tab', '#payment-info-tab', function() {
-     
+      console.log('Payment tab açıldı, mevcut tenant ID:', currentTenantId);
       
       // Eğer currentTenantId null ise, modal'dan almaya çalış
       if (!currentTenantId) {
         const modalTenantId = $('#current-tenant-id').val();
-       
+        console.log('Modal hidden input\'tan ID alınıyor:', modalTenantId);
         if (modalTenantId) {
           currentTenantId = modalTenantId;
         }
@@ -1312,7 +1033,7 @@ window.PaymentModule = (function() {
     init: initEventHandlers,
     loadPaymentInfo: loadPaymentInfo,
     changePage: changePage,
-    //showPaymentDetail: showPaymentDetail,
+    showPaymentDetail: showPaymentDetail,
     get currentTenantId() { return currentTenantId; }
   };
 })();
@@ -1493,60 +1214,5 @@ $(document).ready(function() {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-/* Payment Detail Modal Styles */
-#paymentDetailModal .modal-dialog {
-  max-width: 800px;
-}
-
-#paymentDetailModal .card {
-  border: 1px solid #e3e6f0;
-}
-
-#paymentDetailModal .card-header {
-  background-color: #f8f9fc !important;
-  border-bottom: 1px solid #e3e6f0;
-  font-weight: 600;
-}
-
-#paymentDetailModal .row.mb-2 {
-  border-bottom: 1px solid #f1f1f1;
-  padding-bottom: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-#paymentDetailModal .row.mb-2:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-/* Loading, Error states */
-#paymentDetailLoading,
-#paymentDetailError {
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  #paymentDetailModal .modal-dialog {
-    margin: 1rem;
-  }
-  
-  #paymentDetailModal .row.mb-2 .col-5,
-  #paymentDetailModal .row.mb-2 .col-7 {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
-  
-  #paymentDetailModal .row.mb-2 .col-5 {
-    margin-bottom: 0.25rem;
-    font-weight: 600;
-  }
 }
 </style>

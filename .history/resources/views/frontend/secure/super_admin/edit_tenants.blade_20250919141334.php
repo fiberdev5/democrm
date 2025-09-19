@@ -586,6 +586,11 @@
         
         <!-- Sayfalama -->
         <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <small class="text-muted">
+              Toplam <span id="total-payments-count">0</span> ödeme kaydı
+            </small>
+          </div>
           <nav>
             <ul class="pagination pagination-sm mb-0" id="payments-pagination">
               <!-- Dinamik sayfalama -->

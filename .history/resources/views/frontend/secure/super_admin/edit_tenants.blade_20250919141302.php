@@ -586,6 +586,11 @@
         
         <!-- Sayfalama -->
         <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <small class="text-muted">
+              Toplam <span id="total-payments-count">0</span> ödeme kaydı
+            </small>
+          </div>
           <nav>
             <ul class="pagination pagination-sm mb-0" id="payments-pagination">
               <!-- Dinamik sayfalama -->
@@ -1312,7 +1317,7 @@ window.PaymentModule = (function() {
     init: initEventHandlers,
     loadPaymentInfo: loadPaymentInfo,
     changePage: changePage,
-    //showPaymentDetail: showPaymentDetail,
+    showPaymentDetail: showPaymentDetail,
     get currentTenantId() { return currentTenantId; }
   };
 })();

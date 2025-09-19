@@ -189,13 +189,13 @@ Route::middleware(['auth', 'superadmin'])->group(function () {
 
          // Ödeme bilgileri route'ları
         Route::get('/tenant/{id}/payments', [SuperAdminController::class, 'getTenantPayments'])
-            ->name('tenant.payments');
+            ->name('super.admin.tenant.payments');
         
         Route::get('/tenant/{tenantId}/payment/{paymentType}/{paymentId}', [SuperAdminController::class, 'getPaymentDetail'])
-            ->name('tenant.payment.detail');
+            ->name('super.admin.tenant.payment.detail');
         
         Route::get('/tenant/{tenantId}/payment-statistics', [SuperAdminController::class, 'getPaymentStatistics'])
-            ->name('tenant.payment.statistics');
+            ->name('super.admin.tenant.payment.statistics');
        
     });
 });

@@ -188,14 +188,14 @@ Route::middleware(['auth', 'superadmin'])->group(function () {
         });
 
          // Ödeme bilgileri route'ları
-        Route::get('/tenant/{id}/payments', [SuperAdminController::class, 'getTenantPayments'])
-            ->name('tenant.payments');
-        
-        Route::get('/tenant/{tenantId}/payment/{paymentType}/{paymentId}', [SuperAdminController::class, 'getPaymentDetail'])
-            ->name('tenant.payment.detail');
-        
-        Route::get('/tenant/{tenantId}/payment-statistics', [SuperAdminController::class, 'getPaymentStatistics'])
-            ->name('tenant.payment.statistics');
+    Route::get('/tenant/{id}/payments', [SuperAdminController::class, 'getTenantPayments'])
+         ->name('super.admin.tenant.payments');
+    
+    Route::get('/tenant/{tenantId}/payment/{paymentType}/{paymentId}', [SuperAdminController::class, 'getPaymentDetail'])
+         ->name('super.admin.tenant.payment.detail');
+    
+    Route::get('/tenant/{tenantId}/payment-statistics', [SuperAdminController::class, 'getPaymentStatistics'])
+         ->name('super.admin.tenant.payment.statistics');
        
     });
 });
