@@ -174,59 +174,25 @@ if (method_exists($tenant, 'storagePurchases')) {
     }
 
     public function downloadInvoice($type, $id, $tenant_id)
-{
-    abort_if(!auth()->user()->hasRole('Patron'), 403);
+    {
+        abort_if(!auth()->user()->hasRole('Patron'), 403);
 
-    $tenant = Tenant::findOrFail($tenant_id);
-    
-    if ($type === 'subscription') {
-        $payment = $tenant->subscriptionPayments()->findOrFail($id);
-    } else {
-        $payment = $tenant->storagePurchases()->findOrFail($id);
-    }
-
-    if (!$payment->invoice_path) {
-        abort(404, 'Fatura yolu bulunamadı');
-    }
-
-    // Debug için log ekle
-    \Log::info('Invoice download attempt', [
-        'payment_id' => $payment->id,
-        'invoice_path' => $payment->invoice_path,
-        'type' => $type
-    ]);
-
-    // Farklı path kombinasyonlarını dene
-    $possiblePaths = [
-        public_path($payment->invoice_path),
-        public_path('upload/uploads/' . basename($payment->invoice_path)),
-        storage_path('app/public/' . $payment->invoice_path),
-        storage_path('app/' . $payment->invoice_path)
-    ];
-
-    $validPath = null;
-    foreach ($possiblePaths as $path) {
-        \Illuminate\Support\Facades\Log::info('Checking path: ' . $path . ' - Exists: ' . (file_exists($path) ? 'YES' : 'NO'));
-        if (file_exists($path)) {
-            $validPath = $path;
-            break;
+        $tenant = Tenant::findOrFail($tenant_id); // Bu fonksiyonun nasıl çalıştığına bağlı olarak değişebilir
+        
+        if ($type === 'subscription') {
+            $payment = $tenant->subscriptionPayments()->findOrFail($id);
+        } else {
+            $payment = $tenant->storagePurchases()->findOrFail($id);
         }
-    }
 
-    if (!$validPath) {
-        \Illuminate\Support\Facades\Log::error('Invoice file not found', [
-            'payment_id' => $payment->id,
-            'invoice_path' => $payment->invoice_path,
-            'checked_paths' => $possiblePaths
-        ]);
-        abort(404, 'Fatura dosyası bulunamadı: ' . $payment->invoice_path);
-    }
+        if (!$payment->invoice_path ) {
+            abort(404, 'Fatura bulunamadı');
+        }
 
-    return response()->download(
-        $validPath,
-        'fatura_' . $payment->id . '.pdf'
-    );
-}
+        return response()->download(
+            'fatura_' . $payment->id . '.pdf'
+        );
+    }
 
     private function getSubscriptionPaymentDescription($payment)
     {

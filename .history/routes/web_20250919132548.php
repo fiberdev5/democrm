@@ -185,8 +185,6 @@ Route::middleware(['auth', 'superadmin'])->group(function () {
 
             Route::get('/fatura-sonuc', 'GetInvoices')->name('invoices.get');
             Route::post('/firma-ara', [SuperAdminInvoicesController::class, 'FirmaAra'])->name('firma.ara');
-            
-            Route::get('/invoices/payments', [SuperAdminInvoicesController::class, 'GetCompletedPayments'])->name('invoices.payments');
         });
        
     });
@@ -991,8 +989,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::get('/export', [PaymentHistoryController::class, 'export'])
             ->name('export');  
         Route::get('/invoice/{type}/{id}', [PaymentHistoryController::class, 'downloadInvoice'])
-            ->name('invoice')
-            ->where(['type' => '(subscription|storage)', 'id' => '[0-9]+']);
+            ->name('invoice');
     });
 
     // Route::controller(TenantsController::class)->group(function() { 

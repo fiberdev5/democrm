@@ -364,7 +364,7 @@
             html += '      <div class="payment-description">' + payment.description + '</div>';
             html += '      <div class="payment-date">' + paymentDate + ' ' + paymentTime + ' - ' + payment.payment_method + '</div>';
             html += '    </div>';
-            html += '    <div class="payment-amount">' + payment.amount + ' ' + payment.currency + '</div>';
+            html += '    <div class="payment-amount">' + payment.amount.toFixed(2) + ' ' + payment.currency + '</div>';
             html += '  </div>';
             html += '</div>';
           });

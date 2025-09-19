@@ -206,7 +206,7 @@ if (method_exists($tenant, 'storagePurchases')) {
 
     $validPath = null;
     foreach ($possiblePaths as $path) {
-        \Illuminate\Support\Facades\Log::info('Checking path: ' . $path . ' - Exists: ' . (file_exists($path) ? 'YES' : 'NO'));
+        \Log::info('Checking path: ' . $path . ' - Exists: ' . (file_exists($path) ? 'YES' : 'NO'));
         if (file_exists($path)) {
             $validPath = $path;
             break;
@@ -214,7 +214,7 @@ if (method_exists($tenant, 'storagePurchases')) {
     }
 
     if (!$validPath) {
-        \Illuminate\Support\Facades\Log::error('Invoice file not found', [
+        \Log::error('Invoice file not found', [
             'payment_id' => $payment->id,
             'invoice_path' => $payment->invoice_path,
             'checked_paths' => $possiblePaths

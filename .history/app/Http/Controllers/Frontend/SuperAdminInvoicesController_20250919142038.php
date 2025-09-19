@@ -275,7 +275,7 @@ class SuperAdminInvoicesController extends Controller
                 'kayitAlan' => auth()->user()->id,
                 'faturaPdf' => $save_url,
                 'payment_type' => $request->payment_type, // Yeni alan
-                'odeme_id' => $request->payment_id, // Yeni alan
+                'payment_id' => $request->payment_id, // Yeni alan
             ]);
 
             $invoice_id = $invoice->id;
@@ -381,7 +381,7 @@ class SuperAdminInvoicesController extends Controller
             
             // Eski ödeme bilgisi
             $oldPaymentType = $invoice->payment_type;
-            $oldPaymentId = $invoice->odeme_id;
+            $oldPaymentId = $invoice->payment_id;
             
             $invoice->firma_id = $request->firma_id;
             $invoice->faturaNumarasi = $request->faturaNumarasi;
@@ -402,7 +402,7 @@ class SuperAdminInvoicesController extends Controller
                 }
                 
                 $invoice->payment_type = $request->payment_type;
-                $invoice->odeme_id = $request->payment_id;
+                $invoice->payment_id = $request->payment_id;
                 
                 $this->updatePaymentInvoicePath($request->payment_type, $request->payment_id, $invoice->faturaPdf);
             }
@@ -471,8 +471,8 @@ class SuperAdminInvoicesController extends Controller
             $fatura = SuperAdminInvoice::findOrFail($id);
             
             // İlgili ödeme kaydını temizle
-            if ($fatura->payment_type && $fatura->odeme_id) {
-                $this->clearPaymentInvoicePath($fatura->payment_type, $fatura->odeme_id);
+            if ($fatura->payment_type && $fatura->payment_id) {
+                $this->clearPaymentInvoicePath($fatura->payment_type, $fatura->payment_id);
             }
 
             $eskiUrunler = SuperAdminInvoiceProduct::where('faturaid', $id)->get();
@@ -530,8 +530,8 @@ class SuperAdminInvoicesController extends Controller
             $invoice->save();
             
             // İlgili ödeme kaydını da güncelle
-            if ($invoice->payment_type && $invoice->odeme_id) {
-                $this->updatePaymentInvoicePath($invoice->payment_type, $invoice->odeme_id, $save_url);
+            if ($invoice->payment_type && $invoice->payment_id) {
+                $this->updatePaymentInvoicePath($invoice->payment_type, $invoice->payment_id, $save_url);
             }
 
             return redirect()->back()->with('faturaPdf',$fileName);
@@ -547,8 +547,8 @@ class SuperAdminInvoicesController extends Controller
         $invoice = SuperAdminInvoice::findOrFail($id);
         
         // İlgili ödeme kaydını temizle
-        if ($invoice->payment_type && $invoice->odeme_id) {
-            $this->clearPaymentInvoicePath($invoice->payment_type, $invoice->odeme_id);
+        if ($invoice->payment_type && $invoice->payment_id) {
+            $this->clearPaymentInvoicePath($invoice->payment_type, $invoice->payment_id);
         }
         
         $invoice->update(['faturaPdf' => null]);
