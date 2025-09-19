@@ -3388,20 +3388,50 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
         // Validasyon kuralları
         $validator = Validator::make($request->all(), [
             'belge' => 'required|file|mimes:jpg,jpeg,png|max:5120', // 5MB = 5120KB
+            'servisid' => 'required|integer|exists:services,id'
         ], [
             'belge.required' => 'Lütfen bir dosya seçiniz.',
             'belge.mimes' => 'Sadece JPG, JPEG ve PNG dosyaları yükleyebilirsiniz.',
             'belge.max' => 'Dosya boyutu 5MB\'dan büyük olamaz.',
+            'servisid.required' => 'Servis ID gerekli.',
+            'servisid.exists' => 'Geçersiz servis.'
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first()
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors()
             ], 422);
         }
 
-        // Fotoğraf sayısı kontrolü
+        // Firma kontrolü
+        $firma = Tenant::find($tenant_id);
+        
+        if (!$firma) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Firma bulunamadı.'
+            ], 404);
+        }
+
+        // Dosya
+        $file = $request->file('belge');
+        $fileSize = $file->getSize();
+        
+        // Storage limit kontrolü (middleware'de de kontrol ediliyor ama ekstra güvenlik için)
+        if (!$firma->canUploadFile($fileSize)) {
+            $storageInfo = $firma->getStorageInfo();
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Storage limiti aşıldı! Dosya yükleyemezsiniz.',
+                'error_type' => 'storage_limit_exceeded',
+                'storage_info' => $storageInfo
+            ], 422);
+        }
+
+        // Servis başına fotoğraf sayısı kontrolü
         $currentCount = ServicePhoto::where('firma_id', $tenant_id)
             ->where('servisid', $request->servisid)
             ->count();
@@ -3446,6 +3476,10 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
             'resimyol' => $storedPath,
             'created_at' => Carbon::now(),
         ]);
+         if ($request->attributes->get('storage_warning')) {
+            $response['storage_warning'] = 'Storage alanınız dolmak üzere!';
+        }
+
 
         ActivityLogger::logServicePhotoAdded($request->servisid, $photo->id);
         return response()->json([
@@ -3457,6 +3491,7 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
                 'created_at' => $photo->created_at->format('d/m/Y')
             ]
         ]);
+
 
     } catch (\Exception $e) {
         return response()->json([

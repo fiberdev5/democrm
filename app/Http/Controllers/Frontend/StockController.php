@@ -1013,7 +1013,8 @@ public function uploadPhoto(Request $request, $tenant_id)
 {
     $request->validate([
         'resim' => 'required|file|mimes:jpg,jpeg,png|max:5120',
-        'stock_id' => 'required|integer'
+        'stock_id' => 'required|integer',
+
     ]);
     
 

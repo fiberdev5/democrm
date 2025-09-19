@@ -262,20 +262,7 @@ class InvoicesController extends Controller
     $validateData = $request->validate([
         'document'=> 'max:2000',
     ]);
-    $document = $request->file('document');
-    $extension = $request->file('document')->extension();
-    if($extension != "jpg" && $extension != "png" && $extension != "jpeg" && $extension != "pdf"){
-        $notification = array(
-            'message' => ' Dosya uzantısı sadece jpg,png,jpeg veya pdf olmalı',
-            'alert-type' => 'warning'
-        );
-        return redirect()->back()->with($notification);
-    }
-    $fileName = time().'.'.$document->getClientOriginalExtension();  
-    $save_url = $document->move('upload/uploads', $fileName);
 
-    $firma = Tenant::where('id', $tenant_id)->first();
-    $createdAt = Carbon::parse($request->faturaTarihi . ' ' . now()->format('H:i:s'));
     
     // Sayısal değerleri doğru şekilde dönüştür
     $toplam = $this->convertToDecimal($request->toplam);
@@ -283,6 +270,42 @@ class InvoicesController extends Controller
     $kdv = $this->convertToDecimal($request->kdv);
     $genelToplam = $this->convertToDecimal($request->genelToplam);
     
+
+    
+    $firma = Tenant::where('id', $tenant_id)->first();
+    if (!$firma) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Firma bulunamadı'
+        ], 404);
+    }
+    
+    $document = $request->file('document');
+    
+    // Storage kontrolü
+    if ($document && !$firma->canUploadFile($document->getSize())) {
+        $storageInfo = $firma->getStorageInfo();
+        return response()->json([
+            'success' => false,
+            'message' => "Storage limiti doldu! Dosya boyutu: " . $this->formatBytes($document->getSize()) . 
+                        ", Kalan alan: " . $storageInfo['remaining_formatted'],
+            'error_type' => 'storage_limit_exceeded'
+        ], 422);
+    }
+    
+    $extension = $document->extension();
+    if($extension != "jpg" && $extension != "png" && $extension != "jpeg" && $extension != "pdf"){
+        return response()->json([
+            'success' => false,
+            'message' => 'Dosya uzantısı sadece jpg,png,jpeg veya pdf olmalı'
+        ], 422);
+    }
+    
+    $fileName = time().'.'.$document->getClientOriginalExtension();  
+    $save_url = $document->move('upload/uploads', $fileName);
+    
+    $createdAt = Carbon::parse($request->faturaTarihi . ' ' . now()->format('H:i:s'));
+
     $invoice = Invoice::create([
         'firma_id' => $firma->id,
         'servisid' => $request->servisid,
@@ -302,6 +325,7 @@ class InvoicesController extends Controller
 
     $invoice_id = $invoice->id;
     if($invoice){
+
         // Müşteri bilgisini al
         $customer = Customer::find($request->mid);
         $customerName = $customer ? $customer->adSoyad : null;
@@ -316,6 +340,14 @@ class InvoicesController extends Controller
         $miktar = $request->miktar;
         $fiyat = $request->fiyat;
         $tutar = $request->tutar;
+
+        // Storage warning kontrolü
+        $storageWarning = null;
+        if (session()->has('storage_warning_info')) {
+            $storageInfo = session()->get('storage_warning_info');
+            $storageWarning = "Fatura eklendi ancak storage alanınız %{$storageInfo['usage_percentage']} dolu. Kalan alan: {$storageInfo['remaining_formatted']}. Planınızı yükseltmeyi düşünün.";
+        }
+
 
         foreach($aciklama as $key => $val){
             if(!empty($val)){
@@ -345,6 +377,21 @@ class InvoicesController extends Controller
         return redirect()->back()->with($notification);
     } 
 }
+
+
+// Helper method ekleyin
+private function formatBytes($bytes, $precision = 2) 
+{
+    $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    
+    for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+        $bytes /= 1024;
+    }
+    
+    return round($bytes, $precision) . ' ' . $units[$i];
+}
+
+
     public function EditInvoice($tenant_id,$id) {
         $firma = Tenant::where('id', $tenant_id)->first();
         if (!$firma) {

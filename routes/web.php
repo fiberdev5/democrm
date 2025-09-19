@@ -80,9 +80,11 @@ use App\Http\Controllers\Frontend\SuperAdminController;
 use App\Http\Controllers\Frontend\SupportTicketController;
 use App\Http\Controllers\Frontend\AdminSupportController;
 use App\Http\Controllers\Frontend\DestekController;
+
 use App\Http\Controllers\Frontend\ActivityLogController;
 use App\Http\Controllers\Frontend\SuperAdminInvoicesController;
-
+use App\Http\Controllers\Frontend\PaymentHistoryController;
+use App\Http\Controllers\Frontend\StorageController;
 
 
 Route::get('/secure', function () {
@@ -101,9 +103,9 @@ Route::controller(UserController::class)->group(function () {
 Route::middleware(['auth','check.tenant.status'])->prefix('{tenant_id}')->group(function () {
     Route::get('/support', [SupportTicketController::class, 'index'])->name('support.index');
     Route::get('/support/create', [SupportTicketController::class, 'create'])->name('support.create');
-    Route::post('/support', [SupportTicketController::class, 'store'])->name('support.store');
+    Route::post('/support', [SupportTicketController::class, 'store'])->name('support.store')->middleware('check.storage');
     Route::get('/support/{ticket}', [SupportTicketController::class, 'show'])->name('support.show');
-    Route::post('/support/{ticket}/reply', [SupportTicketController::class, 'reply'])->name('support.reply');
+    Route::post('/support/{ticket}/reply', [SupportTicketController::class, 'reply'])->name('support.reply')->middleware('check.storage');
     Route::get('/support/{ticket}/download/{fileName}', [SupportTicketController::class, 'downloadAttachment'])->name('support.download');
 });
 
@@ -571,7 +573,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
 
         //Dealer Routes
         Route::get('/bayiler', 'AllDealers')->name('dealers');
-        Route::get('/bayi-ekle', 'AddDealer')->name('add.dealer');
+        Route::get('/bayi-ekle', 'AddDealer')->name('add.dealer')->middleware('check.storage');
         Route::post('/bayi-kaydet', 'StoreDealer')->name('store.dealer');
         Route::get('/bayi/duzenle/{id}', 'EditDealer')->name('edit.dealer');
         Route::post('/bayi/guncelle/{id}', 'UpdateDealer')->name('update.dealer');
@@ -611,7 +613,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
 
         //Stok Fotoğrafları
         Route::get('/stok-fotograflar/{stock_id}','getPhotos')->name('stock.photos');
-        Route::post('/stok-foto-ekle','uploadPhoto')->name('stock.photos.update');
+        Route::post('/stok-foto-ekle','uploadPhoto')->name('stock.photos.update')->middleware('check.storage');
         Route::post('/stok-foto-sil', 'deletePhoto')->name('stock.photos.delete');
 
         //Stok Barkod
@@ -635,7 +637,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::post('/stok-konsinye-hareket-kaydet', 'StoreConsignmentStockAction')->name('store.consignment.stock.action');
         Route::delete('/stok-konsinye-hareket-sil/{id}', 'DeleteConsignmentStockAction')->name('delete.consignment.stock.action');
         Route::get('/stok-konsinye-fotograflar/{stock_id}', 'GetConsignmentPhotos')->name('consignment.stock.photos');
-        Route::post('/stok-konsinye-foto-ekle', 'UploadConsignmentPhoto')->name('consignment.stock.photos.update');
+        Route::post('/stok-konsinye-foto-ekle', 'UploadConsignmentPhoto')->name('consignment.stock.photos.update')->middleware('check.storage');
         Route::post('/stok-konsinye-foto-sil', 'DeleteConsignmentPhoto')->name('consignment.stock.photos.delete');
 
         //Konsinye Cihaz Barkod
@@ -866,7 +868,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
     
         //Servis Fotoğrafları kısmı
         Route::get('/servis-fotolari/{service_id}', 'ServicePhotos')->name('service.photos');
-        Route::post('/servis-foto-yukle', 'StoreServicePhoto')->name('store.service.photo');
+        Route::post('/servis-foto-yukle', 'StoreServicePhoto')->name('store.service.photo')->middleware('check.storage');
         Route::delete('/servis-foto-sil/{fotoid}', 'DeleteServicePhoto')->name('delete.service.photo');
         
         //Servis Fiş Notları Bölümü
@@ -952,13 +954,13 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
     Route::controller(InvoicesController::class)->group(function () {
         Route::get('/faturalar', 'AllInvoice')->name('all.invoices');
         Route::get('/fatura/ekle', 'AddInvoice')->name('add.invoices');
-        Route::post('/fatura/gonder', 'StoreInvoice')->name('store.invoices');
+        Route::post('/fatura/gonder', 'StoreInvoice')->name('store.invoices')->middleware('check.storage');
         Route::get('/fatura/duzenle/{id}', 'EditInvoice')->name('edit.invoices');
         Route::post('/fatura/guncelle', 'UpdateInvoice')->name('update.invoices');
         Route::get('/fatura/sil/{id}', 'DeleteInvoice')->name('delete.invoices');
 
         Route::get('/fatura/goruntule/{id}', 'ShowInvoice')->name('show.invoice');
-        Route::post('/fatura/yukle', 'UploadInvoice')->name('upload.invoices');
+        Route::post('/fatura/yukle', 'UploadInvoice')->name('upload.invoices')->middleware('check.storage');
         Route::post('/eArsiv/sil/{id}', 'DeleteEinvoice')->name('delete.einvoice');
 
         Route::get('/fatura-sonuc', 'GetInvoices');
@@ -979,6 +981,16 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
         Route::post('/primlerim/hesapla', 'kullaniciHesapla')->name('prim.kullanici.hesapla');
         Route::get('/primlerim/detay', 'kullaniciDetay')->name('prim.kullanici.detay');
         
+    });
+
+    Route::prefix('payment-history')->name('payment-history.')->group(function () {
+        Route::get('/', [PaymentHistoryController::class, 'index'])
+            ->name('index');
+        Route::get('/export', [PaymentHistoryController::class, 'export'])
+            ->name('export');  
+        Route::get('/invoice/{type}/{id}', [PaymentHistoryController::class, 'downloadInvoice'])
+            ->name('invoice')
+            ->where(['type' => '(subscription|storage)', 'id' => '[0-9]+']);
     });
 
     // Route::controller(TenantsController::class)->group(function() { 
@@ -1016,6 +1028,30 @@ Route::get('/payment/success', [SubscriptionController::class, 'paymentSuccess']
 Route::get('/payment/fail', [SubscriptionController::class, 'paymentFail'])
     ->name('subscription.payment.fail');
 Route::post('/subscription/payment/callback', [SubscriptionController::class, 'paymentCallback'])->name('subscription.payment.callback')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+
+
+Route::middleware(['auth'])->group(function () {
+    // Storage bilgilerini getir (middleware olmadan)
+    Route::get('/{tenant_id}/depolama-alani/bilgisi', [GenelAyarlarController::class, 'getStorageInfo'])->name('depolama.bilgisi');
+    // Storage detayları (bu yeni eklediğimiz)
+    Route::get('/{tenant_id}/storage/details', [GenelAyarlarController::class, 'getStorageDetails'])
+         ->name('tenant.storage.details');
+    
+    // Storage temizleme
+    Route::post('/{tenant_id}/storage/cleanup', [GenelAyarlarController::class, 'cleanupStorageFiles'])
+          ->name('tenant.storage.cleanup');
+
+});
+
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('{tenant_id}')->group(function () {
+        Route::get('/storage-paketleri', [StorageController::class, 'packages'])->name('storage.packages');
+        Route::post('/storage-satin-al', [StorageController::class, 'purchase'])->name('storage.purchase');
+
+    });
+});
+Route::get('/storage-odeme-basarili', [StorageController::class, 'paymentSuccess'])->name('storage.payment.success');
+Route::get('/storage-odeme-basarisiz', [StorageController::class, 'paymentFail'])->name('storage.payment.fail');
 
 
 Route::get('/logs', function () {

@@ -73,90 +73,126 @@ class SupportTicketController extends Controller
     }
 
     // Kullanıcı tarafı - destek talebi oluştur
-  public function store(Request $request, $tenant_id)
-{
-    $request->validate([
-        'category' => 'required|string',
-        'subject' => 'required|string|max:255',
-        'priority' => 'required|in:acil,kritik,yuksek,orta,dusuk',
-        'description' => 'required|string',
-        'attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx',
-        'attachments' => 'max:3' // 3 dosya sınırı
-    ]);
+    public function store(Request $request, $tenant_id)
+    {
+        $request->validate([
+            'category' => 'required|string',
+            'subject' => 'required|string|max:255',
+            'priority' => 'required|in:acil,kritik,yuksek,orta,dusuk',
+            'description' => 'required|string',
+            'attachments.*' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx',
+            'attachments' => 'max:3' // 3 dosya sınırı
+        ]);
 
-    $user = Auth::user();
-    
-    // Super Admin değilse tenant kontrolü yap
-    if (!$user->isSuperAdmin() && $user->tenant_id != $tenant_id) {
-        abort(403, 'Bu tenant\'a erişim yetkiniz yok.');
-    }
+        $user = Auth::user();
+        
+        // Super Admin değilse tenant kontrolü yap
+        if (!$user->isSuperAdmin() && $user->tenant_id != $tenant_id) {
+            abort(403, 'Bu tenant\'a erişim yetkiniz yok.');
+        }
 
-    // Ticket numarasını bir kez oluştur
-    $ticketNumber = SupportTicket::generateTicketNumber();
-    $attachments = [];
-
-    // Dosya yükleme
-    if ($request->hasFile('attachments')) {
         // Tenant bilgisini al
         $tenant = Tenant::where('id', $tenant_id)->first();
-        
-        foreach ($request->file('attachments') as $file) {
-            $ext = $file->getClientOriginalExtension();
-            $uuid = Str::uuid()->toString() . '.' . $ext;
-            
-            // Organize path oluştur - aynı ticket numarasını kullan
-            $path = "support_attachments/firma_{$tenant->firma_slug}/ticket_{$ticketNumber}/" . now()->toDateString();
-            $fullPath = storage_path('app/public/' . $path);
-            
-            // Klasörü oluştur
-            if (!file_exists($fullPath)) {
-                mkdir($fullPath, 0775, true);
-            }
-            
-            $storedPath = $path . '/' . $uuid;
-            
-            // Eğer resim dosyasıysa boyutlandır
-            if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png'])) {
-                $image = Image::make($file)->resize(1024, null, function ($constraint) {
-                    $constraint->aspectRatio();
-                    $constraint->upsize();
-                });
-                $image->save(storage_path('app/public/' . $storedPath), 75);
-            } else {
-                // Diğer dosyalar için normal kaydetme
-                $file->storeAs($path, $uuid, 'public');
-            }
-            
-            $attachments[] = [
-                'original_name' => $file->getClientOriginalName(),
-                'stored_name' => $uuid,
-                'path' => $storedPath,
-                'size' => $file->getSize(),
-                'mime_type' => $file->getMimeType()
-            ];
+        if (!$tenant) {
+            return redirect()->back()->with('error', 'Firma bulunamadı.');
         }
+
+        // Storage kontrolü - dosyalar varsa
+        if ($request->hasFile('attachments')) {
+            $totalUploadSize = 0;
+            foreach ($request->file('attachments') as $file) {
+                $totalUploadSize += $file->getSize();
+            }
+            
+            // Storage limitini kontrol et
+            if (!$tenant->canUploadFile($totalUploadSize)) {
+                $storageInfo = $tenant->getStorageInfo();
+                return redirect()->back()
+                            ->with('error', "Storage limiti doldu! Dosya boyutu: " . $this->formatBytes($totalUploadSize) . 
+                                            ", Kalan alan: " . $storageInfo['remaining_formatted'] . 
+                                            ". Planınızı yükseltiniz veya eski dosyaları siliniz.")
+                            ->withInput();
+            }
+        }
+
+        // Ticket numarasını bir kez oluştur
+        $ticketNumber = SupportTicket::generateTicketNumber();
+        $attachments = [];
+
+        // Dosya yükleme
+        if ($request->hasFile('attachments')) {
+            // Tenant bilgisini al
+            $tenant = Tenant::where('id', $tenant_id)->first();
+            
+            foreach ($request->file('attachments') as $file) {
+                $ext = $file->getClientOriginalExtension();
+                $uuid = Str::uuid()->toString() . '.' . $ext;
+                
+                // Organize path oluştur - aynı ticket numarasını kullan
+                $path = "support_attachments/firma_{$tenant->firma_slug}/ticket_{$ticketNumber}/" . now()->toDateString();
+                $fullPath = storage_path('app/public/' . $path);
+                
+                // Klasörü oluştur
+                if (!file_exists($fullPath)) {
+                    mkdir($fullPath, 0775, true);
+                }
+                
+                $storedPath = $path . '/' . $uuid;
+                
+                // Eğer resim dosyasıysa boyutlandır
+                if (in_array(strtolower($ext), ['jpg', 'jpeg', 'png'])) {
+                    $image = Image::make($file)->resize(1024, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    });
+                    $image->save(storage_path('app/public/' . $storedPath), 75);
+                } else {
+                    // Diğer dosyalar için normal kaydetme
+                    $file->storeAs($path, $uuid, 'public');
+                }
+                
+                $attachments[] = [
+                    'original_name' => $file->getClientOriginalName(),
+                    'stored_name' => $uuid,
+                    'path' => $storedPath,
+                    'size' => $file->getSize(),
+                    'mime_type' => $file->getMimeType()
+                ];
+            }
+        }
+
+
+        // Storage warning kontrolü
+        $storageWarning = null;
+        if ($tenant->getStorageUsagePercentage() >= 80) {
+            $storageInfo = $tenant->getStorageInfo();
+            $storageWarning = "Destek talebi oluşturuldu ancak storage alanınız %{$storageInfo['usage_percentage']} dolu. Kalan alan: {$storageInfo['remaining_formatted']}. Planınızı yükseltmeyi düşünün.";
+        }
+
+        $ticket = SupportTicket::create([
+            'ticket_number' => $ticketNumber, // Aynı numarayı kullan
+            'tenant_id' => $tenant_id,
+            'user_id' => $user->user_id,
+            'category' => $request->category,
+            'subject' => $request->subject,
+            'priority' => $request->priority,
+            'description' => $request->description,
+            'attachments' => !empty($attachments) ? $attachments : null,
+            'status' => 'acik',
+            'last_reply_at' => now()
+        ]);
+
+        $successMessage = 'Destek talebiniz başarıyla oluşturuldu. Talep numaranız: ' . $ticket->ticket_number;
+    
+        // Storage warning varsa ek mesaj
+        if ($storageWarning) {
+            session()->flash('storage_warning', $storageWarning);
+        }
+          // LOG EKLE
+    ActivityLogger::logSupportTicketCreated($ticket->id, $ticket->ticket_number, $ticket->subject);
+        return redirect()->route('support.index', $tenant_id)->with('success', $successMessage);
     }
 
-    $ticket = SupportTicket::create([
-        'ticket_number' => $ticketNumber, // Aynı numarayı kullan
-        'tenant_id' => $tenant_id,
-        'user_id' => $user->user_id,
-        'category' => $request->category,
-        'subject' => $request->subject,
-        'priority' => $request->priority,
-        'description' => $request->description,
-        'attachments' => !empty($attachments) ? $attachments : null,
-        'status' => 'acik',
-        'last_reply_at' => now()
-    ]);
-
-
-    // LOG EKLE
-    ActivityLogger::logSupportTicketCreated($ticket->id, $ticket->ticket_number, $ticket->subject);
-
-    return redirect()->route('support.index', $tenant_id)
-                    ->with('success', 'Destek talebiniz başarıyla oluşturuldu. Talep numaranız: ' . $ticket->ticket_number);
-}
 
     // Kullanıcı tarafı - destek talebi detay
 public function show($tenant_id, SupportTicket $ticket)
@@ -212,6 +248,30 @@ public function show($tenant_id, SupportTicket $ticket)
         // Kapalı taleplere yanıt verilemez
         if (!$ticket->canBeReplied()) {
             return back()->with('error', 'Kapalı taleplere yanıt verilemez.');
+        }
+
+        // Tenant bilgisini al
+        $tenant = Tenant::where('id', $tenant_id)->first();
+        if (!$tenant) {
+            return redirect()->back()->with('error', 'Firma bulunamadı.');
+        }
+
+        // Storage kontrolü - dosyalar varsa
+        if ($request->hasFile('attachments')) {
+            $totalUploadSize = 0;
+            foreach ($request->file('attachments') as $file) {
+                $totalUploadSize += $file->getSize();
+            }
+            
+            // Storage limitini kontrol et
+            if (!$tenant->canUploadFile($totalUploadSize)) {
+                $storageInfo = $tenant->getStorageInfo();
+                return redirect()->back()
+                            ->with('error', "Storage limiti doldu! Dosya boyutu: " . $this->formatBytes($totalUploadSize) . 
+                                            ", Kalan alan: " . $storageInfo['remaining_formatted'] . 
+                                            ". Planınızı yükseltiniz veya eski dosyaları siliniz.")
+                            ->withInput();
+            }
         }
 
         $attachments = [];
