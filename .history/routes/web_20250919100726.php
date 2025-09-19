@@ -185,19 +185,17 @@ Route::middleware(['auth', 'superadmin'])->group(function () {
 
             Route::get('/fatura-sonuc', 'GetInvoices')->name('invoices.get');
             Route::post('/firma-ara', [SuperAdminInvoicesController::class, 'FirmaAra'])->name('firma.ara');
-            
-            Route::get('/invoices/payments', [SuperAdminInvoicesController::class, 'GetCompletedPayments'])->name('invoices.payments');
         });
 
          // Ödeme bilgileri route'ları
         Route::get('/tenant/{id}/payments', [SuperAdminController::class, 'getTenantPayments'])
-            ->name('tenant.payments');
+            ->name('super.admin.tenant.payments');
         
         Route::get('/tenant/{tenantId}/payment/{paymentType}/{paymentId}', [SuperAdminController::class, 'getPaymentDetail'])
-            ->name('tenant.payment.detail');
+            ->name('super.admin.tenant.payment.detail');
         
         Route::get('/tenant/{tenantId}/payment-statistics', [SuperAdminController::class, 'getPaymentStatistics'])
-            ->name('tenant.payment.statistics');
+            ->name('super.admin.tenant.payment.statistics');
        
     });
 });

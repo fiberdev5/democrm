@@ -771,6 +771,4 @@ public function getPaymentStatistics($tenantId)
         ], 500);
     }
 }
-
-
 }

@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Mail;
 
 class SuperAdminController extends Controller
 {
-    
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
@@ -561,7 +560,7 @@ public function changeTenantStatus($id)
                  ->get();
     }
 
-public function getTenantPayments($id)
+    public function getTenantPayments($id)
 {
     try {
         $tenant = Tenant::findOrFail($id);
@@ -629,148 +628,5 @@ public function getTenantPayments($id)
         ], 500);
     }
 }
-public function getPaymentDetail($tenantId, $paymentType, $paymentId)
-{
-    try {
-        $tenant = Tenant::findOrFail($tenantId);
-        
-        $paymentDetail = null;
-        
-        if ($paymentType === 'subscription') {
-            $paymentDetail = \App\Models\SubscriptionPayment::where('tenant_id', $tenantId)
-                                                           ->where('id', $paymentId)
-                                                           ->with(['subscription.plansubs'])
-                                                           ->first();
-            
-            if ($paymentDetail) {
-                $paymentDetail->type = 'subscription';
-                $paymentDetail->type_label = 'Abonelik Ödemesi';
-                $paymentDetail->plan_name = $paymentDetail->subscription->plansubs->name ?? 'Bilinmeyen Plan';
-            }
-            
-        } elseif ($paymentType === 'storage') {
-            $paymentDetail = \App\Models\StoragePurchase::where('tenant_id', $tenantId)
-                                                       ->where('id', $paymentId)
-                                                       ->first();
-            
-            if ($paymentDetail) {
-                $paymentDetail->type = 'storage';
-                $paymentDetail->type_label = 'Depolama Paketi';
-                $paymentDetail->plan_name = $paymentDetail->storage_gb . ' GB Ek Depolama';
-            }
-        }
-        
-        if (!$paymentDetail) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Ödeme kaydı bulunamadı.'
-            ], 404);
-        }
-        
-        return response()->json([
-            'success' => true,
-            'payment' => $paymentDetail,
-            'tenant_info' => [
-                'id' => $tenant->id,
-                'name' => $tenant->firma_adi
-            ]
-        ]);
-        
-    } catch (\Exception $e) {
-        \Log::error('Ödeme detayı getirme hatası: ' . $e->getMessage(), [
-            'tenant_id' => $tenantId,
-            'payment_type' => $paymentType,
-            'payment_id' => $paymentId
-        ]);
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Ödeme detayı yüklenirken bir hata oluştu.'
-        ], 500);
-    }
-}
-public function getPaymentStatistics($tenantId)
-{
-    try {
-        $tenant = Tenant::findOrFail($tenantId);
-        
-        // Abonelik ödemeleri istatistikleri
-        $subscriptionStats = DB::table('subscription_payments')
-            ->where('tenant_id', $tenantId)
-            ->select([
-                DB::raw('COUNT(*) as total_count'),
-                DB::raw('SUM(CASE WHEN status = "completed" THEN amount ELSE 0 END) as total_completed'),
-                DB::raw('SUM(CASE WHEN status = "pending" THEN amount ELSE 0 END) as total_pending'),
-                DB::raw('SUM(CASE WHEN status = "failed" THEN amount ELSE 0 END) as total_failed'),
-                DB::raw('COUNT(CASE WHEN status = "completed" THEN 1 END) as completed_count'),
-                DB::raw('COUNT(CASE WHEN status = "pending" THEN 1 END) as pending_count'),
-                DB::raw('COUNT(CASE WHEN status = "failed" THEN 1 END) as failed_count')
-            ])
-            ->first();
-        
-        // Depolama ödemeleri istatistikleri
-        $storageStats = DB::table('storage_purchases')
-            ->where('tenant_id', $tenantId)
-            ->select([
-                DB::raw('COUNT(*) as total_count'),
-                DB::raw('SUM(CASE WHEN status = "completed" THEN amount ELSE 0 END) as total_completed'),
-                DB::raw('SUM(CASE WHEN status = "pending" THEN amount ELSE 0 END) as total_pending'),
-                DB::raw('SUM(CASE WHEN status = "failed" THEN amount ELSE 0 END) as total_failed'),
-                DB::raw('SUM(CASE WHEN status = "completed" THEN storage_gb ELSE 0 END) as total_storage_gb'),
-                DB::raw('COUNT(CASE WHEN status = "completed" THEN 1 END) as completed_count'),
-                DB::raw('COUNT(CASE WHEN status = "pending" THEN 1 END) as pending_count'),
-                DB::raw('COUNT(CASE WHEN status = "failed" THEN 1 END) as failed_count')
-            ])
-            ->first();
-        
-        // Son 12 aylık ödeme trendi
-        $monthlyTrend = [];
-        for ($i = 11; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $monthKey = $date->format('Y-m');
-            
-            $monthlyAmount = DB::table('subscription_payments')
-                ->where('tenant_id', $tenantId)
-                ->where('status', 'completed')
-                ->whereRaw('DATE_FORMAT(paid_at, "%Y-%m") = ?', [$monthKey])
-                ->sum('amount');
-            
-            $monthlyStorageAmount = DB::table('storage_purchases')
-                ->where('tenant_id', $tenantId)
-                ->where('status', 'completed')
-                ->whereRaw('DATE_FORMAT(created_at, "%Y-%m") = ?', [$monthKey])
-                ->sum('amount');
-            
-            $monthlyTrend[] = [
-                'month' => $date->format('M Y'),
-                'subscription_amount' => floatval($monthlyAmount),
-                'storage_amount' => floatval($monthlyStorageAmount),
-                'total_amount' => floatval($monthlyAmount) + floatval($monthlyStorageAmount)
-            ];
-        }
-        
-        return response()->json([
-            'success' => true,
-            'subscription_stats' => $subscriptionStats,
-            'storage_stats' => $storageStats,
-            'monthly_trend' => $monthlyTrend,
-            'tenant_info' => [
-                'id' => $tenant->id,
-                'name' => $tenant->firma_adi
-            ]
-        ]);
-        
-    } catch (\Exception $e) {
-        \Log::error('Ödeme istatistikleri getirme hatası: ' . $e->getMessage(), [
-            'tenant_id' => $tenantId
-        ]);
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'İstatistikler yüklenirken bir hata oluştu.'
-        ], 500);
-    }
-}
-
 
 }
