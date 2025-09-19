@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
+use App\Services\ActivityLogger;
 
 class InvoicesController extends Controller
 {
@@ -261,6 +262,15 @@ class InvoicesController extends Controller
     $validateData = $request->validate([
         'document'=> 'max:2000',
     ]);
+
+    
+    // Sayısal değerleri doğru şekilde dönüştür
+    $toplam = $this->convertToDecimal($request->toplam);
+    $indirim = $this->convertToDecimal($request->indirim);
+    $kdv = $this->convertToDecimal($request->kdv);
+    $genelToplam = $this->convertToDecimal($request->genelToplam);
+    
+
     
     $firma = Tenant::where('id', $tenant_id)->first();
     if (!$firma) {
@@ -295,6 +305,7 @@ class InvoicesController extends Controller
     $save_url = $document->move('upload/uploads', $fileName);
     
     $createdAt = Carbon::parse($request->faturaTarihi . ' ' . now()->format('H:i:s'));
+
     $invoice = Invoice::create([
         'firma_id' => $firma->id,
         'servisid' => $request->servisid,
@@ -302,11 +313,11 @@ class InvoicesController extends Controller
         'faturaNumarasi' => $request->faturaNumarasi,
         'faturaTarihi' => $createdAt,
         'odemeSekli' => $request->odemeSekli,
-        'toplam' => str_replace(',', '.', str_replace('.', '', $request->toplam)),
-        'indirim' => str_replace(',', '.', str_replace('.', '', $request->indirim)),
-        'kdv' => str_replace(',', '.', str_replace('.', '', $request->kdv)),
+        'toplam' => $toplam,
+        'indirim' => $indirim,
+        'kdv' => $kdv,
         'kdvTutar' => $request->kdvTutar,
-        'genelToplam' => str_replace(',', '.', str_replace('.', '', $request->genelToplam)),
+        'genelToplam' => $genelToplam,
         'toplamYazi' => $request->toplamYazi,
         'kayitAlan' => auth()->user()->user_id,
         'faturaPdf' => $save_url,
@@ -314,20 +325,29 @@ class InvoicesController extends Controller
 
     $invoice_id = $invoice->id;
     if($invoice){
+
+        // Müşteri bilgisini al
+        $customer = Customer::find($request->mid);
+        $customerName = $customer ? $customer->adSoyad : null;
+        
+        // Fatura oluşturma log kaydı
+        ActivityLogger::logInvoiceCreated($invoice->id, $request->faturaNumarasi, $customerName);
+        // 1. Fatura müşterisi olarak işaretle
+        Customer::where('id', $request->mid)->update(['faturaMusterisi' => '1']);
+
+        // 2. Ürünleri kaydet
+        $aciklama = $request->aciklama;
+        $miktar = $request->miktar;
+        $fiyat = $request->fiyat;
+        $tutar = $request->tutar;
+
         // Storage warning kontrolü
         $storageWarning = null;
         if (session()->has('storage_warning_info')) {
             $storageInfo = session()->get('storage_warning_info');
             $storageWarning = "Fatura eklendi ancak storage alanınız %{$storageInfo['usage_percentage']} dolu. Kalan alan: {$storageInfo['remaining_formatted']}. Planınızı yükseltmeyi düşünün.";
         }
-        
-        // Müşteri ve ürün kaydetme işlemleri...
-        Customer::where('id', $request->mid)->update(['faturaMusterisi' => '1']);
 
-        $aciklama = $request->aciklama;
-        $miktar = $request->miktar;
-        $fiyat = str_replace(',', '.', str_replace('.', '', $request->fiyat));
-        $tutar = str_replace(',', '.', str_replace('.', '', $request->tutar));
 
         foreach($aciklama as $key => $val){
             if(!empty($val)){
@@ -336,25 +356,28 @@ class InvoicesController extends Controller
                     'faturaid' => $invoice_id,
                     'aciklama' => $val,
                     'miktar' => $miktar[$key],
-                    'fiyat' => $fiyat[$key],
-                    'tutar' => $tutar[$key],
+                    'fiyat' => $this->convertToDecimal($fiyat[$key]),
+                    'tutar' => $this->convertToDecimal($tutar[$key]),
                 ]);
             }
         }
         
-        return response()->json([
-            'success' => true,
+        $notification = array(
             'message' => 'Fatura Başarıyla Eklendi',
-            'storage_warning' => $storageWarning
-        ]);
-        
-    } else {
-        return response()->json([
-            'success' => false,
-            'message' => 'Fatura Eklenemedi'
-        ], 500);
-    }
+            'alert-type' => 'success'
+        );
+    
+        return redirect()->back()->with($notification);
+    }else{
+        $notification = array(
+            'message' => 'Fatura Eklenemedi',
+            'alert-type' => 'warning'
+        );
+    
+        return redirect()->back()->with($notification);
+    } 
 }
+
 
 // Helper method ekleyin
 private function formatBytes($bytes, $precision = 2) 
@@ -367,6 +390,7 @@ private function formatBytes($bytes, $precision = 2)
     
     return round($bytes, $precision) . ' ' . $units[$i];
 }
+
 
     public function EditInvoice($tenant_id,$id) {
         $firma = Tenant::where('id', $tenant_id)->first();
@@ -389,79 +413,105 @@ private function formatBytes($bytes, $precision = 2)
 
     }
 
-    private function convertToDecimal($value)
-    {
-        // Eğer değerde virgül varsa, Türk formatındadır ve uygun formata dönüştürün
-        if (strpos($value, ',') !== false) {
-            $value = str_replace('.', '', $value); // Noktaları kaldırın
-            $value = str_replace(',', '.', $value); // Virgülü noktaya çevirin
+private function convertToDecimal($value)
+{
+    // Boş değer kontrolü
+    if (empty($value)) {
+        return 0.00;
+    }
+    
+    // String'e çevir
+    $value = (string) $value;
+    
+    // Türkçe format kontrolü (14,40 gibi)
+    if (strpos($value, ',') !== false) {
+        // Binlik ayracı noktaları kaldır (1.234,56 -> 1234,56)
+        if (substr_count($value, '.') > 0 && strpos($value, ',') > strrpos($value, '.')) {
+            $value = str_replace('.', '', $value);
         }
+        // Virgülü noktaya çevir
+        $value = str_replace(',', '.', $value);
+    }
+    
+    // Float'a çevir ve 2 basamağa yuvarla
+    return round(floatval($value), 2);
+}
+   public function UpdateInvoice(Request $request, $tenant_id) {
+    $firma = Tenant::where('id', $tenant_id)->first();
+    $invoice_id = $request->id;
+    $pid = Auth::user()->user_id;
+    $createdAt = Carbon::parse($request->faturaTarihi . ' ' . now()->format('H:i:s'));
 
-        return $value;
+    // Fatura bilgilerini güncelle
+    $invoice = Invoice::where('firma_id', $tenant_id)->findOrFail($invoice_id);
+    $invoice->faturaNumarasi = $request->faturaNumarasi;
+    $invoice->faturaTarihi = $createdAt;
+    $invoice->odemeSekli = $request->odemeSekli;
+    $invoice->toplam = $this->convertToDecimal($request->toplam);
+    $invoice->indirim = $this->convertToDecimal($request->indirim);
+    $invoice->kdv = $this->convertToDecimal($request->kdv);
+    $invoice->kdvTutar = $request->kdvTutar;
+    $invoice->genelToplam = $this->convertToDecimal($request->genelToplam);
+    $invoice->toplamYazi = $request->toplamYazi;
+    $invoice->faturaDurumu = $request->faturaDurumu;
+    $invoice->save();
+
+    // Müşteri bilgisini al
+    $customer = Customer::find($invoice->musteriid);
+    $customerName = $customer ? $customer->adSoyad : null;
+
+    // Fatura güncelleme log kaydı
+    ActivityLogger::logInvoiceUpdated($invoice_id, $request->faturaNumarasi, $customerName);
+
+    $oldProducts = InvoiceProduct::where('firma_id', $firma->id)->where('faturaid', $invoice_id)->get();
+    foreach($oldProducts as $product){
+        InvoiceProduct::where('firma_id', $tenant_id)->findOrFail($product->id)->delete();
     }
 
-    public function UpdateInvoice(Request $request, $tenant_id) {
-        $firma = Tenant::where('id', $tenant_id)->first();
-        $invoice_id = $request->id;
-        $pid = Auth::user()->user_id;
-        $createdAt = Carbon::parse($request->faturaTarihi . ' ' . now()->format('H:i:s'));
+    // Yeni ürünleri ekle
+    $aciklama = $request->aciklama;
+    $miktar = $request->miktar;
+    $fiyat = $request->fiyat;
+    $tutar = $request->tutar;
 
-        // Fatura bilgilerini güncelle
-        $invoice = Invoice::where('firma_id', $tenant_id)->findOrFail($invoice_id);
-        $invoice->faturaNumarasi = $request->faturaNumarasi;
-        $invoice->faturaTarihi = $createdAt;
-        $invoice->odemeSekli = $request->odemeSekli;
-        $invoice->toplam = $this->convertToDecimal($request->toplam);
-        $invoice->indirim = $this->convertToDecimal($request->indirim);
-        $invoice->kdv = $this->convertToDecimal($request->kdv);
-        $invoice->kdvTutar = $request->kdvTutar;
-        $invoice->genelToplam = $this->convertToDecimal($request->genelToplam);
-        $invoice->toplamYazi = $request->toplamYazi;
-        $invoice->faturaDurumu = $request->faturaDurumu;
-        $invoice->save();
-
-        $oldProducts = InvoiceProduct::where('firma_id', $firma->id)->where('faturaid', $invoice_id)->get();
-        foreach($oldProducts as $product){
-            InvoiceProduct::where('firma_id', $tenant_id)->findOrFail($product->id)->delete();
+    foreach ($aciklama as $key => $val) {
+        if (!empty($val)) {
+            InvoiceProduct::create([
+                'firma_id' => $firma->id,
+                'faturaid' => $invoice_id,
+                'aciklama' => $val,
+                'miktar' => $miktar[$key],
+                'fiyat' => $this->convertToDecimal($fiyat[$key]),
+                'tutar' => $this->convertToDecimal($tutar[$key]),
+            ]);
         }
-
-        // Yeni ürünleri ekle
-        $aciklama = $request->aciklama;
-        $miktar = $request->miktar;
-        $fiyat = $request->fiyat;
-        $tutar = $request->tutar;
-
-        foreach ($aciklama as $key => $val) {
-            if (!empty($val)) {
-                InvoiceProduct::create([
-                    'firma_id' => $firma->id,
-                    'faturaid' => $invoice_id,
-                    'aciklama' => $val,
-                    'miktar' => $miktar[$key],
-                    'fiyat' => $fiyat[$key],
-                    'tutar' => $tutar[$key],
-                ]);
-            }
-        }
-        if(isset($invoice->servisid)){
-            if(!empty($invoice->servisid)){
-                Service::findOrFail($invoice->servisid)->update([
-                    'faturaNumarasi' => $request->faturaNumarasi,
-                ]);
-            }
-        }
-        
-        $notification = array(
-            'message' => 'Fatura Bilgileri Başarıyla Güncellendi',
-            'alert-type' => 'success'
-        );
-        return response()->json(['success' => $notification]);
     }
+    
+    if(isset($invoice->servisid)){
+        if(!empty($invoice->servisid)){
+            Service::findOrFail($invoice->servisid)->update([
+                'faturaNumarasi' => $request->faturaNumarasi,
+            ]);
+        }
+    }
+    
+    $notification = array(
+        'message' => 'Fatura Bilgileri Başarıyla Güncellendi',
+        'alert-type' => 'success'
+    );
+    return response()->json(['success' => $notification]);
+}
 
 
     public function DeleteInvoice($tenant_id,$id) {
          // Önce faturayı bul
         $fatura = Invoice::where('firma_id', $tenant_id)->findOrFail($id);
+
+        // Müşteri bilgisini al (silmeden önce)
+        $customer = Customer::find($fatura->musteriid);
+        $customerName = $customer ? $customer->adSoyad : null;
+        $invoiceNumber = $fatura->faturaNumarasi;
+        $invoiceId = $fatura->id;
 
         // Faturanın servis numarasını güncelle
         Service::where('id', $fatura->servisid)->update([
@@ -479,6 +529,9 @@ private function formatBytes($bytes, $precision = 2)
 
         // Faturayı sil
         $fatura->delete();
+
+        // Fatura silme log kaydı
+        ActivityLogger::logInvoiceDeleted($invoiceId, $invoiceNumber, $customerName);
 
         $notification = [
             'message' => 'Fatura Başarıyla Silindi',

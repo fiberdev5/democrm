@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\SupportTicket;
 use App\Models\SupportTicketReply;
+use App\Models\ActivityLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\Tenant;
 use Intervention\Image\Facades\Image;
+use App\Services\ActivityLogger;
 
 class SupportTicketController extends Controller
 {
@@ -43,8 +45,8 @@ class SupportTicketController extends Controller
         ];
         $totalTickets = $allTickets->count();
 
-        // Sayfalanmış ticket'ları al
-        $tickets = $query->orderBy('last_reply_at', 'desc')->paginate(10);
+       // Tüm ticket'ları al (sayfalama kaldırıldı)
+        $tickets = $query->orderBy('last_reply_at', 'desc')->get();
 
         return view('frontend.secure.support.index', compact('tickets', 'statusCounts', 'totalTickets'));
     }
@@ -159,6 +161,7 @@ class SupportTicketController extends Controller
             }
         }
 
+
         // Storage warning kontrolü
         $storageWarning = null;
         if ($tenant->getStorageUsagePercentage() >= 80) {
@@ -185,29 +188,42 @@ class SupportTicketController extends Controller
         if ($storageWarning) {
             session()->flash('storage_warning', $storageWarning);
         }
-
+          // LOG EKLE
+    ActivityLogger::logSupportTicketCreated($ticket->id, $ticket->ticket_number, $ticket->subject);
         return redirect()->route('support.index', $tenant_id)->with('success', $successMessage);
     }
 
+
     // Kullanıcı tarafı - destek talebi detay
-    public function show($tenant_id, SupportTicket $ticket)
-    {
-        $user = Auth::user();
-        
-        // Super Admin tümünü görebilir, diğerleri sadece kendilerininkini
-        if (!$user->isSuperAdmin() && $ticket->user_id !== $user->user_id) {
-            abort(403, 'Bu destek talebini görüntüleme yetkiniz bulunmamaktadır.');
-        }
-
-        // Tenant kontrolü (super admin değilse)
-        if (!$user->isSuperAdmin() && $ticket->tenant_id != $tenant_id) {
-            abort(403, 'Bu destek talebi size ait değil.');
-        }
-
-        $ticket->load('replies.user', 'user');
-
-        return view('frontend.secure.support.show', compact('ticket'));
+public function show($tenant_id, SupportTicket $ticket)
+{
+    $user = Auth::user();
+    
+    // Super Admin tümünü görebilir, diğerleri sadece kendilerininkini
+    if (!$user->isSuperAdmin() && $ticket->user_id !== $user->user_id) {
+        abort(403, 'Bu destek talebini görüntüleme yetkiniz bulunmamaktadır.');
     }
+
+    // Tenant kontrolü (super admin değilse)
+    if (!$user->isSuperAdmin() && $ticket->tenant_id != $tenant_id) {
+        abort(403, 'Bu destek talebi size ait değil.');
+    }
+
+    $ticket->load('replies.user', 'user');
+
+    // Bu ticket'a özel aktivite loglarını getir
+    $ticketActivities = ActivityLog::where('tenant_id', $ticket->tenant_id)
+                                  ->where('module', 'support')
+                                  ->where(function($query) use ($ticket) {
+                                      // reference_id ile eşleşenler VEYA description'da ticket ID'si geçenler
+                                      $query->where('reference_id', $ticket->id)
+                                            ->orWhere('description', 'like', "%TalepID: {$ticket->id}%");
+                                  })
+                                  ->orderBy('created_at', 'asc') // Kronolojik sıra ile
+                                  ->get();
+
+    return view('frontend.secure.support.show', compact('ticket', 'ticketActivities'));
+}
 
     // Kullanıcı tarafı - yanıt ekle
     public function reply(Request $request, $tenant_id, SupportTicket $ticket)
@@ -308,6 +324,52 @@ class SupportTicketController extends Controller
             'attachments' => !empty($attachments) ? $attachments : null,
             'is_admin_reply' => $user->isSuperAdmin() // Super Admin ise admin yanıtı olarak işaretle
         ]);
+
+        $oldStatus = $ticket->status;
+    
+    // Kullanıcı yanıt verince durum güncellemesi
+    if (!$user->isSuperAdmin()) {
+        // Normal kullanıcı yanıt verdi
+        if ($oldStatus === 'cevaplandi') {
+            // Admin cevaplamıştı, şimdi kullanıcı tekrar yanıt verdi -> 'acik' yap
+            $ticket->update([
+                'status' => 'acik',
+                'last_reply_at' => now()
+            ]);
+            
+            // Durum değişikliği logunu ekle
+            ActivityLogger::logSupportTicketStatusChanged(
+                $ticket->id, 
+                $ticket->ticket_number, 
+                $oldStatus, 
+                'acik'
+            );
+        } else {
+            // Durum 'acik' kalsın, sadece son yanıt tarihini güncelle
+            $ticket->update(['last_reply_at' => now()]);
+        }
+        
+        // *** ÖNEMLİ: Kullanıcı yanıt logunu ekle ***
+        ActivityLogger::logSupportTicketReply($ticket->id, $ticket->ticket_number, false);
+        
+    } else {
+        // Super Admin yanıt verdi - bu kısım zaten AdminSupportController'da var ama yine de
+        $ticket->update([
+            'status' => 'cevaplandi',
+            'last_reply_at' => now()
+        ]);
+        
+        if ($oldStatus !== 'cevaplandi') {
+            ActivityLogger::logSupportTicketStatusChanged(
+                $ticket->id, 
+                $ticket->ticket_number, 
+                $oldStatus, 
+                'cevaplandi'
+            );
+        }
+        
+        ActivityLogger::logSupportTicketReply($ticket->id, $ticket->ticket_number, true);
+    }
 
         return back()->with('success', 'Yanıtınız başarıyla gönderildi.');
     }

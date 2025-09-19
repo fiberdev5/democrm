@@ -662,4 +662,20 @@ public function getTotalStorageLimit()
         return $query->where('subscription_status', 'expired')
                     ->orWhere('subscription_ends_at', '<', now());
     }
+
+    /**
+     * Süper admin faturalar ilişkisi
+    */
+    public function superAdminInvoices()
+    {
+        return $this->hasMany(SuperAdminInvoice::class, 'firma_id');
+    }
+
+    /**
+     * Aktif süper admin faturalar
+     */
+    public function activeSuperAdminInvoices()
+    {
+        return $this->hasMany(SuperAdminInvoice::class, 'firma_id')->where('durum', '1');
+    }
 }

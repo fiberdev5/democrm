@@ -25,6 +25,7 @@ use Yajra\DataTables\DataTables;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Milon\Barcode\Facades\DNS1D;
 use Illuminate\Support\Facades\Validator;
+use App\Services\ActivityLogger;
 
 class StockController extends Controller
 {
@@ -92,7 +93,9 @@ public function AllStocks($tenant_id, Request $request)
             $kalanAdet = $toplamGiris - $toplamCikis;
 
             $toplamAdet += max($kalanAdet, 0);
-            $toplamFiyat += max($stock->fiyat,0);
+            // Toplam fiyat hesaplama - Fiyat × Kalan Adet
+            $fiyat = max($stock->fiyat, 0);
+            $toplamFiyat += ($fiyat * $kalanAdet);
         }
 
         // DataTables
@@ -275,6 +278,8 @@ public function AllStocks($tenant_id, Request $request)
             $stock->stok_cihaz  = $request->cihaz_id;   // ilişkili cihaz tablosu id'si
                
             $stock->save();
+            // Activity log ekle
+            ActivityLogger::logStockCreated($stock->id, $stock->urunAdi);
 
             $notification = [
                 'message' => 'Stok başarıyla oluşturuldu.',
@@ -784,6 +789,9 @@ public function StoreStockAction(Request $request, $tenant_id)
 
     $stockAction->save();
 
+    // Activity log ekle
+    ActivityLogger::logStockAction($stokId, $request->islem, $request->adet, $stockAction->id);
+
     // --- Stok Güncellemeleri ---
     if ($request->islem == 1) {
         $stock = \App\Models\Stock::find($stokId);
@@ -1189,7 +1197,9 @@ public function consignmentDeviceData(Request $request, $tenant_id)
     $kalanStok = $girisAdet - $cikisAdet;
 
     $toplamAdet += max($kalanStok, 0); // negatifse 0 yap
-    $toplamFiyat += max($stock->fiyat, 0);
+    // Toplam fiyat hesaplama - Fiyat × Kalan Adet
+    $fiyat = max($stock->fiyat, 0);
+    $toplamFiyat += ($fiyat * $kalanStok);
     }
 
 
@@ -1354,6 +1364,8 @@ public function StoreConsignmentDevice(Request $request, $tenant_id)
     $stock->stok_cihaz = $request->cihaz_id;
     $stock->save();
 
+    // Activity log ekle
+    ActivityLogger::logConsignmentCreated($stock->id, $stock->urunAdi);
 
 
     return redirect()->route('consignmentdevice', $tenant_id)
@@ -1584,6 +1596,9 @@ public function StoreConsignmentStockAction(Request $request, $tenant_id)
         $stockAction->tedarikci  = $request->tedarikci;
         $stockAction->save();
 
+
+        // Activity log ekle
+        ActivityLogger::logStockAction($stokId, $request->islem, $request->adet, $stockAction->id);
         // Alış işlemi: Stock tablosundaki fiyatı güncelle 
         if ($request->islem == 1 && $fiyat) {
             $stock = Stock::find($stokId);
@@ -1591,6 +1606,8 @@ public function StoreConsignmentStockAction(Request $request, $tenant_id)
                 $stock->save();
             }
         }
+
+        
 
         return response()->json([
             'status' => 'success',

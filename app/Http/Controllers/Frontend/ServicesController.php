@@ -45,6 +45,7 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
 use Image;
 use App\Models\IncomingCall;
+use App\Services\ActivityLogger;
 
 
 class ServicesController extends Controller
@@ -909,7 +910,7 @@ class ServicesController extends Controller
         if (!$firma) {
             return redirect()->route('giris');
         }
-        
+
         $raw1 = preg_replace('/\D/', '', $request->tel1); // Sadece rakamlar
         $tel1 = preg_replace('/(\d{3})(\d{3})(\d{4})/', '$1 $2 $3', $raw1);
 
@@ -953,6 +954,10 @@ class ServicesController extends Controller
             } else {
                 $musteri = Customer::create($musteriData);
                 $musteriId = $musteri->id;
+
+            // Yeni müşteri oluşturulduğunda log ekle
+            ActivityLogger::logCustomerCreated($musteriId);
+            
             }
         } else {
             // Eski müşteri seçilmiş - sadece güncelle, yeni müşteri oluşturma
@@ -1032,6 +1037,7 @@ class ServicesController extends Controller
                     
                     // SMS gönderimi için kod buraya eklenebilir
                     // ...
+                    ActivityLogger::logServiceCreated($servisId);
 
                     $notification = array(
                         'message' => 'Servis Başarıyla Eklendi',
@@ -1413,6 +1419,10 @@ class ServicesController extends Controller
                         'planDurum' => $planId,
                         'updated_at' => now()
                     ]);
+                      
+                // Aşama adını al
+                $stageName = ServiceStage::find($gidenIslem)->asama ?? 'Bilinmeyen Aşama';
+                ActivityLogger::logServicePlanAdded($servisId, $planId, $stageName);
                 $servis = Service::find($servisId);
 
                 // Soru cevaplarını işle
@@ -2090,7 +2100,10 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
                 ServiceMoneyAction::where('stokIslem', $stok->id)->delete();
 
                 $stok->delete();
-            }
+            }  
+
+            $stageName = ServiceStage::find($plan->gidenIslem)->asama ?? 'Bilinmeyen Aşama';
+            ActivityLogger::logServicePlanDeleted($plan->servisid, $planid, $stageName);
 
             // cevapları sil
             ServiceStageAnswer::where('planid', $servisPlanID)->delete();
@@ -2673,7 +2686,8 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
             
             // Servisi güncelle
             $service->update($data);
-            
+            // Basit servis güncelleme logunu ekle
+            ActivityLogger::logServiceUpdated($resource_id);
             // Güncellenmiş servisi döndür
             $updatedResource = Service::with([
                 'musteri:id,adSoyad,tel1,tel2',
@@ -2708,6 +2722,10 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
             'silinmeTarihi' => Carbon::now(),
             'silenKisi' => auth()->id(),
         ]);
+
+        // Servis silme logunu ekle
+        ActivityLogger::logServiceDeleted($id);
+    
         Log::info( $firma->firma_adi . ' firmasının ' . Auth::user()->name . '  personeli ' . $id. ' IDli servisi sildi.', [
             'ip_address' => request()->ip(),
         ]);
@@ -3019,6 +3037,7 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
         $sonuc = ServiceMoneyAction::where('firma_id', $tenant_id)->create($data);
     
         if ($sonuc) {
+            ActivityLogger::logServiceMoneyAdded($servisid, $fiyat, 1, $request->input('aciklama'));
             // kasa_hareketleri için veri hazırlığı
             $kasaData = [
                 'firma_id' => $tenant_id,
@@ -3129,6 +3148,7 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
         $sonuc = ServiceMoneyAction::where('firma_id', $tenant_id)->create($data);
     
         if ($sonuc) {
+            ActivityLogger::logServiceMoneyAdded($servisid, $fiyat, 2, $request->input('aciklama'));
             // kasa_hareketleri için veri hazırlığı
             $kasaData = [
                 'firma_id' => $tenant_id,
@@ -3461,6 +3481,7 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
         }
 
 
+        ActivityLogger::logServicePhotoAdded($request->servisid, $photo->id);
         return response()->json([
             'success' => true,
             'message' => 'Fotoğraf başarıyla yüklendi.',
@@ -3482,6 +3503,7 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
 
     public function DeleteServicePhoto($tenant_id, $photo_id)
     {
+        ActivityLogger::logServicePhotoDeleted($tenant_id, $photo_id);
         try {
             $photo = ServicePhoto::where('firma_id', $tenant_id)
                                 ->where('id', $photo_id)
@@ -3537,7 +3559,7 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
             'aciklama' => $request->aciklama,
             'created_at' => Carbon::now(),
         ]);
-
+        ActivityLogger::logServiceNoteAdded($request->servisid, 'receipt', $receiptNotes->id);
         return response()->json([
                 'success' => true,
                 'message' => 'Servis fiş notu başarıyla yüklendi.',
@@ -3615,7 +3637,7 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
             'aciklama' => $request->aciklama,
             'created_at' => Carbon::now(),
         ]);
-
+        ActivityLogger::logServiceNoteAdded($request->servisid, 'opt', $optNotes->id);
         return response()->json([
                 'success' => true,
                 'message' => 'Servis fiş notu başarıyla yüklendi.',

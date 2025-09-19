@@ -80,8 +80,12 @@ use App\Http\Controllers\Frontend\SuperAdminController;
 use App\Http\Controllers\Frontend\SupportTicketController;
 use App\Http\Controllers\Frontend\AdminSupportController;
 use App\Http\Controllers\Frontend\DestekController;
+
+use App\Http\Controllers\Frontend\ActivityLogController;
+use App\Http\Controllers\Frontend\SuperAdminInvoicesController;
 use App\Http\Controllers\Frontend\PaymentHistoryController;
 use App\Http\Controllers\Frontend\StorageController;
+
 
 Route::get('/secure', function () {
     return view('backend.index');
@@ -160,9 +164,35 @@ Route::middleware(['auth', 'superadmin'])->group(function () {
         // Firma silme (pasif hale getirme)
         Route::get('/tenant/{id}/delete', [SuperAdminController::class, 'deleteTenant'])
              ->name('tenant.delete');
+    
+        Route::get('/log-kayitlari', [ActivityLogController::class, 'superAdminIndex'])->name('super.admin.activity.logs');
+        Route::get('/activity-logs/data', [ActivityLogController::class, 'getLogs'])->name('super.admin.activity.logs.data');
+        Route::post('/activity-logs/clear', [ActivityLogController::class, 'clearLogs'])->name('super.admin.activity.logs.clear');
 
+
+        // Super Admin Faturalar
+        Route::controller(SuperAdminInvoicesController::class)->group(function () {
+            Route::get('/faturalar', 'AllInvoice')->name('invoices');
+            Route::get('/fatura/ekle', 'AddInvoice')->name('invoices.add');
+            Route::post('/fatura/gonder', 'StoreInvoice')->name('invoices.store');
+            Route::get('/fatura/duzenle/{id}', 'EditInvoice')->name('invoices.edit');
+            Route::post('/fatura/guncelle', 'UpdateInvoice')->name('invoices.update');
+            Route::get('/fatura/sil/{id}', 'DeleteInvoice')->name('invoices.delete');
+
+            Route::get('/fatura/goruntule/{id}', 'ShowInvoice')->name('invoices.show');
+            Route::post('/fatura/yukle', 'UploadInvoice')->name('invoices.upload');
+            Route::post('/eArsiv/sil/{id}', 'DeleteEinvoice')->name('invoices.delete.einvoice');
+
+            Route::get('/fatura-sonuc', 'GetInvoices')->name('invoices.get');
+            Route::post('/firma-ara', [SuperAdminInvoicesController::class, 'FirmaAra'])->name('firma.ara');
+        });
        
     });
+});
+Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth']], function () {
+    // Activity Logs
+    Route::get('/log-kayitlari', [ActivityLogController::class, 'index'])->name('activity.logs.index');
+    Route::get('/activity-logs/data', [ActivityLogController::class, 'getLogs'])->name('activity.logs.data');
 });
 
 Route::middleware(['auth'])->group(function () {
