@@ -185,8 +185,6 @@ Route::middleware(['auth', 'superadmin'])->group(function () {
 
             Route::get('/fatura-sonuc', 'GetInvoices')->name('invoices.get');
             Route::post('/firma-ara', [SuperAdminInvoicesController::class, 'FirmaAra'])->name('firma.ara');
-            
-            Route::get('/invoices/payments', [SuperAdminInvoicesController::class, 'GetCompletedPayments'])->name('invoices.payments');
         });
        
     });

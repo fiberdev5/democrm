@@ -27,11 +27,11 @@
                               Başlangıç Tarihi
                             </label>
                             <input type="date" 
-                              class="form-control datepicker" 
+                              class="form-control" 
                               id="date_from" 
                               name="date_from" 
                               value="{{ $dateFrom }}"
-                              title="Başlangıç tarihi seçin" style="width: 100%!important;">
+                              title="Başlangıç tarihi seçin">
                           </div>
                         </div>
 
@@ -42,11 +42,11 @@
                               Bitiş Tarihi
                             </label>
                             <input type="date" 
-                              class="form-control datepicker" 
+                              class="form-control " 
                               id="date_to" 
                               name="date_to" 
                               value="{{ $dateTo }}"
-                              title="Bitiş tarihi seçin" style="width: 100%!important;">                        
+                              title="Bitiş tarihi seçin">                        
                           </div>
                         </div>
 
@@ -228,7 +228,7 @@
                       </td>
                       <td class="text-center">
                         @if($payment['invoice_path'])
-                          <a href="{{ asset($payment['invoice_path']) }}" 
+                          <a href="{{ route('payment-history.invoice', ['type' => $payment['type'], 'id' => $payment['id'], 'tenant_id' => $tenant->id]) }}" 
                             class="btn btn-sm btn-outline-primary"
                             target="_blank">
                             <i class="fas fa-file-pdf mr-1"></i>

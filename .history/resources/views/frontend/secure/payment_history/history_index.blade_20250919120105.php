@@ -228,7 +228,7 @@
                       </td>
                       <td class="text-center">
                         @if($payment['invoice_path'])
-                          <a href="{{ asset($payment['invoice_path']) }}" 
+                          <a href="{{ route('payment-history.invoice', ['type' => $payment['type'], 'id' => $payment['id'], 'tenant_id' => $tenant->id]) }}" 
                             class="btn btn-sm btn-outline-primary"
                             target="_blank">
                             <i class="fas fa-file-pdf mr-1"></i>

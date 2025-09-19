@@ -27,11 +27,11 @@
                               Başlangıç Tarihi
                             </label>
                             <input type="date" 
-                              class="form-control datepicker" 
+                              class="form-control" 
                               id="date_from" 
                               name="date_from" 
                               value="{{ $dateFrom }}"
-                              title="Başlangıç tarihi seçin" style="width: 100%!important;">
+                              title="Başlangıç tarihi seçin">
                           </div>
                         </div>
 
@@ -42,11 +42,11 @@
                               Bitiş Tarihi
                             </label>
                             <input type="date" 
-                              class="form-control datepicker" 
+                              class="form-control " 
                               id="date_to" 
                               name="date_to" 
                               value="{{ $dateTo }}"
-                              title="Bitiş tarihi seçin" style="width: 100%!important;">                        
+                              title="Bitiş tarihi seçin">                        
                           </div>
                         </div>
 
@@ -215,67 +215,67 @@
                         </td>
                         <td class="text-center">
                           @if($payment['invoice_path'])
-                            <span class="badge badge-success">
-                              <i class="fas fa-check mr-1"></i>
-                              Mevcut
-                            </span>
-                          @else
-                          <span class="badge badge-warning">
-                            <i class="fas fa-clock mr-1"></i>
-                            Bekleniyor
-                          </span>
-                        @endif
-                      </td>
-                      <td class="text-center">
-                        @if($payment['invoice_path'])
-                          <a href="{{ asset($payment['invoice_path']) }}" 
-                            class="btn btn-sm btn-outline-primary"
-                            target="_blank">
-                            <i class="fas fa-file-pdf mr-1"></i>
-                            Faturayı İndir
-                          </a>
-                        @else
-                          <span class="text-muted">
-                            <i class="fas fa-times"></i>
-                            Fatura Yok
-                          </span>
-                        @endif
-                      </td>
-                    </tr>
-                    @endforeach
-                  </tbody>
-                </table>
-              </div>
+                                                    <span class="badge badge-success">
+                                                        <i class="fas fa-check mr-1"></i>
+                                                        Mevcut
+                                                    </span>
+                                                @else
+                                                    <span class="badge badge-warning">
+                                                        <i class="fas fa-clock mr-1"></i>
+                                                        Bekleniyor
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="text-center">
+                                                @if($payment['invoice_path'] && file_exists(storage_path('app/' . $payment['invoice_path'])))
+                                                    <a href="{{ route('payment-history.invoice', ['type' => $payment['type'], 'id' => $payment['id'], 'tenant_id' => $tenant->id]) }}" 
+                                                       class="btn btn-sm btn-outline-primary"
+                                                       target="_blank">
+                                                        <i class="fas fa-file-pdf mr-1"></i>
+                                                        Faturayı İndir
+                                                    </a>
+                                                @else
+                                                    <span class="text-muted">
+                                                        <i class="fas fa-times"></i>
+                                                        Fatura Yok
+                                                    </span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
 
-              <!-- Sayfalama -->
-              <div class="row mt-2">
-                <div class="col-12">
-                  {{ $pagination->links() }}
+                        <!-- Sayfalama -->
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                {{ $pagination->links() }}
+                            </div>
+                        </div>
+
+                    @else
+                        <div class="alert alert-warning text-center">
+                            <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                            <h5>Ödeme kaydı bulunamadı</h5>
+                            <p class="mb-0">Belirtilen kriterlere uygun herhangi bir ödeme kaydı bulunmamaktadır.</p>
+                        </div>
+                    @endif
+
+                    <!-- Sonuç Sayısı -->
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <div class="">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Toplam <strong>{{ $pagination->total() }}</strong> ödeme kaydı bulundu.
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-
-            @else
-              <div class="alert alert-warning text-center">
-                <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
-                <h5>Ödeme kaydı bulunamadı</h5>
-                <p class="mb-0">Belirtilen kriterlere uygun herhangi bir ödeme kaydı bulunmamaktadır.</p>
-              </div>
-            @endif
-
-            <!-- Sonuç Sayısı -->
-            <div class="row mb-3">
-              <div class="col-12">
-                <div class="">
-                  <i class="fas fa-info-circle mr-1"></i>
-                  Toplam <strong>{{ $pagination->total() }}</strong> ödeme kaydı bulundu.
-                </div>
-              </div>
             </div>
-          </div>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 </div>
 
 
