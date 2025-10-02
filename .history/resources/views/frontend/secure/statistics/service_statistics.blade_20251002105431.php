@@ -1,85 +1,94 @@
 @extends('frontend.secure.user_master')
 @section('user')
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
 <div class="page-content servis-istatistik-genel">
     <div class="container-fluid">
         @include('frontend.secure.statistics.statistics_menu', ['tenant_id' => $tenant_id])
            <!-- Modern Header Card -->
-            <div class="card shadow-sm mb-4 istatistik-card">
+            <div class="card shadow-sm istatistik-card">
                 <div class="card-header sayfaBaslik d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Servis İstatistikleri</h6>
-                <div class="btn-group mb-0">
+                    <h5 class="mb-0 d-flex align-items-center">
+                        <i class="fas fa-chart-line me-1"></i> <!-- ikon -->
+                        Servis İstatistikleri
+                    </h5>
+                <div class="btn-group mb-3">
                     <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown">
                         Filtrele <i class="mdi mdi-chevron-down"></i>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-end servisDrop p-3" style="min-width: 300px;">
-                        <form id="istatistikAra" action="{{ route('statistics', $tenant_id) }}" method="get">
-                            {{-- Personel --}}
-                            <div class="d-flex align-items-center mb-2">
-                                <label class="form-label me-2 mb-0" style="width: 120px; white-space: nowrap;">Personel</label>
-                                <div class="flex-grow-1">
-                                    <select name="personeller" class="form-select">
-                                        <option value="0">Tüm Personeller</option>
-                                        @foreach($personeller as $p)
-                                            <option value="{{ $p->user_id }}" {{ request()->personeller == $p->user_id ? 'selected' : '' }}>
-                                                {{ $p->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                   <div class="dropdown-menu dropdown-menu-end servisDrop p-3" style="min-width: 320px;">
+                    <form id="istatistikAra" action="{{ route('statistics', $tenant_id) }}" method="get">
+                        {{-- Personel --}}
+                        <div class="row g-2 align-items-center mb-3">
+                            <div class="col-4">
+                                <label for="personellerSelect" class="form-label mb-0">Personel</label>
                             </div>
-                            {{-- Servis Kaynağı --}}
-                            <div class="d-flex align-items-center mb-2">
-                                <label class="form-label me-2 mb-0" style="width: 120px; white-space: nowrap;">Servis Kaynağı</label>
-                                <div class="flex-grow-1">
-                                    <select name="servisKaynak" class="form-select form-select-sm w-100">
-                                        <option value="0">Tüm Kaynaklar</option>
-                                        @foreach($servisKaynaklari as $kaynak)
-                                            <option value="{{ $kaynak->id }}" 
-                                                {{ (isset($request) && $request->servisKaynak == $kaynak->id) ? 'selected' : '' }}>
-                                                {{ $kaynak->kaynak }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                            <div class="col-8">
+                                <select name="personeller" id="personellerSelect" class="form-select">
+                                    <option value="0">Tüm Personeller</option>
+                                    @foreach($personeller as $p)
+                                        <option value="{{ $p->user_id }}" {{ request()->personeller == $p->user_id ? 'selected' : '' }}>
+                                            {{ $p->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
-                            {{-- Başlangıç Tarihi --}}
-                            <div class="d-flex align-items-center mb-2">
-                                <label class="form-label me-2 mb-0" style="width: 120px;">Başlangıç Tarihi</label>
-                                <div class="flex-grow-1">
-                                    <input type="date" name="tarih1" class="form-control form-control-sm"
-                                        value="{{ \Carbon\Carbon::parse($request->tarih1 ?? now()->subMonth())->format('Y-m-d') }}">
-                                </div>
-                            </div>
-                            {{-- Bitiş Tarihi --}}
-                            <div class="d-flex align-items-center mb-3">
-                                <label class="form-label me-2 mb-0" style="width: 120px;">Bitiş Tarihi</label>
-                                <div class="flex-grow-1">
-                                    <input type="date" name="tarih2" class="form-control form-control-sm"
-                                        value="{{ \Carbon\Carbon::parse($request->tarih2 ?? now())->format('Y-m-d') }}">
-                                </div>
-                            </div>
-                            {{-- Hızlı filtre ve Ara --}}
-                            <div>
-                                <div class="row">
-                                    <div>
-                                    <div class="tarihAraligi mt-2 mb-2">
-                                        <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
-                                        <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
-                                        <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
-                                        <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
-                                        <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
-                                    </div>
-                                    </div>
-                                </div>
-                                <button type="submit" name="servisSayListele" class="btn btn-primary btn-sm w-100">
-                                    <i class="fas fa-search me-1"></i> Ara
-                                </button>
-                            </div>
+                        </div>
 
-                        </form>
-                    </div>
+                        {{-- Servis Kaynağı --}}
+                        <div class="row g-2 align-items-center mb-3">
+                            <div class="col-4">
+                                <label for="servisKaynakSelect" class="form-label mb-0">Servis Kaynağı</label>
+                            </div>
+                            <div class="col-8">
+                                <select name="servisKaynak" id="servisKaynakSelect" class="form-select form-select-sm w-100">
+                                    <option value="0">Tüm Kaynaklar</option>
+                                    @foreach($servisKaynaklari as $kaynak)
+                                        <option value="{{ $kaynak->id }}" 
+                                            {{ (isset($request) && $request->servisKaynak == $kaynak->id) ? 'selected' : '' }}>
+                                            {{ $kaynak->kaynak }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        {{-- Tarih Aralığı --}}
+                        <div class="row g-2 mb-3">
+                            <div class="col-4">
+                                <label for="daterange" class="form-label mb-0" style="padding-top: 6px;">Tarih Aralığı</label>
+                            </div>
+                            <div class="col-8">
+                                {{-- Gizli inputlar daterangepicker tarafından doldurulacak --}}
+                                <input type="hidden" name="tarih1" id="tarih1" value="{{ \Carbon\Carbon::parse($request->tarih1 ?? now()->subMonth())->format('Y-m-d') }}">
+                                <input type="hidden" name="tarih2" id="tarih2" value="{{ \Carbon\Carbon::parse($request->tarih2 ?? now())->format('Y-m-d') }}">
+                                
+                                {{-- Görünür daterangepicker inputu --}}
+                                <input id="daterange" class="form-control form-control-sm tarih-araligi mb-2" />
+                                
+                                <div class="tarihAraligi">
+                                    <button type="button" id="lastMonth" class="btn btn-sm btn-secondary me-1 mb-1">Son 1 Ay</button>
+                                    <button type="button" id="last15Days" class="btn btn-sm btn-secondary me-1 mb-1">Son 15 Gün</button>
+                                    <button type="button" id="lastWeek" class="btn btn-sm btn-secondary me-1 mb-1">Son 7 Gün</button>
+                                    <button type="button" id="yesterday" class="btn btn-sm btn-secondary me-1 mb-1">Dün</button>
+                                    <button type="button" id="today" class="btn btn-sm btn-secondary mb-1">Bugün</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Ara Butonu --}}
+                        <div>
+                            <button type="submit" name="servisSayListele" class="btn btn-primary btn-sm w-100">
+                                <i class="fas fa-search me-1"></i> Ara
+                            </button>
+                        </div>
+                    </form>
                 </div>
-        </div>
+                </div>
+            </div>
         @if(isset($statistics))
             <!-- Filtered Results -->
             <div class="row mb-4 statistics-filter-section">
@@ -280,13 +289,13 @@
             </div>
         @endif
         <!-- Grafik Bölümleri -->
-        <div class="row mt-4">
+        <div>
             <!-- Servis Sayıları Grafiği -->
             <div class="col-lg-7">
                 <div class="card shadow-sm servisSayilariChart" style="height: 300px;">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Servis Sayıları</h6>
+                            <h5 class="mb-0"><i class="fas fa-chart-line me-1"></i>Servis Sayıları</h6>
                         </div>
                         <ul class="nav nav-tabs border-0" role="tablist">
                             <li class="nav-item">
@@ -320,7 +329,7 @@
                 <div class="card shadow-sm servisSaatleriChart" style="height: 300px;">
                     <div class="card-header  d-flex justify-content-between align-items-center">
                         <div class="d-flex align-items-center">
-                            <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Saat Aralıkları</h6>
+                            <h5 class="mb-0"><i class="fas fa-clock me-1"></i>Saat Aralıkları</h6>
                         </div>
                         <!-- Tab Navigation -->
                         <ul class="nav nav-tabs border-0" role="tablist">
@@ -699,60 +708,69 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
 $(document).ready(function () {
-    const tarih1Input = document.querySelector('input[name="tarih1"]');
-    const tarih2Input = document.querySelector('input[name="tarih2"]');
-    const servisDropMenu = document.querySelector('.servisDrop');
+    // Başlangıç ve bitiş tarihlerini gizli inputlardan al
+    let start_date = moment($('#tarih1').val());
+    let end_date = moment($('#tarih2').val());
 
-    document.getElementById('lastYear').addEventListener('click', function(e) {
-        e.preventDefault(); 
-        // Event'ın dropdown'ı kapatmasını engelle
-        e.stopPropagation();
+    // Daterangepicker'ı başlat
+    $('#daterange').daterangepicker({
+        startDate: start_date,
+        endDate: end_date,
+        locale: {
+            format: 'DD-MM-YYYY',
+            separator: ' - ',
+            applyLabel: 'Uygula',
+            cancelLabel: 'İptal',
+            weekLabel: 'H',
+            daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
+            monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+            firstDay: 1
+        }
+    }, function(start, end) {
+        // Tarih seçildiğinde gizli inputları güncelle
+        $('#tarih1').val(start.format('YYYY-MM-DD'));
+        $('#tarih2').val(end.format('YYYY-MM-DD'));
+    });
+    
+    // Kısayol butonları için fonksiyon
+    function updateRange(start, end) {
+        $('#daterange').data('daterangepicker').setStartDate(start);
+        $('#daterange').data('daterangepicker').setEndDate(end);
+        // Gizli inputları da güncelle
+        $('#tarih1').val(start.format('YYYY-MM-DD'));
+        $('#tarih2').val(end.format('YYYY-MM-DD'));
+    }
 
-        const today = moment();
-        const lastYear = moment().subtract(1, 'year');
-        tarih1Input.value = lastYear.format('YYYY-MM-DD');
-        tarih2Input.value = today.format('YYYY-MM-DD');
+    // Kısayol buton eventleri
+    $('#lastMonth').click(function() { updateRange(moment().subtract(1, 'month'), moment()); });
+    $('#last15Days').click(function() { updateRange(moment().subtract(15, 'days'), moment()); });
+    $('#lastWeek').click(function() { updateRange(moment().subtract(7, 'days'), moment()); });
+    $('#yesterday').click(function() { updateRange(moment().subtract(1, 'days'), moment().subtract(1, 'days')); });
+    $('#today').click(function() { updateRange(moment(), moment()); });
+
+    // Dropdown'ın kapanmasını engellemek için
+    let isClickFromDaterangepicker = false;
+    $('.servisDrop').parent().on('hide.bs.dropdown', function(e) {
+        if (isClickFromDaterangepicker) {
+            e.preventDefault();
+        }
+        isClickFromDaterangepicker = false;
     });
 
-    document.getElementById('lastMonth').addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        const today = moment();
-        const lastMonth = moment().subtract(1, 'month');
-        tarih1Input.value = lastMonth.format('YYYY-MM-DD');
-        tarih2Input.value = today.format('YYYY-MM-DD');
+    $(document).on('mousedown', function(e) {
+        if ($(e.target).closest('.daterangepicker, #daterange, .tarihAraligi button').length) {
+            isClickFromDaterangepicker = true;
+        }
     });
 
-    document.getElementById('lastWeek').addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation(); 
-
-        const today = moment();
-        const lastWeek = moment().subtract(7, 'days');
-        tarih1Input.value = lastWeek.format('YYYY-MM-DD');
-        tarih2Input.value = today.format('YYYY-MM-DD');
+    $('#daterange').on('apply.daterangepicker cancel.daterangepicker', function() {
+        // Daterangepicker'dan bir seçim yapıldığında dropdown'ın kapanmasına izin ver
+        // ama bunu bir sonraki tıklamada yapmak için bayrağı sıfırla
+        setTimeout(() => isClickFromDaterangepicker = false, 100);
     });
 
-    document.getElementById('yesterday').addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation(); 
-
-        const yesterday = moment().subtract(1, 'days');
-        tarih1Input.value = yesterday.format('YYYY-MM-DD');
-        tarih2Input.value = yesterday.format('YYYY-MM-DD');
-    });
-
-    document.getElementById('today').addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation(); 
-
-        const today = moment();
-        tarih1Input.value = today.format('YYYY-MM-DD');
-        tarih2Input.value = today.format('YYYY-MM-DD');
-    });
-
-    servisDropMenu.addEventListener('click', function (e) {
+    $('.servisDrop button').on('click', function(e) {
+        // Kısayol butonları tıklandığında formun gönderilmesini engelle
         e.stopPropagation();
     });
 });
