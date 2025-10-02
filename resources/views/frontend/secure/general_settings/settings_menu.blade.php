@@ -304,7 +304,7 @@
             <i class="fas fa-money custom-icon"></i>Yazıcı Fiş Tasarımı
           </a>
             <a class="dropdown-item nav25" data-bs-toggle="pill" href="#tab25" data-id="" role="tab">
-            <i class="fas fa-history custom-icon"></i>Sistem Log Kayıtları
+            <i class="fas  custom-icon"></i>Sistem Log Kayıtları
           </a>
           
         </div>

@@ -3,28 +3,41 @@
 @section('user')
 
 <style>
+  /* "Önerilen" etiketi ve Satın Al butonu için ortak gradient stili */
+  .bg-custom-gradient {
+    background: linear-gradient(135deg, #fb923c 0%, #f9b233 100%);
+  }
+
+  /* Satın Al butonu */
   .btn-gradient {
     background: linear-gradient(135deg, #fb923c 0%, #f9b233 100%);
     color: #fff;
     border: none;
     transition: all 0.3s ease;
   }
-
   .btn-gradient:hover {
+    color: #fff;
     opacity: 0.9;
     transform: translateY(-2px);
   }
 
+  /* Fiyatlandırma kartları */
   .pricing-card {
     border-radius: 1.2rem;
     transition: all 0.3s ease;
+    border: none; /* Bootstrap'in varsayılan card border'ını kaldırır */
+    height: 100%; /* Sütunların eşit yükseklikte olmasını sağlar */
   }
 
-  .pricing-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  /* Sadece masaüstünde çalışacak hover efekti */
+  @media (min-width: 768px) {
+    .pricing-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+    }
   }
   
+  /* Paket özellikleri listesi */
   .price-description ul {
     list-style: none;
     padding: 0;
@@ -32,14 +45,12 @@
     margin: 0 auto;
     display: inline-block;
   }
-
   .price-description ul li {
     display: flex;
     align-items: center;
     margin-bottom: 0.75rem;
     font-size: 0.95rem;
   }
-
   .price-description ul li::before {
     content: '';
     display: inline-block;
@@ -51,22 +62,20 @@
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3E%3Cpath fill-rule='evenodd' d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z' clip-rule='evenodd' /%3E%3C/svg%3E") no-repeat center;
     background-size: contain;
   }
-  
-  .text-gray-900 {
-    --tw-text-opacity: 1;
-    color: #212529;
-  }
-  
-  .bg-bls-teal-50 {
-    background-color: #cff3fa;
-  }
-  
-  .text-bls-success-700 {
-    color: #027a48;
-  }
+
+   @media (max-width: 768px) {
+    .page-title-box{
+      padding-bottom: 10px !important;
+    }
+    .mobil-gb{
+      display: flex;
+      justify-content: space-between;
+    }
+   }
+
 </style>
 
-<script src="https://cdn.tailwindcss.com"></script>  
+{{-- Tailwind CSS script'i kaldırıldı --}}
 
 <div class="page-content">
   <div class="container-fluid">
@@ -75,7 +84,6 @@
       <div class="col-12">
         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
           <h4 class="mb-sm-0">
-            {{-- <i class="fas fa-hdd text-primary me-2"></i> --}}
             Ek Storage Paketleri
           </h4>
           <div class="page-title-right">
@@ -109,7 +117,7 @@
       <div class="col-12">
         <div class="card ">
           <div class="card-body">
-            <div class="row align-items-center">
+            <div class="row align-items-center p-1">
               <div class="col-md-8">
                 <h6 class="mb-2"><i class="fas fa-info-circle text-primary me-2"></i>Mevcut Storage Durumunuz</h6>
                 <div class="d-flex justify-content-between mb-2">
@@ -129,7 +137,7 @@
                   </small>
                 @endif
               </div>
-              <div class="col-md-4 text-end">
+              <div class="col-md-4 text-md-end mt-1 mt-md-0 mobil-gb">
                 <div class="text-muted">Kalan Alan</div>
                 <h4 class="mb-0 text-{{ $storageInfo['danger_threshold'] ? 'danger' : 'primary' }}">{{ $storageInfo['remaining_formatted'] }}</h4>
               </div>
@@ -141,86 +149,76 @@
 
     <div class="row">
       <div class="col-md-12">
-        <section class="py-8 bg-gray-50">
-          <div class="container">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:items-start">
+        <section class="py-1 py-md-5" style="background-color: #f8f9fa;">
+          <div class="container-fluid">
+            {{-- DEĞİŞİKLİK: Tailwind grid yapısı Bootstrap 'row' ve 'col' ile değiştirildi --}}
+            <div class="row justify-content-center">
               @foreach($packages as $i => $package)
                 @php
-                  // 2. kartı "önerilen" yap
                   $isPopular = ($i === 1);
                 @endphp
+                {{-- Her kart mobil için tam genişlik (col-12), masaüstü için 1/3 genişlik (col-md-4) kaplar --}}
+                <div class="col-12 col-md-6 col-lg-4 mb-4">
+                  {{-- DEĞİŞİKLİK: Tailwind sınıfları Bootstrap ve özel CSS sınıfları ile değiştirildi --}}
+                  <div class="card pricing-card shadow-lg position-relative text-center p-3 p-md-4">
+                    <div class="card-body d-flex flex-column">                     
+                      @if($isPopular)
+                        {{-- DEĞİŞİKLİK: "Önerilen" etiketi Bootstrap sınıfları ile yeniden yapıldı --}}
+                        <span class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-custom-gradient text-white shadow-sm py-2 px-3" style="font-size: 0.75rem;">
+                          Önerilen
+                        </span>
+                      @endif
 
-                <div class="relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition transform hover:-translate-y-2 p-8 flex flex-col text-center pricing-card">                                     
-                  @if($isPopular)
-                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-orange-500 to-[#f9b233] text-white text-xs font-semibold px-3 py-1 rounded-full shadow">
-                      Önerilen
-                    </span>
-                  @endif
-
-                  <div class="flex justify-center mb-6">
-                    <i class="fas fa-database text-5xl text-[#f9b233]"></i>
-                  </div>
-                  
-                  <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $package->name }}</h3>
-                  <p class="text-gray-500 font-normal mb-2" style="font-size: 14px;">{{ $package->description }}</p>
-
-                  <div class="text-4xl font-extrabold text-gray-900 mb-4">
-                    ₺ {{ number_format($package->price, 2) }}
-                    <span class="text-base text-gray-500 font-normal">
-                      / tek seferlik
-                    </span>
-                  </div>
-
-                  <div class="flex justify-between items-center my-4 text-sm text-gray-600">
-                    <!-- Sol Taraf: Storage İkonu -->
-                    <div class="flex items-center space-x-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
-                      </svg>
-                      <span class="text-gray-400">Kalıcı</span>
-                    </div>
-                    
-                    <!-- Sağ Taraf: Storage Miktarı -->
-                    <div class="flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 text-gray-400" style="width: 1rem;height: 0.9rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
-                      </svg>
-                      <span class="font-medium">
-                        +{{ $package->storage_gb }} GB
-                      </span>
-                    </div>
-                  </div>
-
-                  <form action="{{ route('storage.purchase', $firma->id) }}" method="POST" class="mb-4">
-                    @csrf
-                    <input type="hidden" name="package_id" value="{{ $package->id }}">
-                    <button type="submit" class="inline-block w-full py-2 rounded-full bg-gradient-to-r from-orange-500 to-[#f9b233] text-white font-semibold transition hover:opacity-90">
-                      Satın Al
-                    </button>
-                  </form>
-
-                  <hr class="mt-4" style="--tw-border-opacity: 1;border-color: rgb(132 145 173);">
-
-                  <!-- Özellikler - Her Zaman Görünür -->
-                  <div class="price-description text-gray-600 mb-2 mt-4 text-center">
-                    <h6 class="text-gray-700 font-semibold mb-3">Bu Pakette</h6>
-                    <ul>
-                      <li>+{{ $package->storage_gb }} GB kalıcı depolama alanı</li>
-                      <li>Tüm dosya türleri desteklenir</li>
-                      <li>Anında aktifleşir</li>
-                      <li>Süre sınırı yoktur</li>
-                      <li>Mevcut limitinize eklenir</li>
-                      <li>7/24 teknik destek</li>
-                    </ul>
-                    
-                    {{-- @if($package->storage_gb >= 15)
-                      <div class="mt-3 p-2 bg-green-50 rounded-lg">
-                        <small class="text-green-600 font-medium">
-                          <i class="fas fa-gift me-1"></i>
-                          Bonus: Öncelikli müşteri desteği
-                        </small>
+                      <div class="d-flex justify-content-center mb-4 mt-3">
+                        <i class="fas fa-database" style="font-size: 3rem; color: #f9b233;"></i>
                       </div>
-                    @endif --}}
+                      
+                      <h3 class="h5 fw-bold text-dark mb-2">{{ $package->name }}</h3>
+                      <p class="text-muted small mb-2">{{ $package->description }}</p>
+
+                      <div class="h1 fw-bolder text-dark my-3">
+                        ₺{{ number_format($package->price, 2) }}
+                        <span class="h6 text-muted fw-normal">/ tek seferlik</span>
+                      </div>
+
+                      <div class="d-flex justify-content-between align-items-center my-4 small text-muted">
+                        <div class="d-flex align-items-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M2.5.5A.5.5 0 0 1 3 .5V1h10V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                          </svg>
+                          <span class="ms-2">Kalıcı</span>
+                        </div>
+                        
+                        <div class="d-flex align-items-center fw-medium text-dark">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="me-1" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" stroke="currentColor" stroke-width="0.1">
+                              <path d="M8 1.5c4.418 0 8 2.015 8 4.5S12.418 10.5 8 10.5 0 8.485 0 6s3.582-4.5 8-4.5zM8 12c4.418 0 8 2.015 8 4.5s-3.582 4.5-8 4.5S0 18.985 0 16.5 3.582 12 8 12zM0 6a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H.5A.5.5 0 0 1 0 6z"/>
+                          </svg>
+                          <span>+{{ $package->storage_gb }} GB</span>
+                        </div>
+                      </div>
+
+                      <form action="{{ route('storage.purchase', $firma->id) }}" method="POST" class="mb-4 mt-auto">
+                        @csrf
+                        <input type="hidden" name="package_id" value="{{ $package->id }}">
+                        <button type="submit" class="btn btn-gradient rounded-pill w-100 py-2 fw-semibold">
+                          Satın Al
+                        </button>
+                      </form>
+
+                      <hr class="mt-4">
+
+                      <div class="price-description text-muted mb-2 mt-4 text-center">
+                        <h6 class="text-dark fw-semibold mb-3">Bu Pakette</h6>
+                        <ul>
+                          <li>+{{ $package->storage_gb }} GB kalıcı depolama alanı</li>
+                          <li>Tüm dosya türleri desteklenir</li>
+                          <li>Anında aktifleşir</li>
+                          <li>Süre sınırı yoktur</li>
+                          <li>Mevcut limitinize eklenir</li>
+                          <li>7/24 teknik destek</li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
               @endforeach
@@ -233,7 +231,7 @@
     <!-- Alt Bilgilendirme -->
     <div class="row mt-4">
       <div class="col-12">
-        <div class="card">
+        <div style="margin-bottom: 0px;padding:5px" class="card">
           <div class="card-body text-center">
             <h5 class="mb-3"><i class="fas fa-question-circle text-primary me-2"></i>Sıkça Sorulan Sorular</h5>
             <div class="row">
