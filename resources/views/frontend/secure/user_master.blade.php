@@ -96,16 +96,16 @@
             @endif
             <!-- Impersonation kullanıcı rolüne göre giriş-çıkış kısmı   -->
             <div id="impersonationBanner" class="d-none">
-                <div class="alert alert-warning alert-dismissible m-0" style="border-radius: 0; border: none; border-bottom: 3px solid #ffc107;">
+                <div class="alert alert-warning m-0" style="border-radius: 0;padding:10px 0px; border: none; border-bottom: 3px solid #ffc107;">
                     <div class="container-fluid">
                         <div class="row align-items-center">
-                            <div class="col-auto">
+                            <div style="padding-right:3px" class="col-auto col-md-1 col-2 ms-auto text-center">
                                 <i class="fas fa-user-secret fa-2x text-warning"></i>
                             </div>
-                            <div class="col">
+                            <div style="padding-left:3px;padding-right:3px" class="col col-md-9 col-10">
                                 <div class="d-flex align-items-center">
                                     <div class="me-3">
-                                        <strong>Kimliğe Bürünme Aktif</strong>
+                                        <strong class="font-md">Kimliğe Bürünme Aktif</strong>
                                         <div id="impersonationDetails" class="small"></div>
                                     </div>
                                     <div class="me-3">
@@ -114,7 +114,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-auto">
+                            <div class="col-auto back-button col-md-2">
                                 <button type="button" class="btn btn-outline-dark btn-sm" id="exitImpersonation">
                                     <i class="fas fa-sign-out-alt me-1"></i>
                                     Süper Admin Hesabıma Dön
@@ -346,6 +346,20 @@ $(document).ready(function() {
     position: sticky;
     top: 0;
     z-index: 1040;
+    height: 0px;
+    margin-left: 6px;
+}
+@media (max-width: 767px) {
+   #impersonationBanner {
+        margin-left: 0px;
+        height: 54px;
+    } 
+    .font-md{
+        font-size:13px;
+    }
+    .back-button{
+        margin-top:10px;
+    }
 }
 </style>
 

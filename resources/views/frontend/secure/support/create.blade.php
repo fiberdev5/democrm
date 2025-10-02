@@ -44,7 +44,7 @@
             <div class="col-12">
                 <div class="card shadow-sm">
                     <div class="card-header text-white">
-                        <h5 class="card-title mb-0">
+                        <h5 class="card-title mb-2">
                             <i class="fas fa-plus-circle"></i>
                             Yeni Destek Talebi Oluştur
                         </h5>
@@ -126,7 +126,7 @@
                                     @endphp
                                         @foreach($categories as $key => $value)
                                             @php $iconData = $categoryIcons[$key] ?? ['icon' => 'fas fa-folder', 'color' => 'secondary', 'desc' => '']; @endphp
-                                            <div class="col-auto" style="min-width: 250px;">
+                                            <div class="col-auto new-support" style="min-width: 250px;">
                                                 <input type="radio" name="category" id="category_{{ $key }}" value="{{ $key }}" 
                                                        class="btn-check" {{ old('category') == $key ? 'checked' : '' }} required>
                                                 <label for="category_{{ $key }}" class="btn btn-outline-{{ $iconData['color'] }} w-100 h-100 p-1 category-card">
@@ -158,7 +158,7 @@
                                         ];
                                         @endphp
                                         @foreach($priorityOptions as $key => $data)
-                                            <div class="col-auto" style="min-width: 250px;">
+                                            <div class="col-auto new-support" style="min-width: 250px;">
                                                 <input type="radio" name="priority" id="priority_{{ $key }}" value="{{ $key }}"
                                                        class="btn-check" {{ old('priority') == $key ? 'checked' : '' }} {{ $key == 'orta' && !old('priority') ? 'checked' : '' }} required>
                                                 <label for="priority_{{ $key }}" class="btn btn-outline-{{ $data['color'] }} w-100 h-100 p-2 priority-card">
@@ -271,7 +271,7 @@
                                 <a href="{{ route('support.index', Auth::user()->tenant_id) }}" class="btn btn-outline-secondary">
                                     <i class="fas fa-arrow-left me-2"></i> Geri Dön
                                 </a>
-                                <button type="submit" class="btn btn-primary px-4">
+                                <button type="submit" class="btn btn-primary px-2">
                                     <i class="fas fa-paper-plane me-2"></i> Destek Talebi Gönder
                                 </button>
                             </div>

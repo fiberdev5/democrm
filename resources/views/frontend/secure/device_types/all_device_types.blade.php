@@ -5,8 +5,11 @@
     </div>
   </div>
 </div>
-        <div  id="cihazTuru">
-          <table id="datatableDeviceTypes" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+        <div id="cihazTuru">
+
+    {{-- MASAÜSTÜ GÖRÜNÜMÜ (ORİJİNAL KODUNUZ - HİÇBİR DEĞİŞİKLİK YAPILMADI) --}}
+    <div class="d-none d-lg-block">
+        <table id="datatableDeviceTypes" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
             <a  class="btn btn-success btn-sm mb-1 addDeviceType" data-bs-toggle="modal" data-bs-target="#addDeviceTypeModal"><i class="fas fa-plus"></i><span>Cihaz Ekle</span></a>
             <thead class="title">
               <tr>
@@ -32,8 +35,49 @@
                 </tr>
               @endforeach
             </tbody>
-          </table>
-        </div>
+        </table>
+    </div>
+
+    {{-- MOBİL GÖRÜNÜM (YENİ LİSTE YAPISI) --}}
+    <div class="d-lg-none">
+        {{-- "Cihaz Ekle" butonu mobilde de görünmesi için buraya da kopyalandı --}}
+        <a class="btn btn-success btn-sm mb-3 addDeviceType" data-bs-toggle="modal" data-bs-target="#addDeviceTypeModal"><i class="fas fa-plus"></i><span> Cihaz Ekle</span></a>
+
+        @foreach($device_types as $item)
+            <div class="card shadow-sm mb-3" data-id="{{$item->id}}">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="text-muted">Cihaz</span>
+                            <a href="javascript:void(0);" class="t-link editDeviceType" data-bs-id="{{$item->id}}" data-bs-toggle="modal" data-bs-target="#editDeviceTypeModal">
+                                <h6 class="mb-0 fw-bold d-inline">{{ $item->cihaz }}</h6>
+                            </a>
+                        </div>
+                        <span class="badge bg-light text-primary border">ID: {{ $item->id }}</span>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">Operatör Prim:</span>
+                            <span class="fw-bold">{{ $item->operatorPrim }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">Atolye Prim:</span>
+                            <span class="fw-bold">{{ $item->atolyePrim }}</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                {{-- Orijinal tablodaki işlem butonları, TÜM ÖZELLİKLERİYLE BİREBİR KOPYALANDI --}}
+                <div class="card-footer bg-white d-flex justify-content-end gap-2 p-2">
+                    <a href="javascript:void(0);" class="btn btn-outline-primary btn-sm editDeviceType mobilBtn mbuton1" data-bs-id="{{$item->id}}" data-bs-toggle="modal" data-bs-target="#editDeviceTypeModal" title="Göster"><i class="fas fa-eye"></i> <span> Düzenle</span></a>
+                    <a href="javascript:void(0);" class="btn btn-outline-warning btn-sm editDeviceType mobilBtn mbuton1" data-bs-id="{{$item->id}}" data-bs-toggle="modal" data-bs-target="#editDeviceTypeModal" title="Düzenle"><i class="fas fa-edit"></i> <span> Düzenle</span></a>
+                    <a href="javascript:void(0);"  class="btn btn-outline-danger btn-sm mobilBtn deleteDeviceType" data-bs-id="{{$item->id}}" title="Sil"><i class="fas fa-trash-alt"></i> <span> Sil</span></a>
+                </div>
+            </div>
+        @endforeach
+    </div>
+</div>
   
   <!-- add modal content -->
   <div id="addDeviceTypeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >

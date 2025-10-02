@@ -129,6 +129,33 @@
   font-weight: normal;
   letter-spacing: 0;
 }
+@media (max-width: 767px) {
+  .subscription-overview {
+    padding: 20px 10px;
+  }
+  .subscription-overview h2{
+    font-size: 14px !important;
+  }
+  .subscription-overview p{
+    font-size: 10px !important;
+  }
+  .opacity-75{
+    font-size: 14px !important;
+  }
+  .stat-card {
+    padding: 4px;
+    text-align: center;
+  }
+.stat-value{
+ margin-bottom: 0px !important;
+}
+.stat-label{
+ font-size: 13px !important;
+}
+.subscription-stats{
+  gap: 8px !important;
+}
+}
 </style>
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -142,14 +169,14 @@
       
       <div class="subscription-overview">
         <div class="row align-items-center mb-4">
-          <div class="col-md-8" >
+          <div class="col-md-8 col-8" >
             <h2 class="mb-2" style="color: #e2e8f0;font-size:18px;">
               <i class="fas fa-crown"></i>
               {{ $currentPlan->name }} Planı
             </h2>
             <p class="mb-0 opacity-90">{{ $currentPlan->getFormattedPrice() }} / {{ $currentPlan->getBillingCycleText() }} - Aktif aboneliğiniz</p>
           </div>
-          <div class="col-md-4 text-end">
+          <div class="col-md-4 col-4 text-end">
             <div class="opacity-75" style="font-size: 18px;">Bitiş Tarihi</div>
             <p class="opacity-90 mb-0" style="color: #e2e8f0">{{ $tenant->subscription_ends_at?->format('d.m.Y') ?? 'Süresiz' }}</p>
           </div>
@@ -183,7 +210,7 @@
         {{-- Storage Durumu --}}
        
 
-        <div class="row text-center">
+        <div class="row text-md-center">
           <div class="col-md-4">
             <a href="{{ route('storage.packages', $tenant->id) }}" class="btn btn-light btn-sm">
               <i class="fas fa-hdd me-1"></i>Ek Depolama
@@ -197,7 +224,7 @@
               </a>
             @endif
           </div>
-          <div class="col-md-4">
+          <div style="margin-top: 10px;" class="col-md-4">
             <a href="{{route('depolama.bilgisi', $tenant->id)}}" class="btn btn-light btn-sm">
               <i class="fas fa-file-invoice me-1"></i>Depolama Alanı Yönetimi
             </a>

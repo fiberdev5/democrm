@@ -21,7 +21,7 @@
                     <div class="row align-items-end">
                       <!-- Başlangıç -->
                       <div class="col-lg-2 col-md-3 col-sm-6">
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-1">
                           <label for="date_from" class="form-label fw-bold" style="font-size: 12px;">Başlangıç</label>
                           <input type="date" class="form-control form-control-sm" id="date_from" name="date_from" value="{{ $dateFrom }}">
                         </div>
@@ -29,7 +29,7 @@
 
                       <!-- Bitiş -->
                       <div class="col-lg-2 col-md-3 col-sm-6">
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-1">
                           <label for="date_to" class="form-label fw-bold" style="font-size: 12px;">Bitiş</label>
                           <input type="date" class="form-control form-control-sm" id="date_to" name="date_to" value="{{ $dateTo }}">
                         </div>
@@ -37,7 +37,7 @@
 
                       <!-- Tür -->
                       <div class="col-lg-2 col-md-3 col-sm-6">
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-1">
                           <label for="type" class="form-label fw-bold" style="font-size: 12px;">Tür</label>
                           <select class="form-control form-control-sm select-with-arrow" id="type" name="type">
                             <option value="all">Tümü</option>
@@ -49,7 +49,7 @@
 
                       <!-- İşlem Butonları -->
                       <div class="col-auto">
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-1">
                           <label class="form-label fw-bold text-transparent" style="font-size: 12px;">İşlemler</label>
                           <div class="d-flex gap-1">
                             <button type="button" class="btn btn-outline-secondary btn-sm action-btn" id="clear-filter" title="Temizle">
@@ -64,7 +64,7 @@
 
                       <!-- Hızlı Tarih Filtreleri -->
                       <div class="col-12 col-lg-auto">
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-1">
                           <label class="form-label fw-bold text-transparent" style="font-size: 12px;">Hızlı</label>
                           <div class="btn-group btn-group-sm d-flex flex-nowrap" role="group" style="overflow-x: auto; flex-wrap: nowrap;">
                             <button type="button" class="btn btn-outline-light text-dark quick-filter" data-days="7">7 Gün</button>
@@ -229,6 +229,7 @@ $(document).ready(function() {
     var table = $('#datatablePayments').DataTable({
         processing: true,
         serverSide: true,
+        responsive: true,
         language: {
             paginate: {
                 previous: "<i class='mdi mdi-chevron-left'>",
@@ -245,19 +246,30 @@ $(document).ready(function() {
             }
         },
         columns: [
-            { data: 'id', name: 'id' },
-            { data: 'type_label', name: 'type_label' },
-            { data: 'description', name: 'description' },
-            { data: 'amount', name: 'amount' },
-            { data: 'status_label', name: 'status_label' },
-            { data: 'created_at', name: 'created_at' },
-            { data: 'invoice_status', name: 'invoice_status' },
-            { data: 'action', name: 'action', orderable: false, searchable: false }
-        ],
+    { data: 'id', name: 'id', title: 'ID' },
+    { data: 'type_label', name: 'type_label', title: 'Tür' },
+    { data: 'description', name: 'description', title: 'Açıklama' },
+    { data: 'amount', name: 'amount', title: 'Tutar' },
+    { data: 'status_label', name: 'status_label', title: 'Durum' },
+    { data: 'created_at', name: 'created_at', title: 'Tarih' },
+    { data: 'invoice_status', name: 'invoice_status', title: 'Fatura' },
+    { data: 'action', name: 'action', orderable: false, searchable: false, title: 'İşlem' }
+],
         drawCallback: function() {
             $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+            var api = this.api();
+    api.rows({ page: 'current' }).nodes().each(function(row) {
+        $(row).find('td').each(function(i) {
+            var title = api.column(i).header().textContent;
+            $(this).attr('data-label', title);
+        });
+    });
         },
         order: [[5, 'desc']],
+        "columnDefs": [{
+          "targets": 0,
+          "className": "gizli"
+        }],
         oLanguage: {
             sDecimal: ",",
             sEmptyTable: "Tabloda herhangi bir veri mevcut değil",
