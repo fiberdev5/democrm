@@ -152,7 +152,7 @@ form .mb-3 {margin-bottom: 0.3rem!important;}
   .topGun{float: left!important;}
   .anasayfa-card .card-body{padding: 10px;}
   .avatar-sm {height: 2rem;width: 2rem;}
-  /* #cash_transactions .addCashTransactions span{display: none!important;} */
+  #cash_transactions .addCashTransactions span{display: none!important;}
   #cash_transactions .tevkifatHesapla span{display: none!important;}
   #tab1 .card1 .ch1 .kategori{width: 100%!important;}
   #editServiceDescModal #tab1 .card3 .right .altAsamalar {margin-left: 0!important;}
@@ -685,7 +685,7 @@ form .mb-3 {margin-bottom: 0.3rem!important;}
   #datatableBayi_filter label{width: 116px!important;}
   #datatableBayi_filter{text-align: center!important;}
   .pageDetail .staffLeaves{border-radius: 0;}
-  #datatableOffer_filter label{width: 182px!important;}
+  #datatableOffer_filter label{width: 110px!important;}
   #datatableOffer_filter{text-align: center!important;}
   .pageDetail .addOffer {padding: .5rem .5rem;border-radius: 0;}
   .addOffer span{display: none;}
@@ -700,7 +700,7 @@ form .mb-3 {margin-bottom: 0.3rem!important;}
   .pageDetail .addContract {padding: .5rem .5rem;border-radius: 0;}
   .addContract span{display: none;}
   .addContract i{display: block!important;}
-  #datatableKasa_filter label{width: 188px!important;}
+  #datatableKasa_filter label{width: 110px!important;}
   #datatableKasa_filter{text-align: center!important;}
   .pageDetail .addCashTransactions {padding: .5rem .5rem;border-radius: 0;}
   .addCashTransactions span{display: none;}
@@ -1909,7 +1909,7 @@ b, strong {font-weight: 900;color: #000000;}
 }
 /* Aktif satır */
 .teknisyen-detay-btn.clicked {
-    background-color: #fff !important;
+    background-color: rgba(0, 123, 255, 0.12) !important;
     border-left: 3px solid #007bff;
 }
 .table-container::before {
@@ -5029,13 +5029,22 @@ b, strong {font-weight: 900;color: #000000;}
 
 /********************** Faturalar sayfası için özel mobil düzen ********************************/
 @media (max-width: 767px) {
+  /* Buton container */
+  .pageDetail .card-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
   /* Fatura Ekle butonu */
   .pageDetail .addInvoice {
     position: static !important;
-    display: block;
-    width: 100%;
+    display: inline-block;
+    width: calc(50% - 2.5px) !important;
     margin-bottom: 5px !important;
     border-radius: 4px !important;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
   }
   
   .pageDetail .addInvoice i {
@@ -5050,11 +5059,13 @@ b, strong {font-weight: 900;color: #000000;}
   /* Tevkifat Hesaplama butonu */
   .pageDetail .tevkifatHesapla {
     position: static !important;
-    display: block;
-    width: 100%;
+    display: inline-block;
+    width: calc(50% - 2.5px) !important;
     margin-bottom: 5px !important;
     border-radius: 4px !important;
     left: auto !important;
+    padding: 8px 10px !important;
+    font-size: 13px !important;
   }
   
   .pageDetail .tevkifatHesapla i {
@@ -5133,6 +5144,7 @@ b, strong {font-weight: 900;color: #000000;}
     right: 12px !important;
   }
   
+
   /* Arama inputu */
   #datatableInvoice_wrapper .dataTables_filter {
     float: none !important;
@@ -5150,8 +5162,8 @@ b, strong {font-weight: 900;color: #000000;}
   #datatableInvoice_wrapper .top {
     margin-bottom: 5px !important;
   }
-
-   /* Bottom alanı */
+  
+  /* Bottom alanı */
   #datatableInvoice_wrapper .bottom {
     display: flex !important;
     flex-direction: column !important;
@@ -5159,7 +5171,7 @@ b, strong {font-weight: 900;color: #000000;}
     gap: 8px !important;
   }
   
-  /* Listelenen Ürün Sayısı üstte ortada */
+  /* Fatura Sayısı üstte ortada */
   #datatableInvoice_wrapper .dataTables_info {
     float: none !important;
     text-align: center !important;
@@ -5193,63 +5205,58 @@ b, strong {font-weight: 900;color: #000000;}
     padding: 5px 10px !important;
   }
   
-  
-  /* Toplam Bilgiler alanı - Tablo formatı */
+  /* Toplam Bilgiler alanı - Kasa tarzı */
   .tableToplamaAlani.kasaToplamaAlani {
     margin-top: 15px !important;
-    width: 100% !important;
-    display: table !important;
   }
   
   .tableToplamaAlani.kasaToplamaAlani .row {
-    display: table-row !important;
-    margin: 0 !important;
-  }
-  
-  /* Sol sütun - başlık */
-  .tableToplamaAlani.kasaToplamaAlani .sol {
-    display: table-cell !important;
-    width: 35% !important;
-    text-align: left !important;
+    margin: 5px 0 !important;
+    border-radius: 4px !important;
     padding: 10px !important;
-    vertical-align: middle !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    background-color: #f8f9fa !important;
-    border: 1px solid #dee2e6 !important;
+  }
+  
+  .tableToplamaAlani.kasaToplamaAlani .sol {
+    width: 100% !important;
+    text-align: left !important;
+    padding: 0 0 8px 0 !important;
+    float: none !important;
     border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+    font-size: 14px !important;
+    margin-bottom: 8px !important;
   }
   
-  /* Sağ sütun - içerik */
   .tableToplamaAlani.kasaToplamaAlani .sag {
-    display: table-cell !important;
-    width: 65% !important;
-    padding: 8px 10px !important;
-    vertical-align: middle !important;
-    border: 1px solid #dee2e6 !important;
-    border-left: none !important;
+    width: 100% !important;
+    text-align: left !important;
+    padding: 0 !important;
+    float: none !important;
   }
   
-  /* İçerik satırları */
   .tableToplamaAlani.kasaToplamaAlani .sag .tur {
-    display: block !important;
-    margin-bottom: 3px !important;
-    font-size: 12px !important;
-    line-height: 1.4 !important;
-  }
-  
-  .tableToplamaAlani.kasaToplamaAlani .sag .tur:last-child {
-    margin-bottom: 0 !important;
-    font-weight: 600 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 5px;
     font-size: 13px !important;
+    padding: 2px 0 !important;
   }
   
   .tableToplamaAlani.kasaToplamaAlani .sag .tur span {
-    display: inline !important;
-    font-weight: 500 !important;
+    display: inline-block;
+    font-weight: 500;
+    margin-right: 5px;
   }
   
-
+  .tableToplamaAlani.kasaToplamaAlani .sag .tur:last-child {
+    margin-bottom: 0;
+    margin-top: 5px;
+    padding-top: 5px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.2) !important;
+    font-weight: 700;
+    font-size: 14px !important;
+  }
   
   /* Tevkifat Hesaplama Modal */
   #tevkifatHesaplamaModal .modal-dialog {
@@ -5322,817 +5329,6 @@ b, strong {font-weight: 900;color: #000000;}
   }
 }
 /********************** Faturalar sayfası için özel mobil düzen ********************************/
-
-/********************** Teklifler sayfası için özel mobil düzen ****************************/
-@media (max-width: 767px) {
-  /* Teklif Ekle butonu */
-  .pageDetail .addOffer {
-    position: static !important;
-    display: block;
-    width: 100%;
-    margin-bottom: 5px !important;
-    border-radius: 4px !important;
-  }
-  
-  .pageDetail .addOffer i {
-    display: none !important;
-  }
-  
-  .pageDetail .addOffer span {
-    display: inline !important;
-    margin-left: 0 !important;
-  }
-  
-  /* Filtre butonu - Teklifler */
-  .pageDetail .searchWrap {
-    float: none !important;
-    width: 100%;
-    display: block;
-    margin-bottom: 5px !important;
-  }
-  
-  .pageDetail .searchWrap .btn-group {
-    width: 100% !important;
-    margin-bottom: 5px !important;
-  }
-  
-  .pageDetail .searchWrap .filtrele {
-    width: 100% !important;
-    border-radius: 4px !important;
-  }
-  
-  /* Filtre dropdown menüsü - Teklifler */
-  .pageDetail .searchWrap .dropdown-menu {
-    width: 100% !important;
-    min-width: 100% !important;
-    left: 0 !important;
-    right: 0 !important;
-    margin: 0 !important;
-    padding: 10px !important;
-  }
-  
-  .pageDetail .searchWrap .dropdown-menu .item {
-    margin-bottom: 10px !important;
-  }
-  
-  .pageDetail .searchWrap .dropdown-menu .row {
-    margin: 0 !important;
-  }
-  
-  .pageDetail .searchWrap .dropdown-menu label {
-    font-size: 13px !important;
-    margin-bottom: 5px;
-  }
-  
-  .pageDetail .searchWrap .dropdown-menu .form-control,
-  .pageDetail .searchWrap .dropdown-menu .form-select {
-    font-size: 13px !important;
-    padding: 6px 10px !important;
-  }
-  
-  /* Tarih aralığı butonları - Teklifler */
-  .pageDetail .searchWrap .tarihAraligi {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 5px !important;
-  }
-  
-  .pageDetail .searchWrap .tarihAraligi .btn {
-    font-size: 11px !important;
-    padding: 5px 8px !important;
-    white-space: nowrap;
-  }
-  
-  /* Arama inputu - Teklifler */
-  #datatableOffer_wrapper .dataTables_filter {
-    float: none !important;
-    text-align: left !important;
-    width: 100% !important;
-    margin-bottom: 5px !important;
-    margin-top: 0 !important;
-  }
-  
-  #datatableOffer_wrapper .dataTables_filter input {
-    width: 100% !important;
-    max-width: 100%;
-  }
-  
-  #datatableOffer_wrapper .top {
-    margin-bottom: 5px !important;
-  }
-  
-  /* Bottom alanı - Teklifler */
-  #datatableOffer_wrapper .bottom {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    margin-top: 10px !important;
-    margin-bottom: 15px !important;
-  }
-  
-  /* Teklif Sayısı ortada */
-  #datatableOffer_wrapper .dataTables_info {
-    float: none !important;
-    text-align: center !important;
-    flex: 1 !important;
-    order: 2;
-  }
-  
-  /* Length solda */
-  #datatableOffer_wrapper .dataTables_length {
-    float: left !important;
-    order: 1;
-  }
-  
-  /* Pagination sağda */
-  #datatableOffer_wrapper .dataTables_paginate {
-    float: right !important;
-    order: 3;
-  }
-  
-  #datatableOffer_wrapper .pagination {
-    display: inline-flex !important;
-    margin: 0 !important;
-  }
-  
-  #datatableOffer_wrapper .pagination .page-item {
-    display: inline-block !important;
-  }
-  
-  #datatableOffer_wrapper .pagination .page-link {
-    display: block !important;
-    padding: 5px 10px !important;
-  }
-  
-  /* Teklif Ekle/Düzenle Modal */
-  #addOfferModal .modal-dialog,
-  #editOfferModal .modal-dialog {
-    margin: 10px !important;
-    max-width: calc(100% - 20px) !important;
-  }
-  
-  #addOfferModal .modal-body,
-  #editOfferModal .modal-body {
-    padding: 10px !important;
-  }
-}
-/********************** Teklifler sayfası için özel mobil düzen ****************************/
-
-/********************** Kasa Hareketleri sayfası için özel mobil düzen ****************************/
-@media (max-width: 767px) {
-  /* Kasa Hareketi Ekle butonu */
-  .pageDetail .addCashTransactions {
-    position: static !important;
-    display: block !important;
-    width: 100% !important;
-    margin-bottom: 5px !important;
-    border-radius: 4px !important;
-  }
-  
-  .pageDetail .addCashTransactions i {
-    display: none !important;
-  }
-  
-  .pageDetail .addCashTransactions span {
-    display: inline-block !important;
-    margin-left: 0 !important;
-    font-size: 14px !important;
-  }
-  
-  /* Arama butonu - ÖNCE GELENLER İÇİN */
-  .pageDetail .kasaArama {
-    position: static !important;
-    width: calc(50% - 2.5px) !important;
-    float: left !important;
-    border-radius: 4px !important;
-    margin-bottom: 5px !important;
-    margin-right: 5px !important;
-  }
-  
-  .pageDetail .kasaArama::after {
-    content: " Ara";
-  }
-  
-  /* SearchWrap container */
-  .pageDetail .searchWrap {
-    float: left !important;
-    width: calc(50% - 2.5px) !important;
-    margin-bottom: 5px !important;
-  }
-  
-  /* Filtre butonu grubu */
-  .pageDetail .searchWrap .btn-group {
-    width: 100% !important;
-    margin-bottom: 0 !important;
-  }
-  
-  .pageDetail .searchWrap .filtrele {
-    width: 100% !important;
-    border-radius: 4px !important;
-  }
-  
-  /* Filtre dropdown menüsü */
-  .pageDetail .searchWrap .dropdown-menu {
-    position: fixed !important;
-    width: calc(100vw - 20px) !important;
-    min-width: calc(100vw - 20px) !important;
-    left: 10px !important;
-    right: 10px !important;
-    top: auto !important;
-    transform: none !important;
-    margin: 0 !important;
-    padding: 10px !important;
-    max-height: 70vh !important;
-    overflow-y: auto !important;
-    z-index: 1050 !important;
-  }
-  
-  .pageDetail .searchWrap .dropdown-menu .item {
-    margin-bottom: 10px !important;
-  }
-  
-  .pageDetail .searchWrap .dropdown-menu .row {
-    margin: 0 !important;
-  }
-  
-  .pageDetail .searchWrap .dropdown-menu label {
-    font-size: 13px !important;
-    margin-bottom: 5px;
-  }
-  
-  .pageDetail .searchWrap .dropdown-menu .form-control,
-  .pageDetail .searchWrap .dropdown-menu .form-select {
-    font-size: 13px !important;
-    padding: 6px 10px !important;
-  }
-  
-  /* Tarih aralığı butonları */
-  .pageDetail .searchWrap .tarihAraligi {
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: 5px !important;
-  }
-  
-  .pageDetail .searchWrap .tarihAraligi .btn {
-    font-size: 11px !important;
-    padding: 5px 8px !important;
-    white-space: nowrap;
-  }
-  
-  /* Float temizleme */
-  .pageDetail .card-body > table {
-    clear: both !important;
-  }
-  
-  /* Arama inputu */
-  #datatableKasa_wrapper .dataTables_filter {
-    float: none !important;
-    text-align: left !important;
-    width: 100% !important;
-    margin-bottom: 5px !important;
-    margin-top: 0 !important;
-  }
-  
-  #datatableKasa_wrapper .dataTables_filter input {
-    width: 100% !important;
-    max-width: 100%;
-  }
-  
-  #datatableKasa_wrapper .top {
-    margin-bottom: 5px !important;
-  }
-  
-  /* Bottom alanı */
-  #datatableKasa_wrapper .bottom {
-    display: flex !important;
-    flex-direction: row !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    margin-top: 10px !important;
-    margin-bottom: 15px !important;
-  }
-  
-  /* Kasa Hareketi Sayısı ortada */
-  #datatableKasa_wrapper .dataTables_info {
-    float: none !important;
-    text-align: center !important;
-    flex: 1 !important;
-    order: 2;
-  }
-  
-  /* Length solda */
-  #datatableKasa_wrapper .dataTables_length {
-    float: left !important;
-    order: 1;
-  }
-  
-  /* Pagination sağda */
-  #datatableKasa_wrapper .dataTables_paginate {
-    float: right !important;
-    order: 3;
-  }
-  
-  #datatableKasa_wrapper .pagination {
-    display: inline-flex !important;
-    margin: 0 !important;
-  }
-  
-  #datatableKasa_wrapper .pagination .page-item {
-    display: inline-block !important;
-  }
-  
-  #datatableKasa_wrapper .pagination .page-link {
-    display: block !important;
-    padding: 5px 10px !important;
-  }
-  
-  /* Toplam Bilgiler alanı - Tablo formatı (Kasa için) */
-  #cash_transactions .tableToplamaAlani.kasaToplamaAlani {
-    margin-top: 15px !important;
-    width: 100% !important;
-    display: table !important;
-  }
-  
-  #cash_transactions .tableToplamaAlani.kasaToplamaAlani .row {
-    display: table-row !important;
-    margin: 0 !important;
-  }
-  
-  /* Sol sütun - başlık */
-  #cash_transactions .tableToplamaAlani.kasaToplamaAlani .sol {
-    display: table-cell !important;
-    width: 35% !important;
-    text-align: left !important;
-    padding: 10px !important;
-    vertical-align: middle !important;
-    font-size: 13px !important;
-    font-weight: 600 !important;
-    background-color: #f8f9fa !important;
-    border: 1px solid #dee2e6 !important;
-    border-right: none !important;
-  }
-  
-  /* Sağ sütun - içerik */
-  #cash_transactions .tableToplamaAlani.kasaToplamaAlani .sag {
-    display: table-cell !important;
-    width: 65% !important;
-    padding: 8px 10px !important;
-    vertical-align: middle !important;
-    border: 1px solid #dee2e6 !important;
-    border-left: none !important;
-  }
-  
-  /* İçerik satırları */
-  #cash_transactions .tableToplamaAlani.kasaToplamaAlani .sag .tur {
-    display: block !important;
-    margin-bottom: 3px !important;
-    font-size: 12px !important;
-    line-height: 1.4 !important;
-  }
-  
-  #cash_transactions .tableToplamaAlani.kasaToplamaAlani .sag .tur:last-child {
-    margin-bottom: 0 !important;
-    font-weight: 600 !important;
-    font-size: 13px !important;
-  }
-  
-  #cash_transactions .tableToplamaAlani.kasaToplamaAlani .sag .tur span {
-    display: inline !important;
-    font-weight: 500 !important;
-  }
-  
-  /* Kasa Hareketi Ekle/Düzenle Modal */
-  #addCashTransactionsModal .modal-dialog,
-  #editCashTransactionsModal .modal-dialog {
-    margin: 10px !important;
-    max-width: calc(100% - 20px) !important;
-  }
-  
-  #addCashTransactionsModal .modal-body,
-  #editCashTransactionsModal .modal-body {
-    padding: 10px !important;
-  }
-  
-  /* Kasa İstatistikleri Modal */
-  #cashTransactionStatisticsModal .modal-dialog {
-    margin: 10px !important;
-    max-width: calc(100% - 20px) !important;
-  }
-  
-  #cashTransactionStatisticsModal .modal-body {
-    padding: 10px !important;
-  }
-}
-/********************** Kasa Hareketleri sayfası için özel mobil düzen ****************************/
-
-/********************** İstatistikler-Servis sayfası için özel mobil düzen ****************************/
-/* Mobil Responsive Düzenlemeler */
-@media (max-width: 992px) {
-    /* Chart kartlarının mobilde tam genişlik olması */
-    .servis-istatistik-genel .row > .col-lg-7,
-    .servis-istatistik-genel .row > .col-lg-5 {
-        width: 100%;
-        margin-bottom: 1.5rem;
-    }
-    
-    /* Chart yüksekliklerini mobilde artır */
-    .servisSayilariChart,
-    .servisSaatleriChart {
-        height: 350px !important;
-    }
-    
-    /* Filter section kartları */
-    .statistics-filter-section .row > div {
-        margin-bottom: 1rem;
-    }
-}
-
-@media (max-width: 768px) {
-    /* Sayfa içi genel boşlukları azalt */
-    .servis-istatistik-genel .container-fluid {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
-    
-    /* Kart boşluklarını azalt */
-    .servis-istatistik-genel .card {
-        margin-bottom: 1rem !important;
-    }
-    
-    .servis-istatistik-genel .istatistik-card {
-        margin-bottom: 1rem !important;
-    }
-    
-    /* Period statistics ile üstteki kart arası boşluğu azalt */
-    .servis-istatistik-genel .istatistik-card + .period-statistics,
-    .servis-istatistik-genel .istatistik-card + .statistics-filter-section {
-        margin-top: 1rem !important;
-    }
-    
-    /* Period tabs mobilde daha kompakt */
-    .period-tabs-compact {
-        flex-wrap: wrap;
-    }
-    
-    .period-tabs-compact .period-tab-compact {
-        font-size: 0.7rem;
-        padding: 8px 4px;
-        flex: 1 1 50%; /* İki sütun */
-        border-bottom: 1px solid #dee2e6;
-    }
-    
-    .period-tabs-compact .period-tab-compact:nth-child(odd) {
-        border-right: 1px solid #dee2e6;
-    }
-    
-    .period-tabs-compact .period-tab-compact:nth-last-child(-n+2) {
-        border-bottom: none;
-    }
-    
-    /* Card body padding'leri azalt */
-    .period-accordion .card-body,
-    .statistics-filter-section .card-body {
-        padding: 0.5rem !important;
-    }
-    
-    /* İç kartlar mobilde tam genişlik */
-    .period-accordion .row > div,
-    .statistics-filter-section .row > div {
-        width: 100%;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-    }
-    
-    /* Chart header'ları mobilde düzgün göster */
-    .servisSayilariChart .card-header,
-    .servisSaatleriChart .card-header {
-        flex-direction: column;
-        gap: 10px;
-        padding: 0.75rem;
-    }
-    
-    /* Chart nav-tabs mobilde daha küçük */
-    .servisSayilariChart .nav-tabs,
-    .servisSaatleriChart .nav-tabs {
-        font-size: 0.75rem;
-        flex-wrap: nowrap;
-    }
-    
-    .servisSayilariChart .nav-link,
-    .servisSaatleriChart .nav-link {
-        padding: 0.35rem 0.5rem;
-    }
-    
-    /* Tarih input'u mobilde daha küçük */
-    .saatTarih {
-        max-width: 110px !important;
-        font-size: 0.75rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    /* Chart yüksekliklerini mobilde optimize et */
-    .servisSayilariChart,
-    .servisSaatleriChart {
-        height: 300px !important;
-    }
-    
-    .servisSayilariChart .card-body,
-    .servisSaatleriChart .card-body {
-        height: calc(100% - 90px) !important;
-    }
-    
-    /* Filter dropdown mobilde daha geniş */
-    .servisDrop {
-        min-width: 280px !important;
-        max-width: 95vw;
-    }
-    
-    /* Tarih aralığı butonları mobilde daha küçük */
-    .tarihAraligi .btn {
-        font-size: 0.7rem;
-        padding: 4px 8px;
-    }
-    
-    /* Row gap'leri azalt */
-    .row.g-4 {
-        --bs-gutter-y: 0rem;
-    }
-}
-
-@media (max-width: 576px) {
-    /* Çok küçük ekranlar için ek optimizasyonlar */
-    .period-tabs-compact .period-tab-compact {
-        font-size: 0.65rem;
-        padding: 6px 2px;
-    }
-    
-    .period-tabs-compact .period-tab-compact .badge {
-        font-size: 0.65rem;
-        padding: 2px 4px;
-    }
-    
-    /* Chart başlıkları daha küçük */
-    .servisSayilariChart h5,
-    .servisSaatleriChart h5 {
-        font-size: 0.9rem;
-    }
-    
-    /* Kart içi başlıklar */
-    .card-header small {
-        font-size: 0.7rem;
-    }
-    
-    /* Badge boyutları */
-    .card-body .badge {
-        font-size: 0.65rem !important;
-        padding: 2px 4px !important;
-    }
-}
-
-/* Canvas responsive ayarları */
-canvas {
-    max-width: 100% !important;
-    height: auto !important;
-}
-
-/* Chart container'larının overflow kontrolü */
-.tab-pane {
-    overflow: hidden;
-}
-
-/********************** İstatistikler-Servis sayfası için özel mobil düzen ****************************/
-
-/********************** İstatistikler-Teknisyen sayfası için özel mobil düzen ****************************/
-@media (max-width: 767px) {
-  /* Sayfa başlığı ve filtre düzeni */
-  .servis-istatistik .card-header {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 10px;
-  }
-  
-  .servis-istatistik .sayfaBaslik span {
-    display: block;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-  
-  /* Filtre dropdown */
-  .servis-istatistik .teknisyen-dropdown {
-    width: 100% !important;
-  }
-  
-  .servis-istatistik .filtrele {
-    width: 100% !important;
-    border-radius: 4px !important;
-  }
-  
-  .servis-istatistik .teknisyen-dropdown-menu {
-    left: 0 !important;
-    right: 0 !important;
-    width: 100% !important;
-    min-width: 100% !important;
-  }
-  
-  /* Tarih butonları mobilde daha iyi görünsün */
-  .servis-istatistik .tarih-butonlari {
-    justify-content: space-between !important;
-  }
-  
-  .servis-istatistik .tarih-butonlari .tarih-btn {
-    flex: 1;
-    font-size: 10px !important;
-    padding: 4px 6px !important;
-  }
-  
-  /* Tablo container */
-  .servis-istatistik .table-responsive {
-    overflow-x: visible !important;
-  }
-  
-  /* Tablo başlıklarını gizle */
-  #teknisyenTable thead tr {
-    display: none;
-  }
-  
-  /* Satırları kart gibi göster */
-  #teknisyenTable tbody tr {
-    display: block !important;
-    background-color: rgba(0, 0, 0, .05);
-    border: 1px solid #ccc;
-    margin-bottom: 10px !important;
-    /* border-radius: 4px;
-    padding: 10px; */
-  }
-  
-  /* Hücreleri liste elemanı gibi göster */
-  #teknisyenTable tbody td {
-    display: flex !important;
-    justify-content: space-between;
-    align-items: center;
-    border: none !important;
-    border-bottom: 1px solid #eee !important;
-    padding: 8px 5px !important;
-    text-align: left !important;
-    white-space: normal;
-    line-height: 1.4;
-  }
-  
-  #teknisyenTable tbody td:last-child {
-    border-bottom: none !important;
-  }
-  
-  /* Her hücreye label ekle */
-  #teknisyenTable tbody td:nth-child(1)::before { content: "Teknisyen: "; font-weight: 600; }
-  #teknisyenTable tbody td:nth-child(2)::before { content: "Atanan Servis: "; font-weight: 600; }
-  #teknisyenTable tbody td:nth-child(3)::before { content: "Tamamlanan: "; font-weight: 600; }
-  #teknisyenTable tbody td:nth-child(4)::before { content: "Şikayetçi: "; font-weight: 600; }
-  #teknisyenTable tbody td:nth-child(5)::before { content: "İptal: "; font-weight: 600; }
-  #teknisyenTable tbody td:nth-child(6)::before { content: "Haber Verecek: "; font-weight: 600; }
-  #teknisyenTable tbody td:nth-child(7)::before { content: "Fiyat Anlaşılamadı: "; font-weight: 600; }
-  #teknisyenTable tbody td:nth-child(8)::before { content: "Alınan Ücret: "; font-weight: 600; }
-  #teknisyenTable tbody td:nth-child(9)::before { content: "Verilen Teklif: "; font-weight: 600; }
-  
-  /* Teknisyen adı için özel stil - daha belirgin */
-  #teknisyenTable tbody td:nth-child(1) {
-    font-size: 14px;
-    padding: 10px 5px !important;
-    cursor: pointer;
-  }
-  
-
-  /* Detay ikonu */
-  #teknisyenTable .detay-icon {
-    margin-left: 10px;
-    transition: transform 0.3s ease;
-  }
-  
-  #teknisyenTable .teknisyen-detay-btn.clicked .detay-icon {
-    transform: rotate(90deg);
-  }
-  
-  /* Detay satırları */
-  #teknisyenTable .detay-satir {
-    display: block !important;
-    background-color: #f8f9fa !important;
-    border: 1px solid #dee2e6 !important;
-    margin-top: -10px !important;
-    margin-bottom: 10px !important;
-    border-radius: 0 0 4px 4px;
-  }
-  
-  #teknisyenTable .detay-satir td {
-    display: block !important;
-    padding: 15px !important;
-  }
-  
-  /* Detay içindeki grafikler */
-  #teknisyenTable .detay-satir .row {
-    margin: 0 !important;
-  }
-  
-  #teknisyenTable .detay-satir .col-md-4 {
-    width: 100% !important;
-    padding: 0 !important;
-    margin-bottom: 15px;
-  }
-  
-  #teknisyenTable .detay-satir .card {
-    min-height: auto !important;
-  }
-  
-  #teknisyenTable .detay-satir canvas {
-    max-height: 200px !important;
-  }
-  
-  /* Aşama kartları */
-  #teknisyenTable .detay-satir .col-lg-3,
-  #teknisyenTable .detay-satir .col-md-4,
-  #teknisyenTable .detay-satir .col-sm-6 {
-    width: 50% !important;
-    padding: 5px !important;
-  }
-  
-  #teknisyenTable .detay-satir .card-body {
-    padding: 8px !important;
-  }
-  
-  #teknisyenTable .detay-satir .badge {
-    font-size: 12px !important;
-    padding: 4px 8px !important;
-  }
-  
-  #teknisyenTable .detay-satir .card-text {
-    font-size: 10px !important;
-  }
-  
-  /* Loading spinner */
-  #loadingDiv {
-    padding: 20px !important;
-  }
-  
-  /* DataTable kontrolleri - bayiler gibi */
-  #teknisyenTable_wrapper .bottom {
-    display: flex !important;
-    flex-direction: column !important;
-    margin-top: 10px !important;
-    gap: 8px !important;
-  }
-  
-  #teknisyenTable_wrapper .dataTables_info {
-    float: none !important;
-    text-align: center !important;
-    order: 1;
-    width: 100% !important;
-  }
-  
-  #teknisyenTable_wrapper .dataTables_length {
-    display: none !important; /* Teknisyen tablosunda paging kapalı zaten */
-  }
-  
-  #teknisyenTable_wrapper .dataTables_paginate {
-    display: none !important; /* Teknisyen tablosunda paging kapalı zaten */
-  }
-  
-  /* Sayıları daha belirgin göster */
-  #teknisyenTable tbody td strong {
-    color: #495057;
-    font-size: 14px;
-  }
-  
-  /* Para birimi gösterimi */
-  #teknisyenTable tbody td:nth-child(8) strong,
-  #teknisyenTable tbody td:nth-child(9) strong {
-    color: #28a745;
-  }
-}
-
-/* Ekstra küçük ekranlar için (< 480px) */
-@media (max-width: 480px) {
-  .servis-istatistik .tarih-butonlari .tarih-btn {
-    font-size: 9px !important;
-    padding: 3px 4px !important;
-  }
-  
-  #teknisyenTable tbody td::before {
-    font-size: 12px;
-  }
-  
-  #teknisyenTable tbody td {
-    font-size: 12px;
-    padding: 6px 5px !important;
-  }
-  
-  /* Aşama kartlarını tam genişlik yap çok küçük ekranlarda */
-  #teknisyenTable .detay-satir .col-lg-3,
-  #teknisyenTable .detay-satir .col-md-4,
-  #teknisyenTable .detay-satir .col-sm-6 {
-    width: 100% !important;
-  }
-}
-
-/********************** İstatistikler-Teknisyen sayfası için özel mobil düzen ****************************/
 
 
 
@@ -6837,7 +6033,7 @@ canvas {
 #showInvo .faturalar .stn {text-align: center;} 
 #showInvo .faturalar .stn i {font-size: 45px;padding: 15px;border-radius: 5px;width: 100%;background: #e9ecef;margin-bottom: 5px;}
 
-.container-fluid{
-  padding-left: 5px !important;
-  padding-right: 5px !important;
-}
+/********************** Edit Tenants Styles *******************************/
+
+
+/********************** Edit Tenants Styles *******************************/

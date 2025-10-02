@@ -5962,8 +5962,8 @@ canvas {
     background-color: rgba(0, 0, 0, .05);
     border: 1px solid #ccc;
     margin-bottom: 10px !important;
-    /* border-radius: 4px;
-    padding: 10px; */
+    border-radius: 4px;
+    padding: 10px;
   }
   
   /* Hücreleri liste elemanı gibi göster */
@@ -5996,12 +5996,16 @@ canvas {
   
   /* Teknisyen adı için özel stil - daha belirgin */
   #teknisyenTable tbody td:nth-child(1) {
+    background-color: rgba(0, 123, 255, 0.1);
     font-size: 14px;
     padding: 10px 5px !important;
     cursor: pointer;
   }
   
-
+  #teknisyenTable tbody td:nth-child(1) strong {
+    color: #007bff;
+  }
+  
   /* Detay ikonu */
   #teknisyenTable .detay-icon {
     margin-left: 10px;

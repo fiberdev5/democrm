@@ -289,7 +289,7 @@
             </div>
         @endif
         <!-- Grafik Bölümleri -->
-        <div class="row">
+        <div class="row mt-5">
             <!-- Servis Sayıları Grafiği -->
             <div class="col-lg-7">
                 <div class="card shadow-sm servisSayilariChart" style="height: 300px;">
