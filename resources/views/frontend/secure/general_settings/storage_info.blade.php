@@ -77,7 +77,7 @@
         <div class="widget-title">
             <i class="{{ $iconClass }} widget-icon"></i>
             <span>Depolama Alanı</span>
-            <span class="status-badge status-{{ $storageInfo['danger_threshold'] ? 'danger' : ($storageInfo['warning_threshold'] ? 'warning' : 'success') }}">
+            <span style="margin-right: 10px;" class="status-badge status-{{ $storageInfo['danger_threshold'] ? 'danger' : ($storageInfo['warning_threshold'] ? 'warning' : 'success') }}">
                 {{ $statusText }}
             </span>
         </div>
