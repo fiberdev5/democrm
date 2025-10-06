@@ -302,7 +302,7 @@ $(document).ready(function(){
 // DataTable
 $(document).ready(function () {
   var table = $('#datatableConsignment').DataTable({
-      processing: true,
+      processing: false,
       serverSide: true,
       ajax: {
         url: "{{ route('consignmentdevice.data', $firma->id) }}",

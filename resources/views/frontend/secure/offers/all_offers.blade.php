@@ -323,7 +323,7 @@ $(document).ready(function () {
     });
 
   var table = $('#datatableOffer').DataTable({
-      processing: true,
+      processing: false,
       serverSide: true,
       order: [[0, 'desc']],
       language: {

@@ -691,5 +691,53 @@
             loadSurveyResults();
             loadSurveyStatistics();
         });
-    </script>
+
+    }
+
+    function updatePersonnelTable(personnelStats) {
+    let tableBody = $('#surveyStatsTableBody');
+    tableBody.empty();
+
+    // Obje içeriğini diziye çeviriyoruz
+    const statsArray = Object.values(personnelStats);
+
+    if (statsArray.length === 0) {
+        tableBody.append('<tr><td colspan="4" class="text-center">Gösterilecek veri bulunamadı.</td></tr>');
+        return;
+    }
+    
+    statsArray.forEach(function(personnel) {
+        // Detay butonu için parametreleri hazırla
+        var from_date = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
+        var to_date = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
+        let deviceType = document.getElementById("deviceType").value;
+
+        let detailUrl = "{{ url($tenant_id . '/servisler') }}" + 
+            "?personel_id=" + personnel.personel_id + 
+            "&deviceType=" + deviceType +
+            "&anket_yapilan=1" +
+            "&personel_istatistik_tarih1=" + from_date + 
+            "&personel_istatistik_tarih2=" + to_date;
+
+
+        let row = `<tr>
+            <td>${personnel.adsoyad}</td>
+            <td>${personnel.tamamlanan_servis_sayisi}</td>
+            <td>${personnel.anket_yapilan_servis_sayisi}</td>
+            <td>
+                <a href="${detailUrl}" target="_blank" class="btn btn-action btn-sm">
+                    <i class="fas fa-eye me-1"></i>Servisleri Gör
+                </a>
+            </td>
+        </tr>`;
+        tableBody.append(row);
+    });
+}
+    // Sayfa yüklendiğinde hem anket sonuçlarını hem de personel istatistiklerini yükle
+    loadSurveyResults();
+    loadSurveyStatistics();
+});
+</script>
+
+
 @endsection

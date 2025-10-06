@@ -190,7 +190,7 @@ $(document).ready(function(){
 <script>
 $(document).ready(function () {
   var table = $('#datatablePersonel').DataTable({
-      processing: true,
+      processing: false,
       serverSide: true,
       language: {
         paginate: {

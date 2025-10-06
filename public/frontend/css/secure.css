@@ -10073,6 +10073,7 @@ b, strong {
   }
 
   /* Filtre dropdown menüsü */
+
   .pageDetail .searchWrap .dropdown-menu {
     width: calc(100vw - 20px) !important;
     min-width: calc(100vw - 20px) !important;
@@ -10085,6 +10086,7 @@ b, strong {
     overflow-y: auto !important;
     z-index: 1050 !important;
   }
+
 
   .pageDetail .searchWrap .dropdown-menu .item {
     margin-bottom: 10px !important;
@@ -10506,8 +10508,6 @@ canvas {
     background-color: rgba(0, 0, 0, .05);
     border: 1px solid #ccc;
     margin-bottom: 10px !important;
-    /* border-radius: 4px;
-    padding: 10px; */
   }
 
   /* Hücreleri liste elemanı gibi göster */
@@ -10580,7 +10580,16 @@ canvas {
     cursor: pointer;
   }
 
+  .g-3{
+    --bs-gutter-y: 0 !important;
+    
+  }
+  
+  .technician_statistics_card{
+    height: 60px;
 
+
+  }
   /* Detay ikonu */
   #teknisyenTable .detay-icon {
     margin-left: 10px;
@@ -10591,7 +10600,6 @@ canvas {
     transform: rotate(90deg);
   }
 
-  /* Detay satırları */
   #teknisyenTable .detay-satir {
     display: block !important;
     background-color: #f8f9fa !important;
@@ -10603,47 +10611,101 @@ canvas {
 
   #teknisyenTable .detay-satir td {
     display: block !important;
-    padding: 15px !important;
+    padding: 8px !important;
   }
 
-  /* Detay içindeki grafikler */
-  #teknisyenTable .detay-satir .row {
-    margin: 0 !important;
+  
+  /* Detay loading container padding minimize */
+  #teknisyenTable .detay-satir .detay-loading {
+    padding: 8px !important;
   }
+  
+  
+  #teknisyenTable .detay-satir .detay-loading > .row:first-child .col-md-4 {
 
-  #teknisyenTable .detay-satir .col-md-4 {
     width: 100% !important;
     padding: 0 !important;
-    margin-bottom: 15px;
+    margin-bottom: 8px !important;
   }
 
   #teknisyenTable .detay-satir .card {
     min-height: auto !important;
+    margin-bottom: 0 !important;
+  }
+  
+  #teknisyenTable .detay-satir .card-body {
+    padding: 10px !important;
   }
 
   #teknisyenTable .detay-satir canvas {
-    max-height: 200px !important;
+    max-height: 180px !important;
   }
 
-  /* Aşama kartları */
-  #teknisyenTable .detay-satir .col-lg-3,
-  #teknisyenTable .detay-satir .col-md-4,
-  #teknisyenTable .detay-satir .col-sm-6 {
+  
+  /* Grafik başlıkları için margin */
+  #teknisyenTable .detay-satir .card-title {
+    margin-bottom: 8px !important;
+    font-size: 13px !important;
+  }
+  
+  /* Servis Aşamaları başlık bölümü - BOŞLUK MİNİMİZE */
+  #teknisyenTable .detay-satir .row .col-12 {
+    padding: 0 !important;
+    margin-bottom: 6px !important;
+    margin-top: 10px !important;
+  }
+  
+  #teknisyenTable .detay-satir .row .col-12 h6 {
+    margin-bottom: 0 !important;
+    font-size: 13px !important;
+    padding: 0 3px !important;
+  }
+  
+  /* SERVİS AŞAMALARI KARTLARI - 2'Lİ GÖRÜNÜM İÇİN SPESİFİK SELECTOR */
+  #teknisyenTable .detay-satir .detay-loading > .row:last-of-type {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    /* margin: 0 -2px !important; */
+  }
+  
+  /* Aşama kartlarını 2'li yap */
+  #teknisyenTable .detay-satir .detay-loading > .row:last-of-type > div[class*="col-"] {
+
     width: 50% !important;
-    padding: 5px !important;
+    max-width: 50% !important;
+    flex: 0 0 50% !important;
+    padding: 2px !important;
+    margin-bottom: 4px !important;
   }
 
-  #teknisyenTable .detay-satir .card-body {
-    padding: 8px !important;
+  
+  /* Card içeriği optimize */
+  #teknisyenTable .detay-satir .detay-loading > .row:last-of-type .card {
+    margin-bottom: 0 !important;
+    height: auto !important;
   }
-
-  #teknisyenTable .detay-satir .badge {
-    font-size: 12px !important;
-    padding: 4px 8px !important;
+  
+  #teknisyenTable .detay-satir .detay-loading > .row:last-of-type .card-body {
+    padding: 6px 4px !important;
+    text-align: center !important;
   }
+  
+  #teknisyenTable .detay-satir .detay-loading > .row:last-of-type .badge {
+    font-size: 11px !important;
+    padding: 3px 6px !important;
+    display: inline-block !important;
+  }
+  
+  #teknisyenTable .detay-satir .detay-loading > .row:last-of-type .card-text {
+    font-size: 9px !important;
+    margin-bottom: 0 !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Shadow minimize - sadece aşama kartları için */
+  #teknisyenTable .detay-satir .detay-loading > .row:last-of-type .shadow-sm {
+    box-shadow: 0 0.05rem 0.1rem rgba(0,0,0,0.075) !important;
 
-  #teknisyenTable .detay-satir .card-text {
-    font-size: 10px !important;
   }
 
   /* Loading spinner */
@@ -10651,7 +10713,6 @@ canvas {
     padding: 20px !important;
   }
 
-  /* DataTable kontrolleri - bayiler gibi */
   #teknisyenTable_wrapper .bottom {
     display: flex !important;
     flex-direction: column !important;
@@ -10668,12 +10729,11 @@ canvas {
 
   #teknisyenTable_wrapper .dataTables_length {
     display: none !important;
-    /* Teknisyen tablosunda paging kapalı zaten */
+
   }
 
   #teknisyenTable_wrapper .dataTables_paginate {
     display: none !important;
-    /* Teknisyen tablosunda paging kapalı zaten */
   }
 
   /* Sayıları daha belirgin göster */
@@ -10705,15 +10765,44 @@ canvas {
     padding: 6px 5px !important;
   }
 
-  /* Aşama kartlarını tam genişlik yap çok küçük ekranlarda */
-  #teknisyenTable .detay-satir .col-lg-3,
-  #teknisyenTable .detay-satir .col-md-4,
-  #teknisyenTable .detay-satir .col-sm-6 {
+  
+  /* GRAFİKLER - TEK TEK KALSIN */
+  #teknisyenTable .detay-satir .detay-loading > .row:first-child .col-md-4 {
+
     width: 100% !important;
+  }
+  
+  /* SERVİS AŞAMALARI - 2'Lİ KALSIN */
+  #teknisyenTable .detay-satir .detay-loading > .row:last-of-type > div[class*="col-"] {
+    width: 50% !important;
+    max-width: 50% !important;
+    flex: 0 0 50% !important;
+    padding: 2px !important;
+  }
+  
+  /* Çok küçük ekranlarda font boyutları daha da küçülsün */
+  #teknisyenTable .detay-satir .detay-loading > .row:last-of-type .card-text {
+    font-size: 10px !important;
+  }
+  
+  #teknisyenTable .detay-satir .detay-loading > .row:last-of-type .badge {
+    font-size: 10px !important;
+    padding: 2px 5px !important;
   }
 }
 
 /********************** İstatistikler-Teknisyen sayfası için özel mobil düzen ****************************/
+.detay-loading {
+    padding: 1.5rem; /* 786px üstü */
+}
+
+@media (max-width: 786px) {
+    .detay-loading {
+        padding: 10px 0 !important;
+    }
+}
+
+
 
 
 
@@ -12027,6 +12116,8 @@ canvas {
 }
 }
 
+
 #superAdminSupportTable_filter {
   display: none;
 }
+

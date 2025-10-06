@@ -481,7 +481,7 @@ $(document).ready(function () {
     });
 
     var table = $('#datatableInvoice').DataTable({
-      processing: true,
+      processing: false,
       serverSide: true,
       language: {
         paginate: {

@@ -572,7 +572,7 @@ $(document).ready(function(){
 
 
     var table = $('#datatableKasa').DataTable({
-      processing: true,
+      processing: false,
       serverSide: true,
       order: [[0, 'desc']],
       language: {

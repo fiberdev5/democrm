@@ -869,7 +869,7 @@ div.dataTables_wrapper div.dataTables_filter input {
       let activeFilterType = '';
 
       var table = $('#datatableService').DataTable({
-        processing: true,
+        processing: false,
         serverSide: true,
         ordering: true,
         language: {
@@ -1267,7 +1267,7 @@ div.dataTables_wrapper div.dataTables_filter input {
 
       // Yeni DataTable oluştur
       var incomingCallsTable = $('#incomingCallsTable').DataTable({
-        processing: true,
+        processing: false,
         serverSide: true,
         ordering: true,
         language: {

@@ -233,7 +233,7 @@ $(document).ready(function () {
 
 
   var table = $('#datatableCustomer').DataTable({
-      processing: true,
+      processing: false,
       serverSide: true,
       language: {
         paginate: {
