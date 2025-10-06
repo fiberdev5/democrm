@@ -26,7 +26,7 @@
             <div class="col-12">
                 <div class="card filter-card">
                     <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
+                        <div class="d-flex align-items-center mb-2 pt-2">
                             <i class="fas fa-filter text-primary me-2"></i>
                             <h6 class="mb-0 text-dark">Filtreler</h6>
                         </div>
@@ -41,7 +41,7 @@
                                 </select>
                             </div>
                         
-                            <div class="col-md-2">
+                            <div class="col-md-2 all-support">
                                 <label class="form-label text-muted small">Öncelik</label>
                                 <select name="priority" class="form-select">
                                     <option value="">Tüm Öncelikler</option>
@@ -52,7 +52,7 @@
                                     <option value="dusuk" {{ request('priority') == 'dusuk' ? 'selected' : '' }}>Düşük</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2 all-support">
                                 <label class="form-label text-muted small">Kategori</label>
                                 <select name="category" class="form-select">
                                     <option value="">Tüm Kategoriler</option>
@@ -65,7 +65,7 @@
                                     @endif
                                 </select>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2 all-support">
                                 <label class="form-label text-muted small">Firma</label>
                                 <select name="tenant_id" class="form-select">
                                     <option value="">Tüm Firmalar</option>
@@ -78,7 +78,7 @@
                                     @endif
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 all-support">
                                 <label class="form-label text-muted small">Arama</label>
                                 <input type="text" name="search" class="form-control" 
                                        placeholder="Talep no, konu veya kullanıcı ara..." 
@@ -113,7 +113,7 @@
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0 py-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center p-1">
                             <h5 class="card-title mb-0 d-flex align-items-center">
                                 Destek Talepleri
                                 @if(isset($tickets) && $tickets->count() > 0)
@@ -144,7 +144,7 @@
                                     <tbody>
                                         @foreach($tickets as $ticket)
                                             <tr class="align-middle">
-                                                <td>
+                                                <td data-label="Talep No">
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatar-xs me-2">
                                                             <div class="avatar-title rounded-circle bg-light text-primary">
@@ -154,7 +154,7 @@
                                                         <span class="fw-bold">{{ $ticket->ticket_number }}</span>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Firma">
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatar-xs me-2">
                                                             <div class="avatar-title rounded-circle bg-soft-primary text-primary">
@@ -164,7 +164,7 @@
                                                         <span>{{ $ticket->tenant->firma_adi ?? 'Bilinmiyor' }}</span>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Kullanıcı">
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatar-xs me-2">
                                                             <div class="avatar-title rounded-circle bg-soft-primary text-primary">
@@ -174,7 +174,7 @@
                                                         <span>{{ $ticket->user->name ?? 'Bilinmiyor' }}</span>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Konu">
                                                     <div style="max-width: 200px;">
                                                         <h6 class="mb-0">{{ Str::limit($ticket->subject, 40) }}</h6>
                                                         <small class="text-muted">
@@ -182,7 +182,7 @@
                                                         </small>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Kategori">
                                                     @switch($ticket->category)
                                                         @case('teknik_sorun')
                                                             <span class="badge bg-soft-danger text-danger border border-danger border-opacity-25">
@@ -213,7 +213,7 @@
                                                             <span class="badge bg-soft-secondary text-secondary">{{ $ticket->category }}</span>
                                                     @endswitch
                                                 </td>
-                                                <td>
+                                                <td data-label="Öncelik">
                                                     @switch($ticket->priority)
                                                         @case('acil')
                                                             <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
@@ -246,7 +246,7 @@
                                                             </span>
                                                     @endswitch
                                                 </td>
-                                                <td>
+                                                <td data-label="Durum">
                                                     @php
                                                         $statusConfig = [
                                                             'acik' => ['color' => 'primary', 'icon' => 'fas fa-spinner', 'text' => 'Açık'],
@@ -260,13 +260,13 @@
                                                         <i class="{{ $currentStatus['icon'] }} me-1"></i>{{ $currentStatus['text'] }}
                                                     </span>
                                                 </td>
-                                                <td>
+                                                <td data-label="Oluşturma">
                                                     <div class="text-nowrap">
                                                         <div class="fw-medium">{{ $ticket->created_at->format('d.m.Y') }}</div>
                                                         <small class="text-muted">{{ $ticket->created_at->format('H:i') }}</small>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Son Yanıt">
                                                     <div class="text-nowrap">
                                                         @if($ticket->last_reply_at)
                                                             <div class="fw-medium">{{ $ticket->last_reply_at->format('d.m.Y') }}</div>
@@ -276,7 +276,7 @@
                                                         @endif
                                                     </div>
                                                 </td>
-                                                <td class="text-center">
+                                                <td data-label="İşlemler" class="text-center">
                                                     <div class="d-flex gap-1 justify-content-center">
                                                          <a href="{{ route('super.admin.destek.show', $ticket->id) }}" 
                                                             class="btn btn-sm btn-outline-primary rounded-pill px-3" 
@@ -347,90 +347,69 @@
 
 <script>
 $(document).ready(function() {
+    var customSearchInput = $('input[name="search"]');
+    var filterCard = $('.filter-card');
+    var dataTableSearchBox = $('#superAdminSupportTable_filter');
+    dataTableSearchBox.hide();
+
     var table = $('#superAdminSupportTable').DataTable({
-        processing: false,
-        serverSide: false,
-        ordering: false, // Tüm sıralamaları devre dışı bırak
+        responsive: true,
+        ordering: false, 
+        paging: false,   
+        info: false,   
         
         language: {
-            paginate: {
-                previous: "<i class='mdi mdi-chevron-left'>",
-                next: "<i class='mdi mdi-chevron-right'>"
-            },
-            sEmptyTable: "Henüz sistemde destek talebi bulunmuyor",
-            sInfo: "Toplam Talep: _TOTAL_",
-            sInfoEmpty: "Kayıt yok",
-            sSearch: "Talep Ara:",
-            sZeroRecords: "Eşleşen kayıt bulunamadı",
-            sLengthMenu: "_MENU_",
-            oPaginate: {
-                sFirst: "İlk",
-                sLast: "Son",
-                sNext: '<i class="fas fa-angle-right"></i>',
-                sPrevious: '<i class="fas fa-angle-left"></i>'
-            }
+            "sEmptyTable":     "Tabloda herhangi bir veri mevcut değil",
+            "sZeroRecords":    "Eşleşen kayıt bulunamadı",
         },
-        
-        drawCallback: function() {
-            $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
-            addClickableRows();
-        },
-        
-        dom: '<"top">rt<"bottom"i<"float-end"lp>><"clear">',
-        lengthMenu: [ [25, 50, 100], [25, 50, 100] ]
-    });
-    addClickableRows();
-});
 
-// Tıklanabilir satır özelliği fonksiyonu
-function addClickableRows() {
-    // Daha önce eklenmiş event listener'ları temizle
-    $('#superAdminSupportTable tbody tr').off('click.rowClick mouseenter.rowHover mouseleave.rowHover');
-    
-    $('#superAdminSupportTable tbody tr').each(function() {
-        const row = $(this);
-        const detailButton = row.find('a[title="Detay"]');
+        "search": {
+            "search": customSearchInput.val()
+        },
         
-        if (detailButton.length > 0) {
-            const detailUrl = detailButton.attr('href');
-            
-            // Cursor stilini ayarla
-            row.css({
-                'cursor': 'pointer',
-                'transition': 'all 0.2s ease-in-out'
-            });
-            
-            // Tıklama olayı
-            row.on('click.rowClick', function(e) {
-                // Form butonları, linkler ve diğer etkileşimli elementlere tıklandığında engelle
-                if ($(e.target).closest('a, button, form').length > 0) {
-                    return;
-                }
-                
-                // Detay sayfasına git
-                window.location.href = detailUrl;
-            });
-            
-            // Hover efektleri
-            row.on('mouseenter.rowHover', function() {
-                $(this).css({
-                    'background-color': 'rgba(0, 123, 255, 0.05)',
-                    'transform': 'translateY(-1px)',
-                    'box-shadow': '0 2px 4px rgba(0,0,0,0.1)'
-                });
-            });
-            
-            row.on('mouseleave.rowHover', function() {
-                $(this).css({
-                    'background-color': '',
-                    'transform': 'translateY(0px)',
-                    'box-shadow': ''
-                });
-            });
+        "drawCallback": function( settings ) {
+            addEventListenersToRows();
         }
     });
-}
 
+    customSearchInput.on('keyup', function () {
+        table.search(this.value).draw();
+    });
+
+    function addEventListenersToRows() {
+        const tableRows = document.querySelectorAll('#superAdminSupportTable tbody tr');
+        
+        tableRows.forEach(function(row) {
+            row.style.cursor = 'pointer';
+            
+            const detailButton = row.querySelector('a[title="Detay"]');
+            
+            if (detailButton) {
+                const detailUrl = detailButton.getAttribute('href');
+                
+                const newRow = row.cloneNode(true);
+                row.parentNode.replaceChild(newRow, row);
+
+                newRow.addEventListener('click', function(e) {
+                    if (e.target.closest('a, button, form')) {
+                        return;
+                    }
+                    window.location.href = detailUrl;
+                });
+                
+                newRow.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(0, 123, 255, 0.05)';
+                });
+                
+                newRow.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            }
+        });
+    }
+
+    addEventListenersToRows();
+});
 </script>
 
 @endsection

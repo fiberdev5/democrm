@@ -21,7 +21,7 @@
                     <div class="row align-items-end">
                       <!-- Firma -->
                         <div class="col-lg-2 col-md-3 col-sm-6">
-                            <div class="form-group mb-3">
+                            <div class="form-group mb-1">
                                 <label for="tenant_id" class="form-label fw-bold" style="font-size: 12px;">Müşteri</label>
                                 <select class="form-control form-control-sm select-with-arrow" id="tenant_id" name="tenant_id">
                                     <option value="">Tüm Müşteriler</option>
@@ -34,7 +34,7 @@
 
                       <!-- Başlangıç -->
                       <div class="col-lg-2 col-md-3 col-sm-6">
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-1">
                           <label for="date_from" class="form-label fw-bold" style="font-size: 12px;">Başlangıç</label>
                           <input type="date" class="form-control form-control-sm" id="date_from" name="date_from">
                         </div>
@@ -42,7 +42,7 @@
 
                       <!-- Bitiş -->
                       <div class="col-lg-2 col-md-3 col-sm-6">
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-1">
                           <label for="date_to" class="form-label fw-bold" style="font-size: 12px;">Bitiş</label>
                           <input type="date" class="form-control form-control-sm" id="date_to" name="date_to">
                         </div>
@@ -50,7 +50,7 @@
 
                       <!-- Tür -->
                     <div class="col-lg-2 col-md-3 col-sm-6">
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-1">
                             <label for="type" class="form-label fw-bold" style="font-size: 12px;">Tür</label>
                             <select class="form-control form-control-sm select-with-arrow" id="type" name="type">
                                 <option value="all">Tümü</option>
@@ -62,7 +62,7 @@
 
                       <!-- İşlem Butonları -->
                       <div class="col-auto">
-                        <div class="form-group mb-3">
+                        <div class="form-group">
                           <label class="form-label fw-bold text-transparent" style="font-size: 12px;">İşlemler</label>
                           <div class="d-flex gap-1">
                             <button type="button" class="btn btn-outline-secondary btn-sm action-btn" id="clear-filter" title="Temizle">
@@ -77,7 +77,7 @@
 
                       <!-- Hızlı Tarih Filtreleri -->
                       <div class="col-12 col-lg-auto">
-                        <div class="form-group mb-3">
+                        <div class="form-group">
                           <label class="form-label fw-bold text-transparent" style="font-size: 12px;">Hızlı</label>
                           <div class="btn-group btn-group-sm d-flex flex-nowrap" role="group" style="overflow-x: auto; flex-wrap: nowrap;">
                             <button type="button" class="btn btn-outline-light text-dark quick-filter" data-days="7">7 Gün</button>
@@ -201,6 +201,23 @@ $(document).ready(function() {
             { data: 'invoice_status', name: 'invoice_status' }
         ],
         drawCallback: function() {
+           var headers = [];
+    // Not: Tablonuzun ID'si #datatablePayments olmalı. Değilse burayı güncelleyin.
+    $('#datatablePayments thead th').each(function() { 
+        headers.push($(this).text());
+    });
+
+    // 2. Tablonun gövdesindeki her bir satır için dön
+    $('#datatablePayments tbody tr').each(function() {
+        // 3. O satırdaki her bir hücre (td) için dön
+        $(this).find('td').each(function(index) {
+            // Sütun gizli değilse data-label ekle
+            if (!$(this).hasClass('gizli')) {
+                 // 4. Hücreye, başlık dizisindeki karşılığına göre data-label ekle
+                $(this).attr('data-label', headers[index]);
+            }
+        });
+    });
             $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
         },
         order: [[6, 'desc']],
