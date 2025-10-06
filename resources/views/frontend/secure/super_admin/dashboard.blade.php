@@ -23,9 +23,9 @@
         </div>
         <!-- İstatistik Kartları -->
         <div class="row">
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-3 col-6 col-md-6 pr">
                 <div class="card superadmin-dashboard-card superadmin-statistic primary">
-                    <div class="card-body">
+                    <div class=" card-h-s">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="sistatistic-label">Toplam Müşteri</p>
@@ -39,9 +39,9 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-3 col-6 col-md-6 pl">
                 <div class="card superadmin-dashboard-card superadmin-statistic success">
-                    <div class="card-body">
+                    <div class=" card-h-s">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="sistatistic-label">Aktif Müşteri</p>
@@ -55,9 +55,9 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6 ">
+            <div class="col-xl-3 col-6 col-md-6 pr">
                 <div class="card superadmin-dashboard-card superadmin-statistic info">
-                    <div class="card-body">
+                    <div class=" card-h-s">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="sistatistic-label">Toplam Kullanıcı</p>
@@ -71,9 +71,9 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-3 col-6 col-md-6 pl">
                 <div class="card superadmin-dashboard-card superadmin-statistic warning">
-                    <div class="card-body">
+                    <div class=" card-h-s">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="sistatistic-label">Aktif Kullanıcı</p>

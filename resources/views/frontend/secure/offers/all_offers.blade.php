@@ -8,7 +8,19 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
+<style>
+.searchWrap {
+    visibility: hidden;
+    opacity: 0;
+}
+@media (max-width: 767px) {
 
+.searchWrap{margin-top: 0px !important;}
+    .pageDetail .searchWrap{width: 39% !important;}
+    .pageDetail .searchWrap{margin-bottom: 0px !important;}
+ div.dataTables_filter input{margin-left: 0 !important;}
+}
+</style>
 
 <div class="page-content" id="passwords">
   <div class="container-fluid">
@@ -20,46 +32,92 @@
           </div>
           <div class="card-body">
             <table id="datatableOffer" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                <a class="btn btn-success btn-sm addOffer" data-bs-toggle="modal" data-bs-target="#addOfferModal"><i class="fas fa-plus"></i><span>Teklif Ekle</span></a> 
-
-              <div class="searchWrap float-end">
-                <div class="btn-group mb-2 ">
-                  <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Filtrele <i class="mdi mdi-chevron-down"></i>
-                  </button>
-                  <div class="dropdown-menu">
-                    <div class="item">
-                      <div class="row">
+                {{-- MASAÜSTÜ GÖRÜNÜMÜ (Orijinal Kodunuz - Hiçbir Değişiklik Yapılmadı) --}}
+{{-- Bu bölüm sadece geniş ekranlarda (lg ve üstü) görünecektir. --}}
+<div class="d-none d-lg-block">
+    <a class="btn btn-success btn-sm addOffer" data-bs-toggle="modal" data-bs-target="#addOfferModal"><i class="fas fa-plus"></i><span>Teklif Ekle</span></a> 
+    <div class="searchWrap float-end">
+        <div class="btn-group mb-2 ">
+            <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Filtrele <i class="mdi mdi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <div class="item">
+                    <div class="row">
                         <label class="col-sm-4">Durum</label>
                         <div class="col-sm-8">
-                          <select name="teklifDurumu" id="teklifDurumu" class="form-select">
-                            <option value="">Hepsi</option>
-                              <option value="0">Beklemede</option>
-                              <option value="1">Onaylandı</option>
-                          </select>
+                            <select name="teklifDurumu" id="teklifDurumu" class="form-select">
+                                <option value="">Hepsi</option>
+                                <option value="0">Beklemede</option>
+                                <option value="1">Onaylandı</option>
+                            </select>
                         </div>
-                      </div>
                     </div>
-      
-                    <div class="item">
-                      <div class="row">
+                </div>
+                <div class="item">
+                    <div class="row">
                         <label class="col-sm-4">Tarih Aralığı:</label>
                         <div class="col-sm-8">
-                          <input id="daterange" class="tarih-araligi">
-                          <div class="tarihAraligi mt-2 mb-2">
-                            <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
-                            <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
-                            <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
-                            <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
-                            <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
-                          </div>
+                            <input id="daterange" class="tarih-araligi">
+                            <div class="tarihAraligi mt-2 mb-2">
+                                <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
+                                <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                                <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                                <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
+                                <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
+                            </div>
                         </div>
-                      </div>
                     </div>
-                    
-                  </div>
-                </div><!-- /btn-group -->
-              </div>
+                </div>
+            </div>
+        </div><!-- /btn-group -->
+    </div>
+</div>
+
+
+<div class="d-lg-none">
+    <div  class="d-flex gap-1 justify-content-between align-items-center mb-2">
+        <a class="btn btn-success btn-sm addOffer" data-bs-toggle="modal" data-bs-target="#addOfferModal">
+            <i class="fas fa-plus"></i><span>Teklif Ekle</span>
+        </a>
+        <div style="margin-top: 0px !important;" class="searchWrap">
+            <div class="btn-group">
+                <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filtrele <i class="mdi mdi-chevron-down"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <div class="item">
+                        <div class="row">
+                            <label class="col-sm-4">Durum</label>
+                            <div class="col-sm-8">
+                                <select name="teklifDurumu" id="teklifDurumu" class="form-select">
+                                    <option value="">Hepsi</option>
+                                    <option value="0">Beklemede</option>
+                                    <option value="1">Onaylandı</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="row">
+                            <label class="col-sm-4">Tarih Aralığı:</label>
+                            <div class="col-sm-8">
+                                <input id="daterange" class="tarih-araligi">
+                                <div class="tarihAraligi mt-2 mb-2">
+                                    <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
+                                    <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                                    <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                                    <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
+                                    <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /btn-group -->
+        </div>
+    </div>
+</div>
               
               <thead class="title">
                 <tr>
@@ -310,7 +368,7 @@ $(document).ready(function () {
           "sLengthMenu":     "_MENU_",
           "sLoadingRecords": "Yükleniyor...",
           "sProcessing":     "İşleniyor...",
-          "sSearch":         "Teklif Ara:",
+          "sSearch":         "",
           "sZeroRecords":    "Eşleşen kayıt bulunamadı",
           "oPaginate": {
               "sFirst":    "İlk",
@@ -332,6 +390,21 @@ $(document).ready(function () {
           },
         dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
         "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
+         "initComplete": function(settings, json) {
+            var searchContainer = $('#datatableOffer_filter');
+            var searchInput = searchContainer.find('input');
+            searchInput.attr('placeholder', 'Teklif Ara...');
+            if (window.matchMedia("(max-width: 991.98px)").matches) {
+                var mobileFilterWrapper = $('.d-lg-none .searchWrap');
+                searchContainer.append(mobileFilterWrapper);
+                searchContainer.addClass('input-group');
+                mobileFilterWrapper.find('.btn').css({
+                    'border-top-left-radius': '0',
+                    'border-bottom-left-radius': '0'
+                });
+            }
+            $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+        }
   });
 
   $('#teklifDurumu').change(function(){

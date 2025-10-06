@@ -131,7 +131,7 @@
 }
 @media (max-width: 767px) {
   .subscription-overview {
-    padding: 20px 10px;
+    padding: 10px 10px;
   }
   .subscription-overview h2{
     font-size: 14px !important;
@@ -327,11 +327,11 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-header">
-              <h4 class="mb-0">{{ $onTrial ? 'Plan Seçenekleri' : 'Plan Seçin' }}</h4>
+              <h4 class="mb-0 p-1">{{ $onTrial ? 'Plan Seçenekleri' : 'Plan Seçin' }}</h4>
             </div>
             <div class="card-body">
-              <section class="py-4 bg-gray-50">
-                <div class="container">
+              <section class="py-2 bg-gray-50">
+                <div class="containefluid">
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:items-start">
                     @foreach($plans as $i => $plan)
                       @php $isPopular = ($i === 1); @endphp

@@ -12,7 +12,18 @@
 <!-- Date Range Picker CSS ve JS -->
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script> 
-
+ <style>
+        @media (max-width: 767px) {
+            .searchWrap {
+        margin-top: -15px;
+        margin-bottom: 0px;
+    }
+        #giderArea {
+        height: auto !important;
+    }
+        }
+    
+    </style>
 <div class="page-content servis-istatistik">
     <div class="container-fluid">
         @include('frontend.secure.statistics.statistics_menu', ['tenant_id' => $tenant_id])
@@ -22,10 +33,10 @@
                 <span style="font-weight: bold;">Kasa İstatistikleri</span>
                 <div class="searchWrap float-end">
                     <div class="btn-group">
-                        <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button  class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Filtrele <i class="mdi mdi-chevron-down"></i>
                         </button>
-                        <div class="dropdown-menu">
+                        <div style="left: 0px !important" class="dropdown-menu" data-bs-offset="50,0">
                             <div class="item">
                                 <div class="row">
                                     <label class="col-sm-4">Tarih Aralığı:</label>
