@@ -39,7 +39,7 @@
 <style>
  .statistic-btn {
     background: linear-gradient(135deg, var(--card-bg-1), var(--card-bg-2));
-    border-radius: 16px;
+    border-radius: 4px;
     padding: 15px 20px;
     color: white;
     position: relative;
@@ -93,7 +93,7 @@
 .statistics-menu {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    gap: 0.75rem;
+    gap: 5px;
     width: 100%;
 }
 

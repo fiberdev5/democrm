@@ -1,6 +1,23 @@
 @extends('frontend.secure.user_master')
 @section('user')
+<style>
 
+#datatableCustomer_filter input[type="search"] {
+    padding-right: 12px !important; 
+}
+.searchWrap {
+    visibility: hidden;
+    opacity: 0;
+}
+
+@media (max-width: 767px) {
+
+ div.dataTables_filter input{margin-left: 0 !important;}
+ .dataTables_filter{
+margin-right: 0px !important;
+    }
+}
+</style>
 <div class="page-content">
   <div class="container-fluid">
     <div class="row pageDetail">
@@ -11,54 +28,106 @@
           </div>
           <div class="card-body">
             <table id="datatableCustomer" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-              <a data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-success btn-sm addCustomer"><i class="fas fa-plus"></i><span>Müşteri Ekle</span></a> 
-              <div class="searchWrap float-end">
-                <div class="btn-group mb-2 ">
-                  <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Filtrele <i class="mdi mdi-chevron-down"></i>
-                  </button>
-                  <div class="dropdown-menu">
-                    <div class="item">
-                      <div class="row">
+
+<div class="d-none d-lg-block">
+    <a data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-success btn-sm addCustomer"><i class="fas fa-plus"></i><span>Müşteri Ekle</span></a> 
+    <div class="searchWrap float-end">
+        <div class="btn-group mb-2 ">
+            <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Filtrele <i class="mdi mdi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <div class="item">
+                    <div class="row">
                         <label class="col-sm-5">Durum</label>
                         <div class="col-sm-7">
-                          <select name="musteriTipi" id="musteriTipi" class="form-select">
-                            <option value="">Hepsi</option>
-                            <option value="1" >Bireysel</option>
-                            <option value="2">Kurumsal</option>
-                          </select>
+                            <select name="musteriTipi" id="musteriTipi" class="form-select">
+                                <option value="">Hepsi</option>
+                                <option value="1" >Bireysel</option>
+                                <option value="2">Kurumsal</option>
+                            </select>
                         </div>
-                      </div>
                     </div>
-
-                    <div class="item">
-                      <div class="row">
+                </div>
+                <div class="item">
+                    <div class="row">
                         <label class="col-sm-5">İl</label>
                         <div class="col-sm-7">
-                          <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;">
-                            <option value="" selected disabled>-Seçiniz-</option>
-                            @foreach($countries as $item)
-                              <option value="{{ $item->id }}">{{ $item->name}}</option>
-                            @endforeach
-                          </select>
+                            <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;">
+                                <option value="" selected disabled>-Seçiniz-</option>
+                                @foreach($countries as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name}}</option>
+                                @endforeach
+                            </select>
                         </div>
-                      </div>
                     </div>
-
-                    <div class="item">
-                      <div class="row">
+                </div>
+                <div class="item">
+                    <div class="row">
                         <label class="col-sm-5">İlçe</label>
                         <div class="col-sm-7">
-                          <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;">
-                            <option value="" selected disabled>-Seçiniz-</option>                              
-                          </select>
+                            <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;">
+                                <option value="" selected disabled>-Seçiniz-</option>                              
+                            </select>
                         </div>
-                      </div>
                     </div>
+                </div>
+            </div>
+        </div><!-- /btn-group -->
+    </div>
+</div>
 
-                  </div>
-                </div><!-- /btn-group -->
-              </div>
+<div class="d-lg-none">
+    <div class="d-flex gap-1 justify-content-between align-items-center mb-2">
+        <a data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-success btn-sm addCustomer">
+            <i class="fas fa-plus"></i><span>Müşteri Ekle</span>
+        </a> 
+        <div style="margin-top: 0px !important;width: 44% !important;" class="searchWrap">
+            <div class="btn-group">
+                <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filtrele <i class="mdi mdi-chevron-down"></i>
+                </button>
+                <div  class="dropdown-menu">
+                    <div class="item">
+                        <div class="row">
+                            <label class="col-sm-5">Durum</label>
+                            <div class="col-sm-7">
+                                <select name="musteriTipi" id="musteriTipi" class="form-select">
+                                    <option value="">Hepsi</option>
+                                    <option value="1" >Bireysel</option>
+                                    <option value="2">Kurumsal</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="row">
+                            <label class="col-sm-5">İl</label>
+                            <div class="col-sm-7">
+                                <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;">
+                                    <option value="" selected disabled>-Seçiniz-</option>
+                                    @foreach($countries as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="row">
+                            <label class="col-sm-5">İlçe</label>
+                            <div class="col-sm-7">
+                                <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;">
+                                    <option value="" selected disabled>-Seçiniz-</option>                              
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /btn-group -->
+        </div>
+    </div>
+</div>
               
               <thead class="title">
                 <tr>
@@ -202,6 +271,7 @@ $(document).ready(function () {
           "targets": 0,
           "className": "gizli"
         }],
+       
         "oLanguage": {
             "sDecimal":        ",",
           "sEmptyTable":     "Tabloda herhangi bir veri mevcut değil",
@@ -213,7 +283,7 @@ $(document).ready(function () {
           "sLengthMenu":     "_MENU_",
           "sLoadingRecords": "Yükleniyor...",
           "sProcessing":     "İşleniyor...",
-          "sSearch":         "Müşteri Ara:",
+          "sSearch":         "",
           "sZeroRecords":    "Eşleşen kayıt bulunamadı",
           "oPaginate": {
               "sFirst":    "İlk",
@@ -235,6 +305,22 @@ $(document).ready(function () {
           },
       dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
       "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
+      "initComplete": function(settings, json) {
+    var searchContainer = $('#datatableCustomer_filter');
+    var searchInput = searchContainer.find('input');
+    searchInput.attr('placeholder', 'Müşteri Ara...');
+    if (window.matchMedia("(max-width: 991.98px)").matches) {
+        var mobileFilterWrapper = $('.d-lg-none .searchWrap');
+
+        searchContainer.append(mobileFilterWrapper);
+        searchContainer.addClass('input-group');
+        mobileFilterWrapper.find('.btn').css({
+            'border-top-left-radius': '0',
+            'border-bottom-left-radius': '0'
+        });
+    }
+    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+}
   });
 
   $('#musteriTipi').change(function(){

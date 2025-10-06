@@ -9,7 +9,7 @@
     <div class="container-fluid">
         @include('frontend.secure.statistics.statistics_menu', ['tenant_id' => $tenant_id])
            <!-- Modern Header Card -->
-            <div class="card shadow-sm istatistik-card">
+            <div class="card shadow-sm istatistik-card mt-2">
                 <div class="card-header sayfaBaslik d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 d-flex align-items-center">
                         <i class="fas fa-chart-line me-1"></i> <!-- ikon -->

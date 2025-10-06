@@ -16,6 +16,21 @@ $staffAll = App\Models\User::where('tenant_id', $firma->id)
     })->count();
 @endphp
 
+
+<style>
+
+@media (max-width: 767px) {
+
+.searchWrap{margin-top: 0px !important;}
+    .pageDetail .searchWrap{}
+    .pageDetail .searchWrap{margin-bottom: 0px !important;}
+ div.dataTables_filter input{margin-left: 0 !important;}
+ .dataTables_filter{
+margin-right: 0px !important;
+    }
+    #datatablePersonel_filter label{width: 100%!important;}
+}
+</style>
 <div class="page-content">
   <div class="container-fluid">
     <div class="row pageDetail">
@@ -219,7 +234,7 @@ $(document).ready(function () {
           "sLengthMenu":     "_MENU_",
           "sLoadingRecords": "Yükleniyor...",
           "sProcessing":     "İşleniyor...",
-          "sSearch":         "Personel Ara:",
+          "sSearch":         "",
           "sZeroRecords":    "Eşleşen kayıt bulunamadı",
           "oPaginate": {
               "sFirst":    "İlk",
@@ -241,6 +256,34 @@ $(document).ready(function () {
           },
       dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
       "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
+      "initComplete": function(settings, json) {
+          // --- DEĞİŞTİRİLEN BÖLÜM BURASI ---
+          var searchContainer = $('#datatablePersonel_filter');
+          var searchInput = searchContainer.find('input');
+          var filterWrapper = $('.searchWrap');
+          var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
+
+          // Varsayılan "Search:" etiketini kaldır
+          searchContainer.find('label').contents().filter(function() {
+              return this.nodeType == 3;
+          }).remove();
+
+          // Arama kutusunu ve filtreyi sarmalamak için
+          searchContainer.addClass('flex-grow-1 me-2');
+          searchInput.addClass('w-100');
+          searchInput.attr('placeholder', 'Personel Ara...');
+
+          // Ögeleri flex container'a ekle
+          flexContainer.append(searchContainer);
+          flexContainer.append(filterWrapper);
+
+          // Flex container'ı tablonun üstüne ekle
+          $('#datatablePersonel_wrapper .top').append(flexContainer);
+
+          // Hazır olduğunda görünür yap
+          $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+          // --- DEĞİŞTİRİLEN BÖLÜM SONU ---
+      }
   });
 
   $('#rolePers').change(function(){

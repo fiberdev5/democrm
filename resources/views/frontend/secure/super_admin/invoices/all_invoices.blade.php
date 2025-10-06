@@ -5,7 +5,49 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<style>
+    .searchWrap {
+      visibility: hidden;
+      opacity: 0;
+    }
 
+    @media (max-width: 767px) {
+      .pageDetail .searchWrap {
+      }
+
+
+      #datatableInvoice_filter{
+        margin-right: 0px !important;
+      }
+      .dataTables_filter label {
+      }
+
+      .searchWrap {
+        margin-top: 0px !important;
+      }
+
+      div.dataTables_filter input {
+        margin-left: 0px !important;
+      }
+
+      .top {
+        margin-top: 19px;
+      }
+
+      div.dataTables_wrapper div.dataTables_filter input {
+        width: 227px !important;
+      }
+
+      .servisDrop {
+        inset: 0px 0px -412px -213px !important;
+      }
+
+      .pageDetail .searchWrap {
+        margin-bottom: 0px !important;
+      }
+
+    }
+  </style>
 <div class="page-content" id="passwords">
   <div class="container-fluid">
     <div class="row pageDetail">
@@ -331,7 +373,7 @@ $(document).ready(function () {
         "sLengthMenu":     "_MENU_",
         "sLoadingRecords": "Yükleniyor...",
         "sProcessing":     "İşleniyor...",
-        "sSearch":         "Ara:",
+        "sSearch":         "",
         "sZeroRecords":    "Eşleşen kayıt bulunamadı",
         "oPaginate": {
           "sFirst":    "İlk",
@@ -351,9 +393,27 @@ $(document).ready(function () {
               }
           }
           },
-          dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+          dom: '<"top"f>rt<"bottom"i<"float-end invoices-filtre"lp>><"clear">',
           "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
-  });
+           "initComplete": function(settings, json) {
+    var searchContainer = $('#datatableInvoice_filter');
+    var searchInput = searchContainer.find('input');
+    var filterWrapper = $('.searchWrap');
+    var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
+    searchContainer.find('label').contents().filter(function() {
+        return this.nodeType == 3;
+    }).remove();
+    searchContainer.addClass('flex-grow-1 me-2');
+    searchInput.addClass('w-100');
+    searchInput.attr('placeholder', 'Fatura Ara...');
+    flexContainer.append(searchContainer);
+    flexContainer.append(filterWrapper);
+    $('#datatableInvoice_wrapper .top').append(flexContainer);
+    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+}
+  
+  
+    });
 
   $('#firma').change(function(){
     table.draw();        

@@ -13,6 +13,34 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
   ->count();
 @endphp
 
+<style>
+    /* Genel Stiller */
+    .searchWrap {
+      visibility: hidden; /* JS ile görünür yapılacak */
+      opacity: 0;
+    }
+
+    /* Mobil Cihazlar İçin Özel Stiller */
+    @media (max-width: 767px) {
+      .searchWrap {
+      }
+      .dataTables_filter label {
+      }
+
+      div.dataTables_filter input {
+        margin-left: 0 !important;
+      }
+      .dataTables_filter {
+        margin-right: 0 !important;
+      }
+      .pageDetail .searchWrap {
+        margin-bottom: 0px !important;
+      }
+      .searchWrap {
+        margin-top: 0px !important;
+      }
+    }
+</style>
 <div class="page-content">
   <div class="container-fluid">
     <div class="row pageDetail">
@@ -324,7 +352,7 @@ $(document).ready(function () {
         sLengthMenu: "_MENU_ ",
         sLoadingRecords: "Yükleniyor...",
         sProcessing: "İşleniyor...",
-        sSearch: "Ürün Ara:",
+        sSearch: "",
         sZeroRecords: "Eşleşen kayıt bulunamadı",
         oPaginate: {
           sFirst: "İlk",
@@ -357,7 +385,28 @@ $(document).ready(function () {
         $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
       },
       
-      lengthMenu: [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ]
+      lengthMenu: [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
+       "initComplete": function(settings, json) {
+          var searchContainer = $('#datatableConsignment_filter');
+          var searchInput = searchContainer.find('input');
+          var filterWrapper = $('.searchWrap');
+          var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
+
+          searchContainer.find('label').contents().filter(function() {
+              return this.nodeType == 3;
+          }).remove();
+
+          searchContainer.addClass('flex-grow-1 me-2');
+          searchInput.addClass('w-100');
+          searchInput.attr('placeholder', 'Konsinye Cihaz Ara...');
+
+          flexContainer.append(searchContainer);
+          flexContainer.append(filterWrapper);
+
+          $('#datatableConsignment_wrapper .top').append(flexContainer);
+
+          $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+      }
   });
 
   // Filtreler değiştiğinde tabloyu yeniden çiz

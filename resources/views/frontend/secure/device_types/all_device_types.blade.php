@@ -7,7 +7,7 @@
 </div>
         <div id="cihazTuru">
 
-    {{-- MASAÜSTÜ GÖRÜNÜMÜ (ORİJİNAL KODUNUZ - HİÇBİR DEĞİŞİKLİK YAPILMADI) --}}
+    
     <div class="d-none d-lg-block">
         <table id="datatableDeviceTypes" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
             <a  class="btn btn-success btn-sm mb-1 addDeviceType" data-bs-toggle="modal" data-bs-target="#addDeviceTypeModal"><i class="fas fa-plus"></i><span>Cihaz Ekle</span></a>

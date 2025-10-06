@@ -44,7 +44,7 @@
 <!-- Talep Bilgileri Header -->
 <div class="row">
     <div class="col-12">
-        <div class="ticket-header position-relative"> {{-- position-relative ekledik --}}
+        <div class="ticket-header container-fluid position-relative"> {{-- position-relative ekledik --}}
             <div class="row align-items-md-start">
                 <!-- Sol Taraf: Başlık ve Kartlar -->
                 <div class="col-md-8">
@@ -90,7 +90,7 @@
             </div> {{-- align-items-md-start row'u burada kapanıyor --}}
 
             <!-- Firma, Kullanıcı ve Tarih Bilgisi -->
-            <div class="row g-3 mb-3 mt-1"> {{-- mt-3 ekledim, isterseniz ayarlayabilirsiniz --}}
+            <div class="row g-3  mt-1"> {{-- mt-3 ekledim, isterseniz ayarlayabilirsiniz --}}
                 <!-- Firma Kartı -->
                 <div class="col-sm-4">
                     <div class="card h-100 shadow-sm border-0">

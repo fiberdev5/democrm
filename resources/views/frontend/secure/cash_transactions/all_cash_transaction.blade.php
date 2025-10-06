@@ -7,7 +7,22 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script> 
+<style>
 
+@media (max-width: 767px) {
+
+.searchWrap{margin-top: 0px !important;}
+    .pageDetail .searchWrap{}
+    .pageDetail .searchWrap{margin-bottom: 0px !important;}
+ div.dataTables_filter input{margin-left: 0 !important;}
+ .dataTables_filter{
+margin-right: 0px !important;
+    }
+    .pageDetail .kasaArama{
+              margin-right: 0px !important;
+    }
+}
+</style>
 <div class="page-content" id="cash_transactions">
   <div class="container-fluid">
     <div class="row pageDetail">
@@ -16,10 +31,28 @@
           <div class="card-header sayfaBaslik">Kasa Hareketleri</div>
           <div class="card-body">
             <table id="datatableKasa" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-              @if(Auth::user()->can('Kasa Hareketi Ekleyebilir'))
+              <div class="d-none d-lg-block">
+    @if(Auth::user()->can('Kasa Hareketi Ekleyebilir'))
+        <a class="btn btn-success btn-sm addCashTransactions" data-bs-toggle="modal" data-bs-target="#addCashTransactionsModal"><i class="fas fa-plus"></i> <span>Kasa Hareketi Ekle</span></a>
+    @endif  
+    <button type="submit" id="kasaArama" class="btn btn-sm btn-dark searchBtn kasaArama float-end"><i class="fas fa-search"></i></button>
+</div>
+
+
+
+<div class="d-lg-none">
+    <div class="d-flex gap-1 justify-content-between align-items-center">
+        
+        <div>
+            @if(Auth::user()->can('Kasa Hareketi Ekleyebilir'))
                 <a class="btn btn-success btn-sm addCashTransactions" data-bs-toggle="modal" data-bs-target="#addCashTransactionsModal"><i class="fas fa-plus"></i> <span>Kasa Hareketi Ekle</span></a>
-              @endif  
-              <button type="submit" id="kasaArama" class="btn btn-sm btn-dark searchBtn kasaArama float-end"><i class="fas fa-search"></i></button>
+            @endif
+        </div>
+        
+        <button type="submit" id="kasaArama" class="btn btn-sm btn-dark searchBtn kasaArama"><i class="fas fa-search"></i></button>
+
+    </div>
+</div>
 
               <div class="searchWrap float-end">
                 <div class="btn-group mb-2 " id="kasaFilterDropdownContainer">
@@ -603,7 +636,7 @@ $(document).ready(function(){
         "sLengthMenu":     "_MENU_",
         "sLoadingRecords": "Yükleniyor...",
         "sProcessing":     "İşleniyor...",
-        "sSearch":         "Servis Id:",
+        "sSearch":         "",
         "sZeroRecords":    "Eşleşen kayıt bulunamadı",
         "oPaginate": {
           "sFirst":    "İlk",
@@ -625,6 +658,34 @@ $(document).ready(function(){
       },
        dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
       "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
+      "initComplete": function(settings, json) {
+            // --- DEĞİŞTİRİLEN BÖLÜM BURASI ---
+            var searchContainer = $('#datatableKasa_filter');
+            var searchInput = searchContainer.find('input');
+            var filterWrapper = $('.searchWrap');
+            var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
+
+            // Varsayılan "Search:" etiketini kaldır
+            searchContainer.find('label').contents().filter(function() {
+                return this.nodeType == 3;
+            }).remove();
+
+            // Arama kutusunu ve filtreyi sarmalamak için
+            searchContainer.addClass('flex-grow-1 me-2');
+            searchInput.addClass('w-100');
+            searchInput.attr('placeholder', 'Kasa Hareketi Ara...');
+
+            // Ögeleri flex container'a ekle
+            flexContainer.append(searchContainer);
+            flexContainer.append(filterWrapper);
+
+            // Flex container'ı tablonun üstüne ekle
+            $('#datatableKasa_wrapper .top').append(flexContainer);
+
+            // Hazır olduğunda görünür yap
+            $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+            // --- DEĞİŞTİRİLEN BÖLÜM SONU ---
+        }
     });
 
     // Kullanıcının filtreleme yaptığını takip etmek için flag
