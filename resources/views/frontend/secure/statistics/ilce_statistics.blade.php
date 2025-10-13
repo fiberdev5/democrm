@@ -10,9 +10,24 @@
             opacity: 0;
         }
 
+        @media (min-width: 768px) {
+    .table-modern .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .table-modern .card-header .d-flex {
+        margin-bottom: 0 !important; 
+        width: auto !important;
+    }
+}
         @media (max-width: 767px) {
             .pageDetail .searchWrap .dropdown-menu {
                 transform: translate3d(-208px, 2px, 0px) !important;
+            }
+            .pageDetail .searchWrap {
+                width: 30% !important;
             }
 
             .searchWrap {
@@ -37,12 +52,12 @@
                 <div class="col-12">
                     <div class="table-modern">
                         <div class="card-header">
-                            İlçe İstatistikleri
+                            <span>İlçe İstatistikleri</span>
 
                         </div>
                         <div class="card-body">
                             <div class="searchWrap float-end">
-                                <div class="btn-group mb-2">
+                                <div class="btn-group">
                                     <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         Filtrele <i class="mdi mdi-chevron-down"></i>
@@ -246,29 +261,29 @@
                 drawCallback: function () {
                     $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
                 },
-                dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
-                lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
-                "initComplete": function (settings, json) {
-                    var searchContainer = $('#datatableIlceStats_filter');
-                    var searchInput = searchContainer.find('input');
-                    var filterWrapper = $('.searchWrap');
-                    var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
+                dom: 'frt<"bottom"i<"float-end"lp>><"clear">', 
+lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
+"initComplete": function (settings, json) {
+    var searchContainer = $('#datatableIlceStats_filter');
+    var searchInput = searchContainer.find('input');
+    var filterWrapper = $('.searchWrap');
+    var flexContainer = $('<div class="d-flex justify-content-end"></div>');
 
-                    searchContainer.find('label').contents().filter(function () {
-                        return this.nodeType == 3;
-                    }).remove();
+    searchContainer.find('label').contents().filter(function () {
+        return this.nodeType == 3;
+    }).remove();
 
-                    searchContainer.addClass('flex-grow-1 me-2');
-                    searchInput.addClass('w-100');
-                    searchInput.attr('placeholder', 'İlçe Ara...');
+    searchContainer.addClass('flex-grow-1');
+    searchInput.addClass('w-100');
+    searchInput.attr('placeholder', 'İlçe Ara...');
 
-                    flexContainer.append(searchContainer);
-                    flexContainer.append(filterWrapper);
+    flexContainer.append(searchContainer);
+    flexContainer.append(filterWrapper);
 
-                    $('#datatableIlceStats_wrapper .top').append(flexContainer);
+    $('.card-header').append(flexContainer);
 
-                    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
-                }
+    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+}
             });
         });
     </script>

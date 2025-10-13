@@ -13,12 +13,48 @@
     visibility: hidden;
     opacity: 0;
 }
+.p-b{
+  padding-bottom: 5px !important;
+}
 @media (max-width: 767px) {
-
+.custom-p{
+        padding-left: 0px !important;
+      }
+.pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+    }
 .searchWrap{margin-top: 0px !important;}
-    .pageDetail .searchWrap{width: 39% !important;}
+    .pageDetail .searchWrap{width: 30% !important;}
     .pageDetail .searchWrap{margin-bottom: 0px !important;}
  div.dataTables_filter input{margin-left: 0 !important;}
+     #datatableOffer_filter label {
+        width: 100% !important;
+    }
+    li.paginate_button.next, li.paginate_button.previous {
+        font-size: 15px;
+    }
+        #datatableOffer_wrapper .dataTables_info {
+        text-align: left !important;
+    }
+    .searchWrap .tarih-araligi {
+    padding: 5px 0px;
+}
+        .pageDetail .searchWrap .dropdown-menu {
+        min-width: calc(78vw - 20px) !important;
+                transform: translate3d(12px, 4px, 0px) !important;
+    }
+        .pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+        padding: 0px !important;
+    }
+    .searchWrap .dropdown-menu {
+    padding: 0px !important;
+}
+.pageDetail .searchWrap .tarihAraligi .btn {
+        color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+      }
 }
 </style>
 
@@ -60,11 +96,11 @@
                         <div class="col-sm-8">
                             <input id="daterange" class="tarih-araligi">
                             <div class="tarihAraligi mt-2 mb-2">
+                              <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
+                              <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
+                              <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                              <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
                                 <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
-                                <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
-                                <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
-                                <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
-                                <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
                             </div>
                         </div>
                     </div>
@@ -81,15 +117,15 @@
             <i class="fas fa-plus"></i><span>Teklif Ekle</span>
         </a>
         <div style="margin-top: 0px !important;" class="searchWrap">
-            <div class="btn-group">
+            <div class="btn-group" id="teklif_filtre">
                 <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Filtrele <i class="mdi mdi-chevron-down"></i>
                 </button>
                 <div class="dropdown-menu">
                     <div class="item">
                         <div class="row">
-                            <label class="col-sm-4">Durum</label>
-                            <div class="col-sm-8">
+                            <label class="col-sm-4 custom-p  col-4">Durum</label>
+                            <div class="col-sm-8 custom-p col-8">
                                 <select name="teklifDurumu" id="teklifDurumu" class="form-select">
                                     <option value="">Hepsi</option>
                                     <option value="0">Beklemede</option>
@@ -100,8 +136,8 @@
                     </div>
                     <div class="item">
                         <div class="row">
-                            <label class="col-sm-4">Tarih Aralığı:</label>
-                            <div class="col-sm-8">
+                            <label class="col-sm-4 custom-p  col-4">Tarih Aralığı:</label>
+                            <div class="col-sm-8 custom-p col-8">
                                 <input id="daterange" class="tarih-araligi">
                                 <div class="tarihAraligi mt-2 mb-2">
                                     <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
@@ -148,7 +184,7 @@
         <h6 class="modal-title" id="myModalLabel">Teklif Ekle</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body p-b">
       Yükleniyor...
       </div>
     </div><!-- /.modal-content -->
@@ -391,20 +427,38 @@ $(document).ready(function () {
         dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
         "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
          "initComplete": function(settings, json) {
-            var searchContainer = $('#datatableOffer_filter');
-            var searchInput = searchContainer.find('input');
-            searchInput.attr('placeholder', 'Teklif Ara...');
-            if (window.matchMedia("(max-width: 991.98px)").matches) {
-                var mobileFilterWrapper = $('.d-lg-none .searchWrap');
-                searchContainer.append(mobileFilterWrapper);
-                searchContainer.addClass('input-group');
-                mobileFilterWrapper.find('.btn').css({
-                    'border-top-left-radius': '0',
-                    'border-bottom-left-radius': '0'
-                });
-            }
-            $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
-        }
+    var searchContainer = $('#datatableOffer_filter');
+    var searchInput = searchContainer.find('input');
+
+    // Mobil ve masaüstünde tutarlı bir yapı için mobil görünüme ait filtre butonunu kullanacağız.
+    var filterWrapper = $('.d-lg-none .searchWrap');
+
+    // Arama kutusu ve filtre butonu için yeni bir flex container oluşturuyoruz.
+    var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
+
+    // DataTables'ın varsayılan "Search:" etiketini kaldırıyoruz.
+    searchContainer.find('label').contents().filter(function() {
+        return this.nodeType == 3;
+    }).remove();
+
+    // Arama kutusunu ve kapsayıcısını stillendiriyoruz.
+    searchContainer.addClass('flex-grow-1');
+    searchInput.addClass('w-100');
+    searchInput.attr('placeholder', 'Teklif Ara...');
+
+    // Arama kutusunu ve filtre butonunu yeni flex container'a ekliyoruz.
+    flexContainer.append(searchContainer);
+    flexContainer.append(filterWrapper);
+
+    // Artık ihtiyaç kalmadığı için masaüstü için olan orijinal filtre sarmalayıcısını kaldırıyoruz.
+    $('.d-none.d-lg-block .searchWrap').remove();
+
+    // Oluşturduğumuz yeni ve birleşik arama/filtre çubuğunu tablonun üst kısmına ekliyoruz.
+    $('#datatableOffer_wrapper .top').append(flexContainer);
+
+    // Taşıma işlemi bittikten sonra filtre butonunu görünür yapıyoruz.
+    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+}
   });
 
   $('#teklifDurumu').change(function(){
@@ -412,5 +466,22 @@ $(document).ready(function () {
   });
 
 });
+
+
+</script>
+<script>
+    $(document).ready(function () {
+      // Olay dinleyiciyi, silinmeyen bir üst element olan `.searchWrap` üzerine kuruyoruz.
+      // Bu sayede içindeki elementler taşınsa bile olay dinleyici çalışmaya devam eder.
+      $('.searchWrap').on('show.bs.dropdown', '.btn-group', function () {
+        // Tıklanan `.btn-group` içindeki `.filtrele` butonunu bulup metnini değiştiriyoruz.
+        $(this).find('.filtrele').html('Kapat <i class="mdi mdi-chevron-down"></i>');
+      });
+
+      $('.searchWrap').on('hide.bs.dropdown', '.btn-group', function () {
+        // Menü kapandığında metni tekrar eski haline getiriyoruz.
+        $(this).find('.filtrele').html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+      });
+    });
 </script>
 @endsection

@@ -1,15 +1,25 @@
+<style>
+@media (min-width: 767px) {
+.custom-p-r{
+    padding-right: 0px !important;
+  }
+  .custom-p-l{
+    padding-left: 0px !important;
+  }
+}
+</style>
 <form method="post" id="addCashTransaction" action="{{ route('store.cash.transaction', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
   @csrf
   <div class="row ">
-    <label class="col-sm-4 col-form-label">İşlem Tarihi:<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r col-form-label">İşlem Tarihi:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="islemTarihi" class="form-control datepicker kayitTarihi" type="date" value="{{date('Y-m-d')}}" required>
     </div>
   </div>
 
   <div class="row">
-    <label class="col-sm-4">Ödeme Yönü:<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Ödeme Yönü:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <select name="odeme_yonu" class="form-select" required>
         <option selected value="1">Gelen Ödeme(Borç)</option>
         <option value="2">Giden Ödeme(Alacak)</option>
@@ -18,8 +28,8 @@
   </div>
 
   <div class="row">
-    <label class="col-sm-4">Ödeme Şekli:<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Ödeme Şekli:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <select name="odeme_sekli" class="form-select odemeSekli" required>
         @foreach($payment_methods as $method)
           <option value="{{$method->id}}">{{$method->odemeSekli}}</option>
@@ -30,8 +40,8 @@
 
 
   <div class="row">
-    <label class="col-sm-4">Ödeme Türü:<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Ödeme Türü:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <select name="odeme_turu" class="form-select odemeTuru" required>
         <option selected value="">-Seçiniz-</option>
         @foreach($payment_types as $type)
@@ -44,8 +54,8 @@
   <div class="odemeAciklamalari"></div>
 
   <div class="row">
-    <label class="col-sm-4">Ödeme Durumu:<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Ödeme Durumu:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <select name="odeme_durum" class="form-select" required>
         <option selected value="1">Tamamlandı</option>
         <option value="2">Tamamlanmadı</option>
@@ -54,8 +64,8 @@
   </div>
 
   <div class="row mb-3">
-    <div class="col-sm-4"><label>Tutar (₺) <span style="font-weight: bold; color: red;">*</span></label></div>
-    <div class="col-sm-8">
+    <div class="col-sm-4 custom-p-r"><label>Tutar (₺) <span style="font-weight: bold; color: red;">*</span></label></div>
+    <div class="col-sm-8 custom-p-l">
       <input type="number" step="0.01" name="fiyat" class="form-control fiyat" placeholder="0.00" required>
     </div>
   </div>

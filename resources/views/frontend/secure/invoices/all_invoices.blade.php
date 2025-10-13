@@ -7,9 +7,28 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 <style>
+  @media (min-width: 767px) {
+.custom-p-r{
+    padding-right: 0px !important;
+  }
+  .custom-p-l{
+    padding-left: 0px !important;
+  }
+}
+ @media (min-width: 768px) {
+  .custom-modal-width {
+    max-width: 390px;
+    margin: 1.75rem auto;
+  }
+}
 
 @media (max-width: 767px) {
-
+.custom-p{
+        padding-left: 0px !important;
+      }
+.pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+    }
 .searchWrap{margin-top: 0px !important;}
     .pageDetail .searchWrap{}
     .pageDetail .searchWrap{margin-bottom: 0px !important;}
@@ -17,6 +36,33 @@
  .dataTables_filter{
 margin-right: 0px !important;
     }
+        #datatableInvoice_wrapper .dataTables_info{
+          width: auto !important;
+        }
+            #datatableInvoice_wrapper .bottom {
+        flex-direction: row !important;
+    }
+    li.paginate_button.next, li.paginate_button.previous {
+        font-size: 15px;
+    }
+      .pageDetail .searchWrap .dropdown-menu {
+transform: translate3d(10px, 1px, 0px) !important;
+min-width: calc(92vw - 20px) !important;
+      } 
+      .searchWrap .dropdown-menu {
+    padding: 0px;
+} 
+    .pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+    }
+    .pageDetail .searchWrap .tarihAraligi .btn {
+        color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+      }
+      .searchWrap .tarih-araligi {
+    padding: 5px 0px !important;
+}
 }
 </style>
 <div class="page-content" id="passwords">
@@ -32,15 +78,15 @@ margin-right: 0px !important;
                 <a class="btn btn-success btn-sm addInvoice" data-bs-toggle="modal" data-bs-target="#addInvoiceModal"><i class="fas fa-plus"></i><span>Fatura Ekle</span></a> 
                 <a class="btn btn-danger btn-sm tevkifatHesapla" data-bs-toggle="modal" data-bs-target="#tevkifatHesaplamaModal"><i class="fas fa-calculator"></i> <span>Tevkifat Hesaplama</span></a>
               <div class="searchWrap float-end">
-                <div class="btn-group mb-2 ">
+                <div class="btn-group mb-2 " id="fatura_filtre">
                   <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Filtrele <i class="mdi mdi-chevron-down"></i>
                   </button>
                   <div class="dropdown-menu">
                     <div class="item">
                       <div class="row form-group">
-                        <label class="col-sm-4">Müşteri<span style="font-weight: bold; color: red;">*</span></label>
-                        <div class="col-md-8">
+                        <label class="col-sm-4 custom-p col-4">Müşteri<span style="font-weight: bold; color: red;">*</span></label>
+                        <div class="col-md-8 custom-p col-8">
                           <input id="search" type="text" name="adSoyad" class="form-control musteriAdSoyad" autocomplete="off" placeholder="Müşteri Adı" >
                           <input type="hidden" name="musteri" class="mus_id" id="alici"/>
                           <ul id="result" style="margin: 0; padding: 0"></ul>
@@ -49,8 +95,8 @@ margin-right: 0px !important;
                     </div>
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Durum:</label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-4 custom-p col-4">Durum:</label>
+                        <div class="col-sm-8 custom-p col-8">
                           <select name="durum" id="durum" class="form-select">
                             <option value="">Hepsi</option>
                               <option value="sent">Gönderildi</option>
@@ -61,15 +107,15 @@ margin-right: 0px !important;
                     </div>
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Tarih Aralığı:</label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-4 custom-p col-4">Tarih Aralığı:</label>
+                        <div class="col-sm-8 custom-p col-8">
                           <input id="daterange" class="tarih-araligi">
                           <div class="tarihAraligi mt-2 mb-2">
-                            <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
-                            <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
-                            <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
-                            <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
                             <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
+                            <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
+                            <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                            <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                            <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
                           </div>
                         </div>
                       </div>
@@ -131,7 +177,7 @@ margin-right: 0px !important;
 </div>
 
 <div class="modal fade" id="tevkifatHesaplamaModal" tabindex='-1' role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog custom-modal-width">
     <div class="modal-content">
       <!-- Modal Header -->
       <div class="modal-header">
@@ -141,8 +187,8 @@ margin-right: 0px !important;
       <!-- Modal body -->
       <div id="response" class="modal-body" style="padding: 10px;">
         <div class="row form-group">
-          <label class="col-sm-4 ">KDV Oranı (%):</label>
-          <div class="col-sm-8">
+          <label class="col-sm-4 custom-p-r">KDV Oranı (%):</label>
+          <div class="col-sm-8 custom-p-l">
             <select class="form-control kdvOrani" style="font-weight: 500;">
               <option value="20" selected>%20</option>
               <option value="10">%10</option>
@@ -154,8 +200,8 @@ margin-right: 0px !important;
         </div>
 
         <div class="row form-group">
-          <label class="col-sm-4 ">Tevkifat Oranı:</label>
-          <div class="col-sm-8">
+          <label class="col-sm-4 custom-p-r">Tevkifat Oranı:</label>
+          <div class="col-sm-8 custom-p-l">
             <select class="form-control tevkifatOrani" style="font-weight: 500;">
               <option value="1">Yok</option>
               <option value="0.5">%50 (5/10)</option>
@@ -166,30 +212,30 @@ margin-right: 0px !important;
         </div>
 
         <div class="row form-group">
-          <div class="col-md-4"><label style="color:red">KDV Dahil Tutar</label></div>
-          <div class="col-md-8">
+          <div class="col-md-4 custom-p-r"><label style="color:red">KDV Dahil Tutar</label></div>
+          <div class="col-md-8 custom-p-l">
             <input class="form-control tutar" type="text" placeholder="0.00" style="width: calc(100% - 25px);display: inline-block;margin-right: -10px;font-weight: 500;">
             <input class="form-control" type="text" value="TL" disabled style="width: 30px;display: inline-block;background: #fff;border-left: 0;border-top-left-radius: 0;border-bottom-left-radius: 0;text-align: center;">
           </div>
         </div>
 
         <div class="row form-group">
-          <div class="col-md-4"><label style="color:green">Hesaplanan KDV</label></div>
-          <div class="col-md-8">
+          <div class="col-md-4 custom-p-r"><label style="color:green">Hesaplanan KDV</label></div>
+          <div class="col-md-8 custom-p-l">
             <input type="text" class="form-control hesaplananKdv" disabled style="font-weight: 500; background: #e5e5e5;">
           </div>
         </div>
 
         <div class="row form-group">
-          <div class="col-md-4"><label style="color:#ff9800">Tevkifat Tutarı</label></div>
-          <div class="col-md-8">
+          <div class="col-md-4 custom-p-r"><label style="color:#ff9800">Tevkifat Tutarı</label></div>
+          <div class="col-md-8 custom-p-l">
             <input type="text" class="form-control tevkifatTutar" disabled style="font-weight: 500; background: #e5e5e5;">
           </div>
         </div>
 
         <div class="row form-group">
-          <div class="col-md-4"><label style="color:red">KDV Hariç Tutar</label></div>
-          <div class="col-md-8">
+          <div class="col-md-4 custom-p-r"><label style="color:red">KDV Hariç Tutar</label></div>
+          <div class="col-md-8 custom-p-l">
             <input type="text" class="form-control sonuc" disabled style="font-weight: 500; background: #e5e5e5;">
           </div>
         </div>
@@ -565,7 +611,7 @@ $(document).ready(function () {
               }).remove();
     
               // Arama kutusunu ve filtreyi sarmalamak için
-              searchContainer.addClass('flex-grow-1 me-2');
+              searchContainer.addClass('flex-grow-1');
               searchInput.addClass('w-100');
               searchInput.attr('placeholder', 'Fatura Ara...');
     
@@ -578,7 +624,7 @@ $(document).ready(function () {
     
               // Hazır olduğunda görünür yap
               $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
-              // --- DEĞİŞTİRİLEN BÖLÜM SONU ---
+               $('.tableToplamaAlani').insertBefore('#datatableInvoice_wrapper .bottom');
           }
   });
 
@@ -651,4 +697,16 @@ $(document).ready(function () {
     });
 });
 </script>
+<script>
+    $(document).ready(function () {
+      var dropdownContainer = $('#fatura_filtre');
+      var filterButton = dropdownContainer.find('.filtrele');
+      dropdownContainer.on('show.bs.dropdown', function () {
+        filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+      });
+      dropdownContainer.on('hide.bs.dropdown', function () {
+        filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+      });
+    });
+  </script>
 @endsection

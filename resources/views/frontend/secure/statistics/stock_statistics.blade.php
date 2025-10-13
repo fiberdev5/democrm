@@ -6,9 +6,26 @@
             opacity: 0;
         }
 
+        @media (min-width: 768px) {
+            .table-modern .card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .table-modern .card-header .d-flex {
+                margin-bottom: 0 !important;
+                width: auto !important;
+            }
+        }
+
         @media (max-width: 767px) {
             .pageDetail .searchWrap .dropdown-menu {
                 transform: translate3d(-208px, 2px, 0px) !important;
+            }
+
+            .pageDetail .searchWrap {
+                width: 30% !important;
             }
 
             .searchWrap {
@@ -32,11 +49,11 @@
                 <div class="col-12">
                     <div class="table-modern ">
                         <div class="card-header">
-                            Personel Depo İstatistikleri
+                            <span>Personel Depo İstatistikleri</span>
                         </div>
                         <div class="card-body">
                             <div class="searchWrap float-end">
-                                <div class="btn-group mb-2">
+                                <div class="btn-group">
                                     <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button"
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         Filtrele <i class="mdi mdi-chevron-down"></i>
@@ -134,11 +151,11 @@
                             let text = tempDiv.textContent || tempDiv.innerText || "";
 
                             return `
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <div class="fw-bold">${text}</div>
-                            </div>
-                        </div>`;
+                            <div class="d-flex align-items-center">
+                                <div>
+                                    <div class="fw-bold">${text}</div>
+                                </div>
+                            </div>`;
                         }
 
                     },
@@ -162,29 +179,31 @@
                 drawCallback: function () {
                     $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
                 },
-                dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
-                lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
-                "initComplete": function (settings, json) {
-                    var searchContainer = $('#datatablePersonelDepoStats_filter');
-                    var searchInput = searchContainer.find('input');
-                    var filterWrapper = $('.searchWrap');
-                    var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
+                dom: 'frt<"bottom"i<"float-end"lp>><"clear">', // "f" (filter) etrafındaki <"top"> sarmalayıcısı kaldırıldı.
+lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
+"initComplete": function (settings, json) {
+    var searchContainer = $('#datatablePersonelDepoStats_filter');
+    var searchInput = searchContainer.find('input');
+    var filterWrapper = $('.searchWrap');
+    // Genişlik ve alt boşluk sınıfları kaldırıldı, çünkü CSS ile yönetiliyor.
+    var flexContainer = $('<div class="d-flex justify-content-end"></div>');
 
-                    searchContainer.find('label').contents().filter(function () {
-                        return this.nodeType == 3;
-                    }).remove();
+    searchContainer.find('label').contents().filter(function () {
+        return this.nodeType == 3;
+    }).remove();
 
-                    searchContainer.addClass('flex-grow-1 me-2');
-                    searchInput.addClass('w-100');
-                    searchInput.attr('placeholder', 'Personel Ara...');
+    searchContainer.addClass('flex-grow-1');
+    searchInput.addClass('w-100');
+    searchInput.attr('placeholder', 'Personel Ara...');
 
-                    flexContainer.append(searchContainer);
-                    flexContainer.append(filterWrapper);
+    flexContainer.append(searchContainer);
+    flexContainer.append(filterWrapper);
 
-                    $('#datatablePersonelDepoStats_wrapper .top').append(flexContainer);
+    // Konteyner artık doğrudan başlığın (.card-header) içine ekleniyor.
+    $('.card-header').append(flexContainer);
 
-                    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
-                }
+    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+}
             });
 
         });

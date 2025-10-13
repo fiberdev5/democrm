@@ -77,9 +77,11 @@
     .service-summary {
         background: white;
         border-radius: 16px;
-        padding: 15px; /* Reduced padding */
+        padding: 0; /* Reduced padding */
         margin: 0 0 16px 0; /* Adjusted margin */
         box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        border: 1px solid rgba(0, 0, 0, .125);
+        
     }
 
     .service-summary h5 {
@@ -88,8 +90,13 @@
         font-weight: 600;
         display: flex;
         align-items: center;
+        padding: 9px 17px; /* Reduced padding */
         gap: 10px;
         font-size: 1.1rem;
+        background-color: #f7f7f7;
+        border-bottom: 1px solid rgba(0, 0, 0, .125);
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
     }
 
     .service-item {
@@ -266,13 +273,16 @@
     }
     
     .chart-header h5 {
-        font-size: 0.95rem;
+        font-size: 15px !important;
         margin-bottom: 0;
     }
-    
+    .dashboard-card-header h5{font-size: 15px !important;}
+    .dashboard-card-header .view-all-btn{font-size: 10px !important;}
     .time-filter {
         align-self: stretch;
-        justify-content: center;
+        justify-content: left !important;
+            gap: 0px !important;
+    padding: 1px 0px !important;
     }
     
     .filter-btn {
@@ -496,9 +506,13 @@
         .chart-container, .dashboard-card { height: auto; min-height: 320px; }
         .time-filter { flex-wrap: wrap; }
         .filter-btn { font-size: 0.75rem; padding: 5px 12px; }
-        .service-summary { padding: 16px; }
-        .service-item { padding: 14px 12px; }
+        .service-summary { padding: 15px 5px; }
+        .service-item { padding: 0px; }
         .service-count { font-size: 1.6rem; }
+        .main-page-custom{margin-top: 37px;}
+        .chart-header {
+    align-items: flex-start !important;
+}
     }
 
     .row { margin-left: -8px; margin-right: -8px; }
@@ -512,7 +526,7 @@
     <div id="errorMessage" class="error-message"></div>
     
     <!-- Üst İstatistik Kartları -->
-    <div class="row">
+    <div class="row main-page-custom">
         <div class="col-lg-3 col-md-6">
             <a href="#" class="stat-card blue" id="totalServicesCard">
                 <i class="fas fa-tools stat-icon"></i>
