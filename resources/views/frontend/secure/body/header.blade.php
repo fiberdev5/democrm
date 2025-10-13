@@ -1,8 +1,46 @@
 @php 
 $user = Auth::user();
 @endphp
-
+<style>
+  @media (max-width: 767px) {
+    .navbar-header{
+      padding-right: 0px !important;
+    }
+    .dropdown-divider{
+      display: none;
+    }
+     .username-ellipsis {
+    display: inline-block;
+    max-width: 11ch;         /* 7 karakterlik alan */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom; /* hizalama için */
+  }
+  .mobile-top-logo {
+    position: sticky;   /* veya fixed yapabilirsin */
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #22262b;
+    border-bottom: 1px solid #2f343a;
+    font-weight: 600;
+    font-size: 16px;
+    z-index: 1050;
+    text-transform: uppercase; 
+    color: white;
+  }
+  }
+  
+</style>
 <header id="page-topbar">
+  <div class="mobile-top-logo d-block d-md-none text-center py-2">
+    @if(!empty($user->tenant->firma_adi))
+        {{ $user->tenant->firma_adi }}
+    @else 
+        Yönetim Paneli
+    @endif
+</div>
     <div class="navbar-header">
       <div class="d-flex">
         <button type="button" class="btn btn-sm px-3 font-size-24 header-item" id="vertical-menu-btn">
@@ -21,6 +59,7 @@ $user = Auth::user();
                         Yönetim Paneli
                     @endif
                 </span>
+                
             </a>
         </div>
 
@@ -36,8 +75,12 @@ $user = Auth::user();
         <div class="dropdown d-inline-block user-dropdown">
           <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="d-none d-xl-inline-block ms-1"><i class="ri-user-line align-middle me-1"></i> {{ $adminData->name }} (<span class="fst-italic small">{{ $adminData->getRoleNames()->first() ?? 'Rol Yok' }}</span>)</span>
-            <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
+            <span class="ms-1 username-ellipsis">
+  <i class="ri-user-line align-middle me-1"></i> 
+  {{ $adminData->name }} 
+  (<span class="fst-italic small">{{ $adminData->getRoleNames()->first() ?? 'Rol Yok' }}</span>)
+</span>
+            <i class="mdi mdi-chevron-down"></i>
           </button>
           <div class="dropdown-menu dropdown-menu-end">
           <!-- item-->
@@ -59,4 +102,5 @@ $user = Auth::user();
                 
         </div>
     </div>
+    
   </header>

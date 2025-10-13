@@ -98,7 +98,8 @@ if ($request->ajax()) {
             'services.servisDurum',
             'services.kayitAlan',
             'services.acil',
-            'services.firma_id'
+            'services.firma_id',
+            'services.cihazAriza'
         ])
         ->with([
             // Sadece gerekli kolonlar
@@ -543,14 +544,15 @@ if ($request->ajax()) {
         $tel2 = $row->musteri->tel2 ?? '';
         $adres= $row->musteri->adres ?? '';
 
-        return '<a class="t-link serBilgiDuzenle address" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal"><span class="mobileTitle">Müşteri:</span><strong>'. $alarmIcon . e($row->musteri->adSoyad) .'</strong><br><div style="font-size:12px;">'.e($tel1).' - '.e($tel2).'</div><div style="font-size:12px;">'.e($adres).'</div></a>';
+        return '<a class="t-link serBilgiDuzenle address" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal"><span class="mobileTitle">Müşteri:</span><strong>'. $alarmIcon . e($row->musteri->adSoyad) .'</strong><br><div style="font-size:12px;">'.e($tel1).' - '.e($tel2).'</div><div style="font-size:12px;">'. e(Str::limit($adres, 40)) .'</div></a>';
     }
 
     private function colCihaz($row): string
     {
         $marka = $row->markaCihaz->marka ?? '';
         $tur   = $row->turCihaz->cihaz ?? '';
-        return '<a class="t-link serBilgiDuzenle" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal"><span class="mobileTitle">Cihaz:</span><strong>'.e($marka).' - '.e($tur).'</strong></a>';
+         $ariza = $row->cihazAriza ?  $row->cihazAriza : '';
+        return '<a class="t-link serBilgiDuzenle" href="javascript:void(0);" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editServiceDescModal"><span class="mobileTitle">Cihaz:</span><strong>'.e($marka).' - '.e($tur).'</strong><br/><p class="p-cihaz">'.e($ariza).'</p></a>';
     }
 
 private function colAsama($row): string

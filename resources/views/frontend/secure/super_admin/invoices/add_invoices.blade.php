@@ -1,10 +1,18 @@
+<style>
+  .card-header{
+    padding: 5px 7px !important;
+  }
+  .custom-m{
+    margin-bottom: 0px !important;
+  }
+</style>
 <div class="add_invoices_superadmin">
 <form method="post" id="addInvo" action="{{ route('super.admin.invoices.store')}}" enctype="multipart/form-data" class="needs-validation" novalidate>
   @csrf
   <div class="card f5">
     <div class="card-header ch1" style="padding: 3px 10px;">
       <div class="tarihWrap">
-        <label style="text-align: left;width: auto;display: inline-block;margin: 0;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
+        <label style="text-align: left;width: auto;display: inline-block;margin: 0;margin-right: 3px;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
         <input type="date" name="faturaTarihi" class="form-control datepicker kayitTarihi"  value="{{date('Y-m-d')}}" style="width: 100px!important;display: inline-block;background:#fff" required>
       </div>
       <div class="clearfix"></div>
@@ -127,21 +135,21 @@
         </div>
       </div>
 
-      <div class="card col-lg-6 f4">
+      <div class="card col-lg-6 f4 custom-m">
         <div class="card-body" style="padding:17px 5px">
           <div class="row form-group">
-            <div class="col-md-8 rw1"><label>Toplam (KDV Hariç)<span style="font-weight: bold; color: red;"> *</span></label></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam" required></div>
+            <div class="col-md-5 rw1"><label>Toplam (KDV Hariç)<span style="font-weight: bold; color: red;"> *</span></label></div>
+            <div class="col-md-7 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam" required></div>
           </div>
 
           <div class="row form-group">
-            <div class="col-md-8 rw1"><label>İndirim</label></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" autocomplete="off" class="form-control indirim" value="0.00"></div>
+            <div class="col-md-5 rw1"><label>İndirim</label></div>
+            <div class="col-md-7 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" autocomplete="off" class="form-control indirim" value="0.00"></div>
           </div>
           
           <div class="row form-group">
-            <div class="col-md-8 rw1"><label>Ara Toplam</label></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" autocomplete="off" class="form-control araToplam"></div>
+            <div class="col-md-5 rw1"><label>Ara Toplam</label></div>
+            <div class="col-md-7 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" autocomplete="off" class="form-control araToplam"></div>
           </div>
 
           <div class="row form-group">
@@ -167,8 +175,8 @@
           </div>
 
           <div class="row form-group" style="padding-bottom: 0">
-            <div class="col-md-8 rw1"><label>Genel Toplam (KDV Dahil)<span style="font-weight: bold; color: red;"> *</span></label></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam" required></div>
+            <div class="col-md-5 rw1"><label>Genel Toplam (KDV Dahil)<span style="font-weight: bold; color: red;"> *</span></label></div>
+            <div class="col-md-7 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam" required></div>
           </div>
         </div>
       </div>

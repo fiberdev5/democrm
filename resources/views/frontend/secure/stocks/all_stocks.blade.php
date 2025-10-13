@@ -19,15 +19,37 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
 @endphp
 
 <style>
+   @media (min-width: 768px) {
+  .custom-modal-width {
+    max-width: 340px;
+    margin: 1.75rem auto;
+  }
+  .searchWrap .dropdown-menu{
+    width: 321px !important;
+  }
+}
+
 
 @media (max-width: 767px) {
-
+.custom-p{
+        padding-left: 0px !important;
+      }
 .searchWrap{margin-top: 0px !important;}
-    .pageDetail .searchWrap{}
+.pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+    }
+    .pageDetail .searchWrap{width: 30% !important;}
     .pageDetail .searchWrap{margin-bottom: 0px !important;}
  div.dataTables_filter input{margin-left: 0 !important;}
  .dataTables_filter{
 margin-right: 0px !important;
+    }
+        #datatableStock_filter label {
+        width: 100% !important;
+    }
+    .pageDetail .searchWrap .dropdown-menu{transform: translate3d(11px, 1px, 0px) !important;width: 100% !important;min-width: calc(64vw - 20px) !important;padding: 0px !important;}
+     li.paginate_button.next, li.paginate_button.previous {
+        font-size: 15px;
     }
 }
 </style>
@@ -59,17 +81,17 @@ margin-right: 0px !important;
             </a>
             <!-- Filtre dropdown butonu -->
             <div class="searchWrap float-end">
-              <div class="btn-group mb-2 ">
+              <div class="btn-group" id="depo_filtre">
                 <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Filtrele <i class="mdi mdi-chevron-down"></i>
                 </button>
                 <div class="dropdown-menu p-3" style="min-width: 250px;">
                   
                   <!-- Raf -->
-                  <div class="item mb-2">
+                  <div class="item">
                     <div class="row align-items-center">
-                      <label class="col-sm-5 mb-0">Raf</label>
-                      <div class="col-sm-7">
+                      <label class="col-sm-3 custom-p custom-p-r-m col-4 mb-0">Raf</label>
+                      <div class="col-sm-9 custom-p custom-p-m col-8">
                         <select id="raf" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($rafListesi as $raf)
@@ -81,10 +103,10 @@ margin-right: 0px !important;
                   </div>
                   
                   <!-- Marka -->
-                  <div class="item mb-2">
+                  <div class="item">
                     <div class="row align-items-center">
-                      <label class="col-sm-5 mb-0">Marka</label>
-                      <div class="col-sm-7">
+                      <label class="col-sm-3 custom-p custom-p-r-m col-4 mb-0">Marka</label>
+                      <div class="col-sm-9 custom-p custom-p-m col-8">
                         <select id="marka" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($markalar as $marka)
@@ -96,10 +118,10 @@ margin-right: 0px !important;
                   </div>
 
                   <!-- Cihaz -->
-                  <div class="item mb-2">
+                  <div class="item">
                     <div class="row align-items-center">
-                      <label class="col-sm-5 mb-0">Cihaz</label>
-                      <div class="col-sm-7">
+                      <label class="col-sm-3 custom-p custom-p-r-m col-4 mb-0">Cihaz</label>
+                      <div class="col-sm-9 custom-p custom-p-m col-8">
                         <select id="cihaz" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($cihazlar as $cihaz)
@@ -113,8 +135,8 @@ margin-right: 0px !important;
                   <!-- Personel -->
                   <div class="item">
                     <div class="row align-items-center">
-                      <label class="col-sm-5 mb-0">Personel</label>
-                      <div class="col-sm-7">
+                      <label class="col-sm-3 custom-p custom-p-r-m col-4 mb-0">Personel</label>
+                      <div class="col-sm-9 custom-p custom-p-m col-8">
                         <select id="personel" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($personeller as $personel)
@@ -184,7 +206,7 @@ margin-right: 0px !important;
 
 <!-- Modallar -->
 <div id="addStockModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addStockModalLabel" aria-hidden="true">
-  <div class="modal-dialog ">
+  <div class="modal-dialog custom-modal-width">
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title" id="addStockModalLabel">Stok Kartı Ekle</h6>
@@ -198,7 +220,7 @@ margin-right: 0px !important;
 
 <div id="editStockModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editStockModalLabel" aria-hidden="true">
   {{-- modal-dialog sınıfı JS tarafından eklenecek --}}
-  <div class="modal-dialog"> 
+  <div class="modal-dialog "> 
     <div class="modal-content">
       {{-- İçerik AJAX ile buraya gelecek --}}
     </div>
@@ -474,13 +496,16 @@ $(document).ready(function () {
           var searchContainer = $('#datatableStock_filter');
           var searchInput = searchContainer.find('input');
           var filterWrapper = $('.searchWrap');
-          var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
+          var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
 
           searchContainer.find('label').contents().filter(function() {
               return this.nodeType == 3;
           }).remove();
 
-          searchContainer.addClass('flex-grow-1 me-2');
+
+          // Arama kutusunu ve filtreyi sarmalamak için
+          searchContainer.addClass('flex-grow-1');
+
           searchInput.addClass('w-100');
           searchInput.attr('placeholder', 'Stok Ara...');
 
@@ -490,6 +515,10 @@ $(document).ready(function () {
           $('#datatableStock_wrapper .top').append(flexContainer);
 
           $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+
+          $('.tableToplamaAlani').insertBefore('#datatableStock_wrapper .bottom');
+          // --- DEĞİŞTİRİLEN BÖLÜM SONU ---
+
       }
   });
 
@@ -503,6 +532,17 @@ $(document).ready(function () {
   });
 });
 </script>
-
+<script>
+    $(document).ready(function () {
+      var dropdownContainer = $('#depo_filtre');
+      var filterButton = dropdownContainer.find('.filtrele');
+      dropdownContainer.on('show.bs.dropdown', function () {
+        filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+      });
+      dropdownContainer.on('hide.bs.dropdown', function () {
+        filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+      });
+    });
+  </script>
 
 @endsection

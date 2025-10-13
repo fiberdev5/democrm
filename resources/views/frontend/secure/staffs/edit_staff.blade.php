@@ -1,15 +1,26 @@
+<style>
+  
+@media (min-width: 767px) {
+.custom-p-r{
+    padding-right: 0px !important;
+  }
+  .custom-p-l{
+    padding-left: 0px !important;
+  }
+}
+</style>
 <form method="post" id="editPers" action="{{ route('update.personel', [$firma->id, $staff->user_id]) }}" enctype="multipart/form-data">
     @csrf
     <div class="row">
-      <label class="col-sm-4">Başlama Tarihi<span style="font-weight: bold; color: red;">*</span></label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Başlama Tarihi<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-sm-8 custom-p-l">
         <input name="baslamaTarihi" class="form-control datepicker kayitTarihi" type="date" value="{{$staff->baslamaTarihi}}" style="border: 1px solid #ced4da;" required>
       </div>
     </div>
   
     <div class="row">
-      <label class="col-sm-4">Personel Durumu: </label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Personel Durumu: </label>
+      <div class="col-sm-8 custom-p-l">
         <select name="status" class="form-select durum" required>
           <option value="1" {{ $staff->status == "1" ? 'selected' : ''}}>Çalışıyor</option>
           <option value="0" {{ $staff->status == "0" ? 'selected' : ''}}>Ayrıldı</option>
@@ -18,29 +29,29 @@
     </div> <!--end row-->
   
     <div class="row ayrilmaTarihi">
-      <label class="col-sm-4">Ayrılma Tarihi:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Ayrılma Tarihi:</label>
+      <div class="col-sm-8 custom-p-l">
           <input name="ayrilmaTarihi" class="form-control datepicker ayrilmaTarihi" type="date" value="{{$staff->ayrilmaTarihi}}" style="border: 1px solid #ced4da;">
       </div>
     </div>
   
     <div class="row">
-      <label class="col-sm-4">Personel Adı<span style="font-weight: bold; color: red;">*</span></label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Personel Adı<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-sm-8 custom-p-l">
         <input name="name" class="form-control" value="{{$staff->name}}" type="text" required>
       </div>
     </div>
   
     <div class="row">
-      <label class="col-sm-4">Telefon:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Telefon:</label>
+      <div class="col-sm-8 custom-p-l">
         <input name="tel" class="form-control phone" value="{{$staff->tel}}" type="text" required>
       </div>
     </div>
 
     <div class="row">
-        <div class="col-sm-4"><label>İl/İlçe</label></div>
-        <div class="col-sm-4">
+        <div class="col-sm-4 custom-p-r"><label>İl/İlçe</label></div>
+        <div class="col-sm-4 custom-p-l">
           <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;">
             <option value="" selected disabled>-Seçiniz-</option>
             @foreach($countries as $item)
@@ -48,7 +59,7 @@
             @endforeach
           </select>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-4 custom-p-l">
           <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;">
             <option value="" selected disabled>-Seçiniz-</option>                              
           </select>
@@ -56,15 +67,15 @@
       </div> 
   
     <div class="row">
-      <label class="col-sm-4">Adress:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Adress:</label>
+      <div class="col-sm-8 custom-p-l">
       <textarea name="address" type="text" class="form-control" rows="2">{{$staff->address}}</textarea>
       </div>
     </div>
   
     <div class="row">
-      <label class="col-sm-4">Personel Grubu<span style="font-weight: bold; color: red;">*</span></label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Personel Grubu<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-sm-8 custom-p-l">
         <select name="roles" class="form-select" required>
           <option selected value="">-Seçiniz-</option>
           @foreach($roles as $role)
@@ -75,15 +86,15 @@
     </div> <!--end row-->
   
     <div class="row">
-      <label class="col-sm-4">Kullanıcı Adı<span style="font-weight: bold; color: red;">*</span></label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Kullanıcı Adı<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-sm-8 custom-p-l">
         <input name="username" class="form-control" value="{{$staff->username}}" type="text" required>
       </div>
     </div>
               
     <div class="row mb-3">
-      <label class="col-sm-4">Şifre</label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Şifre</label>
+      <div class="col-sm-8 custom-p-l">
         <input name="password" class="form-control" type="password" placeholder="**********">
       </div>
     </div>

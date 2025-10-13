@@ -6,10 +6,30 @@
       opacity: 0;
     }
 
+    @media (min-width: 767px) {
+      .searchWrap .dropdown-menu {
+        width: 237px !important;
+      }
+    }
+
+
     @media (max-width: 767px) {
       .pageDetail .searchWrap {
         width: 25% !important;
       }
+      .custom-p-m-m{
+        padding-left: 0px !important;
+      }
+      .pageDetail .searchWrap .dropdown-menu {
+        min-width: calc(77vw - 20px) !important;
+      transform: translate3d(9.237503px, 3px, 0px) !important;
+      }
+      .dropdown-menu .row .col-3{
+        width: 25% !important;
+      }
+          .pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+    }
 
       .dataTables_filter label {
         width: 75% !important;
@@ -24,7 +44,8 @@
       }
 
       .top {
-        margin-top: 19px;
+        margin-top: 0px;
+        margin-bottom: 10px;
       }
 
       div.dataTables_wrapper div.dataTables_filter input {
@@ -64,8 +85,8 @@
                     <div class="dropdown-menu">
                       <div class="item">
                         <div class="row">
-                          <label class="col-sm-5">Durum</label>
-                          <div class="col-sm-7">
+                          <label class="col-sm-3 col-3 custom-p-r-m custom-p-m-m">Durum</label>
+                          <div class="col-sm-9 col-9">
                             <select name="tenantStatus" id="tenantStatus" class="form-select">
                               <option value="">Hepsi</option>
                               <option value="1">Aktif</option>
@@ -77,8 +98,8 @@
 
                       <div class="item">
                         <div class="row">
-                          <label class="col-sm-5">İl</label>
-                          <div class="col-sm-7">
+                          <label class="col-sm-3 col-3 custom-p-r-m custom-p-m-m">İl</label>
+                          <div class="col-sm-9 col-9">
                             <select name="il" id="countrySelect" class="form-control form-select"
                               style="width:100%!important;">
                               <option value="">Hepsi</option>
@@ -92,8 +113,8 @@
 
                       <div class="item">
                         <div class="row">
-                          <label class="col-sm-5">İlçe</label>
-                          <div class="col-sm-7">
+                          <label class="col-sm-3 col-3 custom-p-r-m custom-p-m-m">İlçe</label>
+                          <div class="col-sm-9 col-9">
                             <select name="ilce" id="citySelect" class="form-control form-select"
                               style="width:100%!important;">
                               <option value="">Hepsi</option>
@@ -441,13 +462,13 @@
 
         function loadTenantUsers(tenantId) {
           $('#tenantUsersContent').html(`
-              <div class="text-center p-4">
-                  <div class="spinner-border text-primary" role="status">
-                      <span class="visually-hidden">Yükleniyor...</span>
-                  </div>
-                  <p class="mt-2">Kullanıcılar yükleniyor...</p>
-              </div>
-          `);
+                <div class="text-center p-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                    <p class="mt-2">Kullanıcılar yükleniyor...</p>
+                </div>
+            `);
           $('#tenantUsersModal').modal('show');
 
 
@@ -460,38 +481,38 @@
             })
             .fail(function (xhr) {
               $('#tenantUsersContent').html(`
-                      <div class="alert alert-danger">
-                          <i class="fas fa-exclamation-triangle me-2"></i>
-                          ${xhr.responseJSON?.message || 'Kullanıcılar yüklenemedi.'}
-                      </div>
-                  `);
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            ${xhr.responseJSON?.message || 'Kullanıcılar yüklenemedi.'}
+                        </div>
+                    `);
             });
         }
 
         function renderTenantUsers(users, tenantId) {
           if (users.length === 0) {
             $('#tenantUsersContent').html(`
-                  <div class="text-center p-4">
-                      <i class="fas fa-users text-muted" style="font-size: 48px;"></i>
-                      <p class="text-muted mt-3">Bu firmada kullanıcı bulunmuyor.</p>
-                  </div>
-              `);
+                    <div class="text-center p-4">
+                        <i class="fas fa-users text-muted" style="font-size: 48px;"></i>
+                        <p class="text-muted mt-3">Bu firmada kullanıcı bulunmuyor.</p>
+                    </div>
+                `);
             return;
           }
 
           var html = `
-              <div class="table-responsive" >
-                  <table class="table table-hover">
-                      <thead class="table-light">
-                          <tr>
-                              <th>Kullanıcı</th>
-                              <th>Roller</th>
-                              <th>Durum</th>
-                              <th style="width: 120px;">İşlemler</th>
-                          </tr>
-                      </thead>
-                      <tbody>
-          `;
+                <div class="table-responsive" >
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Kullanıcı</th>
+                                <th>Roller</th>
+                                <th>Durum</th>
+                                <th style="width: 120px;">İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
 
           users.forEach(function (user) {
             var statusBadge = user.is_active ?
@@ -505,12 +526,12 @@
             var actions = '';
             if (user.can_be_impersonated && user.is_active) {
               actions = `<button class="btn btn-outline-danger btn-sm impersonate-user-btn" 
-                                    data-user-id="${user.user_id}" 
-                                    data-user-name="${user.name}"
-                                    data-company-name="${$('#modalTenantName').text()}"
-                                    title="Bu kullanıcı olarak giriş yap">
-                                <i class="fas fa-user-secret"></i>
-                            </button>`;
+                                      data-user-id="${user.user_id}" 
+                                      data-user-name="${user.name}"
+                                      data-company-name="${$('#modalTenantName').text()}"
+                                      title="Bu kullanıcı olarak giriş yap">
+                                  <i class="fas fa-user-secret"></i>
+                              </button>`;
             } else {
               actions = '<span class="text-muted small">İmpersonate edilemez</span>';
             }
@@ -521,16 +542,16 @@
             }
 
             html += `<tr>
-                  <td>
-                      <div>
-                          <strong>${userInfo}</strong>
-                          <br><small class="text-muted">${user.username || '-'}</small>
-                      </div>
-                  </td>
-                  <td>${rolesBadges || '<span class="text-muted">Rol yok</span>'}</td>
-                  <td>${statusBadge}</td>
-                  <td>${actions}</td>
-              </tr>`;
+                    <td>
+                        <div>
+                            <strong>${userInfo}</strong>
+                            <br><small class="text-muted">${user.username || '-'}</small>
+                        </div>
+                    </td>
+                    <td>${rolesBadges || '<span class="text-muted">Rol yok</span>'}</td>
+                    <td>${statusBadge}</td>
+                    <td>${actions}</td>
+                </tr>`;
           });
 
           html += '</tbody></table></div>';
@@ -539,21 +560,21 @@
           var impersonatableCount = users.filter(u => u.can_be_impersonated && u.is_active).length;
 
           html += `<div class="mt-3 p-3 bg-light rounded">
-              <div class="row text-center">
-                  <div class="col-4">
-                      <div class="fw-bold">${users.length}</div>
-                      <small class="text-muted">Toplam Kullanıcı</small>
-                  </div>
-                  <div class="col-4">
-                      <div class="fw-bold">${activeCount}</div>
-                      <small class="text-muted">Aktif Kullanıcı</small>
-                  </div>
-                  <div class="col-4">
-                      <div class="fw-bold">${impersonatableCount}</div>
-                      <small class="text-muted">Aktif Kimliğe Bürünme</small>
-                  </div>
-              </div>
-          </div>`;
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="fw-bold">${users.length}</div>
+                        <small class="text-muted">Toplam Kullanıcı</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold">${activeCount}</div>
+                        <small class="text-muted">Aktif Kullanıcı</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold">${impersonatableCount}</div>
+                        <small class="text-muted">Aktif Kimliğe Bürünme</small>
+                    </div>
+                </div>
+            </div>`;
 
           $('#tenantUsersContent').html(html);
         }
@@ -591,13 +612,13 @@
             type === 'danger' ? 'alert-danger' : 'alert-info';
 
           var notification = `
-              <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
-                   style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
-                  <i class="fas fa-${type === 'success' ? 'check' : type === 'danger' ? 'exclamation-triangle' : 'info'} me-2"></i>
-                  ${message}
-                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-              </div>
-          `;
+                <div class="alert ${alertClass} alert-dismissible fade show position-fixed" 
+                     style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;">
+                    <i class="fas fa-${type === 'success' ? 'check' : type === 'danger' ? 'exclamation-triangle' : 'info'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
 
           $('body').append(notification);
 
@@ -618,12 +639,12 @@
 
         $('#tenantUsersModal').on('hidden.bs.modal', function () {
           $('#tenantUsersContent').html(`
-              <div class="text-center p-4">
-                  <div class="spinner-border text-primary" role="status">
-                      <span class="visually-hidden">Yükleniyor...</span>
-                  </div>
-              </div>
-          `);
+                <div class="text-center p-4">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Yükleniyor...</span>
+                    </div>
+                </div>
+            `);
         });
       });
     </script>

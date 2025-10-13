@@ -241,7 +241,7 @@
         
           <div class="gonderBtnWrap" style="text-align: center;margin-top: 5px;">
             <input type="hidden" name="servisEkle" value="Ekle"/>
-            <input type="submit" class="btn btn-info btn-sm" value="Servis Kaydet"/>
+            <input style="background-color: #343a40;border-color: #343a40;" type="submit" class="btn btn-info btn-sm" value="Servis Kaydet"/>
           </div>
 
           <div class="yukleniyor" style="text-align: center;margin-top: 5px;display: none;">

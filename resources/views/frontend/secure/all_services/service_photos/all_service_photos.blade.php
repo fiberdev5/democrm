@@ -69,6 +69,12 @@
             color: #28a745;
             font-size: 12px;
         }
+@media (max-width: 767px) {
+    .service-h5 h5{
+            font-size: 13px !important;
+        }
+}
+        
     </style>
 
                 <form id="servisFotoEkle" enctype="multipart/form-data">
@@ -97,7 +103,7 @@
 
         <!-- Mevcut Fotoğraflar -->
         <div class="card">
-            <div class="card-header">
+            <div class="card-header service-h5">
                 <h5>Mevcut Fotoğraflar</h5>
             </div>
             <div class="card-body">

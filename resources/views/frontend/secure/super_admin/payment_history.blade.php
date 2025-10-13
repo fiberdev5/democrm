@@ -1,6 +1,28 @@
 @extends('frontend.secure.user_master')
 @section('user')
+<style>
+  @media (max-width: 768px) {
+    #datatablePayments tr{
+        border-bottom: none;
+      }
+          #datatablePayments_wrapper .dataTables_info {
+        text-align: left !important;
+        width: auto !important;
 
+    }
+        #datatablePayments_wrapper .bottom {
+        flex-direction: row !important;
+    }
+        #datatablePayments_wrapper .pagination .page-link {
+        display: block !important;
+        padding: 3px 5px !important;
+    }
+    .form-label {
+    margin-bottom: 5px;
+}
+  }
+      
+</style>
 <div class="page-content">
   <div class="container-fluid">
     <div class="row">
@@ -14,7 +36,7 @@
 
           <div class="card-body">
             <!-- Filtreleme Formu -->
-            <div class="row mb-3">
+            <div class="row">
               <div class="col-12">
                 <div class="card shadow-sm" style="margin-bottom: 0!important;">           
                   <div class="card-body">
@@ -63,7 +85,7 @@
                       <!-- İşlem Butonları -->
                       <div class="col-auto">
                         <div class="form-group">
-                          <label class="form-label fw-bold text-transparent" style="font-size: 12px;">İşlemler</label>
+                          <label class="form-label fw-bold" style="font-size: 12px;">İşlemler</label>
                           <div class="d-flex gap-1">
                             <button type="button" class="btn btn-outline-secondary btn-sm action-btn" id="clear-filter" title="Temizle">
                               <i class="fas fa-eraser"></i>
@@ -78,7 +100,7 @@
                       <!-- Hızlı Tarih Filtreleri -->
                       <div class="col-12 col-lg-auto">
                         <div class="form-group">
-                          <label class="form-label fw-bold text-transparent" style="font-size: 12px;">Hızlı</label>
+                          <label class="form-label fw-bold text-transparent d-none" style="font-size: 12px;">Hızlı</label>
                           <div class="btn-group btn-group-sm d-flex flex-nowrap" role="group" style="overflow-x: auto; flex-wrap: nowrap;">
                             <button type="button" class="btn btn-outline-light text-dark quick-filter" data-days="7">7 Gün</button>
                             <button type="button" class="btn btn-outline-light text-dark quick-filter" data-days="30">30 Gün</button>
@@ -253,7 +275,11 @@ $(document).ready(function() {
             }
         },
          dom: 'rt<"bottom"i<"float-end"lp>><"clear">',
-        lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]]
+        lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
+        initComplete: function(settings, json) {
+            // Toplamlar bölümünü, DataTables tarafından oluşturulan alt bölümün (sayfalama) önüne taşı.
+            $('.tableToplamaAlani').insertBefore('#datatablePayments_wrapper .bottom');
+        }
     });
 
     // Filtre değişikliklerinde tabloyu yenile

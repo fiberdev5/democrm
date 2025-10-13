@@ -15,14 +15,14 @@
       <table class="table table-hover table-striped" id="paraHareketTablo" width="100%" cellspacing="0" style="margin: 0">
         <thead class="title">
           <tr>
-            <th style="padding: 5px 10px;font-size: 12px;">Tarih</th>
-            <th style="padding: 5px 10px;font-size: 12px;">İşlemi Yapan</th>
-            <th style="padding: 5px 10px;font-size: 12px;">Ödeme Şekli</th>
-            <th style="padding: 5px 10px;font-size: 12px;">Açıklama</th>
-            <th style="padding: 5px 10px;font-size: 12px;">Durum</th>
-            <th style="padding: 5px 10px;font-size: 12px;">Fiyat</th>
-            <th style="padding: 5px 10px;font-size: 12px;"></th>
-            <th style="padding: 5px 10px;font-size: 12px;"></th>
+            <th style="padding: 5px 10px;font-size: 10px;">Tarih</th>
+            <th style="padding: 5px 10px;font-size: 10px;">İşlemi Yapan</th>
+            <th style="padding: 5px 10px;font-size: 10px;">Ödeme Şekli</th>
+            <th style="padding: 5px 10px;font-size: 10px;">Açıklama</th>
+            <th style="padding: 5px 10px;font-size: 10px;">Durum</th>
+            <th style="padding: 5px 10px;font-size: 10px;">Fiyat</th>
+            <th style="padding: 5px 10px;font-size: 10px;"></th>
+            <th style="padding: 5px 10px;font-size: 10px;"></th>
           </tr>
         </thead>
         <tbody>

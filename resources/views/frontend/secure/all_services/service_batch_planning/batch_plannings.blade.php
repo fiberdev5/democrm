@@ -1,5 +1,30 @@
+<style>
+  .bolgeler option{
+    font-size: 12px !important;
+  }
+  .cihazlar option{
+    font-size: 12px !important;
+  }
+  .kaynaklar option{
+    font-size: 12px !important;
+  }
+  .sag{
+    padding-left: 0px !important;
+  }
+  @media (max-width: 767px) {
+    .row{
+        --bs-gutter-x: 0px !important;
+    }
+    .servisListe .card-body{
+      height: auto !important;
+    }
+    .personelServisListele{
+      margin-top: 5px;
+    }
+  }
+</style>
 <div class="row wrap">
-  <div class="col-lg-3 sol">
+  <div class="col-lg-4 sol">
     <div id="planlamaSearch" class="collapse show">
       <div class="card" style="margin-bottom:0!important;">
         <div class="card-header" style="padding: 5px!important;">
@@ -38,7 +63,7 @@
                 <select class="form-control cihazlar" multiple style="height: 155px">
                   <option value="0" selected>HEPSİ</option>
                   @foreach($deviceTypes as $device)
-                    <option value="{{ $device->id }}">{{ $device->cihaz }}</option>
+                    <option style="text-transform: uppercase;" value="{{ $device->id }}">{{ $device->cihaz }}</option>
                   @endforeach
                 </select>
               </div>
@@ -50,7 +75,7 @@
                 <select class="form-control kaynaklar" multiple style="height: 100px">
                   <option value="0" selected>HEPSİ</option>
                   @foreach($serviceSources as $source)
-                    <option value="{{ $source->id }}">{{ $source->kaynak }}</option>
+                    <option style="text-transform: uppercase;" value="{{ $source->id }}">{{ $source->kaynak }}</option>
                   @endforeach
                 </select>
               </div>
@@ -84,7 +109,7 @@
     </div>
   </div>
 
-  <div class="col-lg-9 sag">
+  <div class="col-lg-8 sag">
     <div class="card" style="margin-bottom: 0!important;">
       <div class="servisListe" style="padding: 0">
         <!-- Service list will be loaded here -->

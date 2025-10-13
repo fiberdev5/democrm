@@ -9,7 +9,7 @@
     <div class="container-fluid">
         @include('frontend.secure.statistics.statistics_menu', ['tenant_id' => $tenant_id])
         <div class="card">
-            <div class="card-header sayfaBaslik d-flex justify-content-between align-items-center">
+            <div class="techinican-p card-header sayfaBaslik d-flex justify-content-between align-items-center">
                 <span>Teknisyen İstatistikleri</span>
                 <!-- Filtre Dropdown -->
                 <div class="dropdown teknisyen-dropdown" id="teknisyenFilterDropdownContainer">

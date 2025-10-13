@@ -1,3 +1,25 @@
+<style>
+  #addOffer .card .form-group .rw2 {
+    padding-left: 11px;
+    padding-right: 10px;
+}
+.card-header{
+  padding: 3px 5px !important;
+  background-color: #ebebeb !important;
+}
+.card-body{
+  border: 1px solid #e5e5e5;
+}
+ @media (max-width: 768px) {
+  .m-p{
+    padding-left: 5px !important;
+  }
+  .card-body{
+  margin-bottom: 10px !important;
+}
+ }
+
+</style>
 <form method="post" id="addOffer" class="servisModal" action="{{ route('store.offer', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
     @csrf
     <div class="row" style="margin: 0">
@@ -6,7 +28,7 @@
         <div class="card-body">
           <div class="row form-group ">
             <label class="col-sm-3 col-form-label rw1">Müşteri<span style="font-weight: bold; color: red;">*</span></label>
-            <div class="col-md-9">
+            <div class="col-md-9 m-p">
               <input id="search" type="text" name="adSoyad" class="form-control adSoyad rw2" data-id="" autocomplete="off" placeholder="Müşteri Adı" required>
               <input type="hidden" name="musteri" class="mid" />
               <ul id="result" style="margin: 0; padding: 0"></ul>
@@ -15,7 +37,7 @@
   
           <div class="row form-group">
             <div class="col-md-3 rw1 col-form-label"><label>Müşteri Bilgileri</label></div>
-            <div class="col-md-9 rw2 col-form-label"><textarea class="form-control musBilgileri" disabled style="height: 77px;resize: none !important"></textarea></div>
+            <div class="col-md-9 m-p rw2 col-form-label"><textarea class="form-control musBilgileri" disabled style="height: 77px;resize: none !important"></textarea></div>
           </div>
         </div>
       </div>
@@ -25,19 +47,19 @@
         <div class="card-body">  
         <div class="row form-group">
             <div class="col-md-3 rw1 col-form-label"><label><span class="musteriAdiSpan">Tarih</span> <span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-9 rw2">
-              <input name="kayitTarihi" class="form-control datepicker kayitTarihi" type="date" value="{{date('Y-m-d')}}" style="width: 110px;display: inline-block;background:#fff;text-align:center" required>
+            <div class="col-md-9 m-p rw2">
+              <input name="kayitTarihi" class="form-control datepicker kayitTarihi" type="date" value="{{date('Y-m-d')}}" style="display: inline-block;background:#fff;text-align:left" required>
             </div>
           </div>  
           <div class="row form-group">
             <div class="col-md-3 rw1 col-form-label"><label>Başlık 1</label></div>
-            <div class="col-md-9 rw2 col-form-label">
+            <div class="col-md-9 m-p rw2 col-form-label">
               <input type="text" name="baslik1" class="form-control baslik1" placeholder="Başlık 1" value="Teknik Servis">
             </div>
           </div> 
           <div class="row form-group">
             <div class="col-md-3 rw1 col-form-label"><label>Başlık 2</label></div>
-            <div class="col-md-9 rw2 col-form-label">
+            <div class="col-md-9 m-p rw2 col-form-label">
               <input type="text" name="baslik2" class="form-control baslik2" placeholder="Başlık 2" value="Teklif Formu">
             </div>
           </div>
@@ -75,7 +97,7 @@
         <div class="card-body">
           <div class="row form-group" style="border:0">
             <div class="col-md-4 rw1 col-form-label"><label>Durum</label></div>
-            <div class="col-md-8 rw2">
+            <div class="col-md-8 m-p rw2">
               <select class="form-select durum" name="durum">
                 <option value="0">Beklemede</option>
                 <option value="1">Onaylandı</option>
@@ -87,12 +109,12 @@
   
           <div class="row form-group" style="border:0">
             <div class="col-md-4 rw1 col-form-label"><label>Toplam Yazıyla</label></div>
-            <div class="col-md-8 rw2 col-form-label"><input type="text" name="toplamYazi" autocomplete="off" class="form-control toplamYazi"></div>
+            <div class="col-md-8 m-p rw2 col-form-label"><input type="text" name="toplamYazi" autocomplete="off" class="form-control toplamYazi"></div>
           </div>
   
           <div class="row form-group" style="border:0">
             <div class="col-md-4 rw1 col-form-label"><label>Döviz Kuru</label></div>
-            <div class="col-md-8 rw2 col-form-label">
+            <div class="col-md-8 m-p rw2 col-form-label">
               <input type="text" onkeyup="sayiKontrol(this)" name="dovizKuru" autocomplete="off" class="form-control dovizKuru">
             </div>
           </div>
@@ -102,19 +124,19 @@
       <div class="card col-sm-6 card5">
         <div class="card-body">
           <div class="row form-group">
-            <div class="col-md-8 rw1 col-form-label"><label>Toplam</label></div>
-            <div class="col-md-4 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam"></div>
+            <div class="col-md-4 rw1 col-form-label"><label>Toplam</label></div>
+            <div class="col-md-8 m-p rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam"></div>
           </div>
           
           <div class="row form-group">
-            <div class="col-md-6 rw1 col-form-label"><label>KDV</label></div>
-              <div class="col-md-2 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20" style="text-align: center;"></div>
-              <div class="col-md-4 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv"></div>
+            <div class="col-md-4 rw1 col-form-label"><label>KDV</label></div>
+              <div class="col-md-2 m-p rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20"></div>
+              <div class="col-md-6 m-p rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv"></div>
             </div>
   
             <div class="row form-group" style="padding-bottom: 0">
-              <div class="col-md-8 rw1 col-form-label"><label>Genel Toplam</label></div>
-              <div class="col-md-4 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam"></div>
+              <div class="col-md-4 m-p rw1 col-form-label"><label>Genel Toplam</label></div>
+              <div class="col-md-8 rw2 m-p col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam"></div>
             </div>
           </div>
         </div>

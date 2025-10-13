@@ -23,6 +23,16 @@
     font-size: 12px;
     color: #6c757d;
   }
+  .servisiAc{
+    color: #fff !important;
+    background-color: #f32f53 !important;
+  }
+  @media (max-width: 767px) {
+    .fatura-mobil-add{
+    --bs-gutter-x: 2px !important;
+  }
+  }
+  
 </style>
 
 
@@ -31,7 +41,7 @@
   <div class="card f5">
     <div class="card-header ch1" style="padding: 3px 10px;">
       <div class="tarihWrap">
-        <label style="text-align: left;width: auto;display: inline-block;margin: 0;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
+        <label style="text-align: left;width: auto;display: inline-block;margin: 0; margin-right: 2px;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
         <input type="date" name="faturaTarihi" class="form-control datepicker kayitTarihi"  value="{{date('Y-m-d')}}" style="width: 150px!important;display: inline-block;background:#fff" required>
       </div>
 
@@ -44,9 +54,9 @@
      <div class="card-body">
         <div class="row">
            <div class="col-sm-6 s1">
-              <div class="row form-group">
+              <div class="row form-group ">
                 <div class="col-md-4 rw1"><label>Servis Ara</label></div>
-                <div class="col-md-8 rw2 d-flex flex-wrap align-items-center gap-2">
+                <div class="col-md-8 rw2 d-flex flex-wrap align-items-center gap-3">
                     <input id="search" type="text" name="servisid" class="form-control servisid" data-bs-id="" autocomplete="off" placeholder="Servis ID" style="flex: 1 1 auto; max-width: 160px;">
 
                     <a href="#" target="_blank" class="servisiAc btn btn-outline-danger px-2 py-1"style="font-size: 13px; line-height: 1.3;">Servisi Aç</a>
@@ -100,17 +110,17 @@
   <div class="card f2">
     <div class="card-body">
       <div class="row form-group head">
-        <div class="col-5 rw1 "><label>Cinsi</label></div>
-        <div class="col-2 rw2 "><label>Miktar</label></div>
-        <div class="col-2 rw3 "><label>Fiyat</label></div>
+        <div class="col-3 rw1 "><label>Cinsi</label></div>
+        <div class="col-3 rw2 "><label>Miktar</label></div>
+        <div class="col-3 rw3 "><label>Fiyat</label></div>
         <div class="col-3 rw4 "><label>Tutar</label></div>
       </div>
 
-      <div class="satirBody">
-        <div class="row form-group">
-          <div class="col-5 rw1 "><input type="text" name="aciklama[]" class="form-control aciklama aciklama0 buyukYaz" placeholder="Ürün" autocomplete="off"></div>
-          <div class="col-2 rw2 "><input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control miktar miktar0" autocomplete="off"></div>
-          <div class="col-2 rw3 "><input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat0" autocomplete="off"></div>
+      <div class="satirBody mb-1">
+        <div class="row form-group fatura-mobil-add">
+          <div class="col-3 rw1 "><input type="text" name="aciklama[]" class="form-control aciklama aciklama0 buyukYaz" placeholder="Ürün" autocomplete="off"></div>
+          <div class="col-3 rw2 "><input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control miktar miktar0" autocomplete="off"></div>
+          <div class="col-3 rw3 "><input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat0" autocomplete="off"></div>
           <div class="col-3 rw4 "><input type="text" name="tutar[]" onkeyup="sayiKontrol(this)" class="form-control tutar tutar0" autocomplete="off"></div>
         </div>
       </div>
@@ -121,7 +131,7 @@
     </div>
   </div>
        
-  <div class="row cardRow1">
+  <div class="row cardRow1 fatura-mobil-add">
     <div class="card col-lg-6 f3">
       <div class="card-body">
         <div class="row" style="border:0">
@@ -161,28 +171,28 @@
       <div class="card col-lg-6 f4">
         <div class="card-body" style="padding:17px 5px">
           <div class="row form-group">
-            <div class="col-md-8 rw1"><label>Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam" required></div>
+            <div class="col-md-4 rw1"><label>Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam" required></div>
           </div>
 
           <div class="row form-group">
-          <div class="col-md-8 rw1"><label>İndirim</label></div>
-          <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" autocomplete="off" class="form-control indirim" value="0.00"></div>
+          <div class="col-md-4 rw1"><label>İndirim</label></div>
+          <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" autocomplete="off" class="form-control indirim" value="0.00"></div>
         </div>
         <div class="row form-group">
-          <div class="col-md-8 rw1"><label>Ara Toplam</label></div>
-          <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" autocomplete="off" class="form-control araToplam"></div>
+          <div class="col-md-4 rw1"><label>Ara Toplam</label></div>
+          <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" autocomplete="off" class="form-control araToplam"></div>
         </div>
 
           <div class="row form-group">
-            <div class="col-md-6 rw1"><label>KDV %</label></div>
-            <div class="col-md-2 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20" style="text-align: center;"></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="0"></div>
+            <div class="col-md-4 rw1"><label>KDV %</label></div>
+            <div class="col-md-2 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20" ></div>
+            <div class="col-md-6 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="0"></div>
           </div>
 
           <div class="row form-group" style="padding-bottom: 0">
-            <div class="col-md-8 rw1"><label>Genel Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam" required></div>
+            <div class="col-md-4 rw1"><label>Genel Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam" required></div>
           </div>
                
         </div>
@@ -275,21 +285,19 @@
       var dataNum = Number($(this).attr("data-id")); 
       var satirClone = `
         <div class="row form-group align-items-center satir">
-          <div class="col-5 rw1">
+          <div class="col-3 rw1">
             <input type="text" name="aciklama[]" class="form-control aciklama aciklama0 buyukYaz" placeholder="Ürün" autocomplete="off">
           </div>
-          <div class="col-2 rw2">
+          <div class="col-3 rw2">
             <input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control miktar miktar${dataNum}" autocomplete="off">
           </div>
-          <div class="col-2 rw3">
+          <div class="col-3 rw3">
             <input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat${dataNum}" autocomplete="off">
           </div>
-          <div class="col-2 rw4">
+          <div class="col-3 rw4">
             <input type="text" name="tutar[]" onkeyup="sayiKontrol(this)" class="form-control tutar tutar${dataNum}" autocomplete="off">
           </div>
-          <div class="col-1 text-end">
-            <button type="button" class="btn btn-danger btn-sm satirSil" title="Satırı Sil"><strong>&times;</strong></button>
-          </div>
+
         </div>
       `;  
       $(".satirBody").append(satirClone);
