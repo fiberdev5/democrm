@@ -1,3 +1,100 @@
+/* Başlıklar */
+.font-h1 {
+  font-size: 32px !important;
+  font-weight: 700 !important;
+}
+
+.font-h2 {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+}
+
+.font-h3 {
+  font-size: 24px !important;
+  font-weight: 600 !important;
+}
+
+.font-h4 {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+}
+
+.font-large {
+  font-size: 18px !important;
+}
+
+.font-normal {
+  font-size: 16px !important;
+}
+
+.font-small {
+  font-size: 14px !important;
+}
+
+.font-tiny {
+  font-size: 13px !important;
+}
+.font-extratiny {
+    font-size: 11px !important;
+  }
+
+
+/* Font Kalınlıkları */
+.font-light {
+  font-weight: 300 !important;
+}
+
+.font-regular {
+  font-weight: 400 !important;
+}
+
+.font-semibold {
+  font-weight: 600 !important;
+}
+
+.font-bold {
+  font-weight: 700 !important;
+}
+
+
+@media (max-width: 768px) {
+
+  .font-h1 {
+    font-size: 28px !important;
+  }
+
+  .font-h2 {
+    font-size: 24px !important;
+  }
+
+  .font-h3 {
+    font-size: 20px !important;
+  }
+
+  .font-h4 {
+    font-size: 18px !important;
+  }
+
+  .font-large {
+    font-size: 16px !important;
+  }
+
+  .font-normal {
+    font-size: 14px !important;
+  }
+
+  .font-small {
+    font-size: 13px !important;
+  }
+
+  .font-tiny {
+    font-size: 12px !important;
+  }
+  .font-extratiny {
+    font-size: 11px !important;
+  }
+
+}
 .navbar-brand-box {
   padding: 0;
   width: auto;
@@ -604,12 +701,21 @@ form .mb-3 {
   margin-bottom: 3px;
   padding: 0
 }
-
+    .pageDetail .searchWrap .filtrele {
+        border-radius: 0px !important;
+    }
 #addOffer .card .form-group {
   margin: 0;
   border: 0
 }
-
+.techinican-p{
+        padding: 10px !important;
+    }
+    @media (max-width: 767px) {
+        .techinican-p{
+        padding: 0px !important ;
+    }
+    }
 #addOffer .card .form-group .rw1 {
   padding-left: 5px
 }
@@ -748,9 +854,6 @@ form .mb-3 {
     display: block !important;
   }
 
-  #editServiceDescModal #tab1 .ch1 .left label {
-    display: none;
-  }
 
   #editServiceDescModal #tab1 .ch1 .right label {
     display: none;
@@ -2302,6 +2405,7 @@ form .mb-3 {
   #datatableCustomer tr {
     border: 1px solid #ccc;
     margin: 0 !important;
+    border-bottom: none;
   }
 
   #datatableCustomer td {
@@ -2390,6 +2494,7 @@ form .mb-3 {
   #datatablePersonel tr {
     border: 1px solid #ccc;
     margin: 0 !important;
+    border-bottom: none;
   }
 
   #datatablePersonel td {
@@ -2615,6 +2720,7 @@ form .mb-3 {
   #datatableInvoice tr {
     border: 1px solid #ccc;
     margin: 0 !important;
+    border-bottom: none !important;
   }
 
   #datatableInvoice td {
@@ -3206,9 +3312,6 @@ form .mb-3 {
     display: block !important;
   }
 
-  #datatableConsignment_filter label {
-    width: 183px !important;
-  }
 
   #datatableConsignment_filter {
     text-align: center !important;
@@ -3240,9 +3343,7 @@ form .mb-3 {
     display: block !important;
   }
 
-  #datatableBayi_filter label {
-    width: 116px !important;
-  }
+  
 
   #datatableBayi_filter {
     text-align: center !important;
@@ -3538,7 +3639,10 @@ form .mb-3 {
   #editOffer .card.f6 .col-sm-1 {
     width: 100%
   }
-
+.filtre-i-p{
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
   #editOffer .card.f6 .col-sm-11 {
     width: 100%
   }
@@ -5156,7 +5260,6 @@ div.dataTables_wrapper div.dataTables_filter input {
 
 .datepicker {
   border: 1px solid #ced4da;
-  width: 118px !important;
   display: inline-block !important;
   background: #fff
 }
@@ -5411,7 +5514,9 @@ a.link-stock:hover {
   text-transform: capitalize;
   cursor: pointer;
 }
-
+#addPers{
+  margin-block-end: auto !important;
+}
 .gelenCagriBtn i {
   display: none;
 }
@@ -5724,7 +5829,6 @@ b, strong {
   letter-spacing: 0.3px;
   padding: 10px 14px;
   border: none;
-  font-size: 12px;
   vertical-align: middle;
 }
 
@@ -6394,6 +6498,7 @@ b, strong {
   .gider .para {
     font-size: 10px;
   }
+
 }
 
 
@@ -6416,7 +6521,7 @@ b, strong {
 }
 
 .input-group .select2-container--bootstrap-5 .select2-selection {
-  height: 85% !important;
+  height: 100% !important;
 }
 
 .select2-container--bootstrap-5 .select2-dropdown .select2-results__options .select2-results__option {
@@ -7963,7 +8068,8 @@ b, strong {
 }
 
 .pagination .page-link {
-  height: 30px !important;
+  height: 24px !important;
+  width: 24px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -7985,17 +8091,22 @@ b, strong {
 
 /* Sayfa uzunluğu seçici ile yükseklik eşitlemesi */
 .dataTables_wrapper .dataTables_length select {
-  height: 30px !important;
+  height: 18px !important;
+  width: 41px !important;
   /* appearance: none !important; */
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e") !important;
   background-repeat: no-repeat !important;
-  background-position: right 8px center !important;
-  background-size: 16px !important;
-  padding-right: 22px !important;
+  background-position: right 2px center !important;
+  background-size: 14px !important;
+  padding-right: 10px !important;
   cursor: pointer !important;
 
+}
+.dataTables_length label .form-control-sm{min-height: calc(1.2em + .5rem + 2px) !important;}
+.pagination-rounded .page-link{
+  border-radius: 4px !important;
 }
 
 /* İsteğe bağlı: Sayfalama container'ını düzenle */
@@ -8032,8 +8143,21 @@ b, strong {
   padding: 3px;
 
 }
-
-
+.bg-c-color{
+  background-color: #e5e5e5;
+}
+.custom-p-m{
+        padding-left: 0px !important;
+      }
+      .custom-p-r-m{
+        padding-right: 0px !important;
+      }
+      .custom-b-p{
+        margin-bottom: 7px;
+      }
+#addCall{
+      margin-block-end: 0em !important;
+}
 /********************** Müşteriler sayfası için özel mobil düzen *******************************/
 @media (max-width: 767px) {
   .pageDetail .addCustomer {
@@ -8067,7 +8191,7 @@ b, strong {
 
   .pageDetail .searchWrap .filtrele {
     width: 100% !important;
-    border-radius: 4px !important;
+    border-radius: 0px !important;
   }
 
   #datatableCustomer_wrapper .dataTables_filter {
@@ -8090,17 +8214,17 @@ b, strong {
   /* Bottom alanını iki satır yap */
   #datatableCustomer_wrapper .bottom {
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
     margin-top: 10px !important;
     gap: 8px !important;
   }
 
-  /* Müşteri Sayısı üstte ortada */
+  /* Müşteri Sayısı üstte ortada */s
   #datatableCustomer_wrapper .dataTables_info {
     float: none !important;
     text-align: center !important;
     order: 1;
-    width: 100% !important;
+    width: auto !important;
   }
 
   /* Alt satırda pagination elemanları */
@@ -8115,14 +8239,14 @@ b, strong {
 
   /* Length solda */
   #datatableCustomer_wrapper .dataTables_length {
-    float: left !important;
-    order: 2;
+  margin-top: -6px !important;
   }
 
   /* Pagination sağda */
   #datatableCustomer_wrapper .dataTables_paginate {
     float: right !important;
     order: 3;
+    margin-top: -7px !important;
   }
 
   #datatableCustomer_wrapper .pagination {
@@ -8131,15 +8255,40 @@ b, strong {
   }
 
   #datatableCustomer_wrapper .pagination .page-item {
-    display: inline-block !important;
+    display: ruby !important;
   }
 
   #datatableCustomer_wrapper .pagination .page-link {
     display: block !important;
-    padding: 5px 10px !important;
+    padding: 2px 1px !important;
   }
+  .dataTables_wrapper .dataTables_length select{
+            width: 38px !important;
+        background-position: right 2px center !important;
+        background-size: 13px !important;
+        padding-right: 13px !important;
+  }
+  .dataTables_wrapper .dataTables_info {
+    margin-top: -12px;
 }
-
+  .pagination .page-link {
+  height: 23px !important;
+  width: 22px !important;
+}
+li.paginate_button.next, li.paginate_button.previous{
+ font-size: 15px !important;
+}
+.pagination-rounded .page-link {
+    border-radius: 3px !important;
+    height: 35px;
+}
+.page-item:not(:first-child) .page-link {
+    margin-left: -7px;
+}
+}
+.dataTables_filter{
+      margin-bottom: -11px !important;
+}
 /********************** Müşteriler sayfası için özel mobil düzen *******************************/
 
 /********************** Personeller sayfası için özel mobil düzen ******************************/
@@ -8188,7 +8337,6 @@ b, strong {
   #datatablePersonel_wrapper .dataTables_info {
     float: none !important;
     text-align: center !important;
-    order: 1;
     width: 100% !important;
   }
 
@@ -8213,7 +8361,7 @@ b, strong {
 
   #datatablePersonel_wrapper .pagination .page-link {
     display: block !important;
-    padding: 5px 10px !important;
+    padding: 2px 4px !important;
   }
 }
 
@@ -8291,7 +8439,7 @@ b, strong {
 
   .pageDetail .searchWrap .filtrele {
     width: 100% !important;
-    border-radius: 4px !important;
+    border-radius: 0px !important;
   }
 
   #datatableBayi_wrapper .dataTables_filter {
@@ -8314,7 +8462,7 @@ b, strong {
   /* Bottom alanını iki satır yap */
   #datatableBayi_wrapper .bottom {
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
     margin-top: 10px !important;
     gap: 8px !important;
   }
@@ -8323,14 +8471,12 @@ b, strong {
   #datatableBayi_wrapper .dataTables_info {
     float: none !important;
     text-align: center !important;
-    order: 1;
-    width: 100% !important;
+    width: auto !important;
   }
 
   /* Length solda */
   #datatableBayi_wrapper .dataTables_length {
-    float: left !important;
-    order: 2;
+
   }
 
   /* Pagination sağda */
@@ -8350,7 +8496,7 @@ b, strong {
 
   #datatableBayi_wrapper .pagination .page-link {
     display: block !important;
-    padding: 5px 10px !important;
+    padding: 2px 4px !important;
   }
 
   #datatableBayi thead tr {
@@ -8369,6 +8515,7 @@ b, strong {
   #datatableBayi tr {
     border: 1px solid #ccc;
     margin: 0 !important;
+    border-bottom: none !important;
   }
 
   #datatableBayi td {
@@ -8402,10 +8549,6 @@ b, strong {
     display: none !important;
   }
 
-  /* Filter alanı için */
-  #datatableBayi_filter label {
-    width: 187px !important;
-  }
 
   #datatableBayi_filter {
     text-align: center !important;
@@ -8505,7 +8648,7 @@ b, strong {
 
   .pageDetail .searchWrap .filtrele {
     width: 100% !important;
-    border-radius: 4px !important;
+    border-radius: 0px !important;
   }
 
 
@@ -8528,6 +8671,7 @@ b, strong {
   #datatableStock tr {
     border: 1px solid #ccc;
     margin: 0 !important;
+    border-bottom: none !important;
   }
 
   #datatableStock td {
@@ -8613,7 +8757,9 @@ b, strong {
     width: 100% !important;
     max-width: 100%;
   }
-
+.service-modal{
+  width: auto !important;
+}
   #datatableStock_wrapper .top {
     margin-bottom: 5px !important;
   }
@@ -8621,7 +8767,7 @@ b, strong {
   /* Bottom alanı */
   #datatableStock_wrapper .bottom {
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
     margin-top: 10px !important;
     gap: 8px !important;
   }
@@ -8630,14 +8776,11 @@ b, strong {
   #datatableStock_wrapper .dataTables_info {
     float: none !important;
     text-align: center !important;
-    order: 1;
-    width: 100% !important;
+    width: auto !important;
   }
 
   /* Length solda */
   #datatableStock_wrapper .dataTables_length {
-    float: left !important;
-    order: 2;
   }
 
   /* Pagination sağda */
@@ -8657,7 +8800,7 @@ b, strong {
 
   #datatableStock_wrapper .pagination .page-link {
     display: block !important;
-    padding: 5px 10px !important;
+    padding: 2px 4px !important;
   }
 
   /* Toplam Bilgiler alanı */
@@ -9049,8 +9192,9 @@ b, strong {
   }
 
   .superadmin-dashboard-card .sistatistic-icon {
-    width: 45px !important;
-    height: 45px !important;
+    width: 25px !important;
+    height: 25px !important;
+    font-size: 14px !important;
   }
 
   .card-h-s {
@@ -9104,7 +9248,7 @@ b, strong {
 
   .pageDetail .searchWrap .filtrele {
     width: 100% !important;
-    border-radius: 4px !important;
+    border-radius: 0px !important;
   }
 
 
@@ -9222,14 +9366,11 @@ b, strong {
   #datatableConsignment_wrapper .dataTables_info {
     float: none !important;
     text-align: center !important;
-    order: 1;
     width: 100% !important;
   }
 
   /* Length solda */
   #datatableConsignment_wrapper .dataTables_length {
-    float: left !important;
-    order: 2;
   }
 
   /* Pagination sağda */
@@ -9621,7 +9762,7 @@ b, strong {
 
   .pageDetail .searchWrap .filtrele {
     width: 100% !important;
-    border-radius: 4px !important;
+    border-radius: 0px !important;
   }
 
 
@@ -9685,7 +9826,7 @@ b, strong {
   /* Bottom alanı */
   #datatableInvoice_wrapper .bottom {
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
     margin-top: 10px !important;
     gap: 8px !important;
   }
@@ -9693,15 +9834,12 @@ b, strong {
   /* Listelenen Ürün Sayısı üstte ortada */
   #datatableInvoice_wrapper .dataTables_info {
     float: none !important;
-    text-align: center !important;
-    order: 1;
-    width: 100% !important;
+    text-align: left !important;
+    width: auto !important;
   }
 
   /* Length solda */
   #datatableInvoice_wrapper .dataTables_length {
-    float: left !important;
-    order: 2;
   }
 
   /* Pagination sağda */
@@ -9721,7 +9859,7 @@ b, strong {
 
   #datatableInvoice_wrapper .pagination .page-link {
     display: block !important;
-    padding: 5px 10px !important;
+    padding:2px 4px !important;
   }
 
 
@@ -9891,7 +10029,7 @@ b, strong {
 
   .pageDetail .searchWrap .filtrele {
     width: 100% !important;
-    border-radius: 4px !important;
+    border-radius: 0px !important;
   }
 
 
@@ -9965,7 +10103,7 @@ b, strong {
     float: none !important;
     text-align: center !important;
     flex: 1 !important;
-    order: 2;
+
   }
 
   .pageDetail .addCustomer {
@@ -9979,8 +10117,6 @@ b, strong {
 
   /* Length solda */
   #datatableOffer_wrapper .dataTables_length {
-    float: left !important;
-    order: 1;
   }
 
   /* Pagination sağda */
@@ -10069,22 +10205,20 @@ b, strong {
 
   .pageDetail .searchWrap .filtrele {
     width: 100% !important;
-    border-radius: 4px !important;
+    border-radius: 0px !important;
   }
 
   /* Filtre dropdown menüsü */
 
   .pageDetail .searchWrap .dropdown-menu {
-    width: calc(100vw - 20px) !important;
     min-width: calc(100vw - 20px) !important;
     right: 10px !important;
     margin-top: 31px !important;
     top: auto !important;
     transform: none !important;
-    padding: 10px !important;
     max-height: 70vh !important;
     overflow-y: auto !important;
-    z-index: 1050 !important;
+    z-index: 100 !important;
   }
 
 
@@ -10158,13 +10292,10 @@ b, strong {
     float: none !important;
     text-align: center !important;
     flex: 1 !important;
-    order: 2;
   }
 
   /* Length solda */
   #datatableKasa_wrapper .dataTables_length {
-    float: left !important;
-    order: 1;
   }
 
   /* Pagination sağda */
@@ -10184,7 +10315,7 @@ b, strong {
 
   #datatableKasa_wrapper .pagination .page-link {
     display: block !important;
-    padding: 5px 10px !important;
+    padding: 4px 6px !important;
   }
 
   /* Toplam Bilgiler alanı - Tablo formatı (Kasa için) */
@@ -11444,7 +11575,9 @@ canvas {
   border: 1px solid #dee2e6;
   display: none;
 }
-
+.filtrele{
+  background-color: #343a40 !important;
+}
 .edit_invoices_superadmin .product-info {
   background: white;
   padding: 15px;
@@ -11627,7 +11760,7 @@ canvas {
 
 
   #datatableService thead {
-    display: none;
+    display: none !important;
   }
 
 
@@ -11643,7 +11776,7 @@ canvas {
 
   #datatableService tbody tr td {
     border: block;
-    border-color: #c3bfbf;
+    border-color: #fff;
   }
 
   #datatableService tbody td {
@@ -11652,13 +11785,23 @@ canvas {
     align-items: center;
     padding: 3px 5px;
     text-align: left;
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid #fff;
   }
 
 
   #datatableService tbody tr td:last-child {
     border-bottom: none;
   }
+  #datatableService td:nth-of-type(2) {
+  display: none;
+}
+#datatableService tbody td::before {
+  display: none !important; /* Başlık etiketini gizle */
+  content: '';   /* İçeriğini de boşaltmak garanti olur */
+}
+#datatableService .mobileTitle{
+  display: none !important;
+}
 
 
 
@@ -11752,12 +11895,24 @@ canvas {
     width: 100% !important;
   }
 }
+table.dataTable {
+    margin-top: 2px !important;
+}
+#datatablePersonel tbody tr:nth-child(even) td {
+    background-color: #f9f9f9; /* Çift sıralar için (2, 4, 6...) açık gri bir renk */
+}
 
+#datatablePersonel tbody tr:nth-child(odd) td {
+    background-color: #ffffff; /* Tek sıralar için (1, 3, 5...) beyaz renk */
+}
 /********************** destek taleplerim mobil *******************************/
 @media (max-width: 767px) {
   .usersupport-index-page .destek-page {
     margin-bottom: 5px !important;
   }
+      #datatablePersonel_wrapper .bottom {
+        flex-direction: row !important;
+    }
 
   .usersupport-index-page .summary-ticket-cards .col-4 {
     padding-right: 2px !important;
@@ -11792,6 +11947,7 @@ canvas {
     font-size: 10px;
     padding: 8px 10px;
   }
+  
 
   .support-message {
     margin-top: 10px;
@@ -11865,7 +12021,6 @@ canvas {
   #datatablePayments_wrapper .dataTables_info {
     float: none !important;
     text-align: left !important;
-    order: 1;
     width: 100% !important;
   }
 
@@ -12121,3 +12276,6 @@ canvas {
   display: none;
 }
 
+.dataTables_wrapper .bottom {
+  margin-top: 10px !important;
+}

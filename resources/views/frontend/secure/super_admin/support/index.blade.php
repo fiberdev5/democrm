@@ -1,10 +1,33 @@
 {{-- resources/views/frontend/secure/super_admin/support/index.blade.php --}}
 @extends('frontend.secure.user_master')
 @section('user')
+<style>
+    .filter-card{
+        margin-bottom: 0px !important;
+    }
+    .card-header{
+        padding: 5px 6px !important;
+    }
+    .custom-none{
+        display: block !important;
+    }
+    @media (max-width: 768px) {
+      .header-t{
+        margin-top: 37px;
+    }  
+    .page-title-box{
+        padding-bottom: 7px !important;
+    }
+        .support-index-page .table td, .support-index-page .table th{
+            padding:7px 5.95rem !important;
+        }
+    }
+    
+</style>
 <div class="page-content support-index-page">
     <div class="container-fluid">
         <!-- Başlık -->
-        <div class="row">
+        <div class="row header-t">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                     <h4 class="mb-sm-0">
@@ -27,7 +50,7 @@
                 <div class="card filter-card">
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-2 pt-2">
-                            <i class="fas fa-filter text-primary me-2"></i>
+                            <i class="fas fa-filter text-primary me-2 d-none"></i>
                             <h6 class="mb-0 text-dark">Filtreler</h6>
                         </div>
                         <form method="GET" class="row g-3">
@@ -80,12 +103,12 @@
                             </div>
                             <div class="col-md-3 all-support">
                                 <label class="form-label text-muted small">Arama</label>
-                                <input type="text" name="search" class="form-control" 
+                                <input type="text" name="search" class="form-control mb-1" 
                                        placeholder="Talep no, konu veya kullanıcı ara..." 
                                        value="{{ request('search') }}">
                             </div>
 
-                            <div class="col-md-1 d-flex align-items-end">
+                            <div class="col-md-1 d-flex align-items-end mt-1">
                                 <button type="submit" class="btn btn-secondary w-100" style="border: 1px solid black">
                                     <i class="fas fa-search me-1"></i>
                                     Filtrele
@@ -127,8 +150,8 @@
                         @if(isset($tickets) && $tickets->count() > 0)
                             <div class="table-responsive">
                                 <table class="table table-hover mb-0" id="superAdminSupportTable">
-                                    <thead class="table-light">
-                                        <tr>
+                                    <thead class="">
+                                        <tr style="background-color: #efefef !important;">
                                             <th class="border-0 fw-bold">Talep No</th>
                                             <th class="border-0 fw-bold">Firma</th>
                                             <th class="border-0 fw-bold">Kullanıcı</th>
@@ -138,7 +161,7 @@
                                             <th class="border-0 fw-bold">Durum</th>
                                             <th class="border-0 fw-bold">Oluşturma</th>
                                             <th class="border-0 fw-bold">Son Yanıt</th>
-                                            <th class="border-0 fw-bold text-center">İşlemler</th>
+                                            <th class="border-0 custom-none fw-bold text-center">İşlemler</th>
                                         </tr>
                                     </thead>
                                     <tbody>

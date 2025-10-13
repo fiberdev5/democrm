@@ -1,3 +1,32 @@
+<style>
+@media (min-width: 768px) {
+  .custom-modal-width {
+    max-width: 360px !important;
+    margin: 1.75rem auto;
+  }
+  .searchWrap .dropdown-menu{
+    width: 271px !important;
+  }
+}
+@media (max-width: 767px) {
+.custom-p{
+        padding-left: 0px !important;
+      }
+          .pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+    }
+    #datatablePersonel_wrapper .bottom {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding-top: 0.85em !important;
+}
+      }
+      #editPers{
+            margin-block-end: 0em !important;
+      }
+</style>
+
 @extends('frontend.secure.user_master')
 @section('user')
 
@@ -22,13 +51,21 @@ $staffAll = App\Models\User::where('tenant_id', $firma->id)
 @media (max-width: 767px) {
 
 .searchWrap{margin-top: 0px !important;}
-    .pageDetail .searchWrap{}
+    .pageDetail .searchWrap{width: 30% !important;}
     .pageDetail .searchWrap{margin-bottom: 0px !important;}
  div.dataTables_filter input{margin-left: 0 !important;}
  .dataTables_filter{
 margin-right: 0px !important;
     }
-    #datatablePersonel_filter label{width: 100%!important;}
+    .pageDetail .searchWrap .dropdown-menu{ transform: translate3d(12px, 1px, 0px) !important;width: 100% !important;min-width: calc(79vw - 20px) !important;padding: 0px !important;}
+    #datatablePersonel_filter label{width: 100%!important;}   
+        #datatablePersonel_wrapper .dataTables_info {
+        width: auto !important;
+    }
+        li.paginate_button.next, li.paginate_button.previous {
+        display: inline-block;
+        font-size: 15px;
+    }
 }
 </style>
 <div class="page-content">
@@ -55,15 +92,15 @@ margin-right: 0px !important;
                   </span>
                 @endif
                 <div class="searchWrap float-end">
-                  <div class="btn-group mb-2 ">
+                  <div class="btn-group " id="personelfiltre">
                     <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                       Filtrele <i class="mdi mdi-chevron-down"></i>
                     </button>
                     <div class="dropdown-menu">
                       <div class="item">
                         <div class="row">
-                          <label class="col-sm-5">Durum</label>
-                          <div class="col-sm-7">
+                          <label class="col-sm-5 custom-p col-5 ">Durum</label>
+                          <div class="col-sm-7 custom-p custom-p-m col-7">
                             <select name="durum" id="durum" class="form-select">
                               <option value="2">Hepsi</option>
                               <option value="1" selected>Çalışıyor</option>
@@ -75,8 +112,8 @@ margin-right: 0px !important;
 
                       <div class="item">
                         <div class="row">
-                          <label class="col-sm-5">Personel Grubu</label>
-                          <div class="col-sm-7">
+                          <label class="col-sm-5 custom-p col-5">Personel Grubu</label>
+                          <div class="col-sm-7 custom-p custom-p-m col-7">
                             <select name="rolePers" id="rolePers" class="form-select">
                               <option value="">Hepsi</option>
                               @foreach($roles as $role)
@@ -114,7 +151,7 @@ margin-right: 0px !important;
 
 <!-- add modal content -->
 <div id="addPersonelModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog ">
+  <div class="modal-dialog custom-modal-width">
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title" id="myModalLabel">Personel Ekle</h6>
@@ -130,7 +167,7 @@ margin-right: 0px !important;
 
 <!-- edit modal content -->
 <div id="editPersonelModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog custom-modal-width">
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title" id="myModalLabel">Personel Düzenle</h6>
@@ -254,33 +291,30 @@ $(document).ready(function () {
               }
           }
           },
-      dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+       dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
       "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
       "initComplete": function(settings, json) {
           // --- DEĞİŞTİRİLEN BÖLÜM BURASI ---
+          var topContainer = $('#datatablePersonel_wrapper .top'); // .top div'ini seçiyoruz
           var searchContainer = $('#datatablePersonel_filter');
           var searchInput = searchContainer.find('input');
           var filterWrapper = $('.searchWrap');
-          var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
+          var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
 
-          // Varsayılan "Search:" etiketini kaldır
           searchContainer.find('label').contents().filter(function() {
               return this.nodeType == 3;
           }).remove();
 
-          // Arama kutusunu ve filtreyi sarmalamak için
-          searchContainer.addClass('flex-grow-1 me-2');
+          searchContainer.addClass('flex-grow-1');
           searchInput.addClass('w-100');
           searchInput.attr('placeholder', 'Personel Ara...');
 
-          // Ögeleri flex container'a ekle
           flexContainer.append(searchContainer);
           flexContainer.append(filterWrapper);
 
-          // Flex container'ı tablonun üstüne ekle
-          $('#datatablePersonel_wrapper .top').append(flexContainer);
+          // .append() yerine .html() kullanarak mevcut içeriği değiştiriyoruz
+          topContainer.html(flexContainer);
 
-          // Hazır olduğunda görünür yap
           $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
           // --- DEĞİŞTİRİLEN BÖLÜM SONU ---
       }
@@ -296,5 +330,18 @@ $(document).ready(function () {
 
 });
 </script>
+
+<script>
+    $(document).ready(function () {
+      var dropdownContainer = $('#personelfiltre');
+      var filterButton = dropdownContainer.find('.filtrele');
+      dropdownContainer.on('show.bs.dropdown', function () {
+        filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+      });
+      dropdownContainer.on('hide.bs.dropdown', function () {
+        filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+      });
+    });
+  </script>
 
 @endsection

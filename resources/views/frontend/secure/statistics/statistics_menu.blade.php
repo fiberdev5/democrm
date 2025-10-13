@@ -1,3 +1,10 @@
+<style>
+  .statistic-btn:hover {
+    text-decoration: none !important;
+    color: #fff !important;
+    background: linear-gradient(135deg, #343537, #585c5f);
+  }
+</style>
 <div class="row pageDetail">
   <div class="col-12">
     <div class="row">
@@ -59,24 +66,25 @@
 }
 
 .statistic-btn:hover {
-    text-decoration: underline !important;
     color: #fff !important;
 }
 
 /* Arka plan ikon stilleri: Sağ üst köşe */
 .statistic-btn::after {
-    content: '';
+        content: '';
     position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 20px;
-    height: 20px;
+    top: 5px;
+    right: -5px;
+    width: 34px;
+    height: 31px;
     opacity: 0.3;
-    transition: all 0.3s ease;
+    transition: all 0.3s 
+ease;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     z-index: 2;
+    transform: rotate(45deg);
 }
 
 /* Renk tanımlamaları */
@@ -132,6 +140,9 @@
         padding: 8px 12px;
         margin-bottom: 0;
     }
+    .page-content {
+    padding: calc(72px + 24px) calc(0px / 2) 60px calc(0px / 2);
+}
 }
 
 @media (max-width: 576px) {
@@ -141,7 +152,7 @@
     
     .statistic-btn {
         font-size: 0.75rem;
-        padding: 6px 10px;
+        padding: 9px 10px;
         margin-bottom: 0;
     }
 }

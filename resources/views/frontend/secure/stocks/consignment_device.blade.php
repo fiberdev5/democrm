@@ -19,10 +19,20 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
       visibility: hidden; /* JS ile görünür yapılacak */
       opacity: 0;
     }
+    @media (min-width: 768px) {
+  .custom-modal-width {
+    max-width: 390px;
+    margin: 1.75rem auto;
+  }
+  .searchWrap .dropdown-menu{
+    width: 250px !important;
+  }
+}
 
     /* Mobil Cihazlar İçin Özel Stiller */
     @media (max-width: 767px) {
-      .searchWrap {
+          .pageDetail .searchWrap {
+        width: 30% !important;
       }
       .dataTables_filter label {
       }
@@ -39,6 +49,26 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
       .searchWrap {
         margin-top: 0px !important;
       }
+      .pageDetail .searchWrap .dropdown-menu{
+        transform: translate3d(10px, 9px, 0px) !important;
+        min-width: calc(78vw - 20px) !important;
+      }
+      .searchWrap .dropdown-menu {
+    padding: 0px;
+}
+    .pageDetail .searchWrap .dropdown-menu .item{
+      margin-bottom: 0px !important;
+    }
+
+        #datatableConsignment_wrapper .dataTables_info{
+          width: auto !important;
+        }
+            #datatableConsignment_wrapper .bottom {
+        flex-direction: row !important;
+    }
+        li.paginate_button.next, li.paginate_button.previous {
+        font-size: 15px;
+    }
     }
 </style>
 <div class="page-content">
@@ -70,13 +100,13 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
                 <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Filtrele <i class="mdi mdi-chevron-down"></i>
                 </button>
-                <div class="dropdown-menu p-3" style="min-width: 250px;">
+                <div class="dropdown-menu" style="min-width: 250px;">
                   
                   <!-- Raf -->
-                  <div class="item mb-2">
+                  <div class="item mb-1">
                     <div class="row align-items-center">
-                      <label class="col-sm-5 mb-0">Raf</label>
-                      <div class="col-sm-7">
+                      <label class="col-sm-4 custom-p-r-m mb-0">Raf</label>
+                      <div class="col-sm-8 custom-p-m">
                         <select id="raf" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($rafListesi as $raf)
@@ -88,10 +118,10 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
                   </div>
                   
                   <!-- Marka -->
-                  <div class="item mb-2">
+                  <div class="item mb-1">
                     <div class="row align-items-center">
-                      <label class="col-sm-5 mb-0">Marka</label>
-                      <div class="col-sm-7">
+                      <label class="col-sm-4 custom-p-r-m mb-0">Marka</label>
+                      <div class="col-sm-8 custom-p-m">
                         <select id="marka" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($markalar as $marka)
@@ -103,10 +133,10 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
                   </div>
 
                   <!-- Cihaz -->
-                  <div class="item mb-2">
+                  <div class="item mb-1">
                     <div class="row align-items-center">
-                      <label class="col-sm-5 mb-0">Cihaz</label>
-                      <div class="col-sm-7">
+                      <label class="col-sm-4 custom-p-r-m mb-0">Cihaz</label>
+                      <div class="col-sm-8 custom-p-m">
                         <select id="cihaz" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($cihazlar as $cihaz)
@@ -120,8 +150,8 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
                   <!-- Personel -->
                   <div class="item">
                     <div class="row align-items-center">
-                      <label class="col-sm-5 mb-0">Personel</label>
-                      <div class="col-sm-7">
+                      <label class="col-sm-4 custom-p-r-m mb-0">Personel</label>
+                      <div class="col-sm-8 custom-p-m">
                         <select id="personel" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($personeller as $personel)
@@ -173,7 +203,7 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
 
 <!-- Modallar -->
 <div id="addConsignmentModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addConsignmentModalLabel" aria-hidden="true">
-  <div class="modal-dialog ">
+  <div class="modal-dialog custom-modal-width">
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title" id="addConsignmentModalLabel">Konsinye Cihaz Ekle</h6>
@@ -390,7 +420,7 @@ $(document).ready(function () {
           var searchContainer = $('#datatableConsignment_filter');
           var searchInput = searchContainer.find('input');
           var filterWrapper = $('.searchWrap');
-          var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
+          var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
 
           searchContainer.find('label').contents().filter(function() {
               return this.nodeType == 3;
@@ -406,6 +436,7 @@ $(document).ready(function () {
           $('#datatableConsignment_wrapper .top').append(flexContainer);
 
           $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+           $('.tableToplamaAlani').insertBefore('#datatableConsignment_wrapper .bottom');
       }
   });
 

@@ -1,3 +1,19 @@
+<style>
+    @media (max-width: 767px) {
+        #editStockModal{
+            font-size: 14px !important;
+        }
+        .card-header{
+            padding: 5px !important;
+        }
+        .card-header h5{
+            padding: 12px !important;
+        }
+    }
+
+    
+
+</style>
 <div class="modal-header">
     <h5 class="modal-title" id="editStockModal">Stok Detayları ve Yönetimi [{{ $stock->urunAdi }}]</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
@@ -81,7 +97,7 @@
                        <div class="row g-1  align-items-center">
                             <label class="col-sm-3">Ürün Kodu <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center mb-1">
                                 <input type="text" name="urunKodu" 
                                         class="form-control @error('urunKodu') is-invalid @enderror me-2" 
                                         value="{{ old('urunKodu', $stock->urunKodu) }}" required>
@@ -186,7 +202,7 @@
                         <button type="button" class="btn btn-success btn-sm hareketEkleBtn" data-stokid="{{ $stock->id }}">
                            <i class="fas fa-plus"></i> Stok Hareketi Ekle
                         </button>
-                        <select class="form-control-select islemSec d-inline-block" name="islemSec" style="width: auto;">
+                        <select class="form-control-select islemSec d-inline-block" name="islemSec" style="width: auto;height: 29px;">
                             <option value="0">Hepsi</option>
                             <option value="1">Alış</option>
                             <option value="3">Personele Gönder</option>

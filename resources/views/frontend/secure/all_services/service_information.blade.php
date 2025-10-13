@@ -1,14 +1,36 @@
+<style>
+@media (max-width: 767px) {
+ .text-align-right{
+  text-align: left !important;
+ }
+     
+    .right {
+    text-align: left !important;
+}
+.kayitAlan {
+    margin-left: 0px !important;
+}
+.servisSil2{
+  width: 100%;
+}
+.btn-sm{
+  width: 100%;
+  margin-top: 4px;
+}
+
+}
+</style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <form method="POST" id="servisDuzenle">
   @csrf
 <div class="card card1" style="margin-bottom: 5px">
   <div class="card-header ch1" style="padding: 3px 10px!important;">
     <div class="row">
-      <div class="col-4 col-md-4 left">
+      <div class="col-12 col-md-4 left">
         <label>Tarih: </label>
         <input type="text" name="tarih" class="form-control tarih" value="{{ Carbon\Carbon::parse($service_id->created_at)->format('d/m/Y H:i:s')}}" disabled="" style="width: 120px;display: inline-block;background: #fff;padding: 3px 5px;font-size:12px;">
       </div>
-      <div class="col-8 col-md-8 text-align-right" style="text-align: right;"> 
+      <div class="col-12 col-md-8 text-align-right" style="text-align: right;"> 
         <label>Müşteri Kaynağı: </label>
         <select class="form-control form-select kaynak" name="kaynak" style="width: 110px; display: inline-block;padding: 3px 5px;font-size:12px;">
           <option value="">-Seçiniz-</option>
@@ -17,7 +39,7 @@
           @endforeach
         </select>
 
-        <label>Operatör: <span class="kayitAlan">{{$service_id->users->name}}</span> </label>
+        <label class="mt-1">Operatör: <span class="kayitAlan">{{$service_id->users->name}}</span> </label>
 
       </div>
     </div>
@@ -48,8 +70,8 @@
         <div class="row form-group" style="border: 0;margin-bottom:0;">
           <div class="col-md-4 rw1"><label>Müsait Olma Zamanı</label></div>
             <div class="col-md-8 rw2">
-              <input name="musaitTarih" type="date" class="form-control datepicker kayitTarihi" value="{{$service_id->musaitTarih}}" style="background:#fff;display: inline-block;width: 105px;" data-has-listeners="true">
-              <select name="musaitSaat1" class="form-control form-select musaitSaat1" style="width: 75px;display: inline-block;">
+              <input name="musaitTarih" type="date" class="form-control datepicker kayitTarihi" value="{{$service_id->musaitTarih}}" style="background:#fff;display: inline-block;" data-has-listeners="true">
+              <select name="musaitSaat1" class="form-control form-select musaitSaat1" style="display: inline-block;">
                 @php
                   $saatler = [
                     "08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30",
@@ -65,7 +87,7 @@
                 @endforeach
               </select>
 
-              <select name="musaitSaat2" class="form-control form-select musaitSaat2" style="width: 75px;display: inline-block;">
+              <select name="musaitSaat2" class="form-control form-select musaitSaat2" style="display: inline-block;">
                 @foreach ($saatler as $saat)
                   <option value="{{ $saat }}" {{ $service_id->musaitSaat2 == $saat ? 'selected' : '' }}>
                     {{ $saat }}
@@ -196,7 +218,7 @@
   <div class="card card3">
     <div class="card-header" style="padding: 3px 7px!important;">
       <div class="row">
-        <div class="col-4 col-sm-6 left">
+        <div class="col-12 col-sm-6 left">
           <label class="kayitAlan">  
             <span>{{$service_id->asamalar["asama"]}}</span>                  
           </label>     
@@ -207,7 +229,7 @@
             </label>
             <input type="hidden" name="acil" class="acil" value="0"/>    
         </div>
-        <div class="col-8 col-sm-6 right">
+        <div class="col-12 col-sm-6 right">
           <label>Yapılacak işlem: </label>
           <select class="form-control altAsamalar" name="altAsamalar" style="padding:3px 5px;">
             <option value="">-Seçiniz-</option>        
@@ -249,7 +271,7 @@
 <div class="card cf1" style="margin-top: 10px;">
   <div class="card-header" style="padding: 3px 5px;">
     <div class="row">
-      <div class="col-sm-1">
+      <div class="col-12 col-sm-1">
         <input type="button" class="btn btn-danger btn-sm servisSil2" data-id="" value="Sil"/>
       </div>
       <div class="col-sm-11" style="text-align: right;">

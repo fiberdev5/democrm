@@ -1,8 +1,22 @@
+<style>
+   .select2-selection{
+    height:37px !important;
+} 
+@media (min-width: 767px) {
+.custom-p-r{
+    padding-right: 0px !important;
+  }
+  .custom-p-l{
+    padding-left: 0px !important;
+  }
+}
+</style>
+
 <form method="post" id="addStock" action="{{ route('store.stock', $firma->id) }}" enctype="multipart/form-data">
   @csrf
   <div class="row mb-1 align-items-center">
-    <label class="col-sm-3">Markalar<span style="color:red;">*</span></label>
-    <div class="col-sm-9">
+    <label class="col-sm-4 custom-p-r">Markalar<span style="color:red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <div class="input-group">
         <select name="marka_id" class="form-select" required>
           <option value="" selected disabled>- Seçiniz -</option>
@@ -16,8 +30,8 @@
   </div>
 
   <div class="row mb-1">
-    <label class="col-sm-3">Cihaz Türü<span style="color:red;">*</span></label>
-    <div class="col-sm-9">
+    <label class="col-sm-4 custom-p-r">Cihaz Türü<span style="color:red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <div class="input-group">
         <select name="cihaz_id" class="form-select" required>
           <option value="" selected disabled>- Seçiniz -</option>
@@ -31,8 +45,8 @@
   </div>
 
   <div class="row mb-1">
-    <label class="col-sm-3">Kategori<span style="color:red;">*</span></label>
-    <div class="col-sm-9">
+    <label class="col-sm-4 custom-p-r">Kategori<span style="color:red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <div class="input-group">
         <select name="urunKategori" class="form-select" required>
           <option value="" selected disabled>- Seçiniz -</option>
@@ -46,8 +60,8 @@
   </div>
   
 <div class="row mb-1">
-    <label class="col-sm-3">Raf Seç<span style="color:red;">*</span></label>
-    <div class="col-sm-9">
+    <label class="col-sm-4 custom-p-r">Raf Seç<span style="color:red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <div class="input-group">
         <select name="raf_id" class="form-select" required>
           <option value="" selected disabled>- Seçiniz -</option>
@@ -62,8 +76,8 @@
 
 
 <div class="row mb-0">
-    <label class="col-sm-3">Ürün Kodu<span class="text-danger">*</span></label>
-    <div class="col-sm-9">
+    <label class="col-sm-4 custom-p-r">Ürün Kodu<span class="text-danger">*</span></label>
+    <div class="col-sm-8 custom-p-l">
         <input name="urunKodu" type="text" class="form-control" 
                value="{{ old('urunKodu') }}" 
                placeholder="0000000000000" 
@@ -74,23 +88,23 @@
 </div>
 
 <div class="row mb-0">
-    <label class="col-sm-3">Ürün Adı<span class="text-danger">*</span></label>
-    <div class="col-sm-9">
+    <label class="col-sm-4 custom-p-r">Ürün Adı<span class="text-danger">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="urunAdi" type="text" class="form-control" value="{{ old('urunAdi') }}" required>
       <div id="urunAdiUyari"></div>
     </div>
 </div>
 
 <div class="row mb-0">
-    <label class="col-sm-3">Satış Fiyatı (₺)<span class="text-danger">*</span></label>
-    <div class="col-sm-9">
+    <label class="col-sm-4 custom-p-r">Satış Fiyatı (₺)<span class="text-danger">*</span></label>
+    <div class="col-sm-8 custom-p-l">
         <input name="fiyat" type="number" min="0" step="0.01" class="form-control" required>
     </div>
 </div>
 
 <div class="row mb-0">
-    <label class="col-sm-3">Açıklama</label>
-    <div class="col-sm-9">
+    <label class="col-sm-4 custom-p-r">Açıklama</label>
+    <div class="col-sm-8 custom-p-l">
       <textarea name="aciklama" rows="3" class="form-control"></textarea>
     </div>
   </div>

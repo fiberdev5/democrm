@@ -1,10 +1,32 @@
 {{-- resources/views/frontend/secure/super_admin/support/dashboard.blade.php --}}
 @extends('frontend.secure.user_master')
 @section('user')
+<style>
+    @media (max-width: 768px) {
+        .custom-header{
+            margin-top: 34px !important;
+        }
+        .page-title-box{
+            padding-bottom: 7px !important;
+        }
+        .quick-action-btn{
+            margin-bottom: 0px !important;
+        }
+        .btn-secondary{
+            padding: 5px 6px !important;
+        }
+        .fa-arrow-right{
+            font-size: 11px;
+        }
+        .support-dashboard-table-modern .table td{
+            padding:5px 4.85rem !important;
+        }
+    }
+</style>
 <div class="page-content">
     <div class="container-fluid">
         <!-- Başlık -->
-        <div class="row">
+        <div class="row custom-header">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                     <h4 class="mb-sm-0">
@@ -25,9 +47,9 @@
             <div class="col-12">
                 <div class="card quick-action-card shadow-sm">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center p-1 mb-1">
+                        <div class="d-flex justify-content-between align-items-center px-2 py-2 mb-1">
                             <div class="d-flex align-items-center">
-                                <div class="avatarsupport-sm me-3">
+                                <div class="avatarsupport-sm me-3 d-none">
                                     <div class="avatarsupport-title bg-primary bg-opacity-10 text-primary rounded">
                                         <i class="fas fa-bolt"></i>
                                     </div>
@@ -123,7 +145,7 @@
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0 py-3">
                         <div class="d-flex justify-content-between align-items-center px-1">
-                            <div class="d-flex align-items-center py-2">
+                            <div class="d-flex align-items-center py-2 px-2">
                                 <div>
                                     <h5 class="card-title mb-0">Son Destek Talepleri</h5>
                                     <p class="text-muted mb-0 small">En son oluşturulan destek talepleri</p>
@@ -278,7 +300,7 @@
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-lg-8">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center pt-3">
                                     <div class="flex-shrink-0">
                                         <div class="avatarsupport-sm">
                                             <div class="avatarsupport-title rounded-circle bg-warning bg-opacity-10 text-warning">
@@ -286,7 +308,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex-grow-1 ms-3">
+                                    <div class="flex-grow-1 ms-1">
                                         <h6 class="mb-1">Super Admin Destek Yönetimi</h6>
                                         <p class="mb-0 text-muted">Sistemdeki tüm destek taleplerini buradan yönetebilir, istatistiklerini takip edebilir ve raporlar oluşturabilirsiniz.</p>
                                     </div>

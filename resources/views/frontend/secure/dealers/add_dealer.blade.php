@@ -1,51 +1,62 @@
+<style>
+  
+@media (min-width: 767px) {
+.custom-p-r{
+    padding-right: 0px !important;
+  }
+  .custom-p-l{
+    padding-left: 0px !important;
+  }
+}
+</style>
 <form method="post" id="addBayi" action="{{ route('store.dealer',$firma->id)}}" enctype="multipart/form-data" >
   @csrf   
   <div class="row">
-    <label class="col-sm-4">Başlama Tarihi<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Başlama Tarihi<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="baslamaTarihi" class="form-control datepicker kayitTarihi" type="date" style="border: 1px solid #ced4da;" value="{{date('Y-m-d')}}" required>
     </div>
   </div>
 
   <div class="row">
-    <label class="col-sm-4">Ad Soyad<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Ad Soyad<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="name" class="form-control" type="text" required>
     </div>
   </div>
 
 <div class="row">
-  <label class="col-sm-4">Vergi No<span style="font-weight: bold; color: red;">*</span></label>
-  <div class="col-sm-8">
+  <label class="col-sm-4 custom-p-r">Vergi No<span style="font-weight: bold; color: red;">*</span></label>
+  <div class="col-sm-8 custom-p-l">
     <input name="vergiNo" id="vergiNo" class="form-control" type="text" required>
   </div>
 </div>
 
 <div class="row">
-  <label class="col-sm-4">Vergi Dairesi<span style="font-weight: bold; color: red;">*</span></label>
-  <div class="col-sm-8">
+  <label class="col-sm-4 custom-p-r">Vergi Dairesi<span style="font-weight: bold; color: red;">*</span></label>
+  <div class="col-sm-8 custom-p-l">
     <input name="vergiDairesi" class="form-control" type="text" required>
   </div>
 </div>
 
   <div class="row">
-    <label class="col-sm-4">Bayi Belgesi<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Bayi Belgesi<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="belgePdf[]" id="belgePdf" class="form-control" type="file" accept=".pdf,.jpg,.jpeg,.png,.svg" multiple required>
       <small class="text-muted">Maksimum 2 dosya seçebilirsiniz. PDF, JPG, PNG, SVG formatları kabul edilir.</small>
     </div>
   </div>
 
   <div class="row">
-    <label class="col-sm-4">Telefon<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Telefon<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="tel" id="tel" class="form-control phone" type="text" required>
     </div>
   </div>
 
   <div class="row">
-    <div class="col-sm-4"><label>İl/İlçe<span style="font-weight: bold; color: red;">*</span></label></div>
-    <div class="col-sm-4">
+    <div class="col-sm-4 custom-p-r"><label>İl/İlçe<span style="font-weight: bold; color: red;">*</span></label></div>
+    <div class="col-sm-4 custom-p-l">
       <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;" required>
         <option value="" selected disabled>-Seçiniz-</option>
         @foreach($countries as $item)
@@ -53,30 +64,30 @@
         @endforeach
       </select>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4 custom-p-l">
       <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;" required>
         <option value="" selected disabled>-Seçiniz-</option>                              
       </select>
     </div>
   </div> 
   <div class="row">
-    <label class="col-sm-4">Adress:</label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Adress:</label>
+    <div class="col-sm-8 custom-p-l">
       <textarea name="address" type="text" class="form-control" rows="2"></textarea>
     </div>
   </div>
 
 
   <div class="row">
-    <label class="col-sm-4">Kullanıcı Adı<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Kullanıcı Adı<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="username" class="form-control" type="text" required>
     </div>
   </div>
             
   <div class="row mb-3">
-    <label class="col-sm-4">Şifre:<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Şifre:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="password" class="form-control" type="password" required>
     </div>
   </div>

@@ -14,8 +14,27 @@
     @media (max-width: 767px) {
       .pageDetail .searchWrap {
       }
-
-
+    .btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+.pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 10px !important;
+    }
+    .invoices-filtre {
+       width: auto !important;
+    }
+        .pageDetail .searchWrap .dropdown-menu {
+        min-width: calc(90vw - 20px) !important;
+            transform: translate3d(9.274994px, 2px, 0px) !important;
+      }
+      .searchWrap .tarih-araligi {
+    padding: 5px 3px;
+}
+.custom-p-m-m{
+        padding-left: 0px !important;
+      }
       #datatableInvoice_filter{
         margin-right: 0px !important;
       }
@@ -67,8 +86,8 @@
                   <div class="dropdown-menu">
                     <div class="item">
                       <div class="row form-group">
-                        <label class="col-sm-4">Firma<span style="font-weight: bold; color: red;">*</span></label>
-                        <div class="col-md-8">
+                        <label class="col-sm-4 col-4 custom-p-m-m">Firma<span style="font-weight: bold; color: red;">*</span></label>
+                        <div class="col-md-8 col-8 custom-p-m-m">
                           <select id="firma" name="firma" class="form-select">
                               <option value="">Tüm Firmalar</option>
                               @foreach($tenants as $tenant)
@@ -94,8 +113,8 @@
                     </div> --}}
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Tarih Aralığı:</label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-4 col-4 custom-p-m-m">Tarih Aralığı:</label>
+                        <div class="col-sm-8 col-8 custom-p-m-m">
                           <input id="daterange" class="tarih-araligi">
                           <div class="tarihAraligi mt-2 mb-2">
                             <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
@@ -410,6 +429,8 @@ $(document).ready(function () {
     flexContainer.append(filterWrapper);
     $('#datatableInvoice_wrapper .top').append(flexContainer);
     $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+
+    $('.tableToplamaAlani').insertBefore('#datatableInvoice_wrapper .bottom');
 }
   
   

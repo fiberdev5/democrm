@@ -10,9 +10,33 @@
 <style>
 
 @media (max-width: 767px) {
-
+    li.paginate_button.next, li.paginate_button.previous {
+        display: inline-block;
+        font-size: 16px !important;
+    }
+        #datatableKasa_wrapper .dataTables_info {
+        text-align: left !important;
+    }
+        .pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+    }
+    .searchWrap .dropdown-menu {
+    padding: 0px !important;
+}
+    .pageDetail .searchWrap .dropdown-menu {
+        min-width: calc(93vw - 20px) !important;
+        transform: translate3d(10.600006px, 4px, 0px) !important;
+    }
+    .pageDetail .searchWrap .tarihAraligi .btn {
+        color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+      }
+.searchWrap .tarih-araligi {
+    padding: 5px 6px !important;
+}
 .searchWrap{margin-top: 0px !important;}
-    .pageDetail .searchWrap{}
+    .pageDetail .searchWrap{width: 30% !important;}
     .pageDetail .searchWrap{margin-bottom: 0px !important;}
  div.dataTables_filter input{margin-left: 0 !important;}
  .dataTables_filter{
@@ -20,8 +44,31 @@ margin-right: 0px !important;
     }
     .pageDetail .kasaArama{
               margin-right: 0px !important;
+              
     }
+    #datatableKasa_wrapper .kasaArama{
+      display: none;
+    }
+        #datatableKasa_filter label {
+        width: 100% !important;
+    }
+    #datatableKasa_filter label{
+      margin-bottom: 0px !important;
+    }
+        #datatableKasa_wrapper .dataTables_filter {
+        margin-bottom: -1px !important;
+    }
+    
 }
+@media (min-width: 768px) {
+  .custom-modal-width {
+    max-width: 390px;
+    margin: 1.75rem auto;
+  }
+}
+#kasaArama{
+      background-color: #343a40 !important;
+    }
 </style>
 <div class="page-content" id="cash_transactions">
   <div class="container-fluid">
@@ -55,15 +102,15 @@ margin-right: 0px !important;
 </div>
 
               <div class="searchWrap float-end">
-                <div class="btn-group mb-2 " id="kasaFilterDropdownContainer">
+                <div class="btn-group" id="kasaFilterDropdownContainer">
                   <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Filtrele <i class="mdi mdi-chevron-down"></i>
                   </button>
                   <div class="dropdown-menu">
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Ödeme Yönü:</label>
-                        <div class="col-sm-8">
+                        <label class="col-4 col-sm-4">Ödeme Yönü:</label>
+                        <div class="col-8 col-sm-8">
                           <select name="odeme_yonu" id="odemeYonu" class="form-select">
                             <option value="">Hepsi</option>
                             <option value="1">Gelen Ödeme(Borç)</option>
@@ -74,8 +121,8 @@ margin-right: 0px !important;
                     </div>
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Ödeme Türü:</label>
-                        <div class="col-sm-8">
+                        <label class="col-4 col-sm-4">Ödeme Türü:</label>
+                        <div class="col-8 col-sm-8">
                           <select name="odeme_turu" id="odemeTuru" class="form-select">
                             <option value="">Hepsi</option>
                             @foreach($payment_types as $type)
@@ -87,8 +134,8 @@ margin-right: 0px !important;
                     </div>
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Ödeme Şekli:</label>
-                        <div class="col-sm-8">
+                        <label class="col-4 col-sm-4">Ödeme Şekli:</label>
+                        <div class="col-8 col-sm-8">
                           <select name="odeme_sekil" id="odemeSekil" class="form-select">
                             <option value="">Hepsi</option>
                             @foreach($payment_methods as $method)
@@ -100,8 +147,8 @@ margin-right: 0px !important;
                     </div>
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Durumu:</label>
-                        <div class="col-sm-8">
+                        <label class="col-4 col-sm-4">Durumu:</label>
+                        <div class="col-8 col-sm-8">
                           <select name="odeme_durumu" id="odemeDurumu" class="form-select">
                             <option value="0">Hepsi</option>
                             <option value="2">Tamamlanmadı</option>
@@ -112,8 +159,8 @@ margin-right: 0px !important;
                     </div>
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Personel:</label>
-                        <div class="col-sm-8">
+                        <label class="col-4 col-sm-4">Personel:</label>
+                        <div class="col-8 col-sm-8">
                           <select name="staff" id="staff" class="form-select">
                             <option value="">Hepsi</option>
                             @foreach($personel as $person)
@@ -126,8 +173,8 @@ margin-right: 0px !important;
 
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Bayiler:</label>
-                        <div class="col-sm-8">
+                        <label class="col-4 col-sm-4">Bayiler:</label>
+                        <div class="col-8 col-sm-8">
                           <select name="bayi" id="bayi" class="form-select">
                             <option value="">Hepsi</option>
                             @foreach($bayiler as $bayi)
@@ -140,8 +187,8 @@ margin-right: 0px !important;
 
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Tedarikçiler:</label>
-                        <div class="col-sm-8">
+                        <label class="col-4 col-sm-4">Tedarikçiler:</label>
+                        <div class="col-8 col-sm-8">
                           <select name="tedarikci" id="tedarikci" class="form-select">
                             <option value="">Hepsi</option>
                             @foreach($tedarikciler as $item)
@@ -154,8 +201,8 @@ margin-right: 0px !important;
 
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Marka:</label>
-                        <div class="col-sm-8">
+                        <label class="col-4 col-sm-4">Marka:</label>
+                        <div class="col-8 col-sm-8">
                           <select name="marka" id="marka" class="form-select">
                             <option value="">Hepsi</option>
                             @foreach($markalar as $item)
@@ -168,8 +215,8 @@ margin-right: 0px !important;
 
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Cihaz:</label>
-                        <div class="col-sm-8">
+                        <label class="col-4 col-sm-4">Cihaz:</label>
+                        <div class="col-8 col-sm-8">
                           <select name="cihaz" id="cihaz" class="form-select">
                             <option value="">Hepsi</option>
                             @foreach($cihazlar as $item)
@@ -182,8 +229,8 @@ margin-right: 0px !important;
         
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Tarih Aralığı:</label>
-                        <div class="col-sm-8">
+                        <label class="col-4 col-sm-4">Tarih Aralığı:</label>
+                        <div class="col-8 col-sm-8">
                           <input id="daterange" class="tarih-araligi" >
                           <div class="tarihAraligi mt-2 mb-2">
                             <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
@@ -251,7 +298,7 @@ margin-right: 0px !important;
         
 <!-- add modal content -->
 <div id="addCashTransactionsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog custom-modal-width">
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title" id="myModalLabel">Kasa Hareketi Ekle</h6>
@@ -281,7 +328,7 @@ margin-right: 0px !important;
 
 <!-- edit modal content -->
 <div id="editCashTransactionsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog custom-modal-width">
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title" id="myModalLabel">Kasa Hareketi Düzenle</h6>
@@ -659,33 +706,46 @@ $(document).ready(function(){
        dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
       "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
       "initComplete": function(settings, json) {
-            // --- DEĞİŞTİRİLEN BÖLÜM BURASI ---
-            var searchContainer = $('#datatableKasa_filter');
-            var searchInput = searchContainer.find('input');
-            var filterWrapper = $('.searchWrap');
-            var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
+    var searchContainer = $('#datatableKasa_filter');
+    var searchInput = searchContainer.find('input');
+    var filterWrapper = $('.searchWrap');
+    var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
 
-            // Varsayılan "Search:" etiketini kaldır
-            searchContainer.find('label').contents().filter(function() {
-                return this.nodeType == 3;
-            }).remove();
+    // --- DEĞİŞTİRİLEN BÖLÜM BAŞLANGICI ---
 
-            // Arama kutusunu ve filtreyi sarmalamak için
-            searchContainer.addClass('flex-grow-1 me-2');
-            searchInput.addClass('w-100');
-            searchInput.attr('placeholder', 'Kasa Hareketi Ara...');
+    // 1. Sadece masaüstü görünümündeki arama butonunu bul.
+    var kasaAramaButton = $('.d-none.d-lg-block .kasaArama');
 
-            // Ögeleri flex container'a ekle
-            flexContainer.append(searchContainer);
-            flexContainer.append(filterWrapper);
+    // 2. Filtrele ve arama butonunu yan yana getirmek için ana sarmalayıcıya flex özellikleri ekle.
+    filterWrapper.addClass('d-flex align-items-center');
 
-            // Flex container'ı tablonun üstüne ekle
-            $('#datatableKasa_wrapper .top').append(flexContainer);
+    // 3. Bulunan arama butonunu, "Filtrele" butonunu içeren sarmalayıcının içine taşı.
+    // .append() ile sona eklenir, yani "Filtrele" butonunun sağına gelir.
+    filterWrapper.append(kasaAramaButton);
 
-            // Hazır olduğunda görünür yap
-            $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
-            // --- DEĞİŞTİRİLEN BÖLÜM SONU ---
-        }
+    // --- DEĞİŞTİRİLEN BÖLÜM SONU ---
+
+    // Varsayılan "Search:" etiketini kaldır
+    searchContainer.find('label').contents().filter(function() {
+        return this.nodeType == 3;
+    }).remove();
+
+    // Arama kutusunu ve filtreyi sarmalamak için
+    searchContainer.addClass('flex-grow-1 me-2');
+    searchInput.addClass('w-100');
+    searchInput.attr('placeholder', 'Kasa Hareketi Ara...');
+
+    // Ögeleri flex container'a ekle
+    flexContainer.append(searchContainer);
+    flexContainer.append(filterWrapper); // filterWrapper artık hem "Filtrele" hem de arama butonunu içeriyor.
+
+    // Flex container'ı tablonun üstüne ekle
+    $('#datatableKasa_wrapper .top').append(flexContainer);
+
+    // Hazır olduğunda görünür yap
+    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+     $('.tableToplamaAlani').insertBefore('#datatableKasa_wrapper .bottom');
+}
     });
 
     // Kullanıcının filtreleme yaptığını takip etmek için flag

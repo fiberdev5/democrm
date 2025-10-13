@@ -1,3 +1,11 @@
+<style>
+  @media (min-width: 768px) {
+  .custom-modal-width {
+    max-width: 380px !important;
+    margin: 1.75rem auto;
+  }
+}
+</style>
 @extends('frontend.secure.user_master')
 @section('user')
   <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
@@ -6,29 +14,99 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
   <style>
-.searchWrap.kullanici_teknisyenfiltre {
-    visibility: hidden;
-    opacity: 0;
-}
-@media (max-width: 767px) {
-
-.dataTables_filter{
-margin-right: 0px !important;
+    .searchWrap.kullanici_teknisyenfiltre {
+      visibility: hidden;
+      opacity: 0;
     }
 
-.searchWrap{margin-top: 0px !important;}
-div.dataTables_filter input{margin-left: 0px !important;}
-.top{margin-top: 19px;}
-div.dataTables_wrapper div.dataTables_filter input {
+    @media (max-width: 767px) {
+
+      .dataTables_filter {
+        margin-right: 0px !important;
+      }
+      .addServiceModal .ekle-modal{
+        width: auto !important;
+      }
+          .ekle-modal {
+        width: auto !important;
+    }
+    #addServiceModal .c1 {
+     padding-right: 0px !important; 
+}
+
+        .pageDetail .searchWrap .tarihAraligi .btn {
+        color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+      }
+          
+      .custom-p{
+        padding-left: 0px !important;
+      }
+      .pageDetail .searchWrap {
+        width: 26% !important;
+      }
+
+      .searchWrap {
+        margin-top: 0px !important;
+      }
+
+      div.dataTables_filter input {
+        margin-left: 0px !important;
+      }
+
+      .top {
+        margin-top: 19px;
+      }
+
+      div.dataTables_wrapper div.dataTables_filter input {
         width: 227px !important;
+      }
+
+      .servisDrop {
+        inset: 0px 0px -412px -213px !important;
+      }
+
+      .pageDetail .searchWrap {
+        margin-bottom: 0px !important;
+        width: 30% !important;
+      }
+
+      div.dataTables_wrapper div.dataTables_filter input {
+        width: 100% !important;
+      }
+
+      .pageDetail .searchWrap .dropdown-menu {
+        transform: translate3d(26px, -59px, 0px) !important;
+        ;
+        width: 100% !important;
+      }
+
+      .pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+      }
+
+      thead.title tr th {
+
+        font-size: 12px;
+      }
+
+      .searchWrap .dropdown-menu {
+        padding: 0px !important;
+      }
+
+      .pageDetail .searchWrap .dropdown-menu .item {
+        padding: 3px !important;
+      }
+          .pageDetail .searchWrap .dropdown-menu {
+        min-width: calc(95vw - 20px) !important;
     }
-    .servisDrop{
-          inset: 0px 0px -412px -213px !important;
+    .p-cihaz{
+      margin-bottom:0px !important ;
     }
-    .pageDetail .searchWrap{margin-bottom: 0px !important;}
-    
-}
-</style>
+
+    }
+  </style>
   <div class="page-content" id="customerTable">
     <div class="container-fluid">
       <div class="row pageDetail">
@@ -54,189 +132,224 @@ div.dataTables_wrapper div.dataTables_filter input {
                 @endif
               </div>
             </div>
-<div class="card-body">
-          @if(auth()->user()->can('Tüm Servisleri Görebilir'))
-            <div class="action-buttons-container">
-              <div class="col-4">
-                <a class="btn btn-success btn-sm addService" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i
-                    class="fas fa-plus"></i><span class="d-inline d-md-none">Ekle</span><span
-                    class="d-none d-md-inline">Servis Ekle</span></a>
+            <div class="card-body">
+              @if(auth()->user()->can('Tüm Servisleri Görebilir'))
+                <div class="action-buttons-container ">
+                  <div class="col-4">
+                    <a class="btn btn-success btn-sm addService" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i
+                        class="fas fa-plus"></i><span class="d-inline d-md-none">Ekle</span><span
+                        class="d-none d-md-inline">Servis Ekle</span></a>
+                  </div>
+                  <div class="col-4">
+                    <a type="button" class="btn btn-success btn-sm gelenCagriButon" data-bs-toggle="modal"
+                      data-bs-target="#gelenCagriModal">
+                      <div class="text">
+                        <!-- Mobilde görünecek ikon -->
+                        <i class="fas fa-headset d-inline d-md-none" data-toggle="tooltip"
+                          title="Gereksiz çağrıları kaydetmek için kullanılır."></i>
+                        <span class="d-inline d-md-none">Çağrılar</span>
+                        <span class="d-none d-md-inline">Gelen Çağrılar</span>
+
+                        
+
+                        <!-- Masaüstünde görünecek ikon -->
+                        <i class="fas fa-info-circle d-none d-md-inline" data-toggle="tooltip"
+                          title="Gereksiz çağrıları kaydetmek için kullanılır."></i>
+                      </div>
+                    </a>
+                  </div>
+
+                  <div class="col-4">
+                    <button type="button" class="btn btn-danger btn-sm servisPlanlaBtn">
+                      <div class="text">
+                         <i class="fas fa-location-arrow d-inline d-md-none" data-toggle="tooltip"
+                          title="Toplu servis yönlendirmeleri yapmak için kullanılır."></i>
+                        <span class="d-inline d-md-none">Planlama</span>
+                        <span class="d-none d-md-inline">Servis Planlama</span>
+
+                        <!-- Mobilde farklı ikon -->
+                       
+
+                        <!-- Masaüstünde aynı ikon -->
+                        <i class="fas fa-info-circle d-none d-md-inline" data-toggle="tooltip"
+                          title="Toplu servis yönlendirmeleri yapmak için kullanılır."></i>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                {{-- Raporlar, Anketler, Primler butonları taşındı--}}
+              @endif
+              <div>
+                @if(auth()->user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
+                  <button type="button" class="btn btn-primary btn-sm teknisyenDepoGoster" data-toggle="modal"
+                    data-target="#teknisyenDepoModal"> Depo </button>
+                @endif
+                @if(Auth::check() && Auth::user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
+                  <button type="button" class="btn btn-primary btn-sm kullanici_teknisyenPrimGoster" data-toggle="modal"
+                    data-target="#kullaniciPrimModal"> Primlerim </button>
+                @endif
               </div>
-              <div class="col-4">
-                <a type="button" class="btn btn-success btn-sm gelenCagriButon" data-bs-toggle="modal"
-                  data-bs-target="#gelenCagriModal">
-                  <div class="text"><span class="d-inline d-md-none">Çağrılar</span><span
-                      class="d-none d-md-inline">Gelen Çağrılar</span> <i data-toggle="tooltip"
-                      title="Gereksiz çağrıları kaydetmek için kullanılır." class="fas fa-info-circle"
-                      data-bs-original-title=""></i></div>
-                </a>
+
+              <div class="searchWrap float-end kullanici_teknisyenfiltre">
+                @if(auth()->user()->can('Tüm Servisleri Görebilir'))
+                  <div class="btn-group" id="servisFilterDropdownContainer">
+
+                    <button class="btn btn-dark btn-sm dropdown-toggle filtrele kullanici_teknisyenfiltre" type="button"
+                      data-bs-toggle="dropdown" aria-expanded="false"> Filtrele <i class="mdi mdi-chevron-down"></i>
+                    </button>
+
+                    <div class="dropdown-menu servisDrop">
+                      <!-- Mobil ve Masaüstü için Esnek Grid Kapsayıcısı -->
+                      <div class="row">
+
+                        <!-- Her bir filtre elemanı mobil için 6, masaüstü için 12 birim yer kaplar -->
+                        <div class="mt-1 item col-12 col-lg-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">Cihaz Marka:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="device_brands" id="device_brands" class="form-select">
+                                <option value="">Hepsi</option>
+                                @foreach($device_brands as $brand)
+                                  <option value="{{$brand->id}}">{{$brand->marka}}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item col-12 col-lg-12">
+                          <div class="row">
+                            <label class=" col-4 custom-p col-sm-4">Cihaz Türü:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="device_types" id="device_types" class="form-select">
+                                <option value="">Hepsi</option>
+                                @foreach($device_types as $type)
+                                  <option value="{{$type->id}}">{{$type->cihaz}}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item col-12 col-lg-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">Servis Durumu:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="stages" id="stages" class="form-select">
+                                <option value="">Hepsi</option>
+                                @foreach($service_stages as $stage)
+                                  <option value="{{$stage->id}}">{{$stage->asama}}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item col-12 col-lg-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">Servis Kaynağı:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="service_resource" id="service_resource" class="form-select">
+                                <option value="">Hepsi</option>
+                                @foreach($service_resources as $resource)
+                                  <option value="{{$resource->id}}">{{$resource->kaynak}}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item col-12 col-lg-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">İl:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="il" id="country2" class="form-control form-select"
+                                style="width:100%!important;">
+                                <option value="" selected>-Seçiniz-</option>
+                                @foreach($states as $item)
+                                  <option value="{{ $item->id }}">{{ $item->name}}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item col-12 col-lg-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">İlçe:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="ilce" id="city2" class="form-control form-select" style="width:100%!important;">
+                                <option value="" selected disabled>-Seçiniz-</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Tarih aralığı daha yüksek olduğu için mobil görünümde tam satırı kaplaması daha iyi olur -->
+                        <div class="item col-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">Tarih Aralığı:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <input id="daterange" class="tarih-araligi w-100">
+                              <div class="tarihAraligi mt-2 mb-2">
+                                <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
+                                <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
+                                <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                                <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                                <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
+                            
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div> <!-- row kapanışı -->
+                    </div>
+                  </div><!-- /btn-group -->
+                @endif
+              </div> <!-- Servisler Tablosu -->
+              <div id="servicesTableSection">
+                <table id="datatableService" class="table table-bordered dt-responsive nowrap"
+                  style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                  <thead class="title font-small">
+                    <tr>
+                      <th style="width: 10px">ID</th>
+                      <th style="width: 10px">Tarih</th>
+                      <th style="width: 250px">Müşteri</th>
+                      <th style="width: 250px">Cihaz</th>
+                      <th>Servis Durumu</th>
+                      <th style="max-width: 40px!important;">Kapat</th>
+                      <th data-priority="1" style="width: 96px;">Düzenle</th>
+                    </tr>
+                  </thead>
+                  <tbody class="font-small">
+                  </tbody>
+                </table>
               </div>
-              <div class="col-4">
-                <button type="button" class="btn btn-danger btn-sm servisPlanlaBtn">
-                  <div class="text"><span class="d-inline d-md-none">Planlama</span> <span
-                      class="d-none d-md-inline">Servis Planlama</span> <i data-toggle="tooltip"
-                      title="Toplu servis yönlendirmeleri yapmak için kullanılır." class="fas fa-info-circle"
-                      data-bs-original-title=""></i></div>
-                </button>
+              {{-- Burası raporlar modalında gelen çağrıları filtrelerken oluşturulan gelen çağrılar tablosu --}}
+              <div id="incomingCallsSection" class="" style="display: none;">
+                <table id="incomingCallsTable" class="table table-striped table-bordered dt-responsive nowrap"
+                  style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                  <thead class="title">
+                    <tr>
+                      <th>ID</th>
+                      <th>Tarih</th>
+                      <th>Telefon</th>
+                      <th>Marka</th>
+                      <th>Açıklama</th>
+                      <th>Personel</th>
+                      <th>İşlemler</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
               </div>
             </div>
-            {{-- Raporlar, Anketler, Primler butonları taşındı--}}
-          @endif
-          <div>
-            @if(auth()->user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
-            <button type="button" class="btn btn-primary btn-sm teknisyenDepoGoster" data-toggle="modal"
-              data-target="#teknisyenDepoModal"> Depo </button>
-          @endif
-          @if(Auth::check() && Auth::user()->hasAnyRole(['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak']))
-            <button type="button" class="btn btn-primary btn-sm kullanici_teknisyenPrimGoster" data-toggle="modal"
-              data-target="#kullaniciPrimModal"> Primlerim </button>
-          @endif
           </div>
-          
-          <div class="searchWrap float-end kullanici_teknisyenfiltre">
-            @if(auth()->user()->can('Tüm Servisleri Görebilir'))
-            <div class="btn-group mb-2" id="servisFilterDropdownContainer">
-              
-                <button class="btn btn-dark btn-sm dropdown-toggle filtrele kullanici_teknisyenfiltre" type="button" data-bs-toggle="dropdown"
-                  aria-expanded="false"> Filtrele <i class="mdi mdi-chevron-down"></i> </button>
-              
-              <div class="dropdown-menu servisDrop">
-                <div class="item">
-                  <div class="row">
-                    <label class="col-sm-5">Cihaz Marka:</label>
-                    <div class="col-sm-7">
-                      <select name="device_brands" id="device_brands" class="form-select">
-                        <option value="">Hepsi</option>
-                        @foreach($device_brands as $brand)
-                          <option value="{{$brand->id}}">{{$brand->marka}}</option>
-                        @endforeach
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="row">
-                    <label class="col-sm-5">Cihaz Türü:</label>
-                    <div class="col-sm-7">
-                      <select name="device_types" id="device_types" class="form-select">
-                        <option value="">Hepsi</option>
-                        @foreach($device_types as $type)
-                          <option value="{{$type->id}}">{{$type->cihaz}}</option>
-                        @endforeach
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="row">
-                    <label class="col-sm-5">Servis Durumu:</label>
-                    <div class="col-sm-7">
-                      <select name="stages" id="stages" class="form-select">
-                        <option value="">Hepsi</option>
-                        @foreach($service_stages as $stage)
-                          <option value="{{$stage->id}}">{{$stage->asama}}</option>
-                        @endforeach
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="row">
-                    <label class="col-sm-5">Servis Kaynağı:</label>
-                    <div class="col-sm-7">
-                      <select name="service_resource" id="service_resource" class="form-select">
-                        <option value="">Hepsi</option>
-                        @foreach($service_resources as $resource)
-                          <option value="{{$resource->id}}">{{$resource->kaynak}}</option>
-                        @endforeach
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="row">
-                    <label class="col-sm-5">İl:</label>
-                    <div class="col-sm-7">
-                      <select name="il" id="country2" class="form-control form-select" style="width:100%!important;">
-                        <option value="" selected>-Seçiniz-</option>
-                        @foreach($states as $item)
-                          <option value="{{ $item->id }}">{{ $item->name}}</option>
-                        @endforeach
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="row">
-                    <label class="col-sm-5">İlçe:</label>
-                    <div class="col-sm-7">
-                      <select name="ilce" id="city2" class="form-control form-select" style="width:100%!important;">
-                        <option value="" selected disabled>-Seçiniz-</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="item">
-                  <div class="row">
-                    <label class="col-sm-5">Tarih Aralığı:</label>
-                    <div class="col-sm-7">
-                      <input id="daterange" class="tarih-araligi">
-                      <div class="tarihAraligi mt-2 mb-2">
-                        <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
-                        <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
-                        <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
-                        <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
-                        <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div><!-- /btn-group -->
-            @endif
-          </div> <!-- Servisler Tablosu -->
-          <div id="servicesTableSection">
-            <table id="datatableService" class="table table-bordered dt-responsive nowrap"
-              style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-              <thead class="title">
-                <tr>
-                  <th style="width: 10px">ID</th>
-                  <th style="width: 10px">Tarih</th>
-                  <th style="width: 250px">Müşteri</th>
-                  <th style="width: 250px">Cihaz</th>
-                  <th>Servis Durumu</th>
-                  <th style="max-width: 40px!important;">Kapat</th>
-                  <th data-priority="1" style="width: 96px;">Düzenle</th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-          </div>
-          {{-- Burası raporlar modalında gelen çağrıları filtrelerken oluşturulan gelen çağrılar tablosu --}}
-          <div id="incomingCallsSection" class="" style="display: none;">
-            <table id="incomingCallsTable" class="table table-striped table-bordered dt-responsive nowrap"
-              style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-              <thead class="title">
-                <tr>
-                  <th>ID</th>
-                  <th>Tarih</th>
-                  <th>Telefon</th>
-                  <th>Marka</th>
-                  <th>Açıklama</th>
-                  <th>Personel</th>
-                  <th>İşlemler</th>
-                </tr>
-              </thead>
-              <tbody>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div> <!-- end col -->
-  </div> <!-- end row -->
-</div>
+        </div> <!-- end col -->
+      </div> <!-- end row -->
+    </div>
   </div>
   <!-- add modal content -->
   <div id="addServiceModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addCustomerLabel"
@@ -257,7 +370,7 @@ div.dataTables_wrapper div.dataTables_filter input {
   <div id="editServiceDescModal" class="modal fade" data-bs-backdrop="static" tabindex='-1'> {{--data-bs-backdrop="static"
     data-bs-keyboard="false" modalın hemen kapanmaması için bunu eklemiştim. Eğer eklenmesi gerekirse aria-hidden in
     yanına ekleyebilirsin--}}
-    <div class="modal-dialog modal-lg" style="width: 980px;">
+    <div class="modal-dialog modal-lg service-modal" style="width: 980px;">
       <div class="modal-content">
         <div class="modal-header">
           <h6 class="modal-title" id="editCustomerLabel">Servis Bilgileri Düzenle</h6>
@@ -403,7 +516,7 @@ div.dataTables_wrapper div.dataTables_filter input {
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
   <div id="gelenCagriModal" class="modal fade" data-bs-backdrop="static" tabindex='-1'>
-    <div class="modal-dialog">
+    <div class="modal-dialog  custom-modal-width ">
       <div class="modal-content">
         <div class="modal-header">
           <h6 class="modal-title">Yeni Çağrı Ekle</h6>
@@ -418,7 +531,7 @@ div.dataTables_wrapper div.dataTables_filter input {
   <!-- edit modal content -->
   <div id="editIncomingCallModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
     aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog custom-modal-width ">
       <div class="modal-content">
         <div class="modal-header">
           <h6 class="modal-title" id="myModalLabel">Çağrı Düzenle</h6>
@@ -1011,45 +1124,45 @@ div.dataTables_wrapper div.dataTables_filter input {
         },
         dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
         "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
-        "initComplete": function(settings, json) {
-    // 1. Gerekli ana elemanları seçiyoruz
-    var topContainer = $('#datatableService_wrapper .top');
-    var searchContainer = $('#datatableService_filter');
-    var searchInput = searchContainer.find('input');
-    // Filtre butonu için doğru seçiciyi kullandığınızdan emin olun
-    var filterWrapper = $('.searchWrap.kullanici_teknisyenfiltre');
+        "initComplete": function (settings, json) {
+          // 1. Gerekli ana elemanları seçiyoruz
+          var topContainer = $('#datatableService_wrapper .top');
+          var searchContainer = $('#datatableService_filter');
+          var searchInput = searchContainer.find('input');
+          // Filtre butonu için doğru seçiciyi kullandığınızdan emin olun
+          var filterWrapper = $('.searchWrap.kullanici_teknisyenfiltre');
 
-    // 2. Arama kutusu ve filtre butonu için yeni bir flexbox kapsayıcısı oluşturuyoruz
-    // Bu kapsayıcı, içindeki elemanları yan yana dizer ve tüm genişliği kaplar.
-    var flexContainer = $('<div class="d-flex align-items-center w-100"></div>');
+          // 2. Arama kutusu ve filtre butonu için yeni bir flexbox kapsayıcısı oluşturuyoruz
+          // Bu kapsayıcı, içindeki elemanları yan yana dizer ve tüm genişliği kaplar.
+          var flexContainer = $('<div class="d-flex align-items-center w-100"></div>');
 
-    // 3. DataTables'in varsayılan "Search:" metnini kaldırıyoruz.
-    searchContainer.find('label').contents().filter(function() {
-        return this.nodeType == 3; // Sadece text node'larını hedefler
-    }).remove();
+          // 3. DataTables'in varsayılan "Search:" metnini kaldırıyoruz.
+          searchContainer.find('label').contents().filter(function () {
+            return this.nodeType == 3; // Sadece text node'larını hedefler
+          }).remove();
 
-    // Placeholder metnini ayarlıyoruz
-    searchInput.attr('placeholder', 'Servis Ara...');
+          // Placeholder metnini ayarlıyoruz
+          searchInput.attr('placeholder', 'Servis Ara...');
 
-    // 4. Arama kutusunun div'ine esneklik kazandırıyoruz.
-    // flex-grow-1: "Mevcut olan tüm boş alanı sen doldur" demektir.
-    // me-2: Filtre butonu ile arasına sağdan küçük bir boşluk bırakır.
-    searchContainer.addClass('flex-grow-1 me-2');
-    
-    // Arama input'unun, kendi kapsayıcısı içinde tam genişlikte olmasını sağlıyoruz.
-    searchInput.addClass('w-100');
+          // 4. Arama kutusunun div'ine esneklik kazandırıyoruz.
+          // flex-grow-1: "Mevcut olan tüm boş alanı sen doldur" demektir.
+          // me-2: Filtre butonu ile arasına sağdan küçük bir boşluk bırakır.
+          searchContainer.addClass('flex-grow-1 me-1');
 
-    // 5. Hazırladığımız elemanları yeni flexbox kapsayıcısına ekliyoruz.
-    flexContainer.append(searchContainer); // Önce arama kutusu
-    flexContainer.append(filterWrapper);   // Sonra filtre butonu
+          // Arama input'unun, kendi kapsayıcısı içinde tam genişlikte olmasını sağlıyoruz.
+          searchInput.addClass('w-100');
 
-    // 6. Orijinal 'top' container'ını temizleyip, yeni ve düzenli yapımızı içine yerleştiriyoruz.
-    topContainer.empty().append(flexContainer);
+          // 5. Hazırladığımız elemanları yeni flexbox kapsayıcısına ekliyoruz.
+          flexContainer.append(searchContainer); // Önce arama kutusu
+          flexContainer.append(filterWrapper);   // Sonra filtre butonu
 
-    // 7. Son olarak, işlem bittiğinde filtre butonunu görünür hale getiriyoruz.
-    filterWrapper.css({ visibility: 'visible', opacity: 1 });
-}
-});
+          // 6. Orijinal 'top' container'ını temizleyip, yeni ve düzenli yapımızı içine yerleştiriyoruz.
+          topContainer.empty().append(flexContainer);
+
+          // 7. Son olarak, işlem bittiğinde filtre butonunu görünür hale getiriyoruz.
+          filterWrapper.css({ visibility: 'visible', opacity: 1 });
+        }
+      });
 
 
 
@@ -1451,6 +1564,19 @@ div.dataTables_wrapper div.dataTables_filter input {
             $('#editServiceDescModal').modal('show');
           }
         });
+      });
+    });
+  </script>
+
+    <script>
+    $(document).ready(function () {
+      var dropdownContainer = $('#servisFilterDropdownContainer');
+      var filterButton = dropdownContainer.find('.filtrele');
+      dropdownContainer.on('show.bs.dropdown', function () {
+        filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+      });
+      dropdownContainer.on('hide.bs.dropdown', function () {
+        filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
       });
     });
   </script>
