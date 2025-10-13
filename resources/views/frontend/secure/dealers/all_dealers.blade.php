@@ -206,39 +206,45 @@
         $('#editBayiModal .modal-body').html("");
       });
     });
-  </script>
 
-  <script>
-    $(document).ready(function () {
-      var table = $('#datatableBayi').DataTable({
-        processing: false,
-        serverSide: true,
-        language: {
-          paginate: {
-            previous: "<i class='mdi mdi-chevron-left'>",
-            next: "<i class='mdi mdi-chevron-right'>"
-          }
-        },
-        ajax: {
-          url: "{{ route('dealers.data', ['tenant_id' => $firma->id]) }}",
-          data: function (data) {
-            data.search = $('input[type="search"]').val();
-            data.durum = $('#durum').val();
-            data.grup = $('#rolePers').val();
-          }
-        },
-        'columns': [
-          { data: 'user_id' },
-          { data: 'name' },
-          { data: 'grup', orderable: false },
-          { data: 'tel' },
-          { data: 'address' },
-          { data: 'status' },
-          { data: 'action' }
-        ],
-        drawCallback: function () {
-          $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
-        },
+    $("#editBayiModal").on("hidden.bs.modal", function() {
+      $('#editBayiModal .modal-body').html("");
+    });
+});
+</script>
+
+<script>
+$(document).ready(function () {
+  var table = $('#datatableBayi').DataTable({
+      processing: true,
+      serverSide: true,
+      language: {
+        paginate: {
+          previous: "<i class='mdi mdi-chevron-left'>",
+          next: "<i class='mdi mdi-chevron-right'>"
+        }
+      },
+      ajax: {
+        url: "{{ route('dealers.data', ['tenant_id' => $firma->id]) }}",
+        data: function(data) {
+          data.search = $('input[type="search"]').val();
+          data.durum = $('#durum').val();
+          data.grup = $('#rolePers').val();
+        }
+      },
+      'columns': [
+        { data: 'user_id'},
+        { data: 'name' },
+        { data: 'grup', orderable: false },
+        { data: 'tel' },
+        { data: 'address' },
+        { data: 'status' },
+        { data: 'action'}           
+      ],
+      drawCallback: function() {
+        $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+      },
+
         "order": [[0, 'desc']],
         "columnDefs": [{
           "targets": 0,

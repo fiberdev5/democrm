@@ -159,13 +159,11 @@
       }                   
     }
   </script>
-  
-  <script>
-    var musteriListesi = @json($musteriler);
-  
+   
+ <script>
+
     function turkceKucukHarfeDonustur(text) {
       if (!text) return '';
-  
       return text.replace(/Ğ/g, 'ğ')
                  .replace(/Ü/g, 'ü')
                  .replace(/Ş/g, 'ş')
@@ -176,47 +174,82 @@
     }
   
     $(document).ready(function () {
+      // ✅ AJAX ile dinamik müşteri arama
       $('#search').keyup(function () {
         $('#result').html('');
-          var searchField = turkceKucukHarfeDonustur($('#search').val());
-          var veriler = 'musteriGetir=' + searchField;
-          if (searchField.length > 2) {
-            var filteredMusteriler = musteriListesi.filter(function (musteri) {
-              var adiKucukHarf = turkceKucukHarfeDonustur(musteri.adSoyad);
-              return adiKucukHarf.includes(searchField);
-            });
-            $.each(filteredMusteriler, function (key, value) {
-              var tip = value.musteriTipi == "1" ? "Bireysel" : "Kurumsal";
-              var ilceAdi = value.ilce ? value.state.ilceName : '';
-              var ilAdi = value.il ? value.country.name : '';
-              var adresFormatli = (value.adres && value.adres.trim() !== "") ? value.adres : ''; // null veya boşsa boş bırak
-
-              // Adresin formatını oluşturma
-              var adresDisplay = adresFormatli ? adresFormatli + " - " + ilceAdi + "/" + ilAdi : ilceAdi + "/" + ilAdi;
-              $('#result').append('<li class="list-group-item link-class" data-id="' + value.id + '" data-adSoyad="' + value.adSoyad + '" data-tel="' + value.tel1 + '" data-adres="' + adresDisplay + '" ><span style="font-weight:500;">Ad Soyad: </span>' + value.adSoyad  +' <br><span style="font-weight:500;">Telefon: </span>' + value.tel1 + '<br><span style="font-weight:500;">Adres: </span>' + adresDisplay + '</li>');
-            });
-          }
-        });
-        $('#result').on('click', 'li', function () {
-          var click_id = $(this).attr('data-id');
-          var click_adSoyad = $(this).attr('data-adSoyad');
-          var click_tel = $(this).attr('data-tel');
-          var click_adres = $(this).attr('data-adres');
-          $('.mid').attr('value', click_id);
-          $('.adSoyad').val(click_adSoyad);
-          $('#addOffer .musBilgileri').val(click_adSoyad+"\n"+click_tel+"\n"+click_adres);
-          $("#result").html('');
-        });
-  
-        $(document).click(function (e) {
-          if (!$(e.target).closest('.adSoyad').length) {
-            $("#result").html('');
-          }
-        });
+        var searchField = $('#search').val();
+        
+        if (searchField.length > 2) { // 3 karakterden sonra ara
+          $.ajax({
+            url: "{{ route('search.customer', $firma->id) }}",
+            method: "POST",
+            data: {
+              musteriGetir: searchField,
+              _token: "{{ csrf_token() }}"
+            },
+            success: function (data) {
+              $('#result').html('');
+              
+              if (data.length === 0) {
+                $('#result').append('<li class="list-group-item">Sonuç bulunamadı</li>');
+                return;
+              }
+              
+              $.each(data, function (key, value) {
+                var tip = value.musteriTipi == "1" ? "Bireysel" : "Kurumsal";
+                var ilceAdi = value.state ? value.state.ilceName : '';
+                var ilAdi = value.country ? value.country.name : '';
+                var adresFormatli = (value.adres && value.adres.trim() !== "") ? value.adres : '';
+                
+                var adresDisplay = adresFormatli 
+                  ? adresFormatli + " - " + ilceAdi + "/" + ilAdi 
+                  : ilceAdi + "/" + ilAdi;
+                
+                $('#result').append(
+                  '<li class="list-group-item link-class" ' +
+                  'data-id="' + value.id + '" ' +
+                  'data-adSoyad="' + value.adSoyad + '" ' +
+                  'data-tel="' + value.tel1 + '" ' +
+                  'data-adres="' + adresDisplay + '">' +
+                  '<span style="font-weight:500;">Ad Soyad: </span>' + value.adSoyad + 
+                  ' (' + tip + ')<br>' +
+                  '<span style="font-weight:500;">Telefon: </span>' + value.tel1 + '<br>' +
+                  '<span style="font-weight:500;">Adres: </span>' + adresDisplay + 
+                  '</li>'
+                );
+              });
+            },
+            error: function(xhr, status, error) {
+              console.error('Arama hatası:', error);
+              $('#result').html('<li class="list-group-item text-danger">Bir hata oluştu</li>');
+            }
+          });
+        }
       });
-  </script>
+
+      // Müşteri seçme
+      $('#result').on('click', 'li.link-class', function () {
+        var click_id = $(this).attr('data-id');
+        var click_adSoyad = $(this).attr('data-adSoyad');
+        var click_tel = $(this).attr('data-tel');
+        var click_adres = $(this).attr('data-adres');
+        
+        $('.mid').val(click_id);
+        $('.adSoyad').val(click_adSoyad);
+        $('#addOffer .musBilgileri').val(click_adSoyad + "\n" + click_tel + "\n" + click_adres);
+        $("#result").html('');
+      });
+
+      // Dışarı tıklanınca listeyi kapat
+      $(document).click(function (e) {
+        if (!$(e.target).closest('.adSoyad, #result').length) {
+          $("#result").html('');
+        }
+      });
+    });
+</script>
   
-  <script>
+<script>
     $(document).ready(function () {
       $('#addOffer').submit(function (event) {
         var formIsValid = true;
@@ -237,7 +270,31 @@
         }
       });
     });
-  </script>
+</script>
+  
+  
+<script>
+    $(document).ready(function () {
+      $('#addOffer').submit(function (event) {
+        var formIsValid = true;
+        $(this).find('input, select').each(function () {
+          var isRequired = $(this).prop('required');
+          var isEmpty = !$(this).val();
+  
+          if (isRequired && isEmpty) {
+            formIsValid = false;
+            return false;
+          }
+        });
+  
+        if (!formIsValid) {
+          event.preventDefault();
+          alert('Lütfen zorunlu alanları doldurun.');
+          return false;
+        }
+      });
+    });
+</script>
   
   <script>
     $(document).ready(function () {

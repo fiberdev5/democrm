@@ -1,6 +1,10 @@
 @extends('frontend.secure.user_master')
 @section('user')
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <style>
+
 @media (min-width: 768px) {
   .custom-modal-width {
     max-width: 330px;
@@ -13,6 +17,7 @@
 #datatableCustomer_filter input[type="search"] {
     padding-right: 12px !important; 
 }
+
 .searchWrap {
     visibility: hidden;
     opacity: 0;
@@ -22,10 +27,12 @@
 }
 
 @media (max-width: 767px) {
+
 .custom-p{
         padding-left: 0px !important;
       }
  div.dataTables_filter input{margin-left: 0 !important;}
+
  .dataTables_filter{
 margin-right: 0px !important;
     }
@@ -65,6 +72,7 @@ margin-right: 0px !important;
 
     <!-- Filtreleme ve Arama Alanı (JavaScript ile taşınacak) -->
     <div class="searchWrap float-end">
+
         <div class="btn-group" id="müsteri_filtre">
             <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Filtrele <i class="mdi mdi-chevron-down"></i>
@@ -105,10 +113,28 @@ margin-right: 0px !important;
                         </div>
                     </div>
                 </div>
+                <!-- YENİ TARİH FİLTRESİ BAŞLANGICI -->
+                <div class="item">
+                    <div class="row">
+                        <label class="col-sm-5">Tarih Aralığı:</label>
+                        <div class="col-sm-7">
+                            <input id="daterangeCustomer" class="tarih-araligi form-control">
+                            <div class="tarihAraligi mt-2 mb-2">
+                                <button id="lastYearCustomer" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
+                                <button id="lastMonthCustomer" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                                <button id="lastWeekCustomer" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                                <button id="yesterdayCustomer" class="btn btn-sm btn-secondary">Dün</button>
+                                <button id="todayCustomer" class="btn btn-sm btn-secondary">Bugün</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- YENİ TARİH FİLTRESİ SONU -->
             </div>
         </div><!-- /btn-group -->
     </div>
 </div>
+
               
               <thead class="title">
                 <tr>
@@ -163,9 +189,9 @@ margin-right: 0px !important;
 
 <script type="text/javascript">
 $(document).ready(function(){
+  // Add Customer Modal
   var firma_id = {{$firma->id}};
   $(".addCustomer").click(function(){
-    
     $.ajax({
       url: "/"+ firma_id + "/musteri-ekle/"
     }).done(function(data) {
@@ -180,41 +206,146 @@ $(document).ready(function(){
   $("#addCustomerModal").on("hidden.bs.modal", function() {
       $('#addCustomerModal .modal-body').html("");
   });
-});
-</script>
 
-<script type="text/javascript">
-$(document).ready(function(){
-    $('#datatableCustomer').on('click', '.editCustomer', function(e){
-        var id = $(this).attr("data-bs-id");
-        var firma_id = {{$firma->id}};
-        $.ajax({
-            url: "/"+ firma_id + "/musteri/duzenle/" + id
-        }).done(function(data) {
-            if ($.trim(data) === "-1") {
-                window.location.reload(true);
-            } else {
-                $('#editCustomerModal').modal('show');
-                $('#editCustomerModal .modal-body').html(data);
-            }
-        });
-    });
-    $("#editCustomerModal").on("hidden.bs.modal", function() {
-      $('#editCustomerModal .modal-body').html("");
-    });
-});
-</script>
+  // Edit Customer Modal
+  $('#datatableCustomer').on('click', '.editCustomer', function(e){
+      var id = $(this).attr("data-bs-id");
+      var firma_id = {{$firma->id}};
+      $.ajax({
+          url: "/"+ firma_id + "/musteri/duzenle/" + id
+      }).done(function(data) {
+          if ($.trim(data) === "-1") {
+              window.location.reload(true);
+          } else {
+              $('#editCustomerModal').modal('show');
+              $('#editCustomerModal .modal-body').html(data);
+          }
+      });
+  });
+  $("#editCustomerModal").on("hidden.bs.modal", function() {
+    $('#editCustomerModal .modal-body').html("");
+  });
 
-<script>
-$(document).ready(function () {
-   // Dashboard'dan gelen URL parametrelerini oku
+  // Ülke seçildiğinde şehirleri getir
+  $("#countrySelect").change(function() {
+    var selectedCountryId = $(this).val();
+    if (selectedCountryId) {
+      loadCities(selectedCountryId);
+    }
+  });
+
+  // Şehirleri yüklemek için kullanılan fonksiyon
+  function loadCities(countryId) {
+    var citySelect = $("#citySelect");
+    citySelect.empty(); // Önceki seçenekleri temizle
+    citySelect.append(new Option("Yükleniyor...", "")); // Kullanıcıya yükleniyor bilgisi ver
+
+    // AJAX isteğiyle şehirleri al
+    $.get("/get-states/" + countryId, function(data) {
+      citySelect.empty(); // Yükleniyor mesajını temizle
+      citySelect.append(new Option("-Seçiniz-", "")); // İlk boş seçeneği ekle
+      $.each(data, function(index, city) {
+        citySelect.append(new Option(city.ilceName, city.id));
+      });
+    }).fail(function() {
+      citySelect.empty(); // Hata durumunda temizle
+      citySelect.append(new Option("Unable to load cities", ""));
+    });
+  }
+
+  // Dashboard'dan gelen URL parametrelerini oku
   const urlParams = new URLSearchParams(window.location.search);
-  const startDate = urlParams.get('dashboard_istatistik_tarih1');
-  const endDate = urlParams.get('dashboard_istatistik_tarih2');
+  const dashboardStartDate = urlParams.get('dashboard_istatistik_tarih1');
+  const dashboardEndDate = urlParams.get('dashboard_istatistik_tarih2');
+
+  // Müşteri filtreleme dropdown'unun daterangepicker ile etkileşimde kapanmasını engelle
+  let preventCustomerDropdownHide = false;
+  $('#customerFilterDropdownContainerDesktop, #customerFilterDropdownContainerMobile').on('hide.bs.dropdown', function (e) {
+    if (preventCustomerDropdownHide) {
+      e.preventDefault();
+    }
+    preventCustomerDropdownHide = false;
+  });
+  $(document).on('mousedown', function (e) {
+    if ($(e.target).closest('.daterangepicker').length) {
+      preventCustomerDropdownHide = true;
+    }
+  });
+  $('#customerFilterDropdownContainerDesktop').find('#daterangeCustomer').on('focus mousedown', function () {
+    preventCustomerDropdownHide = true;
+  });
+  $('#customerFilterDropdownContainerMobile').find('#daterangeCustomer').on('focus mousedown', function () {
+    preventCustomerDropdownHide = true;
+  });
+  $('#customerFilterDropdownContainerDesktop').find('.tarihAraligi button').on('mousedown', function () {
+    preventCustomerDropdownHide = true;
+  });
+  $('#customerFilterDropdownContainerMobile').find('.tarihAraligi button').on('mousedown', function () {
+    preventCustomerDropdownHide = true;
+  });
+  $('#daterangeCustomer').on('apply.daterangepicker cancel.daterangepicker hide.daterangepicker', function () {
+    preventCustomerDropdownHide = false;
+  });
+
+  // Müşteriler için daterangepicker başlatma (varsayılan son 3 gün)
+  // Dashboard'dan gelen tarihler varsa onları, yoksa son 3 günü kullan
+  let initialCustomerStartDate = dashboardStartDate ? moment(dashboardStartDate) : moment().subtract(2, 'days').startOf('day');
+  let initialCustomerEndDate = dashboardEndDate ? moment(dashboardEndDate) : moment().endOf('day');
+
+  $('#daterangeCustomer').daterangepicker({
+    startDate: initialCustomerStartDate,
+    endDate: initialCustomerEndDate,
+    locale: {
+      format: 'DD-MM-YYYY',
+      separator: ' - ',
+      applyLabel: 'Uygula',
+      cancelLabel: 'İptal',
+      weekLabel: 'H',
+      daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
+      monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+      firstDay: 1
+    }
+  },
+  function (start_date, end_date) {
+    // daterangepicker değiştiğinde DataTable'ı yeniden çiz
+    $('#daterangeCustomer').val(start_date.format('DD-MM-YYYY') + ' - ' + end_date.format('DD-MM-YYYY'));
+    table.draw();
+  });
+
+  // Hızlı tarih filtreleme butonları
+  $('#lastYearCustomer').on('click', function () {
+    $('#daterangeCustomer').data('daterangepicker').setStartDate(moment().subtract(1, 'year'));
+    $('#daterangeCustomer').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#lastMonthCustomer').on('click', function () {
+    $('#daterangeCustomer').data('daterangepicker').setStartDate(moment().subtract(1, 'month'));
+    $('#daterangeCustomer').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#lastWeekCustomer').on('click', function () {
+    $('#daterangeCustomer').data('daterangepicker').setStartDate(moment().subtract(7, 'days'));
+    $('#daterangeCustomer').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#yesterdayCustomer').on('click', function () {
+    $('#daterangeCustomer').data('daterangepicker').setStartDate(moment().subtract(1, 'days'));
+    $('#daterangeCustomer').data('daterangepicker').setEndDate(moment().subtract(1, 'days'));
+    table.draw();
+  });
+
+  $('#todayCustomer').on('click', function () {
+    $('#daterangeCustomer').data('daterangepicker').setStartDate(moment());
+    $('#daterangeCustomer').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
 
 
   var table = $('#datatableCustomer').DataTable({
-      processing: false,
+      processing: true,
       serverSide: true,
       language: {
         paginate: {
@@ -230,10 +361,16 @@ $(document).ready(function () {
           data.il = $('#countrySelect').val();
           data.ilce = $('#citySelect').val();
 
-          // Eğer URL'den tarih parametreleri geldiyse, onları da ajax isteğine ekle
-          if (startDate && endDate) {
-              data.dashboard_istatistik_tarih1 = startDate;
-              data.dashboard_istatistik_tarih2 = endDate;
+          // Müşteri tarih aralığını ekle
+          data.from_date_customer = $('#daterangeCustomer').data('daterangepicker').startDate.format('YYYY-MM-DD');
+          data.to_date_customer = $('#daterangeCustomer').data('daterangepicker').endDate.format('YYYY-MM-DD');
+
+          // Eğer URL'den dashboard tarih parametreleri geldiyse, onları da ajax isteğine ekle
+          // Ancak müşteri tarih aralığı filtreleri kullanılıyorsa, dashboard tarihleri override edilmeli.
+          // Controller tarafında öncelik verilecek.
+          if (dashboardStartDate && dashboardEndDate) {
+              data.dashboard_istatistik_tarih1 = dashboardStartDate;
+              data.dashboard_istatistik_tarih2 = dashboardEndDate;
           }
         }
       },

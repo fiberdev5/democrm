@@ -335,8 +335,9 @@ $(document).ready(function(){
 
 <script>
 $(document).ready(function () {
-    var start_date = '01-01-2025';
-    var end_date = moment().add(1, 'day');
+    // Varsayılan tarih aralığı: Son 3 gün (bugünden 2 gün öncesi - bugün)
+    var start_date = moment().subtract(2, 'days');
+    var end_date = moment(); 
 
     $('#daterange').daterangepicker({
       startDate : start_date,
@@ -359,7 +360,7 @@ $(document).ready(function () {
     });
 
   var table = $('#datatableOffer').DataTable({
-      processing: false,
+      processing: true,
       serverSide: true,
       order: [[0, 'desc']],
       language: {

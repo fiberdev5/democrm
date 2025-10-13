@@ -60,9 +60,7 @@ class ServicesController extends Controller
             ];
             return redirect()->route('giris')->with($notification);
         }
-
-        // ---- View için veri (değiştirmedim) ----
-        $services         = Service::where('firma_id', $firma->id)->get();
+        //$services         = Service::where('firma_id', $firma->id)->get();
         $device_brands    = DeviceBrand::where('firma_id', $firma->id)->orderBy('marka', 'asc')->get();
         $device_types     = DeviceType::where('firma_id', $firma->id)->orderBy('cihaz', 'asc')->get();
         $service_stages   = ServiceStage::where(function ($q) use ($tenant_id) {
@@ -71,7 +69,7 @@ class ServicesController extends Controller
         $service_resources= ServiceResource::where('firma_id', $tenant_id)->orderBy('kaynak', 'asc')->get();
         $states           = Il::orderBy('name', 'ASC')->get();
 
-        // İstatistik query paramlarını view'e aynen geçiriyoruz (yapıyı bozmayalım)
+        // İstatistik query paramları
         $operator_id                 = $request->operator_id;
         $opeator_istatistik_tarih1   = $request->opeator_istatistik_tarih1;
         $opeator_istatistik_tarih2   = $request->opeator_istatistik_tarih2;
@@ -122,7 +120,7 @@ if ($request->ajax()) {
         }
     }
 
-    // Tarih ve diğer filtreler (değişmeden kalacak)
+    // Tarih ve diğer filtreler 
     $this->applyDefaultLast3DaysIfEmpty($data, $request);
     $this->applyMainDateRange($data, $request);
     $this->applyOperatorFilters($data, $request);
@@ -135,7 +133,7 @@ if ($request->ajax()) {
     $this->applyOrdering($data, $request);
     $this->applyDashBoardFilters($data, $request);
 
-    // DataTables dönüşü (değişmeden)
+    // DataTables dönüşü
     return DataTables::of($data)
         ->addIndexColumn()
         ->addColumn('id',          fn($row) => $this->colId($row))
@@ -143,8 +141,9 @@ if ($request->ajax()) {
         ->addColumn('m_adi',       fn($row) => $this->colMusteri($row))
         ->addColumn('cihaz',       fn($row) => $this->colCihaz($row))
         ->addColumn('asama_id',    fn($row) => $this->colAsama($row))
-        ->addColumn('sonlandir_action', fn($row) => $this->colSonlandirAction($row))
         ->addColumn('action',      fn($row) => $this->colActions($row))
+        ->addColumn('sonlandir_action', fn($row) => $this->colSonlandirAction($row))
+        ->addColumn('sec_checkbox', fn($row) => $this->colSecCheckbox($row))
         ->filter(function ($instance) use ($request) {
             if (!empty($request->get('search'))) {
                 $search = $request->get('search');
@@ -157,14 +156,14 @@ if ($request->ajax()) {
                 });
             }
         })
-        ->rawColumns(['id', 'created_at', 'm_adi', 'cihaz', 'asama_id', 'sonlandir_action', 'action'])
+        ->rawColumns(['id', 'created_at', 'm_adi', 'cihaz', 'asama_id',  'action','sonlandir_action','sec_checkbox'])
         ->make(true);
 }
 
         return view(
             'frontend.secure.all_services.services',
             compact(
-                'services',
+                //'services',
                 'device_brands',
                 'device_types',
                 'service_stages',
@@ -181,12 +180,31 @@ if ($request->ajax()) {
     /* ===========================
     ===== Helper Methods ======
     =========================== */
+    private function isDefaultDateRange(Request $request): bool
+    {
+        if (!$request->filled('from_date') || !$request->filled('to_date')) {
+            return false;
+        }
+        
+        try {
+            $from = Carbon::createFromFormat('Y-m-d', $request->from_date)->startOfDay();
+            $to = Carbon::createFromFormat('Y-m-d', $request->to_date)->endOfDay();
+            $defaultFrom = Carbon::today()->subDays(2)->startOfDay();
+            $defaultTo = Carbon::today()->endOfDay();
+            
+            return $from->equalTo($defaultFrom) && $to->equalTo($defaultTo);
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
 
     // Eğer hiçbir tarih gelmezse: varsayılan son 3 gün
     private function applyDefaultLast3DaysIfEmpty($query, Request $request): void
     {
-        // 1. Ana daterangepicker'dan gelen tarih var mı?
-        $hasMainDateRange = $request->filled('from_date') && $request->filled('to_date');
+        // 1. Ana daterangepicker'dan gelen tarih var mı? (ve varsayılan değil mi?)
+        $hasMainDateRange = $request->filled('from_date') && 
+                        $request->filled('to_date') && 
+                        !$this->isDefaultDateRange($request);
 
         // 2. İstatistik sayfalarından gelen bir tarih aralığı var mı?
         $hasStatsDateRange =
@@ -197,27 +215,49 @@ if ($request->ajax()) {
             ($request->filled('personel_istatistik_tarih1')&& $request->filled('personel_istatistik_tarih2'));
 
         // 3. Raporlama filtrelerinden gelen bir tarih aralığı var mı?
-        // (Raporlama filtreleri her zaman tarih içerir varsayıyoruz)
         $hasReportingFilter = $request->filled('filterType') && $request->filled('filters');
 
-        // EĞER YUKARIDAKİLERİN HİÇBİRİ YOKSA, varsayılanı uygula.
-        if (!$hasMainDateRange && !$hasStatsDateRange && !$hasReportingFilter) {
-            $from = Carbon::today()->subDays(2)->startOfDay(); // Bugün + önceki 2 gün = 3 gün
-            $to   = Carbon::today()->endOfDay();
-            $query->whereBetween('services.created_at', [$from, $to]);
+        // 4. Dashboard filtrelerinden gelen tarih var mı?
+        $hasDashboardFilter = $request->filled('dashboard_filter') && 
+                            $request->filled('dashboard_istatistik_tarih1') && 
+                            $request->filled('dashboard_istatistik_tarih2');
+
+        // 5. Kullanıcı arama veya filtre yapıyor mu?
+        $hasSearch = !empty(trim($request->get('search', '')));
+        $hasFilters = $request->filled('device_brands') || 
+                    $request->filled('device_types') || 
+                    $request->filled('stages') ||
+                    $request->filled('service_resource') ||
+                    $request->filled('il') ||
+                    $request->filled('ilce');
+        
+        if ($hasMainDateRange || $hasStatsDateRange || $hasReportingFilter || $hasDashboardFilter) {
+            // Tarih filtresi var, ilgili fonksiyonlar zaten uygulayacak
+            return;
         }
+        
+        if ($hasSearch || $hasFilters) {
+            // Arama/filtre var ama tarih seçilmemiş
+            // TÜM kayıtlarda arama yapılacak, tarih kısıtlaması uygulanmayacak
+            return;
+        }
+        
+        // Hiçbir şey yoksa (sayfa ilk açıldığında), varsayılan son 3 günü uygula
+        $from = Carbon::today()->subDays(2)->startOfDay();
+        $to   = Carbon::today()->endOfDay();
+        $query->whereBetween('services.created_at', [$from, $to]);
     }
 
     // Datatable’ın gönderdiği ana tarih aralığı
-    private function applyMainDateRange($query, Request $request): void
-    {
-        if ($request->filled('from_date') && $request->filled('to_date')) {
-            $from = Carbon::createFromFormat('Y-m-d', $request->from_date)->startOfDay();
-            $to   = Carbon::createFromFormat('Y-m-d', $request->to_date)->endOfDay();
-            $query->whereBetween('created_at', [$from, $to]);
+        private function applyMainDateRange($query, Request $request): void
+        {
+            // Sadece kullanıcı gerçekten tarih seçtiyse uygula (varsayılan tarih değilse)
+            if ($request->filled('from_date') && $request->filled('to_date') && !$this->isDefaultDateRange($request)) {
+                $from = Carbon::createFromFormat('Y-m-d', $request->from_date)->startOfDay();
+                $to   = Carbon::createFromFormat('Y-m-d', $request->to_date)->endOfDay();
+                $query->whereBetween('created_at', [$from, $to]);
+            }
         }
-    }
-
     // Operatör filtreleri
     private function applyOperatorFilters($query, Request $request): void
     {
@@ -603,8 +643,20 @@ private function formatStokList(string $value): string
                                 </div>';
                         }
                     }
-                    // Diğer tüm durumlar için hücre boş kalacaktır.
-                    return '';
+                                    
+                        // DURUM 3: Sonlandırılamayan aşamalar - Pasif switch göster
+                         return '
+                        <div class="form-check form-switch d-flex justify-content-center" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            title="Bu aşamadan sonra servisi sonlandıramazsınız"
+                            style="cursor: not-allowed;">
+                            <input class="form-check-input servis-sonlandirilamaz-switch" 
+                                type="checkbox" 
+                                role="switch"
+                                disabled
+                                style="width: 2.7em; height: 1.2em; opacity: 0.5; pointer-events: none;">
+                        </div>';
 
       
     }
@@ -638,156 +690,129 @@ private function formatStokList(string $value): string
 
     return $viewButton . ' ' .  $editButton . ' ' . $deleteButton;
     }
+    private function colSecCheckbox($row): string
+    {
+        return '
+            <div class="d-flex justify-content-center">
+                <input class="form-check-input servis-sec-checkbox" 
+                    type="checkbox" 
+                    value="' . $row->id . '"
+                    data-servis-id="' . $row->id . '"
+                    style="width: 1.2em; height: 1.2em; cursor: pointer;"
+                    title="Servisi seç">
+            </div>';
+    }
     
 
 
     //Sadece kendine atanan servisleri gören kişilerin koşullarını kontrol eden fonksiyon.(üstteki AllServices fonksiyonunda kullandım)
-    private function getYetkiliServisIDleri($user, $tenant_id)
-    {
-        $yetkiliServisIDler = [];
+private function getYetkiliServisIDleri($user, $tenant_id)
+{
+    $bugun = now()->format('Y-m-d');
+    $simdikiSaat = now()->format('H:i');
+    $yetkiliServisIDler = collect();
+    
+    //Tüm gerekli veriyi TEK SORGUDA çek
+    $adayServicler = ServiceStageAnswer::query()
+        ->select([
+            'service_stage_answers.servisid',
+            'service_stage_answers.planid',
+            'service_stage_answers.soruid',
+            'stage_questions.cevapTuru',
+            'service_plannings.tarihDurum',
+            'service_plannings.pid as plan_pid',
+            'service_plannings.created_at as plan_created_at',
+            'services.planDurum as servis_planDurum',
+            'services.servisDurum'
+        ])
+        ->join('stage_questions', 'stage_questions.id', '=', 'service_stage_answers.soruid')
+        ->join('service_plannings', 'service_plannings.id', '=', 'service_stage_answers.planid')
+        ->join('services', 'services.id', '=', 'service_stage_answers.servisid')
+        ->where('service_stage_answers.firma_id', $tenant_id)
+        ->where('service_stage_answers.cevap', $user->user_id)
+        ->where(function($query) {
+            $query->where('stage_questions.cevapTuru', 'LIKE', '%Grup%')
+                  ->orWhere('stage_questions.cevapTuru', 'LIKE', '%Bayi%');
+        })
+        ->get();
 
-        // Kullanıcının cevap verdiği servisleri, her servis için en yüksek planid ile al
-        $servisler = ServiceStageAnswer::with(['question','plan'])->where('firma_id', $tenant_id)
-            ->where('cevap', $user->user_id)
-            ->get();
+    if ($adayServicler->isEmpty()) {
+        return [];
+    }
 
-        foreach ($servisler as $servisRow) {
-            $soru = StageQuestion::find($servisRow->soruid);
+    //Tarih cevaplarını toplu çek (N+1 önleme)
+    $planIdler = $adayServicler->pluck('planid')->unique()->toArray();
+    
+    $tarihCevaplar = ServiceStageAnswer::query()
+        ->select('planid', 'servisid', 'cevap')
+        ->whereIn('planid', $planIdler)
+        ->where('cevapText', '[Tarih]')
+        ->where('firma_id', $tenant_id)
+        ->get()
+        ->keyBy('planid'); // planid'ye göre key'le
+
+    //ServiceTime'ı bir kez çek (cache'lenebilir)
+    $zaman = ServiceTime::where('firma_id', $tenant_id)->first();
+    $saatKontrolAktif = false;
+    $sonsaat = null;
+    
+    if ($zaman) {
+        $sonsaat = str_replace('.', ':', $zaman->zaman);
+        $saatKontrolAktif = strtotime($simdikiSaat) >= strtotime($sonsaat);
+    }
+
+    //Koleksiyon üzerinde filtreleme (memory'de hızlı)
+    $isDepocu = $user->hasRole('Depocu');
+    
+    foreach ($adayServicler as $servisRow) {
+        $eklenmeli = false;
+        $tarihDurum = $servisRow->tarihDurum > 0;
+
+        //Tarih durumu VAR
+        if ($tarihDurum) {
+            $tarihCevap = $tarihCevaplar->get($servisRow->planid);
             
-            if (!$soru) continue;
-
-            // Grup kontrolü
-            if (str_contains($soru->cevapTuru, 'Grup')) {
-                $plan = ServicePlanning::find($servisRow->planid);
-                if (!$plan) continue;
-
-                $tarihDurum = $plan->tarihDurum > 0 ? "1" : "0";
-
-                if ($tarihDurum == "1") {
-                    // Tarih durumu var
-                    $tarihCevap = ServiceStageAnswer::where('planid', $servisRow->planid)
-                        ->where('cevapText', '[Tarih]')
-                        ->first();
-
-                    if ($tarihCevap) {
-                         $bugun = now()->format('Y-m-d');
-                        $tarih = $tarihCevap->cevap;
-
-                        if ($bugun == $tarih) {
-                            // Zaman kontrolü - PHP kodundaki $kid değişkenini kullanıcının kid'i ile değiştiriyoruz
-                            $zaman = ServiceTime::where('firma_id', $tenant_id)->first();
-                            
-                            if ($zaman) {
-                                $ilksaat = strtotime(date("H:i"));
-                                $sonsaat = strtotime(str_replace('.', ':', $zaman->zaman));
-                                
-                                if ($ilksaat >= $sonsaat) {
-                                    // Depocu değil ise devam et
-                                    if (!$user->hasRole('Depocu')) {
-                                        $yetkiliServisIDler[] = $tarihCevap->servisid;
-                                    }
-                                }
-                            }
-                        }
-
-                        // Depocu için özel durum
-                        if ($user->hasRole('Depocu')) {
-                            $servis = Service::find($tarihCevap->servisid);
-                            if ($servis && in_array($servis->servisDurum, ['257', '263'])) {
-                                $yetkiliServisIDler[] = $tarihCevap->servisid;
-                            }
-                        }
-                    }
-                } else {
-                    // Tarih durumu yok
-                    $servis = Service::find($servisRow->servisid);
-                    if ($servis && $servis->planDurum == $servisRow->planid) {
-                        $yetkiliServisIDler[] = $servisRow->servisid;
-                    }
-
-                    // Planid içerisindeki son eklenen aşama kontrolü
-                    if (!$user->hasRole('Depocu')) {
-                        $planSec = ServicePlanning::find($servis->planDurum);
-                        if ($planSec && $planSec->pid == $user->user_id) {
-                            $planTarihBugun = date("Y-m-d");
-                            $planTarih = explode(" ", $planSec->tarih);
-                            
-                            if ($planTarih[0] == $planTarihBugun) {
-                                $yetkiliServisIDler[] = $servisRow->servisid;
-                            }
-                        }
+            if ($tarihCevap) {
+                $tarih = $tarihCevap->cevap;
+                
+                // Bugünkü servisler
+                if ($bugun == $tarih) {
+                    // Depocu değilse ve saat kontrolü geçtiyse
+                    if (!$isDepocu && $saatKontrolAktif) {
+                        $eklenmeli = true;
                     }
                 }
-            }
-
-            // Bayi kontrolü
-            if (str_contains($soru->cevapTuru, 'Bayi')) {
-                $plan = ServicePlanning::find($servisRow->planid);
-                if (!$plan) continue;
-
-                $tarihDurum = $plan->tarihDurum > 0 ? "1" : "0";
-
-                if ($tarihDurum == "1") {
-                    // Tarih durumu var - Grup ile aynı logic
-                    $tarihCevap = ServiceStageAnswer::where('planid', $servisRow->planid)
-                        ->where('cevapText', '[Tarih]')
-                        ->first();
-
-                    if ($tarihCevap) {
-                        $bugun = now()->format('Y-m-d');
-                        $tarih = $tarihCevap->cevap;
-
-                        if ($bugun == $tarih) {
-                            // Zaman kontrolü - PHP kodundaki $kid değişkenini kullanıcının kid'i ile değiştiriyoruz
-                            $zaman = ServiceTime::where('firma_id', $tenant_id)->first();
-                            
-                            if ($zaman) {
-
-                               $ilksaat = strtotime(date("H:i"));
-                               $sonsaat = strtotime(str_replace('.', ':', $zaman->zaman));
-
-                                
-                                if ($ilksaat >= $sonsaat) {
-                                    if (!$user->hasRole('Depocu')) {
-                                        $yetkiliServisIDler[] = $tarihCevap->servisid;
-                                    }
-                                }
-                            }
-                        }
-
-                        // Depocu için özel durum
-                        if ($user->hasRole('Depocu')) {
-                            $servis = Service::find($tarihCevap->servisid);
-                            if ($servis && in_array($servis->servisDurum, ['257', '263'])) {
-                                $yetkiliServisIDler[] = $tarihCevap->servisid;
-                            }
-                        }
-                    }
-                } else {
-                    // Tarih durumu yok
-                    $servis = Service::find($servisRow->servisid);
-                    if ($servis && $servis->planDurum == $servisRow->planid) {
-                        $yetkiliServisIDler[] = $servisRow->servisid;
-                    }
-
-                    // Planid içerisindeki son eklenen aşama kontrolü
-                    if (!$user->hasRole('Depocu')) {
-                        $planSec = ServicePlanning::find($servis->planDurum);
-                        if ($planSec && $planSec->pid == $user->user_id) {
-                            $planTarihBugun = date("Y-m-d");
-                            $planTarih = explode(" ", $planSec->tarih);
-                            
-                            if ($planTarih[0] == $planTarihBugun) {
-                                $yetkiliServisIDler[] = $servisRow->servisid;
-                            }
-                        }
-                    }
+                
+                // Depocu için özel durum (tarih kontrolü yok)
+                if ($isDepocu && in_array($servisRow->servisDurum, ['257', '263'])) {
+                    $eklenmeli = true;
                 }
             }
         }
-
-        return array_unique($yetkiliServisIDler);
+        // Tarih durumu YOK
+        else {
+            // Aktif plan kontrolü
+            if ($servisRow->servis_planDurum == $servisRow->planid) {
+                $eklenmeli = true;
+            }
+            
+            // Bugün eklenen planlar (Depocu hariç)
+            if (!$isDepocu && $servisRow->plan_pid == $user->user_id) {
+                $planTarih = Carbon::parse($servisRow->plan_created_at)->format('Y-m-d');
+                
+                if ($planTarih == $bugun) {
+                    $eklenmeli = true;
+                }
+            }
+        }
+        
+        if ($eklenmeli) {
+            $yetkiliServisIDler->push($servisRow->servisid);
+        }
     }
+
+    return $yetkiliServisIDler->unique()->toArray();
+}
 
     //teknisyene atanan depo stoklarını gösteren fonksiyon
     public function StaffStocks($tenant_id, $personel_id) {

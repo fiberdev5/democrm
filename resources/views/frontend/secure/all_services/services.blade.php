@@ -306,25 +306,45 @@
                       </div> <!-- row kapanışı -->
                     </div>
                   </div><!-- /btn-group -->
-                @endif
-              </div> <!-- Servisler Tablosu -->
-              <div id="servicesTableSection">
-                <table id="datatableService" class="table table-bordered dt-responsive nowrap"
-                  style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                  <thead class="title font-small">
-                    <tr>
-                      <th style="width: 10px">ID</th>
-                      <th style="width: 10px">Tarih</th>
-                      <th style="width: 250px">Müşteri</th>
-                      <th style="width: 250px">Cihaz</th>
-                      <th>Servis Durumu</th>
-                      <th style="max-width: 40px!important;">Kapat</th>
-                      <th data-priority="1" style="width: 96px;">Düzenle</th>
-                    </tr>
-                  </thead>
-                  <tbody class="font-small">
-                  </tbody>
-                </table>
+            @endif
+          </div> <!-- Servisler Tablosu -->
+          <div id="servicesTableSection">
+            <table id="datatableService" class="table table-bordered dt-responsive nowrap"
+              style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+              <thead class="title">
+                <tr>
+                  <th style="width: 10px">ID</th>
+                  <th style="width: 10px">Tarih</th>
+                  <th style="width: 250px">Müşteri</th>
+                  <th style="width: 250px">Cihaz</th>
+                  <th>Servis Durumu</th>
+                  <th data-priority="1" style="width: 96px;">Düzenle</th>
+                  <th style="max-width: 40px!important;">Kapat</th>
+                  <th style="width: 50px; text-align: center;">Seç</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          {{-- Burası raporlar modalında gelen çağrıları filtrelerken oluşturulan gelen çağrılar tablosu --}}
+          <div id="incomingCallsSection" class="" style="display: none;">
+            <table id="incomingCallsTable" class="table table-striped table-bordered dt-responsive nowrap"
+              style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+              <thead class="title">
+                <tr>
+                  <th>ID</th>
+                  <th>Tarih</th>
+                  <th>Telefon</th>
+                  <th>Marka</th>
+                  <th>Açıklama</th>
+                  <th>Personel</th>
+                  <th>İşlemler</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
               </div>
               {{-- Burası raporlar modalında gelen çağrıları filtrelerken oluşturulan gelen çağrılar tablosu --}}
               <div id="incomingCallsSection" class="" style="display: none;">
@@ -346,6 +366,7 @@
                 </table>
               </div>
             </div>
+
           </div>
         </div> <!-- end col -->
       </div> <!-- end row -->
@@ -899,8 +920,12 @@
   </script>
   <script>
     $(document).ready(function () {
-      var start_date = '01-01-2025';
-      var end_date = moment().add(1, 'day');
+      // var start_date = '01-01-2025';
+      // var end_date = moment().add(1, 'day');
+
+      //(Son 3 gün)
+      var start_date = moment().subtract(2, 'days').startOf('day');
+      var end_date = moment().endOf('day');
 
       $('#daterange').daterangepicker({
         startDate: start_date,
@@ -982,9 +1007,10 @@
       let activeFilterType = '';
 
       var table = $('#datatableService').DataTable({
-        processing: false,
+        processing: true,
         serverSide: true,
         ordering: true,
+        deferRender: true,
         language: {
           paginate: {
             previous: "<i class='mdi mdi-chevron-left'>",
@@ -1050,15 +1076,17 @@
           { data: 'm_adi', name: 'm_adi', orderable: true },
           { data: 'cihaz', name: 'cihaz', orderable: true },
           { data: 'asama_id', name: 'durum', orderable: true },
+          { data: 'action', name: 'action', orderable: false, searchable: false },
           { data: 'sonlandir_action', name: 'sonlandir_action', orderable: false, searchable: false },
-          { data: 'action', name: 'action', orderable: false, searchable: false }
+          { data: 'sec_checkbox', name: 'sec_checkbox', orderable: false, searchable: false }
         ],
+        
         createdRow: function (row, data) {
           // 5. sütundaki <strong> içeriği (0‑bazlı => 4. index)
           const asama = $('td:eq(4) strong', row).text().trim();
 
           // Veritabanından gelen özel renk (örneğin '#f0f0f0')
-          const dbRenk = data.asamalar.asama_renk;
+          const dbRenk = data.asamalar?.asama_renk || null;
 
           /** Varsayılan Durum → Renk eşlemesi */
           const varsayilanRenkHaritasi = {
@@ -1075,8 +1103,8 @@
             //eski renklendirme
             //$(row).css('background-color', arkaplanRenk);
 
-            // Tüm hücrelere uygula, ancak son sütun hariç
-            $('td', row).not(':last').not(':nth-last-child(2)').css('background-color', arkaplanRenk);
+           // Tüm hücrelere uygula, ancak son üç sütun hariç (Düzenle, Kapat, Seç)
+           $('td', row).not(':last').not(':nth-last-child(2)').not(':nth-last-child(3)').css('background-color', arkaplanRenk);
           }
 
           // Uzun metin sarması gereken sütunlara sınıf ekleyelim
@@ -1380,7 +1408,7 @@
 
       // Yeni DataTable oluştur
       var incomingCallsTable = $('#incomingCallsTable').DataTable({
-        processing: false,
+        processing: true,
         serverSide: true,
         ordering: true,
         language: {

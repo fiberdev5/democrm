@@ -227,7 +227,7 @@ $(document).ready(function(){
 <script>
 $(document).ready(function () {
   var table = $('#datatablePersonel').DataTable({
-      processing: false,
+      processing: true,
       serverSide: true,
       language: {
         paginate: {

@@ -432,49 +432,101 @@ $(document).ready(function(){
 </script>
 
 <script>
-  var musteriListesi = @json($musteriler);
-  function turkceKucukHarfeDonustur(text) {
-    if (!text) return '';
-    return text.replace(/Ğ/g, 'ğ')
-               .replace(/Ü/g, 'ü')
-               .replace(/Ş/g, 'ş')
-               .replace(/İ/g, 'i')
-               .replace(/Ö/g, 'ö')
-               .replace(/Ç/g, 'ç')
-               .toLowerCase();
-  }
-
   $(document).ready(function () {
+    var aramaZamanlayici; // Debounce için
+
+    // ✅ AJAX ile dinamik müşteri arama
     $('#search').keyup(function () {
+      var searchField = $(this).val();
+      
+      // Önceki zamanlayıcıyı iptal et
+      clearTimeout(aramaZamanlayici);
+      
+      // Liste temizle
       $('#result').html('');
-      var searchField = turkceKucukHarfeDonustur($('#search').val());
-      var veriler = 'musteriGetir=' + searchField;
-      if (searchField.length > 2) {
-        var filteredMusteriler = musteriListesi.filter(function (musteri) {
-          var adiKucukHarf = turkceKucukHarfeDonustur(musteri.m_adi);
-          var firmaAdiKucukHarf = turkceKucukHarfeDonustur(musteri.firma_adi);
-          return adiKucukHarf.includes(searchField) || firmaAdiKucukHarf.includes(searchField);
-        });
-        $.each(filteredMusteriler, function (key, value) {
-          var tip = value.musteriTipi == "1" ? "Bireysel" : "Kurumsal";
-          $('#result').append('<li class="list-group-item link-class" data-id="' + value.id + '" data-adSoyad="' + value.m_adi + '" data-firmaAdi="' + value.firma_adi + '" data-tel="' + value.telefon + '" data-adres="' + value.adres + '" ><span style="font-weight:500;">Ad Soyad: </span>' + value.m_adi + ' (' + value.firma_adi + ')<br><span style="font-weight:500;">Telefon: </span>' + value.telefon + '<br><span style="font-weight:500;">Adres: </span>' + value.adres + '</li>');
-        });
+      
+      if (searchField.length > 2) { // 3 karakterden sonra ara
+        // 300ms bekle, ardından ara
+        aramaZamanlayici = setTimeout(function() {
+          $.ajax({
+            url: "{{ route('search.customer.kasa', $firma->id) }}",
+            method: "POST",
+            data: {
+              musteriGetir: searchField,
+              _token: "{{ csrf_token() }}"
+            },
+            beforeSend: function() {
+              $('#result').html('<li class="list-group-item text-muted">Aranıyor...</li>');
+            },
+            success: function (data) {
+              $('#result').html('');
+              
+              if (data.length === 0) {
+                $('#result').append('<li class="list-group-item text-muted">Sonuç bulunamadı</li>');
+                return;
+              }
+              
+              $.each(data, function (key, value) {
+                var tip = value.musteriTipi == "1" ? "Bireysel" : "Kurumsal";
+                var ilceAdi = value.state ? value.state.ilceName : '';
+                var ilAdi = value.country ? value.country.name : '';
+                
+                // Adres formatla
+                var adresDisplay = value.adres || '';
+                if (ilceAdi || ilAdi) {
+                  adresDisplay += (adresDisplay ? ' - ' : '') + ilceAdi + '/' + ilAdi;
+                }
+                
+                $('#result').append(
+                  '<li class="list-group-item link-class" ' +
+                  'data-id="' + value.id + '" ' +
+                  'data-adSoyad="' + (value.adSoyad || value.m_adi) + '" ' +
+                  'data-firmaAdi="' + (value.firma_adi || '') + '" ' +
+                  'data-tel="' + (value.tel1 || value.telefon) + '" ' +
+                  'data-adres="' + adresDisplay + '">' +
+                  '<span style="font-weight:500;">Ad Soyad: </span>' + (value.adSoyad || value.m_adi) + 
+                  ' (' + (value.firma_adi || '') + ') <span style="color: #666;">(' + tip + ')</span><br>' +
+                  '<span style="font-weight:500;">Telefon: </span>' + (value.tel1 || value.telefon) + '<br>' +
+                  '<span style="font-weight:500;">Adres: </span>' + adresDisplay + 
+                  '</li>'
+                );
+              });
+            },
+            error: function(xhr, status, error) {
+              console.error('Arama hatası:', error);
+              $('#result').html('<li class="list-group-item text-danger">Bir hata oluştu</li>');
+            }
+          });
+        }, 300); // 300ms gecikme
+        
+      } else if (searchField.length === 0) {
+        // Arama kutusu boşaltılırsa temizle
+        $('#result').html('');
       }
     });
 
-    $('#result').on('click', 'li', function () {
-      $('#result .li:selected').removeAttr('selected');
+    // Müşteri seçme
+    $('#result').on('click', 'li.link-class', function () {
       var click_id = $(this).attr('data-id');
       var click_adSoyad = $(this).attr('data-adSoyad');
-      $('#alici').attr('value', click_id);
-      $('#search').attr('value', click_id);
+      
+      $('#alici').val(click_id);
+      $('.mid').val(click_id);
       $('.musteriAdSoyad').val(click_adSoyad);
       $("#result").html('');
-      return false;
+      
+      // Tabloyu güncelle
+      $('#datatableKasa').DataTable().draw();
+    });
+
+    // Dışarı tıklanınca kapat
+    $(document).click(function (e) {
+      if (!$(e.target).closest('#search, #result').length) {
+        $("#result").html('');
+      }
     });
   });
 </script>
-
 <script>
   $(document).ready(function () {
     // Bu bayrak, daterangepicker veya kısa yol butonlarına tıklandığında dropdown'ın kapanmasını engellemek için kullanılır.
@@ -619,7 +671,7 @@ $(document).ready(function(){
 
 
     var table = $('#datatableKasa').DataTable({
-      processing: false,
+      processing: true,
       serverSide: true,
       order: [[0, 'desc']],
       language: {
@@ -706,6 +758,7 @@ $(document).ready(function(){
        dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
       "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
       "initComplete": function(settings, json) {
+
     var searchContainer = $('#datatableKasa_filter');
     var searchInput = searchContainer.find('input');
     var filterWrapper = $('.searchWrap');

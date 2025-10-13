@@ -1,6 +1,11 @@
 @extends('frontend.secure.user_master')
 @section('user')
 
+{{-- Daterangepicker için gerekli kütüphaneler --}}
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
 @php 
   if ($firma->isOnTrial()) {
     $stockLimit = $firma->stokSayisi ?? null;
@@ -142,6 +147,23 @@ margin-right: 0px !important;
                       </div>
                     </div>
                   </div>
+
+                   {{-- YENİ: TARİH ARALIĞI FİLTRESİ --}}
+                    <div class="item">
+                      <div class="row align-items-center">
+                        <label class="col-sm-5 mb-0">Tarih Aralığı:</label>
+                        <div class="col-sm-7">
+                          <input id="daterangeStock" class="form-control form-control-sm mb-2">
+                          <div class="tarihAraligi d-flex flex-wrap gap-1">
+                            <button id="lastYearStock" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
+                            <button id="lastMonthStock" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                            <button id="lastWeekStock" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                            <button id="yesterdayStock" class="btn btn-sm btn-secondary">Dün</button>
+                            <button id="todayStock" class="btn btn-sm btn-secondary">Bugün</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
                 </div>
               </div><!-- /btn-group -->
@@ -316,18 +338,87 @@ $(document).ready(function(){
 <script>
 // DataTable
 $(document).ready(function () {
+  // Dashboard'dan gelen URL parametrelerini oku
+  const urlParams = new URLSearchParams(window.location.search);
+  const dashboardStartDate = urlParams.get('dashboard_istatistik_tarih1');
+  const dashboardEndDate = urlParams.get('dashboard_istatistik_tarih2');
+
+  // Daterangepicker başlatma (varsayılan son 3 gün)
+  let initialStockStartDate = dashboardStartDate ? moment(dashboardStartDate) : moment().subtract(2, 'days').startOf('day');
+  let initialStockEndDate = dashboardEndDate ? moment(dashboardEndDate) : moment().endOf('day');
+
+  $('#daterangeStock').daterangepicker({
+    startDate: initialStockStartDate,
+    endDate: initialStockEndDate,
+    locale: {
+      format: 'DD-MM-YYYY',
+      separator: ' - ',
+      applyLabel: 'Uygula',
+      cancelLabel: 'İptal',
+      weekLabel: 'H',
+      daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
+      monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+      firstDay: 1
+    }
+  },
+  function (start_date, end_date) {
+    $('#daterangeStock').val(start_date.format('DD-MM-YYYY') + ' - ' + end_date.format('DD-MM-YYYY'));
+    table.draw();
+  });
+
+  // Hızlı tarih filtreleme butonları
+  $('#lastYearStock').on('click', function () {
+    $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(1, 'year'));
+    $('#daterangeStock').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#lastMonthStock').on('click', function () {
+    $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(1, 'month'));
+    $('#daterangeStock').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#lastWeekStock').on('click', function () {
+    $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(7, 'days'));
+    $('#daterangeStock').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#yesterdayStock').on('click', function () {
+    $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(1, 'days'));
+    $('#daterangeStock').data('daterangepicker').setEndDate(moment().subtract(1, 'days'));
+    table.draw();
+  });
+
+  $('#todayStock').on('click', function () {
+    $('#daterangeStock').data('daterangepicker').setStartDate(moment());
+    $('#daterangeStock').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
   var table = $('#datatableStock').DataTable({
-      processing: false,
+      processing: true,
       serverSide: true,
-    ajax: {
-      url: "{{ route('stocks', $firma->id) }}",
-      data: function (d) {
-        d.raf = $('#raf').val();
-        d.marka = $('#marka').val();
-        d.cihaz = $('#cihaz').val();
-        d.personel = $('#personel').val();
-      }
-    },
+      ajax: {
+        url: "{{ route('stocks', $firma->id) }}",
+        data: function (d) {
+          d.raf = $('#raf').val();
+          d.marka = $('#marka').val();
+          d.cihaz = $('#cihaz').val();
+          d.personel = $('#personel').val();
+          
+          // Stok tarih aralığını ekle
+          d.from_date_stock = $('#daterangeStock').data('daterangepicker').startDate.format('YYYY-MM-DD');
+          d.to_date_stock = $('#daterangeStock').data('daterangepicker').endDate.format('YYYY-MM-DD');
+          
+          // Dashboard tarih parametreleri varsa ekle
+          if (dashboardStartDate && dashboardEndDate) {
+              d.dashboard_istatistik_tarih1 = dashboardStartDate;
+              d.dashboard_istatistik_tarih2 = dashboardEndDate;
+          }
+        }
+      },
       columns: [
         { data: 'id', name: 'id' },
         { data: 'created_at', name: 'created_at' },
@@ -401,34 +492,33 @@ $(document).ready(function () {
       },
       
       lengthMenu: [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
-       "initComplete": function(settings, json) {
-          // --- DEĞİŞTİRİLEN BÖLÜM BURASI ---
+      initComplete: function(settings, json) {
           var searchContainer = $('#datatableStock_filter');
           var searchInput = searchContainer.find('input');
           var filterWrapper = $('.searchWrap');
           var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
 
-          // Varsayılan "Search:" etiketini kaldır
           searchContainer.find('label').contents().filter(function() {
               return this.nodeType == 3;
           }).remove();
 
+
           // Arama kutusunu ve filtreyi sarmalamak için
           searchContainer.addClass('flex-grow-1');
+
           searchInput.addClass('w-100');
           searchInput.attr('placeholder', 'Stok Ara...');
 
-          // Ögeleri flex container'a ekle
           flexContainer.append(searchContainer);
           flexContainer.append(filterWrapper);
 
-          // Flex container'ı tablonun üstüne ekle
           $('#datatableStock_wrapper .top').append(flexContainer);
 
-          // Hazır olduğunda görünür yap
           $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+
           $('.tableToplamaAlani').insertBefore('#datatableStock_wrapper .bottom');
           // --- DEĞİŞTİRİLEN BÖLÜM SONU ---
+
       }
   });
 
@@ -441,7 +531,6 @@ $(document).ready(function () {
     table.button(0).trigger();
   });
 });
-
 </script>
 <script>
     $(document).ready(function () {

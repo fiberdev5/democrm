@@ -1,6 +1,11 @@
 @extends('frontend.secure.user_master')
 @section('user')
 
+{{-- Daterangepicker için gerekli kütüphaneler --}}
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
 @php 
 if ($firma->isOnTrial()) {
     $konsinyeLimit = $firma->konsinyeSayisi ?? null;
@@ -31,21 +36,23 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
 
     /* Mobil Cihazlar İçin Özel Stiller */
     @media (max-width: 767px) {
+
           .pageDetail .searchWrap {
         width: 30% !important;
       }
-      .dataTables_filter label {
-      }
-
+      
       div.dataTables_filter input {
         margin-left: 0 !important;
       }
+      
       .dataTables_filter {
         margin-right: 0 !important;
       }
+      
       .pageDetail .searchWrap {
         margin-bottom: 0px !important;
       }
+
       .searchWrap {
         margin-top: 0px !important;
       }
@@ -69,8 +76,10 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
         li.paginate_button.next, li.paginate_button.previous {
         font-size: 15px;
     }
+
     }
 </style>
+
 <div class="page-content">
   <div class="container-fluid">
     <div class="row pageDetail">
@@ -148,7 +157,7 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
                   </div>
 
                   <!-- Personel -->
-                  <div class="item">
+                  <div class="item mb-2">
                     <div class="row align-items-center">
                       <label class="col-sm-4 custom-p-r-m mb-0">Personel</label>
                       <div class="col-sm-8 custom-p-m">
@@ -158,6 +167,23 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
                             <option value="{{ $personel->id }}">{{ $personel->name }}</option>
                           @endforeach
                         </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {{-- TARİH ARALIĞI FİLTRESİ - DROPDOWN İÇİNDE --}}
+                  <div class="item">
+                    <div class="row align-items-center">
+                      <label class="col-sm-5 mb-0">Tarih Aralığı:</label>
+                      <div class="col-sm-7">
+                        <input id="daterangeConsignment" class="form-control form-control-sm mb-2">
+                        <div class="tarihAraligi d-flex flex-wrap gap-1">
+                          <button id="lastYearConsignment" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
+                          <button id="lastMonthConsignment" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                          <button id="lastWeekConsignment" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                          <button id="yesterdayConsignment" class="btn btn-sm btn-secondary">Dün</button>
+                          <button id="todayConsignment" class="btn btn-sm btn-secondary">Bugün</button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -296,7 +322,7 @@ $(document).ready(function(){
       }
   });
 
-    $('#datatableConsignment').on('click', '.editConsignment', function(){
+  $('#datatableConsignment').on('click', '.editConsignment', function(){
     var id = $(this).data('bs-id');
     var modal = $('#editConsignmentModal'); 
    
@@ -331,8 +357,67 @@ $(document).ready(function(){
 <script>
 // DataTable
 $(document).ready(function () {
+  // Dashboard'dan gelen URL parametrelerini oku
+  const urlParams = new URLSearchParams(window.location.search);
+  const dashboardStartDate = urlParams.get('dashboard_istatistik_tarih1');
+  const dashboardEndDate = urlParams.get('dashboard_istatistik_tarih2');
+
+  // Daterangepicker başlatma (varsayılan son 3 gün)
+  let initialConsignmentStartDate = dashboardStartDate ? moment(dashboardStartDate) : moment().subtract(2, 'days').startOf('day');
+  let initialConsignmentEndDate = dashboardEndDate ? moment(dashboardEndDate) : moment().endOf('day');
+
+  $('#daterangeConsignment').daterangepicker({
+    startDate: initialConsignmentStartDate,
+    endDate: initialConsignmentEndDate,
+    locale: {
+      format: 'DD-MM-YYYY',
+      separator: ' - ',
+      applyLabel: 'Uygula',
+      cancelLabel: 'İptal',
+      weekLabel: 'H',
+      daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
+      monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+      firstDay: 1
+    }
+  },
+  function (start_date, end_date) {
+    $('#daterangeConsignment').val(start_date.format('DD-MM-YYYY') + ' - ' + end_date.format('DD-MM-YYYY'));
+    table.draw();
+  });
+
+  // Hızlı tarih filtreleme butonları
+  $('#lastYearConsignment').on('click', function () {
+    $('#daterangeConsignment').data('daterangepicker').setStartDate(moment().subtract(1, 'year'));
+    $('#daterangeConsignment').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#lastMonthConsignment').on('click', function () {
+    $('#daterangeConsignment').data('daterangepicker').setStartDate(moment().subtract(1, 'month'));
+    $('#daterangeConsignment').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#lastWeekConsignment').on('click', function () {
+    $('#daterangeConsignment').data('daterangepicker').setStartDate(moment().subtract(7, 'days'));
+    $('#daterangeConsignment').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#yesterdayConsignment').on('click', function () {
+    $('#daterangeConsignment').data('daterangepicker').setStartDate(moment().subtract(1, 'days'));
+    $('#daterangeConsignment').data('daterangepicker').setEndDate(moment().subtract(1, 'days'));
+    table.draw();
+  });
+
+  $('#todayConsignment').on('click', function () {
+    $('#daterangeConsignment').data('daterangepicker').setStartDate(moment());
+    $('#daterangeConsignment').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
   var table = $('#datatableConsignment').DataTable({
-      processing: false,
+      processing:true,
       serverSide: true,
       ajax: {
         url: "{{ route('consignmentdevice.data', $firma->id) }}",
@@ -341,6 +426,16 @@ $(document).ready(function () {
           d.marka = $('#marka').val();
           d.cihaz = $('#cihaz').val();
           d.personel = $('#personel').val();
+          
+          // Konsinye tarih aralığını ekle
+          d.from_date_consignment = $('#daterangeConsignment').data('daterangepicker').startDate.format('YYYY-MM-DD');
+          d.to_date_consignment = $('#daterangeConsignment').data('daterangepicker').endDate.format('YYYY-MM-DD');
+          
+          // Dashboard tarih parametreleri varsa ekle
+          if (dashboardStartDate && dashboardEndDate) {
+              d.dashboard_istatistik_tarih1 = dashboardStartDate;
+              d.dashboard_istatistik_tarih2 = dashboardEndDate;
+          }
         }
       },
       columns: [
@@ -416,7 +511,7 @@ $(document).ready(function () {
       },
       
       lengthMenu: [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
-       "initComplete": function(settings, json) {
+      initComplete: function(settings, json) {
           var searchContainer = $('#datatableConsignment_filter');
           var searchInput = searchContainer.find('input');
           var filterWrapper = $('.searchWrap');
