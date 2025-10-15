@@ -30,6 +30,9 @@
   }
 }
     @media (max-width: 767px) {
+      .pageDetail .card-header {
+        padding: 4px 8px !important;
+    }
       .pageDetail .searchWrap .dropdown-menu{transform: translate3d(12px, 2px, 0px) !important;min-width: 100% !important;}
     .custom-p{
         padding-left: 0px !important;
@@ -59,21 +62,30 @@
           li.paginate_button.next, li.paginate_button.previous {
         font-size: 15px;
     }
+    .dealer-header-top{margin-top: 30px;}
     }
     #addBayi{
         margin-block-end: auto !important;
       }
+      .card-deal{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-deal-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-deal-body{padding: 3px 7px !important;}
+  .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
   </style>
 
   <div class="page-content">
-    <div class="container-fluid">
+    <div class="container-fluid dealer-header-top">
       <div class="row pageDetail">
         <div class="col-12">
-          <div class="card">
-            <div class="card-header sayfaBaslik">
+          <div class="card card-deal">
+            <div class="card-header card-deal-header sayfaBaslik">
               Bayiler
             </div>
-            <div class="card-body">
+            <div class="card-body card-deal-body">
               <table id="datatableBayi" class="table table-bordered dt-responsive nowrap"
                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 @if(is_null($dealerLimit) || $dealerLimit == -1 || $dealerAll < $dealerLimit)
@@ -93,7 +105,7 @@
                       aria-expanded="false">
                       Filtrele <i class="mdi mdi-chevron-down"></i>
                     </button>
-                    <div class="dropdown-menu">
+                    <div class="dropdown-menu servisDrop">
                       <div class="item">
                         <div class="row">
                           <label class="col-sm-4 custom-p col-3">Durum</label>
@@ -210,7 +222,7 @@
     $("#editBayiModal").on("hidden.bs.modal", function() {
       $('#editBayiModal .modal-body').html("");
     });
-});
+
 </script>
 
 <script>

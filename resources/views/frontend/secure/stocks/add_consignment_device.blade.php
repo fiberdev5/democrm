@@ -7,6 +7,10 @@
     padding-left: 0px !important;
   }
 }
+@media (max-width: 767px) {
+    #addConsignmentDevice label{margin-bottom: 3px !important;}
+}
+
 </style>
 <form method="POST" id="addConsignmentDevice" action="{{ route('store.consignment.device', $tenant_id) }}" enctype="multipart/form-data">
     @csrf

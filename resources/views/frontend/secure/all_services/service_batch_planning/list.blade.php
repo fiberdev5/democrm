@@ -1,3 +1,29 @@
+<style>
+  @media (max-width: 767px) {
+    .card-footer{
+          background-color: rgba(0, 0, 0, .03);
+    border-top: 1px solid rgba(0, 0, 0, .125) !important;
+}
+.servisListe{
+  border: 1px solid rgba(0, 0, 0, .125) !important;
+  padding: 5px 6px !important;
+}
+.cardBaslik{
+  margin-bottom: 5px !important;
+}
+.col-form-label{
+  padding-bottom: 1px !important;
+}
+.card-footer{
+         padding: 5px 0px !important;
+}
+#assignBtn{
+  width: 100% !important;
+}
+.personelServisListele{width: 100% !important;}
+  }
+
+</style>
 <div class="card-header cardBaslik" style="padding: 5px 10px;font-size: 14px">
   @if(!empty($persID))
     @php $selectedPersonnel = $personeller->firstWhere('user_id', $persID) @endphp
@@ -78,7 +104,7 @@
       }             
     }
   @endphp
-  <button id="assignBtn" class="btn btn-success btn-sm mt-2 atamaBtn" data-id="{{ $gidenDurum }}" @if($dataPers) data-pers="{{ $dataPers }}" @endif>Atama Yap</button>
+  <button id="assignBtn" class="btn btn-success btn-sm mt-1 atamaBtn" data-id="{{ $gidenDurum }}" @if($dataPers) data-pers="{{ $dataPers }}" @endif>Atama Yap</button>
 </div>
 
 <div id="servisPersonelAtamaModal" class="modal fade" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">

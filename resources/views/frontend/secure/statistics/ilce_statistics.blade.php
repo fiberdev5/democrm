@@ -9,7 +9,11 @@
             visibility: hidden;
             opacity: 0;
         }
-
+.servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
         @media (min-width: 768px) {
     .table-modern .card-header {
         display: flex;
@@ -24,8 +28,23 @@
 }
         @media (max-width: 767px) {
             .pageDetail .searchWrap .dropdown-menu {
-                transform: translate3d(-208px, 2px, 0px) !important;
+                transform: translate3d(-173px, 2px, 0px) !important;
+        min-width: calc(89vw - 20px) !important;
+            inset: 0px auto auto 0px !important;
             }
+            .searchWrap .tarih-araligi {
+    padding: 5px 0px !important;
+}
+.btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+
+  .servis-istatistik .btn-action {
+        padding: 4px 4px !important;
+        font-size: 9px !important;
+    }
             .pageDetail .searchWrap {
                 width: 30% !important;
             }
@@ -52,7 +71,7 @@
                 <div class="col-12">
                     <div class="table-modern">
                         <div class="card-header">
-                            <span>İlçe İstatistikleri</span>
+                            <span style="font-size: 15px;">İlçe İstatistikleri</span>
 
                         </div>
                         <div class="card-body">
@@ -62,11 +81,11 @@
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         Filtrele <i class="mdi mdi-chevron-down"></i>
                                     </button>
-                                    <div class="dropdown-menu">
+                                    <div class="dropdown-menu servisDrop">
                                         <div class="item">
                                             <div class="row mb-3">
-                                                <label class="col-sm-4">İl Seç:</label>
-                                                <div class="col-sm-8">
+                                                <label class="col-sm-4 custom-p-m-k custom-p-r-m-k col-5">İl Seç:</label>
+                                                <div class="col-sm-8 col-7 custom-p-m-k custom-p-r-m-k">
                                                     <select class="form-select form-select-sm" id="ilSelect">
                                                         <option value="">Tüm İller</option>
                                                         @foreach($iller as $il)
@@ -77,8 +96,8 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <label class="col-sm-4">Tarih Aralığı:</label>
-                                                <div class="col-sm-8">
+                                                <label class="col-sm-4 custom-p-m-k custom-p-r-m-k col-5">Tarih Aralığı:</label>
+                                                <div class="col-sm-8 col-7 custom-p-m-k">
                                                     <input id="daterange" class="tarih-araligi" />
                                                     <div class="tarihAraligi mt-2 mb-2">
                                                         <button id="lastYear" class="btn btn-sm btn-secondary">Son 1
@@ -253,7 +272,7 @@
                             var ilceParam = row.ilceName;
                             var url = "{{ url($tenant_id . '/servisler') }}" + "?ilceArama=" + encodeURIComponent(ilceParam) + "&ilce_istatistik_tarih1=" + from_date + "&ilce_istatistik_tarih2=" + to_date;
                             return `<a href="${url}" target="_blank" class="btn btn-action btn-sm">
-                                    <i class="fas fa-eye me-1"></i>Servisleri Gör
+                                    <i class="fas fa-eye me-1 d-md-flex d-none"></i>Servisleri Gör
                                 </a>`;
                         }
                     }
@@ -287,4 +306,16 @@ lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
             });
         });
     </script>
+    <script>
+    $(document).ready(function () {
+        var dropdownContainer = $('.searchWrap .btn-group');
+        var filterButton = dropdownContainer.find('.filtrele');
+        dropdownContainer.on('show.bs.dropdown', function () {
+            filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+        });
+        dropdownContainer.on('hide.bs.dropdown', function () {
+            filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+        });
+    });
+</script>
 @endsection

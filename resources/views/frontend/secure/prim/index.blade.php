@@ -1,23 +1,41 @@
+<style>
+  .card-header-custom{
+    border: 1px solid rgba(0, 0, 0, .125);
+  }
+  .card-body-custom{
+        border: 1px solid rgba(0, 0, 0, .125);
+  }
+  .staff-header{
+        padding: 6px 13px;
+    margin-bottom: 0px !important;
+  }
+  @media (max-width: 767px) {
+    .border-none{
+    border: none !important;
+  }
+  }
+  
+</style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div class="container-fluid mt-1" >
   <div class="row">
     <div class="col-12">
       <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h4 class="card-title">Personel Prim Hesaplama</h4> 
+        <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
+          <h4 class="card-title staff-header">Personel Prim Hesaplama</h4> 
         </div>
-        <div class="card-body">
+        <div class="card-body card-body-custom">
           <!-- Prim Ayarları Özeti -->
-          <div class="row mb-1">
+          <div class="row mb-1 mt-1">
             <div class="col-12">
               <div class="alert alert-info">
                 <h6><i class="fas fa-info-circle"></i> Aktif Prim Ayarları:</h6>
                 <div class="row">
                   @foreach($primAyarlari as $ayar)
                     <div class="col-md-4">
-                      <div class="card bg-light" style="margin-bottom: 0;">
-                        <div class="card-body p-2">
+                      <div class="card bg-light p-1" style="margin-bottom: 0;">
+                        <div class="card-body p-2 border-none">
                           <h6 class="card-title mb-1">Teknisyen</h6>
                           <small class="text-muted">
                             Günlük {{ number_format($ayar->teknisyenPrimTutari, 0, ',', '.') }} TL üzeri teklif = %{{ $ayar->teknisyenPrim }} prim </span>

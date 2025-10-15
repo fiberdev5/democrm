@@ -9,6 +9,17 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 <style>
+  .pagination-rounded .page-link {
+    border-radius: 3px !important;
+}
+  .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
+.card-offer{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-offer-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-offer-body{padding: 3px 7px !important;}
 .searchWrap {
     visibility: hidden;
     opacity: 0;
@@ -55,18 +66,20 @@
     background-color: #5c636a !important;
     border-color: #565e64 !important;
       }
+      .staff-header-top{margin-top: 30px;}
+      
 }
 </style>
 
 <div class="page-content" id="passwords">
-  <div class="container-fluid">
+  <div class="container-fluid staff-header-top">
     <div class="row pageDetail">
       <div class="col-12">
-        <div class="card">
-          <div class="card-header sayfaBaslik">
+        <div class="card card-offer">
+          <div class="card-header card-offer-header sayfaBaslik">
             Teklifler
           </div>
-          <div class="card-body">
+          <div class="card-body card-offer-body">
             <table id="datatableOffer" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 {{-- MASAÜSTÜ GÖRÜNÜMÜ (Orijinal Kodunuz - Hiçbir Değişiklik Yapılmadı) --}}
 {{-- Bu bölüm sadece geniş ekranlarda (lg ve üstü) görünecektir. --}}
@@ -77,7 +90,7 @@
             <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Filtrele <i class="mdi mdi-chevron-down"></i>
             </button>
-            <div class="dropdown-menu">
+            <div class="dropdown-menu servisDrop">
                 <div class="item">
                     <div class="row">
                         <label class="col-sm-4">Durum</label>
@@ -121,7 +134,7 @@
                 <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Filtrele <i class="mdi mdi-chevron-down"></i>
                 </button>
-                <div class="dropdown-menu">
+                <div class="dropdown-menu servisDrop">
                     <div class="item">
                         <div class="row">
                             <label class="col-sm-4 custom-p  col-4">Durum</label>

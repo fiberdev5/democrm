@@ -1,10 +1,14 @@
-
+<style>
+    .card-invocies{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-invocies-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-invocies-body{padding: 3px 7px !important;}
+</style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="edit_invoices_superadmin">
 <form method="post" id="editInvo" action="{{ route('super.admin.invoices.update')}}" enctype="multipart/form-data" class="needs-validation" novalidate>
   @csrf
 
-  <div class="card f5">
+  <div class="card card-invocies f5">
     <div class="card-header ch1" style="padding: 3px 10px;">
       <div class="tarihWrap">
         <label style="text-align: left;width: auto;display: inline-block;margin: 0;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
@@ -17,9 +21,9 @@
   <div class="row">
     <!-- FİRMA BİLGİSİ -->
     <div class="col-lg-6">
-      <div class="card f2" style="min-height: 106px;">
-        <div class="card-header">FİRMA BİLGİSİ</div>
-        <div class="card-body">
+      <div class="card card-invocies f2" style="min-height: 106px;">
+        <div class="card-header card-invocies-header">FİRMA BİLGİSİ</div>
+        <div class="card-body card-invocies-body">
           <div class="row form-group">
             <div class="col-md-3 rw1"><label>Firma Ara <span style="font-weight: bold; color: red;">*</span></label></div>
             <div class="col-md-9 rw2">
@@ -65,9 +69,9 @@
 
     <!-- ÖDEME SEÇİMİ -->
     <div class="col-lg-6">
-      <div class="card f6">
-        <div class="card-header">ÖDEME SEÇİMİ</div>
-        <div class="card-body">
+      <div class="card card-invocies f6">
+        <div class="card-header card-invocies-header">ÖDEME SEÇİMİ</div>
+        <div class="card-body card-invocies-body">
       <div class="alert alert-info" style="padding: 6px; font-size: 11px;">
         <strong>Önemli:</strong> Önce e-Arşiv belgesini silin, ardından mevcut ödemelerle işlem yapabilirsiniz.
       </div>
@@ -222,8 +226,8 @@
 
           <div class="row form-group">
             <div class="col-md-6 rw1"><label>KDV %</label></div>
-            <div class="col-md-2 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="{{$invoice_id->kdvTutar}}" style="text-align: center;"></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="{{$invoice_id->kdv}}"></div>
+            <div class="col-md-2 rw2 col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="{{$invoice_id->kdvTutar}}"></div>
+            <div class="col-md-4 col-6 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="{{$invoice_id->kdv}}"></div>
           </div>
 
           <div class="row form-group" style="padding-bottom: 0">  

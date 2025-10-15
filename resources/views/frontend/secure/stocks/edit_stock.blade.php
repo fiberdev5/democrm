@@ -1,5 +1,11 @@
 <style>
+    .card-stock{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-stock-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 6px 7px !important;}
+  .card-stock-body{padding: 5px 7px !important;}
     @media (max-width: 767px) {
+        .stokhareket-modal{
+            padding: 5px !important;
+        }
         #editStockModal{
             font-size: 14px !important;
         }
@@ -7,11 +13,24 @@
             padding: 5px !important;
         }
         .card-header h5{
-            padding: 12px !important;
+            padding: 1px !important;
+            font-size: 13px !important;
         }
+        .btn-outline-danger {
+    color: #fff !important;
+    background-color: #f32f53 !important;
+    border-color: #f32f53 !important;
+}
+        #editStockModal .row>.col-lg-7{margin-bottom: 0px !important;}
+        
     }
 
-    
+    .modal-dialog-stok-hereketi {
+        max-width: 342px;
+        margin: 1.75rem auto;
+    }
+    .table>tbody>tr>td{padding-left: 3px !important;}
+    .modal-footer{padding: 2px !important;}
 
 </style>
 <div class="modal-header">
@@ -23,17 +42,17 @@
 
         <div class="col-lg-5">
           <!-- 1. KART: ÜRÜN BİLGİLERİ -->
-            <div class="card mb-3">
-                <div class="card-header py-2"> 
+            <div class="card card-stock mb-3">
+                <div class="card-header card-stock-header py-2"> 
                     <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Ürün Bilgileri</h5>
                 </div>
-                <div class="card-body p-1">
+                <div class="card-body card-stock-body p-1">
                     <div id="updateStockFormMessages" class="px-2"></div> 
                     <form method="POST" id="editStockUnifiedForm" action="{{ route('update.stock', [$firma->id, $stock->id]) }}">
                         @csrf
                         <div class="row g-1 align-items-center">
-                            <label class="col-sm-3 col-form-label col-form-label-sm">Markalar<span style="color:red;">*</span></label>
-                            <div class="col-sm-9">
+                            <label class="col-sm-4 col-form-label col-form-label-sm">Markalar<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
                                 <select name="marka_id" class="form-select form-select-sm" required>
                                     <option value="" selected disabled>Seçiniz</option>
                                     @foreach($markalar as $marka)
@@ -46,8 +65,8 @@
                         </div>
 
                         <div class="row g-1  align-items-center">
-                            <label class="col-sm-3 col-form-label col-form-label-sm">Cihaz Türü<span style="color:red;">*</span></label>
-                            <div class="col-sm-9">
+                            <label class="col-sm-4 col-form-label col-form-label-sm">Cihaz Türü<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
                                 <select name="cihaz_id" class="form-select form-select-sm" required>
                                     <option value="" selected disabled>Seçiniz</option>
                                     @foreach($cihazlar as $cihaz)
@@ -60,8 +79,8 @@
                         </div>
 
                         <div class="row g-1  align-items-center">
-                            <label class="col-sm-3 col-form-label col-form-label-sm">Kategori<span style="color:red;">*</span></label>
-                            <div class="col-sm-9">
+                            <label class="col-sm-4 col-form-label col-form-label-sm">Kategori<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
                                 <select name="urunKategori" class="form-select form-select-sm" required>
                                     <option value="" selected disabled>Seçiniz</option>
                                     @foreach($kategoriler as $kategori)
@@ -74,8 +93,8 @@
                         </div>
 
                         <div class="row g-1  align-items-center">
-                            <label class="col-sm-3 col-form-label col-form-label-sm">Raf<span style="color:red;">*</span></label>
-                            <div class="col-sm-9">
+                            <label class="col-sm-4 col-form-label col-form-label-sm">Raf<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
                                 <select name="raf_id" class="form-select form-select-sm" required>
                                     <option value="" selected disabled>Seçiniz</option>
                                     @foreach($rafListesi as $raf)
@@ -88,24 +107,24 @@
                         </div>
                         
                         <div class="row g-1  align-items-center">
-                            <label class="col-sm-3 col-form-label col-form-label-sm">Ürün Adı<span style="color:red;">*</span></label>
-                            <div class="col-sm-9">
+                            <label class="col-sm-4 col-form-label col-form-label-sm">Ürün Adı<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
                                 <input type="text" name="urunAdi" class="form-control form-control-sm" value="{{ $stock->urunAdi }}" required>
                             </div>
                         </div>
 
                        <div class="row g-1  align-items-center">
-                            <label class="col-sm-3">Ürün Kodu <span class="text-danger">*</span></label>
-                            <div class="col-sm-9">
+                            <label class="col-sm-4">Ürün Kodu <span class="text-danger">*</span></label>
+                            <div class="col-sm-8">
                                 <div class="d-flex align-items-center mb-1">
                                 <input type="text" name="urunKodu" 
-                                        class="form-control @error('urunKodu') is-invalid @enderror me-2" 
+                                        class="form-control @error('urunKodu') is-invalid @enderror me-1" 
                                         value="{{ old('urunKodu', $stock->urunKodu) }}" required>
 
                                 <a href="{{ route('stok.barkod.pdf', [$firma->id, $stock->id]) }}" 
                                     target="_blank" 
-                                    class="btn btn-warning btn-sm text-nowrap px-3">
-                                    <i class="ri-printer-line me-1"></i> Barkodu Yazdır
+                                    class="btn btn-warning btn-sm text-nowrap px-1">
+                                    Barkodu Yazdır
                                 </a>
                                 </div>
                                 @error('urunKodu')
@@ -116,15 +135,15 @@
                             </div>
                             </div>
                         <div class="row g-1 align-items-center">
-                            <label class="col-sm-3 col-form-label col-form-label-sm">Satış Fiyatı(₺)<span style="color:red;">*</span></label>
-                            <div class="col-sm-9">
+                            <label class="col-sm-4 col-form-label col-form-label-sm">Satış Fiyatı(₺)<span style="color:red;">*</span></label>
+                            <div class="col-sm-8">
                                 <input name="fiyat" type="number" min="0" step="0.01" class="form-control form-control-sm" value="{{ $stock->fiyat }}" required>
                             </div>
                         </div>
 
                         <div class="row g-1 align-items-center">
-                            <label class="col-sm-3 col-form-label col-form-label-sm">Açıklama</label>
-                            <div class="col-sm-9">
+                            <label class="col-sm-4 col-form-label col-form-label-sm">Açıklama</label>
+                            <div class="col-sm-8">
                                 <textarea name="aciklama" class="form-control form-control-sm" rows="2">{{ $stock->aciklama }}</textarea>
                             </div>
                         </div>
@@ -137,8 +156,8 @@
                             $genelToplam = $kalanStok + $personelAdet;
                         @endphp
                         <div class="row g-1 align-items-center">
-                            <label class="col-sm-3 col-form-label col-form-label-sm">Stok Durumu</label>
-                            <div class="col-sm-9">
+                            <label class="col-sm-4 col-form-label col-form-label-sm">Stok Durumu</label>
+                            <div class="col-sm-8">
                                 <div class="alert alert-secondary py-1 px-2 mb-0"> <!-- Daha sade bir uyarı rengi ve daha az padding -->
                                     <small><strong>Toplam:</strong> {{ $genelToplam }} / <strong>Personelde:</strong> {{ $personelAdet }}</small>
                                 </div>
@@ -149,11 +168,11 @@
             </div>
 
             <!-- 2. KART: FOTOĞRAFLAR -->
-            <div class="card">
-                <div class="card-header">
-                    <h5><i class="bi bi-images"></i> Fotoğraflar</h5>
+            <div class="card card-stock">
+                <div class="card-header card-stock-header">
+                    <h5 class="mb-0"><i class="bi bi-images"></i> Fotoğraflar</h5>
                 </div>
-                <div class="card-body">
+                <div class="card-body card-stock-body">
                     {{-- Yükleme formu artık her zaman DOM'da olacak, sadece CSS ile gizlenip gösterilecek --}}
                     <div id="uploadFormContainer" style="display: {{ $photos->isEmpty() ? 'block' : 'none' }};">
                         <form method="POST" id="stokFotoEkle" enctype="multipart/form-data">
@@ -194,9 +213,9 @@
 
         <div class="col-lg-7">
             <!-- 1. KART: STOK HAREKETLERİ (KAYDIRILABİLİR) -->
-            <div class="card mb-3">
-                <div class="card-header ch1">
-                    <div class="d-flex justify-content-between align-items-center">
+            <div class="card card-stock mb-3">
+                <div class="card-header card-stock-header ch1">
+                    <div class="d-flex justify-content-between">
                         <h5 class="mb-0"><i class="bi bi-arrows-move"></i> Stok Hareketleri</h5>
                         <div>
                         <button type="button" class="btn btn-success btn-sm hareketEkleBtn" data-stokid="{{ $stock->id }}">
@@ -211,7 +230,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body scrollable-card-body p-0">
+                <div class="card-body card-stock-body scrollable-card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-bordered table-sm mb-0">
                             <thead>
@@ -303,11 +322,11 @@
                 </div>
             </div>
             <!-- 2. KART: PERSONEL STOKLARI (KAYDIRILABİLİR) -->
-            <div class="card">
-                <div class="card-header">
-                    <h5><i class="bi bi-people"></i> Personel Stokları</h5>
+            <div class="card card-stock">
+                <div class="card-header card-stock-header">
+                    <h5 class="mb-0"><i class="bi bi-people"></i> Personel Stokları</h5>
                 </div>
-                    <div class="card-body scrollable-card-body p-0">
+                    <div class="card-body card-stock-body scrollable-card-body">
                         <div class="table-responsive">
                         <table class="table table-bordered table-sm mb-0">
                             <thead>
@@ -351,8 +370,8 @@
     <button type="submit" class="btn btn-sm btn-info"id="saveStockInfoBtn" form="editStockUnifiedForm">Ürün Bilgilerini Kaydet</button>
 </div>
 <!-- Hareket Ekle Modal -->
-<div class="modal fade" id="hareketEkleModal" tabindex="-1" aria-labelledby="hareketEkleModalLabel" aria-hidden="true" style="padding-top: 70px; background: rgba(0, 0, 0, 0.50);">
-  <div class="modal-dialog">
+<div class="modal fade stokhareket-modal" id="hareketEkleModal" tabindex="-1" aria-labelledby="hareketEkleModalLabel" aria-hidden="true" style="padding-top: 70px; background: rgba(0, 0, 0, 0.50);">
+  <div class="modal-dialog modal-dialog-stok-hereketi">
     <form id="hareketEkleForm" method="POST" action="{{ route('store.stock.action', request()->route('tenant_id')) }}">
       @csrf
       <input type="hidden" name="stok_id" id="modalStokId">
@@ -364,53 +383,66 @@
         <div class="modal-body">
 
           <!-- İşlem -->
-          <div class="mb-3">
-            <label for="islem" class="form-label">İşlem</label>
-            <select name="islem" class="form-select" required>
-              <option value="">Seçiniz</option>
-              <option value="1" selected>Alış</option>
-              <option value="3">Personel'e Gönder</option>
-            </select>
-          </div>
+          <div class="row align-items-center mb-3">
+  <div class="col-sm-4 col-4 col-form-label">
+    <label for="islem" class="col-form-label">İşlem</label>
+  </div>
+  <div class="col-sm-8 col-8">
+    <select name="islem" class="form-select" required>
+      <option value="">Seçiniz</option>
+      <option value="1" selected>Alış</option>
+      <option value="3">Personel'e Gönder</option>
+    </select>
+  </div>
+</div>
 
           <!-- Tedarikçi -->
-          <div id="tedarikciSelectDiv" class="mb-3">
-            <label for="tedarikciSelect" class="form-label">Tedarikçi</label>
-            <div class="input-group">
-              <select name="tedarikci" id="tedarikciSelect" class="form-select">
-                <option value="">Seçiniz</option>
-                @foreach($sonTedarikciler as $tedarikci)
-                <option value="{{ $tedarikci->id }}">{{ $tedarikci->tedarikci }}</option>
-                @endforeach
-              </select>
-              <button class="btn btn-success" type="button" id="addNewSupplierBtn">
-                +
-              </button>
-            </div>
-          </div>
+          <!-- Tedarikçi -->
+<div class="row mb-3" id="tedarikciSelectDiv">
+  <label for="tedarikciSelect" class="col-sm-4 col-4 col-form-label">Tedarikçi</label>
+  <div class="col-sm-8 col-8">
+    <div class="input-group">
+      <select name="tedarikci" id="tedarikciSelect" class="form-select">
+        <option value="">Seçiniz</option>
+        @foreach($sonTedarikciler as $tedarikci)
+        <option value="{{ $tedarikci->id }}">{{ $tedarikci->tedarikci }}</option>
+        @endforeach
+      </select>
+      <button class="btn btn-success" type="button" id="addNewSupplierBtn">
+        +
+      </button>
+    </div>
+  </div>
+</div>
 
-          <!-- Personel (Gizli) -->
-          <div class="d-none mb-3" id="personelSelectDiv">
-            <label for="personelSelect" class="form-label">Personel</label>
-            <select name="personel" id="personelSelect" class="form-select">
-              <option value="">Seçiniz</option>
-              @foreach($sonPersoneller as $personel)
-              <option value="{{ $personel->user_id }}">{{ $personel->name }}</option>
-              @endforeach
-            </select>
-          </div>
+<!-- Personel (Gizli) -->
+<div class="row d-none mb-3" id="personelSelectDiv">
+  <label for="personelSelect" class="col-sm-4 col-4 col-form-label">Personel</label>
+  <div class="col-sm-8 col-8">
+    <select name="personel" id="personelSelect" class="form-select">
+      <option value="">Seçiniz</option>
+      @foreach($sonPersoneller as $personel)
+      <option value="{{ $personel->user_id }}">{{ $personel->name }}</option>
+      @endforeach
+    </select>
+  </div>
+</div>
 
-          <!-- Adet ve Fiyat (Yan Yana) -->
-          <div class="row">
-            <div class="col-6">
-              <label for="adet" class="form-label">Adet</label>
-              <input type="number" name="adet" class="form-control" required min="1">
-            </div>
-            <div class="col-6" id="fiyatInputDiv">
-              <label for="fiyat" class="form-label">Alış Fiyatı (₺)</label>
-              <input type="text" name="fiyat" class="form-control" required>
-            </div>
-          </div>
+<!-- Adet -->
+<div class="row mb-3">
+  <label for="adet" class="col-sm-4 col-4 col-form-label">Adet</label>
+  <div class="col-sm-8 col-8">
+    <input type="number" name="adet" id="adet" class="form-control" required min="1">
+  </div>
+</div>
+
+<!-- Alış Fiyatı -->
+<div class="row mb-3 " id="fiyatInputDiv">
+  <label for="fiyat" class="col-sm-4 col-4 col-form-label">Alış Fiyatı (₺)</label>
+  <div class="col-sm-8 col-8">
+    <input type="text" name="fiyat" id="fiyat" class="form-control" required>
+  </div>
+</div>
 
         </div>
         <div class="modal-footer">
@@ -777,7 +809,7 @@ $(document).off('submit', '#hareketEkleForm').on('submit', '#hareketEkleForm', f
     $(document).on('click', '.stokSilBtn', function (e) {
     e.preventDefault();
     
-    // Eğer bu buton zaten işlem görüyorsa dur
+    // Eğer bu buton zaten işlem görüyorsa durişlme
     if ($(this).hasClass('processing')) {
         return false;
     }

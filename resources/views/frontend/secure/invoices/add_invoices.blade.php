@@ -27,10 +27,30 @@
     color: #fff !important;
     background-color: #f32f53 !important;
   }
+
+  .card-invoices {
+      border: 1px solid rgba(0, 0, 0, .125) !important;
+    }
+
+    .card-invoices-header {
+      background-color: #f7f7f7 !important;
+      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+      margin-bottom: 7px !important;
+      padding: 4px 7px !important;
+    }
+
+    .card-invoices-body {
+      padding: 3px 7px !important;
+    }
+    .card-header:first-child {
+    border-radius: 0.55rem .55rem 0 0 !important;
+}
   @media (max-width: 767px) {
     .fatura-mobil-add{
     --bs-gutter-x: 2px !important;
   }
+  .satir{--bs-gutter-x: 2px !important;}
+  #addInvo label{margin-bottom: 3px !important;}
   }
   
 </style>
@@ -38,8 +58,8 @@
 
 <form method="post" id="addInvo" action="{{ route('store.invoices', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
   @csrf
-  <div class="card f5">
-    <div class="card-header ch1" style="padding: 3px 10px;">
+  <div class="card card-invoices  f5">
+    <div class="ch1" style="padding: 3px 10px;">
       <div class="tarihWrap">
         <label style="text-align: left;width: auto;display: inline-block;margin: 0; margin-right: 2px;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
         <input type="date" name="faturaTarihi" class="form-control datepicker kayitTarihi"  value="{{date('Y-m-d')}}" style="width: 150px!important;display: inline-block;background:#fff" required>
@@ -49,9 +69,9 @@
     </div>
   </div> 
 
-  <div class="card f2">
-     <div class="card-header">MÜŞTERİ BİLGİSİ</div>
-     <div class="card-body">
+  <div class="card card-invoices f2">
+     <div class="card-header card-invoices-header">MÜŞTERİ BİLGİSİ</div>
+     <div class="card-body card-invoices-body">
         <div class="row">
            <div class="col-sm-6 s1">
               <div class="row form-group ">
@@ -83,7 +103,7 @@
            <div class="col-sm-6 s2">
               <div class="row form-group">
                  <div class="col-sm-2"><label>İl/İlçe</label></div>
-                <div class="col-sm-5">
+                <div class="col-sm-5 col-6">
                 <select name="il" id="country" class="form-control form-select" style="width:100%!important;">
                     <option value="" selected disabled>-Seçiniz-</option>
                     @foreach($countries as $item)
@@ -91,7 +111,7 @@
                     @endforeach
                 </select>
                 </div>
-                <div class="col-sm-5">
+                <div class="col-sm-5 col-6">
                 <select name="ilce" id="city" class="form-control form-select" style="width:100%!important;">
                     <option value="" selected disabled>-Seçiniz-</option>                              
                 </select>
@@ -107,8 +127,8 @@
      </div>
   </div>
 
-  <div class="card f2">
-    <div class="card-body">
+  <div class="card card-invoices f2">
+    <div class="card-body card-invoices-body">
       <div class="row form-group head">
         <div class="col-3 rw1 "><label>Cinsi</label></div>
         <div class="col-3 rw2 "><label>Miktar</label></div>
@@ -131,11 +151,15 @@
     </div>
   </div>
        
-  <div class="row cardRow1 fatura-mobil-add">
-    <div class="card col-lg-6 f3">
-      <div class="card-body">
-        <div class="row" style="border:0">
-          <div class="col-md-4 rw1"><label>Ödeme Şekli<span style="font-weight: bold; color: red;">*</span></label></div>
+  <!-- Ana satır. Sütunlar arasına boşluk koymak için Bootstrap 4'te varsayılan olarak boşluk vardır. -->
+<div class="row cardRow1 mb-1 fatura-mobil-add">
+
+    <!-- 1. Sütun (Sol Taraf) -->
+    <div class="col-lg-6 mb-3 mb-lg-0 custom-p-m">
+      <div class="card card-invoices f3 h-100"> <!-- h-100 ile kart yüksekliğini eşitleyebilirsiniz -->
+        <div class="card-body card-invoices-body">
+          <div class="row" style="border:0">
+            <div class="col-md-4 rw1"><label>Ödeme Şekli<span style="font-weight: bold; color: red;">*</span></label></div>
             <div class="col-md-8 rw2">
               <select class="form-select odemeSekilleri" name="odemeSekli" required>
                 <option value="">Seçiniz</option>
@@ -144,7 +168,6 @@
                 @endforeach
               </select>
             </div>
-           
           </div>
 
           <div class="row form-group" style="border:0">
@@ -167,27 +190,30 @@
           </div>       
         </div>
       </div>
+    </div>
 
-      <div class="card col-lg-6 f4">
-        <div class="card-body" style="padding:17px 5px">
+    <!-- 2. Sütun (Sağ Taraf) -->
+    <div class="col-lg-6 custom-p-r-m">
+      <div class="card card-invoices f4 h-100">
+        <div class="card-body card-invoices-body" style="padding:17px 5px">
           <div class="row form-group">
             <div class="col-md-4 rw1"><label>Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
             <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam" required></div>
           </div>
 
           <div class="row form-group">
-          <div class="col-md-4 rw1"><label>İndirim</label></div>
-          <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" autocomplete="off" class="form-control indirim" value="0.00"></div>
-        </div>
-        <div class="row form-group">
-          <div class="col-md-4 rw1"><label>Ara Toplam</label></div>
-          <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" autocomplete="off" class="form-control araToplam"></div>
-        </div>
+            <div class="col-md-4 rw1"><label>İndirim</label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" autocomplete="off" class="form-control indirim" value="0.00"></div>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-4 rw1"><label>Ara Toplam</label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" autocomplete="off" class="form-control araToplam"></div>
+          </div>
 
           <div class="row form-group">
             <div class="col-md-4 rw1"><label>KDV %</label></div>
-            <div class="col-md-2 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20" ></div>
-            <div class="col-md-6 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="0"></div>
+            <div class="col-md-2 col-6 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20" ></div>
+            <div class="col-md-6 col-6 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="0"></div>
           </div>
 
           <div class="row form-group" style="padding-bottom: 0">
@@ -198,6 +224,7 @@
         </div>
       </div>
     </div>
+</div>
     <div class="row">
       <div class="col-sm-12 gonderBtn">
         <input type="submit" class="btn btn-sm btn-info waves-effect waves-light" value="Kaydet">

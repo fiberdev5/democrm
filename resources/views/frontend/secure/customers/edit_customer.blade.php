@@ -7,7 +7,11 @@
   .custom-p-l{
     padding-left: 0px !important;
   }
+  
 }
+@media (max-width: 767px) {
+  #editCust label{margin-bottom: 3px !important;}
+  }
 </style>
 <ul class="nav nav-pills " role="tablist" style="margin-bottom: 5px;">
   <li class="nav-item" style="font-size: 14px;"><a class="nav-link nav1 active" data-bs-toggle="pill" href="#tab1" data-id="{{$customer->id}}" role="tab">Müşteri Bilgileri</a></li>
@@ -44,17 +48,17 @@
   
       <div class="row">
         <label class="col-sm-4 custom-p-r">Telefon:</label>
-        <div class="col-sm-4 custom-p-l">
+        <div class="col-sm-4 col-6 custom-p-r-m-md custom-p-l">
           <input name="tel1" class="form-control phone" value="{{$customer->tel1}}" type="text" required>
         </div>
-        <div class="col-sm-4 custom-p-l">
+        <div class="col-sm-4 col-6 custom-p-m-md custom-p-l">
           <input name="tel2" class="form-control phone" value="{{$customer->tel2}}" type="text">
         </div>
       </div>
 
       <div class="row">
-        <div class="col-sm-4 custom-p-r"><label>İl/İlçe</label></div>
-        <div class="col-sm-4 custom-p-l">
+        <div class="col-sm-4 custom-p-r "><label>İl/İlçe</label></div>
+        <div class="col-sm-4 custom-p-r-m-md col-6 custom-p-l">
           <select name="il" id="sehirSelect" class="form-control form-select" style="width:100%!important;">
             <option value="" selected disabled>-Seçiniz-</option>
             @foreach($countries as $item)
@@ -62,7 +66,7 @@
             @endforeach
           </select>
         </div>
-        <div class="col-sm-4 custom-p-l">
+        <div class="col-sm-4 custom-p-m-md col-6 custom-p-l">
           <select name="ilce" id="ilceSelect" class="form-control form-select" style="width:100%!important;">
             <option value="" selected disabled>-Seçiniz-</option>                              
           </select>

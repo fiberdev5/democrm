@@ -7,6 +7,12 @@
     padding-left: 0px !important;
   }
 }
+@media (max-width: 767px) {
+  #addCashTransaction label {
+        margin-bottom: 3px !important;
+      }
+}
+
 </style>
 <form method="post" id="addCashTransaction" action="{{ route('store.cash.transaction', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
   @csrf

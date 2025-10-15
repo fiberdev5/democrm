@@ -15,18 +15,18 @@
           $sontarih = \Carbon\Carbon::parse($offer->created_at)->format('d/m/Y');
         @endphp  	 
       <tr>
-        <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;">{{$sontarih}}</td>
-        <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;"><strong>{{$offer->genelToplam}}</strong></td>
+        <td style="vertical-align: middle;font-size: 11px; padding:  10px;">{{$sontarih}}</td>
+        <td style="vertical-align: middle;font-size: 11px; padding:  10px;"><strong>{{$offer->genelToplam}}</strong></td>
         @if($offer->durum == "0")
-          <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;"><strong><div style="color: #0089ff;display:inline-block">Beklemede</div></strong></td>
+          <td style="vertical-align: middle;font-size: 11px; padding:  10px;"><strong><div style="color: #0089ff;display:inline-block">Beklemede</div></strong></td>
         @elseif($offer->durum == "1")
-          <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;"><strong><div style="color: green;display:inline-block">Onaylandı</div></strong></td>
+          <td style="vertical-align: middle;font-size: 11px; padding:  10px;"><strong><div style="color: green;display:inline-block">Onaylandı</div></strong></td>
         @elseif($offer->durum == "2")
-          <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;"><strong><div style="color: red;display:inline-block">Onaylanmadı</div></strong></td>
+          <td style="vertical-align: middle;font-size: 11px; padding:  10px;"><strong><div style="color: red;display:inline-block">Onaylanmadı</div></strong></td>
         @elseif($offer->durum == "3")
-          <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;"><strong><div style="color: #ff890f;display:inline-block">Cevap Gelmedi</div></strong></td>
+          <td style="vertical-align: middle;font-size: 11px; padding:  10px;"><strong><div style="color: #ff890f;display:inline-block">Cevap Gelmedi</div></strong></td>
         @endif
-        <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;"><strong><a href="{{ route('offers', [$firma->id, 'did' => $offer->id]) }}" class="btn btn-danger btn-sm editDomain" style="font-size:11px" target="_blank">Detaylar</a></strong></td>
+        <td style="vertical-align: middle;font-size: 11px; padding:  10px;"><strong><a href="{{ route('offers', [$firma->id, 'did' => $offer->id]) }}" class="btn btn-danger btn-sm editDomain" style="font-size:11px" target="_blank">Detaylar</a></strong></td>
       </tr>
       @endforeach
     </tbody>

@@ -576,7 +576,7 @@
         
         <!-- Ödeme Özeti Kartları -->
         <div class="row">
-          <div class="col-lg-3 col-md-6 ">
+          <div class="col-lg-3 col-md-6 col-6">
             <div class="card border-success">
               <div class="card-body text-center">
                 <i class="fas fa-check-circle text-success fa-x "></i>
@@ -585,7 +585,7 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-md-6">
+          <div class="col-lg-3 col-md-6 col-6">
             <div class="card border-warning">
               <div class="card-body text-center">
                 <i class="fas fa-clock text-warning fa-x "></i>
@@ -594,7 +594,7 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-md-6 mb-3">
+          <div class="col-lg-3 col-md-6 mb-3 col-6">
             <div class="card border-danger">
               <div class="card-body text-center">
                 <i class="fas fa-times-circle text-danger fa-x "></i>
@@ -603,7 +603,7 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-3 col-md-6 mb-3">
+          <div class="col-lg-3 col-md-6 mb-3 col-6">
             <div class="card border-info">
               <div class="card-body text-center">
                 <i class="fas fa-undo text-info fa-x"></i>
@@ -616,11 +616,11 @@
         
         <!-- Filtre ve Arama -->
            <!-- Ödeme Geçmişi -->
-          <div class="card">
-            <div class="card-header bg-light" style="background-color: white !important;">
+          <div class="card card-tenants mb-2">
+            <div class="card-header card-tenants-header bg-light" style="background-color: white !important;">
               <div class="row align-items-center">
                 <div class="col-md-6">
-                  <h6 class="mb-0">Ödeme Geçmişi</h6>
+                  <h6 class="mb-2 mt-1">Ödeme Geçmişi</h6>
                 </div>
                 <div class="col-md-6 text-end">
                   <div class="d-flex gap-2 justify-content-end">
@@ -644,7 +644,7 @@
                 </div>
               </div>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body card-tenants-body p-0">
               <div class="table-responsive">
                 <table class="table  mb-0" id="payments-table">
                   <thead class="table-light">
@@ -673,7 +673,7 @@
             </div>
           </div>
           <!-- Ödeme Özeti - Sadece Toplam -->
-          <div class="tableToplamaAlani odemeToplamaAlani">
+          <div class="tableToplamaAlani odemeToplamaAlani mt-3">
             <div class="row r1">
               <div class="sol"><strong>Genel Toplam</strong></div>
               <div class="sag">
@@ -1604,7 +1604,9 @@ $(document).ready(function() {
 
 <style>
 /* Info Cards */
-
+.card-tenants{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-tenants-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-tenants-body{padding: 3px 7px !important;}
 .unified-subscription-storage-widget {
     background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
     border-radius: 16px;
@@ -1887,7 +1889,7 @@ $(document).ready(function() {
   border-bottom: 2px solid #dee2e6;
   text-align: left !important;
   vertical-align: middle;
-  padding: 10px 12px !important;
+  padding: 0px 10px !important;
   background-color: #f8f9fa;
 }
 
@@ -2270,7 +2272,7 @@ $(document).ready(function() {
 }
 
 #payment-info .card-body {
-  padding: 1rem !important; /* Bootstrap varsayılan değeri */
+  padding: 9px !important; /* Bootstrap varsayılan değeri */
 }
 
 #payment-info .card-body.p-0 {
@@ -2312,7 +2314,7 @@ $(document).ready(function() {
   }
   
   .detail-row {
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     gap: 4px;
   }
@@ -2359,7 +2361,7 @@ $(document).ready(function() {
   }
   
   .service-period-nav {
-    flex-direction: column;
+    flex-direction: row;
   }
   
   .service-period-btn {
@@ -2405,14 +2407,10 @@ $(document).ready(function() {
     padding: 12px;
   }
   
-  .row > [class*="col-lg-3"] {
-    flex: 0 0 100%;
-    max-width: 100%;
-    margin-bottom: 1rem;
-  }
+
   
   .d-flex.gap-2 {
-    flex-direction: column;
+    flex-direction: row;
     gap: 0.5rem !important;
   }
   
@@ -2953,9 +2951,14 @@ $(document).ready(function() {
 
 @media (max-width: 576px) {
     .time-stats, .storage-stats {
-        flex-direction: column;
+        flex-direction: row;
         gap: 8px;
     }
+    .time-stats{
+        flex-direction: row !important;
+        gap: 8px;
+    }
+    
     
     .widget-title span {
         display: none;

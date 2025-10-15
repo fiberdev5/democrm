@@ -1,3 +1,17 @@
+<style>
+  .btn-full{
+    width: 100%;
+  }
+  label{margin-bottom: 3px !important;}
+  .accordion-body {
+    padding: 7px 10px !important;
+}
+@media (max-width: 767px) {
+  .btn-full{
+    margin-top: 5px !important;
+  }
+}
+</style>
 <div id="serviceReportAccordion">
   <div class="accordion-item">
     <h2 class="accordion-header" id="heading1">
@@ -24,16 +38,16 @@
           </div>
 
           <div class="row form-group">
-            <div class="col-lg-5 rw1"><label>Tarih Aralığı</label></div>
-            <div class="col-lg-7 rw2">
-              <input type="date" name="operator_tarih1" class="form-control tarih1 datepicker"  value="{{date('Y-m-d')}}" style="background:#fff;margin-bottom: 3px;">
-              <input type="date" name="operator_tarih2" class="form-control tarih2 datepicker"  value="{{date('Y-m-d')}}"  style="background:#fff;margin-bottom: 2px;">
-            </div>
-          </div>
+  <div class="col-lg-5 rw1"><label>Tarih Aralığı</label></div>
+  <div class="col-lg-7 rw2 d-flex gap-2"> 
+    <input type="date" name="operator_tarih1" class="form-control tarih1 datepicker" value="{{date('Y-m-d')}}" style="background:#fff;">
+    <input type="date" name="operator_tarih2" class="form-control tarih2 datepicker" value="{{date('Y-m-d')}}" style="background:#fff;">
+  </div>
+</div>
 
           <div class="row">
             <div class="col-lg-7 offset-lg-5">
-              <button type="submit" class="btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
+              <button type="submit" class="btn-full btn-full btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
             </div>
           </div>
         </form>
@@ -86,7 +100,7 @@
 
           <div class="row">
             <div class="col-lg-7 offset-lg-5">
-              <button type="submit" class="btn btn-primary btn-sm inBtn btn-block btnFilter teknisyenAramaBtn">ARA</button>
+              <button type="submit" class="btn-full btn btn-primary btn-sm inBtn btn-block btnFilter teknisyenAramaBtn">ARA</button>
             </div>
           </div>
         </form>
@@ -109,7 +123,7 @@
           
           <div class="row form-group">
             <div class="col-lg-5 rw1"><label>Tarih Aralığı</label></div>
-            <div class="col-lg-7 rw2">
+            <div class="col-lg-7 d-flex gap-2 rw2">
               <input type="date" name="satis_tarih1" class="form-control satis_tarih1 datepicker" value="{{ date('Y-m-d') }}">
               <input type="date" name="satis_tarih2" class="form-control satis_tarih2 datepicker" value="{{ date('Y-m-d') }}">
             </div>
@@ -117,7 +131,7 @@
 
           <div class="row">
             <div class="col-lg-7 offset-lg-5">
-              <button type="submit" class="btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
+              <button type="submit" class="btn-full btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
             </div>
           </div>
         </form>
@@ -140,7 +154,7 @@
           
           <div class="row form-group">
             <div class="col-lg-5 rw1"><label>Tarih Aralığı</label></div>
-            <div class="col-lg-7 rw2">
+            <div class="col-lg-7 rw2 d-flex gap-2">
               <input type="date" name="bayi_tarih1" class="form-control bayi_tarih1 datepicker" value="{{ date('Y-m-d') }}">
               <input type="date" name="bayi_tarih2" class="form-control bayi_tarih2 datepicker" value="{{ date('Y-m-d') }}">
             </div>
@@ -148,7 +162,7 @@
 
           <div class="row">
             <div class="col-lg-7 offset-lg-5">
-              <button type="submit" class="btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
+              <button type="submit" class="btn-full btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
             </div>
           </div>
         </form>
@@ -171,7 +185,7 @@
           
           <div class="row form-group">
             <div class="col-lg-5 rw1"><label>Tarih Aralığı</label></div>
-            <div class="col-lg-7 rw2">
+            <div class="col-lg-7 rw2 d-flex gap-2">
               <input type="date" name="acil_tarih1" class="form-control acil_tarih1 datepicker" value="{{ date('Y-m-d') }}">
               <input type="date" name="acil_tarih2" class="form-control acil_tarih2 datepicker" value="{{ date('Y-m-d') }}">
             </div>
@@ -179,7 +193,7 @@
 
           <div class="row">
             <div class="col-lg-7 offset-lg-5">
-              <button type="submit" class="btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
+              <button type="submit" class="btn-full btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
             </div>
           </div>
         </form>
@@ -238,7 +252,7 @@
           
           <div class="row form-group">
             <div class="col-lg-5 rw1"><label>Tarih Aralığı</label></div>
-            <div class="col-lg-7 rw2">
+            <div class="col-lg-7 rw2 d-flex gap-2">
               <input type="date" name="cagri_tarih1" class="form-control cagri_tarih1 datepicker" value="{{ date('Y-m-d') }}">
               <input type="date" name="cagri_tarih2" class="form-control cagri_tarih2 datepicker" value="{{ date('Y-m-d') }}">
             </div>
@@ -246,7 +260,7 @@
 
           <div class="row">
             <div class="col-lg-7 offset-lg-5">
-              <button type="submit" class="btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
+              <button type="submit" class="btn-full btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
             </div>
           </div>
         </form>

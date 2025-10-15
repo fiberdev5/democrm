@@ -5,6 +5,11 @@
             visibility: hidden;
             opacity: 0;
         }
+        .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
 
         @media (min-width: 768px) {
             .table-modern .card-header {
@@ -21,8 +26,23 @@
 
         @media (max-width: 767px) {
             .pageDetail .searchWrap .dropdown-menu {
-                transform: translate3d(-208px, 2px, 0px) !important;
+               transform: translate3d(-173px, 2px, 0px) !important;
+        min-width: calc(89vw - 20px) !important;
+            inset: 0px auto auto 0px !important;
             }
+            .searchWrap .tarih-araligi {
+    padding: 5px 0px !important;
+}
+.btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+
+  .servis-istatistik .btn-action {
+        padding: 4px 4px !important;
+        font-size: 9px !important;
+    }
 
             .pageDetail .searchWrap {
                 width: 30% !important;
@@ -49,7 +69,7 @@
                 <div class="col-12">
                     <div class="table-modern ">
                         <div class="card-header">
-                            <span>Personel Depo İstatistikleri</span>
+                            <span style="font-size: 15px;">Personel Depo İstatistikleri</span>
                         </div>
                         <div class="card-body">
                             <div class="searchWrap float-end">
@@ -58,11 +78,11 @@
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         Filtrele <i class="mdi mdi-chevron-down"></i>
                                     </button>
-                                    <div class="dropdown-menu">
+                                    <div class="dropdown-menu servisDrop">
                                         <div class="item">
                                             <div class="row">
-                                                <label class="col-sm-4">Tarih Aralığı:</label>
-                                                <div class="col-sm-8">
+                                                <label class="col-sm-4 custom-p-m-k custom-p-r-m-k col-5">Tarih Aralığı:</label>
+                                                <div class="col-sm-8 col-7 custom-p-m-k">
                                                     <input id="daterange" class="tarih-araligi" />
                                                     <div class="tarihAraligi mt-2 mb-2">
                                                         <button id="lastYear" class="btn btn-sm btn-secondary">Son 1
@@ -172,7 +192,7 @@
                         searchable: false,
                         render: function (data, type, row) {
                             var url = "{{ url($tenant_id . '/stoklar') }}?personel=" + row.user_id;
-                            return '<a href="' + url + '" target="_blank"  class="btn btn-action btn-sm" ><i class="fas fa-eye me-1"></i>Parçaları Göster</a>';
+                            return '<a href="' + url + '" target="_blank"  class="btn btn-action btn-sm" ><i class="fas d-md-flex d-none fa-eye me-1"></i>Parçaları Göster</a>';
                         }
                     }
                 ],
@@ -208,4 +228,17 @@ lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
 
         });
     </script>
+
+    <script>
+    $(document).ready(function () {
+        var dropdownContainer = $('.searchWrap .btn-group');
+        var filterButton = dropdownContainer.find('.filtrele');
+        dropdownContainer.on('show.bs.dropdown', function () {
+            filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+        });
+        dropdownContainer.on('hide.bs.dropdown', function () {
+            filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+        });
+    });
+</script>
 @endsection
