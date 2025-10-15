@@ -349,6 +349,7 @@ $(document).ready(function(){
       }
   });
 
+   // Edit Consignment Modal - Buton click event'i
   $('#datatableConsignment').on('click', '.editConsignment', function(){
     var id = $(this).data('bs-id');
     var modal = $('#editConsignmentModal'); 
@@ -377,6 +378,49 @@ $(document).ready(function(){
         modal.find('.modal-content').html('<div class="modal-header"><h5 class="modal-title">Hata</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-danger">İçerik yüklenirken bir hata oluştu.</div></div>');
       }
     });
+  });
+
+  // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
+  $('#datatableConsignment tbody').on('click', 'tr', function(e) {
+    var $target = $(e.target);
+    
+    // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma (butonun kendi event'i çalışsın)
+    if ($target.closest('.editConsignment').length > 0 ||
+        $target.closest('.btn').length > 0 || 
+        $target.closest('td').index() === 8) {
+      return;
+    }
+    
+    var id = $(this).find('.editConsignment').first().data('bs-id');
+    
+    if (id) {
+      var modal = $('#editConsignmentModal');
+      
+      // 1. Modal boyutunu ayarla ve loading göster
+      modal.find('.modal-dialog').removeClass('modal-xl').addClass('modal-xl');
+      modal.find('.modal-content').html('<div class="modal-body text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
+      
+      // 2. Modal'ı hemen göster
+      modal.modal('show');
+      
+      // 3. Sunucudan veriyi çek
+      $.ajax({
+        url: "/" + firma_id + "/konsinye-cihazlar/duzenle/" + id,
+        dataType: 'json',
+        success: function(data){
+          if($.trim(data.html) === "-1"){
+            location.reload(true);
+          } else {
+            // 4. Gelen tüm HTML'i modal-content'in içine bas
+            modal.find('.modal-content').html(data.html);
+          }
+        },
+        error: function() {
+          // Hata durumunda içeriği temizle ve hata mesajı göster
+          modal.find('.modal-content').html('<div class="modal-header"><h5 class="modal-title">Hata</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-danger">İçerik yüklenirken bir hata oluştu.</div></div>');
+        }
+      });
+    }
   });
 });
 </script>

@@ -359,6 +359,32 @@
               $('html').removeClass('modal-open').removeAttr('style');
             }
           }, 50);
+
+      }
+  });
+ // Edit Stock Modal - Buton click event'i 
+  $('#datatableStock').on('click', '.editStock', function(){
+    var id = $(this).data('bs-id');
+    var modal = $('#editStockModal'); 
+   
+    modal.find('.modal-dialog').removeClass('modal-xl').addClass('modal-xl'); // Boyutu ayarla (her seferinde)
+    modal.find('.modal-content').html('<div class="modal-body text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
+    
+    // 2. Modal'ı göster
+    modal.modal('show');
+    
+    // 3. Sunucudan veriyi çek
+    $.ajax({
+      url: "/" + firma_id + "/stok/duzenle/" + id,
+      dataType: 'json',
+      success: function(data){
+        if($.trim(data.html) === "-1"){
+          location.reload(true);
+        } else {
+          // 4. Gelen tüm HTML'i modal-content'in içine bas
+          // Bu sayede gelen HTML'in kendi header, body, footer'ı kullanılır.
+          modal.find('.modal-content').html(data.html);
+
         }
       });
       $('#datatableStock').on('click', '.editStock', function () {
@@ -391,87 +417,134 @@
         });
       });
     });
-  </script>
 
-  <script>
-    // DataTable
-    $(document).ready(function () {
-      // Dashboard'dan gelen URL parametrelerini oku
-      const urlParams = new URLSearchParams(window.location.search);
-      const dashboardStartDate = urlParams.get('dashboard_istatistik_tarih1');
-      const dashboardEndDate = urlParams.get('dashboard_istatistik_tarih2');
+  });
 
-      // Daterangepicker başlatma (varsayılan son 3 gün)
-      let initialStockStartDate = dashboardStartDate ? moment(dashboardStartDate) : moment().subtract(2, 'days').startOf('day');
-      let initialStockEndDate = dashboardEndDate ? moment(dashboardEndDate) : moment().endOf('day');
-
-      $('#daterangeStock').daterangepicker({
-        startDate: initialStockStartDate,
-        endDate: initialStockEndDate,
-        locale: {
-          format: 'DD-MM-YYYY',
-          separator: ' - ',
-          applyLabel: 'Uygula',
-          cancelLabel: 'İptal',
-          weekLabel: 'H',
-          daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
-          monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
-          firstDay: 1
+  // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
+  $('#datatableStock tbody').on('click', 'tr', function(e) {
+    var $target = $(e.target);
+    
+    // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma (butonun kendi event'i çalışsın)
+    if ($target.closest('.editStock').length > 0 ||
+        $target.closest('.btn').length > 0 || 
+        $target.closest('td').index() === 8) {
+      return;
+    }
+    
+    var id = $(this).find('.editStock').first().data('bs-id');
+    
+    if (id) {
+      var modal = $('#editStockModal');
+      
+      // 1. Modal boyutunu ayarla ve loading göster
+      modal.find('.modal-dialog').removeClass('modal-xl').addClass('modal-xl');
+      modal.find('.modal-content').html('<div class="modal-body text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
+      
+      // 2. Modal'ı hemen göster
+      modal.modal('show');
+      
+      // 3. Sunucudan veriyi çek
+      $.ajax({
+        url: "/" + firma_id + "/stok/duzenle/" + id,
+        dataType: 'json',
+        success: function(data){
+          if($.trim(data.html) === "-1"){
+            location.reload(true);
+          } else {
+            // 4. Gelen tüm HTML'i modal-content'in içine bas
+            modal.find('.modal-content').html(data.html);
+          }
+        },
+        error: function() {
+          // Hata durumunda içeriği temizle ve hata mesajı göster
+          modal.find('.modal-content').html('<div class="modal-header"><h5 class="modal-title">Hata</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-danger">İçerik yüklenirken bir hata oluştu.</div></div>');
         }
-      },
-        function (start_date, end_date) {
-          $('#daterangeStock').val(start_date.format('DD-MM-YYYY') + ' - ' + end_date.format('DD-MM-YYYY'));
-          table.draw();
-        });
-
-      // Hızlı tarih filtreleme butonları
-      $('#lastYearStock').on('click', function () {
-        $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(1, 'year'));
-        $('#daterangeStock').data('daterangepicker').setEndDate(moment());
-        table.draw();
       });
+    }
+  });
+});
+</script>
 
-      $('#lastMonthStock').on('click', function () {
-        $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(1, 'month'));
-        $('#daterangeStock').data('daterangepicker').setEndDate(moment());
-        table.draw();
-      });
+<script>
+// DataTable
+$(document).ready(function () {
+  // Dashboard'dan gelen URL parametrelerini oku
+  const urlParams = new URLSearchParams(window.location.search);
+  const dashboardStartDate = urlParams.get('dashboard_istatistik_tarih1');
+  const dashboardEndDate = urlParams.get('dashboard_istatistik_tarih2');
 
-      $('#lastWeekStock').on('click', function () {
-        $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(7, 'days'));
-        $('#daterangeStock').data('daterangepicker').setEndDate(moment());
-        table.draw();
-      });
+  // Daterangepicker başlatma (varsayılan son 3 gün)
+  let initialStockStartDate = dashboardStartDate ? moment(dashboardStartDate) : moment().subtract(2, 'days').startOf('day');
+  let initialStockEndDate = dashboardEndDate ? moment(dashboardEndDate) : moment().endOf('day');
 
-      $('#yesterdayStock').on('click', function () {
-        $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(1, 'days'));
-        $('#daterangeStock').data('daterangepicker').setEndDate(moment().subtract(1, 'days'));
-        table.draw();
-      });
+  $('#daterangeStock').daterangepicker({
+    startDate: initialStockStartDate,
+    endDate: initialStockEndDate,
+    locale: {
+      format: 'DD-MM-YYYY',
+      separator: ' - ',
+      applyLabel: 'Uygula',
+      cancelLabel: 'İptal',
+      weekLabel: 'H',
+      daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
+      monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+      firstDay: 1
+    }
+  },
+  function (start_date, end_date) {
+    $('#daterangeStock').val(start_date.format('DD-MM-YYYY') + ' - ' + end_date.format('DD-MM-YYYY'));
+    table.draw();
+  });
 
-      $('#todayStock').on('click', function () {
-        $('#daterangeStock').data('daterangepicker').setStartDate(moment());
-        $('#daterangeStock').data('daterangepicker').setEndDate(moment());
-        table.draw();
-      });
+  // Hızlı tarih filtreleme butonları
+  $('#lastYearStock').on('click', function () {
+    $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(1, 'year'));
+    $('#daterangeStock').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
 
-      var table = $('#datatableStock').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-          url: "{{ route('stocks', $firma->id) }}",
-          data: function (d) {
-            d.raf = $('#raf').val();
-            d.marka = $('#marka').val();
-            d.cihaz = $('#cihaz').val();
-            d.personel = $('#personel').val();
+  $('#lastMonthStock').on('click', function () {
+    $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(1, 'month'));
+    $('#daterangeStock').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
 
-            // Stok tarih aralığını ekle
-            d.from_date_stock = $('#daterangeStock').data('daterangepicker').startDate.format('YYYY-MM-DD');
-            d.to_date_stock = $('#daterangeStock').data('daterangepicker').endDate.format('YYYY-MM-DD');
+  $('#lastWeekStock').on('click', function () {
+    $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(7, 'days'));
+    $('#daterangeStock').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
 
-            // Dashboard tarih parametreleri varsa ekle
-            if (dashboardStartDate && dashboardEndDate) {
+  $('#yesterdayStock').on('click', function () {
+    $('#daterangeStock').data('daterangepicker').setStartDate(moment().subtract(1, 'days'));
+    $('#daterangeStock').data('daterangepicker').setEndDate(moment().subtract(1, 'days'));
+    table.draw();
+  });
+
+  $('#todayStock').on('click', function () {
+    $('#daterangeStock').data('daterangepicker').setStartDate(moment());
+    $('#daterangeStock').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  var table = $('#datatableStock').DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: {
+        url: "{{ route('stocks', $firma->id) }}",
+        data: function (d) {
+          d.raf = $('#raf').val();
+          d.marka = $('#marka').val();
+          d.cihaz = $('#cihaz').val();
+          d.personel = $('#personel').val();
+          
+          // Stok tarih aralığını ekle
+          d.from_date_stock = $('#daterangeStock').data('daterangepicker').startDate.format('YYYY-MM-DD');
+          d.to_date_stock = $('#daterangeStock').data('daterangepicker').endDate.format('YYYY-MM-DD');
+          
+          // Dashboard tarih parametreleri varsa ekle
+          if (dashboardStartDate && dashboardEndDate) {
+
               d.dashboard_istatistik_tarih1 = dashboardStartDate;
               d.dashboard_istatistik_tarih2 = dashboardEndDate;
             }

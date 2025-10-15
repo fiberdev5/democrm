@@ -228,7 +228,7 @@ $(document).ready(function(){
       $('#addCustomerModal .modal-body').html("");
   });
 
-  // Edit Customer Modal
+ // Edit Customer Modal - Buton click event'i
   $('#datatableCustomer').on('click', '.editCustomer', function(e){
       var id = $(this).attr("data-bs-id");
       var firma_id = {{$firma->id}};
@@ -243,9 +243,41 @@ $(document).ready(function(){
           }
       });
   });
+
+  // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
+  $('#datatableCustomer tbody').on('click', 'tr', function(e) {
+      var $target = $(e.target);
+      
+      // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma (butonun kendi event'i çalışsın)
+      if ($target.closest('.editCustomer').length > 0 ||
+          $target.closest('.btn').length > 0 || 
+          $target.closest('td').index() === 4) {
+          return;
+      }
+      
+      var id = $(this).find('.editCustomer').first().attr('data-bs-id');
+      
+      if (id) {
+          // 1. MODAL'I HEMEN AÇ (AJAX beklemeden)
+          $('#editCustomerModal').modal('show');
+          
+          // 2. AYNI ANDA AJAX BAŞLAT
+          $.ajax({
+              url: "/" + firma_id + "/musteri/duzenle/" + id
+          }).done(function(data) {
+              if ($.trim(data) === "-1") {
+                  window.location.reload(true);
+              } else {
+                  $('#editCustomerModal .modal-body').html(data);
+              }
+          });
+      }
+  });
+
   $("#editCustomerModal").on("hidden.bs.modal", function() {
     $('#editCustomerModal .modal-body').html("");
   });
+
 
   // Ülke seçildiğinde şehirleri getir
   $("#countrySelect").change(function() {
@@ -473,9 +505,8 @@ $(document).ready(function(){
 
           // Görünür yap
           $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
-      }
+      } 
   });
-
   $('#musteriTipi').change(function(){
     table.draw();        
   });

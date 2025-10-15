@@ -120,62 +120,60 @@
       animation: none !important;
       transform: translate3d(1px, 2px, 0px) !important;
     }
-  </style>
-  <div class="page-content" id="cash_transactions">
-    <div class="container-fluid">
-      <div class="row pageDetail">
-        <div class="col-12">
-          <div class="card card-allcash">
-            <div class="card-header card-allcash-header sayfaBaslik">Kasa Hareketleri</div>
-            <div class="card-body card-allcash-body">
-              <table id="datatableKasa" class="table table-bordered dt-responsive nowrap"
-                style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                <div class="d-none d-lg-block">
-                  @if(Auth::user()->can('Kasa Hareketi Ekleyebilir'))
-                    <a class="btn btn-success btn-sm addCashTransactions" data-bs-toggle="modal"
-                      data-bs-target="#addCashTransactionsModal"><i class="fas fa-plus"></i> <span>Kasa Hareketi
-                        Ekle</span></a>
-                  @endif
-                  <button type="submit" id="kasaArama" class="btn btn-sm btn-dark searchBtn kasaArama float-end"><i
-                      class="fas fa-search"></i></button>
-                </div>
 
+</style>
+<div class="page-content" id="cash_transactions">
+  <div class="container-fluid">
+    <div class="row pageDetail">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header sayfaBaslik">Kasa Hareketleri</div>
+          <div class="card-body">
+            <table id="datatableKasa" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+<!-- Masaüstü -->
+<div class="d-none d-lg-block">
+    @if(Auth::user()->can('Kasa Hareketi Ekleyebilir'))
+        <a class="btn btn-success btn-sm addCashTransactions" data-bs-toggle="modal" data-bs-target="#addCashTransactionsModal">
+            <i class="fas fa-plus"></i> <span>Kasa Hareketi Ekle</span>
+        </a>
+    @endif  
+    <button type="button" class="btn btn-sm btn-dark searchBtn kasaArama float-end">
+        <i class="fas fa-search"></i>
+    </button>
+</div>
 
+<!-- Mobil -->
+<div class="d-lg-none">
+    <div class="d-flex gap-1 justify-content-between align-items-center">
+        <div>
+            @if(Auth::user()->can('Kasa Hareketi Ekleyebilir'))
+                <a class="btn btn-success btn-sm addCashTransactions" data-bs-toggle="modal" data-bs-target="#addCashTransactionsModal">
+                    <i class="fas fa-plus"></i> <span>Kasa Hareketi Ekle</span>
+                </a>
+            @endif
+        </div>
+        <button type="button" class="btn btn-sm btn-dark searchBtn kasaArama">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+</div>
 
-                <div class="d-lg-none">
-                  <div class="d-flex gap-1 justify-content-between align-items-center">
+              <div class="searchWrap float-end">
+                <div class="btn-group" id="kasaFilterDropdownContainer">
+                  <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filtrele <i class="mdi mdi-chevron-down"></i>
+                  </button>
+                  <div class="dropdown-menu">
+                    <div class="item">
+                      <div class="row">
+                        <label class="col-4 col-sm-4">Ödeme Yönü:</label>
+                        <div class="col-8 col-sm-8">
+                          <select name="odeme_yonu" id="odemeYonu" class="form-select">
+                            <option value="">Hepsi</option>
+                            <option value="1">Gelen Ödeme(Borç)</option>
+                            <option value="2">Giden Ödeme(Alacak)</option>
+                          </select>
 
-                    <div>
-                      @if(Auth::user()->can('Kasa Hareketi Ekleyebilir'))
-                        <a class="btn btn-success btn-sm addCashTransactions" data-bs-toggle="modal"
-                          data-bs-target="#addCashTransactionsModal"><i class="fas fa-plus"></i> <span>Kasa Hareketi
-                            Ekle</span></a>
-                      @endif
-                    </div>
-
-                    <button type="submit" id="kasaArama" class="btn btn-sm btn-dark searchBtn kasaArama"><i
-                        class="fas fa-search"></i></button>
-
-                  </div>
-                </div>
-
-                <div class="searchWrap float-end">
-                  <div class="btn-group" id="kasaFilterDropdownContainer">
-                    <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown"
-                      aria-expanded="false">
-                      Filtrele <i class="mdi mdi-chevron-down"></i>
-                    </button>
-                    <div class="dropdown-menu servisDrop ">
-                      <div class="item">
-                        <div class="row">
-                          <label class="col-4 col-sm-4">Ödeme Yönü:</label>
-                          <div class="col-8 col-sm-8">
-                            <select name="odeme_yonu" id="odemeYonu" class="form-select">
-                              <option value="">Hepsi</option>
-                              <option value="1">Gelen Ödeme(Borç)</option>
-                              <option value="2">Giden Ödeme(Alacak)</option>
-                            </select>
-                          </div>
                         </div>
                       </div>
                       <div class="item">
@@ -417,8 +415,14 @@
       }
     };
 
-    var mid = getUrlParameter('did');
-    if (mid) {
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    // Edit Cash Transactions Modal - Buton click event'i (mobil ve masaüstü için gerekli)
+    $('#datatableKasa').on('click', '.editCashTransactions', function(e){
+      var id = $(this).attr("data-bs-id");
+      var firma_id = {{$firma->id}};
+
       $.ajax({
         url: "/kasa-hareketi/duzenle/" + mid
       }).done(function (data) {
@@ -429,7 +433,6 @@
           $('#editCashTransactionsModal .modal-body').html(data);
         }
       });
-    }
   </script>
 
   <script type="text/javascript">
@@ -451,28 +454,42 @@
         $('#addCashTransactionsModal .modal-body').html("");
       });
     });
-  </script>
 
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $('#datatableKasa').on('click', '.editCashTransactions', function (e) {
-        var id = $(this).attr("data-bs-id");
+
+    // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
+    $('#datatableKasa tbody').on('click', 'tr', function(e) {
+      var $target = $(e.target);
+      
+      // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma (butonun kendi event'i çalışsın)
+      if ($target.closest('.editCashTransactions').length > 0 ||
+          $target.closest('.btn').length > 0 || 
+          $target.closest('td').index() === 9) {
+        return;
+      }
+      
+      var id = $(this).find('.editCashTransactions').first().attr('data-bs-id');
+      
+      if (id) {
+        // 1. MODAL'I HEMEN AÇ (AJAX beklemeden)
+        $('#editCashTransactionsModal').modal('show');
+        
+        // 2. AYNI ANDA AJAX BAŞLAT
         var firma_id = {{$firma->id}};
         $.ajax({
           url: "/" + firma_id + "/kasa-hareketi/duzenle/" + id
-        }).done(function (data) {
+        }).done(function(data) {
           if ($.trim(data) === "-1") {
             window.location.reload(true);
           } else {
-            $('#editCashTransactionsModal').modal('show');
             $('#editCashTransactionsModal .modal-body').html(data);
           }
         });
-      });
-      $("#editCashTransactionsModal").on("hidden.bs.modal", function () {
-        $('#editCashTransactionsModal .modal-body').html("");
+      }
+    });
 
-      });
+    $("#editCashTransactionsModal").on("hidden.bs.modal", function() {
+      $('#editCashTransactionsModal .modal-body').html("");
+
     });
   </script>
 
@@ -683,11 +700,19 @@
       });
     });
 
-    function setDateRangeToFull() {
-      var baslangicYil = moment('01-01-2025', 'DD-MM-YYYY');
+
+    $('.kasaArama').on('click', function() {
+      var baslangicYil = '01-01-2025';
       var today = moment();
       $('#daterange').data('daterangepicker').setStartDate(baslangicYil);
       $('#daterange').data('daterangepicker').setEndDate(today);
+      filterData();
+    });
+        
+    // Filtreleme fonksiyonu
+    function filterData() {
+      $('#datatableKasa').DataTable().draw();
+
     }
 
     function setDateRangeToToday() {

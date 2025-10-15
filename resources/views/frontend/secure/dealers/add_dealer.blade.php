@@ -109,7 +109,7 @@
     $("#vergiNo").mask("9999999999");
   });
 </script>
-<script>
+{{-- <script>
   // Maksimum 2 dosya kontrolü
   $(document).ready(function() {
     $('#belgePdf').on('change', function() {
@@ -117,6 +117,86 @@
         alert('Maksimum 2 dosya seçebilirsiniz!');
         this.value = '';
       }
+    });
+  });
+</script> --}}
+
+<script>
+  $(document).ready(function() {
+    // İzin verilen dosya türleri
+    const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'svg'];
+    const allowedMimeTypes = [
+        'application/pdf',
+        'image/jpeg',
+        'image/jpg', 
+        'image/png',
+        'image/svg+xml'
+    ];
+
+    $('#belgePdf').on('change', function() {
+        const files = this.files;
+        
+        // Maksimum 2 dosya kontrolü
+        if (files.length > 2) {
+            alert('Maksimum 2 dosya seçebilirsiniz!');
+            this.value = '';
+            return false;
+        }
+
+        // Her dosyanın türünü kontrol et
+        let invalidFiles = [];
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileName = file.name.toLowerCase();
+            const fileExtension = fileName.split('.').pop();
+            const fileMimeType = file.type;
+
+            // Uzantı kontrolü
+            if (!allowedExtensions.includes(fileExtension)) {
+                invalidFiles.push(file.name);
+            }
+            
+            // MIME type kontrolü (ekstra güvenlik)
+            if (!allowedMimeTypes.includes(fileMimeType)) {
+                if (!invalidFiles.includes(file.name)) {
+                    invalidFiles.push(file.name);
+                }
+            }
+        }
+
+        // Geçersiz dosya varsa
+        if (invalidFiles.length > 0) {
+            alert('❌ Hatalı dosya türü!\n\n' + 
+                  'Geçersiz dosyalar:\n• ' + invalidFiles.join('• ') + 
+                  '\n✅ Sadece PDF, JPG, JPEG, PNG ve SVG dosyaları yükleyebilirsiniz.');
+            this.value = ''; // Seçimi temizle
+            return false;
+        }
+
+        // Dosya boyutu kontrolü (5MB)
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        let oversizedFiles = [];
+        
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].size > maxSize) {
+                oversizedFiles.push(files[i].name + ' (' + (files[i].size / 1024 / 1024).toFixed(2) + ' MB)');
+            }
+        }
+
+        if (oversizedFiles.length > 0) {
+            alert('❌ Dosya boyutu çok büyük!\n\n' + 
+                  'Büyük dosyalar:\n• ' + oversizedFiles.join('\n• ') + 
+                  '\n\n✅ Her dosya maksimum 5MB olmalıdır.');
+            this.value = '';
+            return false;
+        }
+
+        // Başarılı - kullanıcıya bilgi ver
+        let fileNames = [];
+        for (let i = 0; i < files.length; i++) {
+            fileNames.push(files[i].name);
+        }
+        console.log('✅ Seçilen dosyalar: ', fileNames.join(', '));
     });
   });
 </script>

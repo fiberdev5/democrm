@@ -490,6 +490,57 @@
 </script>
 
 <script>
+//E-Arşiv dosya türü ve boyut kontrolü
+$(document).ready(function() {
+    const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
+    const allowedMimeTypes = [
+        'application/pdf',
+        'image/jpeg',
+        'image/jpg', 
+        'image/png'
+    ];
+
+    $('#customFile').on('change', function() {
+        const file = this.files[0];
+        
+        if (!file) return;
+
+        const fileName = file.name.toLowerCase();
+        const fileExtension = fileName.split('.').pop();
+        const fileMimeType = file.type;
+
+        // Uzantı kontrolü
+        if (!allowedExtensions.includes(fileExtension)) {
+            alert('❌ Hatalı dosya türü!\n' + 
+                  'Dosya: ' + file.name + 
+                  '\n✅ Sadece PDF, JPG, JPEG ve PNG dosyaları yükleyebilirsiniz.');
+            this.value = '';
+            return false;
+        }
+        
+        // MIME type kontrolü
+        if (!allowedMimeTypes.includes(fileMimeType)) {
+            alert('❌ Hatalı dosya türü!\n' + 
+                  'Dosya: ' + file.name + 
+                  '\n✅ Sadece PDF, JPG, JPEG ve PNG dosyaları yükleyebilirsiniz.');
+            this.value = '';
+            return false;
+        }
+
+        // Dosya boyutu kontrolü (5MB)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert('❌ Dosya boyutu çok büyük!\n' + 
+                  'Dosya: ' + file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)' +
+                  '\n✅ Maksimum dosya boyutu 2MB olmalıdır.');
+            this.value = '';
+            return false;
+        }
+    });
+});
+</script>
+
+<script>
 $(document).ready(function() {
     $('#addInvo').submit(function(e) {
         e.preventDefault(); // Normal submit'i engelle
@@ -546,10 +597,10 @@ $(document).ready(function() {
                 } else {
                     alert('Sunucu hatası oluştu');
                 }
-                // Hata durumunda da sayfayı yenile
-                setTimeout(function() {
-                    window.location.reload();
-                }, 1000);
+                // // Hata durumunda da sayfayı yenile
+                // setTimeout(function() {
+                //     window.location.reload();
+                // }, 1000);
             }
         });
     });

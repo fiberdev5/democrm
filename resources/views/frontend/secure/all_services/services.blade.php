@@ -592,10 +592,46 @@
       });
     });
   </script>
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $('#datatableService').on('click', '.serBilgiDuzenle', function (e) {
-        var id = $(this).attr("data-bs-id");
+<script type="text/javascript">
+  $(document).ready(function () {
+    // Edit Service Modal - Button Click 
+    $('#datatableService').on('click', '.serBilgiDuzenle', function (e) {
+      var id = $(this).attr("data-bs-id");
+      var firma_id = {{$firma->id}};
+      $.ajax({
+        url: "/" + firma_id + "/servis/duzenle/" + id
+      }).done(function (data) {
+        if ($.trim(data) === "-1") {
+          window.location.reload(true);
+        } else {
+          $('#editServiceDescModal .modal-body').html(data);
+          $('#editServiceDescModal').modal('show');
+        }
+      });
+    });
+
+    // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
+    $('#datatableService tbody').on('click', 'tr', function(e) {
+      var $target = $(e.target);
+      
+      // Sadece Kapat (6), Seç (7) butonlarına, switch'lere ve checkbox'lara tıklanmışsa engelle
+      // Düzenle butonunu (5. kolon) ENGELLEME - kendi event'i çalışsın
+      if ($target.closest('.serBilgiDuzenle').length > 0 ||  // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma
+          $target.closest('input[type="checkbox"]').length > 0 ||
+          $target.closest('.servis-sonlandir-switch').length > 0 ||
+          $target.closest('.servis-sonlanmis-switch').length > 0 ||
+          $target.closest('td').index() === 6 ||  // Kapat kolonu
+          $target.closest('td').index() === 7) {  // Seç kolonu
+        return;
+      }
+      
+      var id = $(this).find('.serBilgiDuzenle').first().attr('data-bs-id');
+      
+      if (id) {
+        // 1. MODAL'I HEMEN AÇ (AJAX beklemeden)
+        $('#editServiceDescModal').modal('show');
+        
+        // 2. AYNI ANDA AJAX BAŞLAT
         var firma_id = {{$firma->id}};
         $.ajax({
           url: "/" + firma_id + "/servis/duzenle/" + id
@@ -604,16 +640,16 @@
             window.location.reload(true);
           } else {
             $('#editServiceDescModal .modal-body').html(data);
-            $('#editServiceDescModal').modal('show');
           }
         });
-      });
-      $("#editServiceDescModal").on("hidden.bs.modal", function () {
-        $('#editServiceDescModal .modal-body').html("");
-
-      });
+      }
     });
-  </script>
+
+    $("#editServiceDescModal").on("hidden.bs.modal", function () {
+      $('#editServiceDescModal .modal-body').html("");
+    });
+  });
+</script>
   <script>
     var getUrlParameter = function getUrlParameter(sParam) {
       var sPageURL = window.location.search.substring(1),
@@ -885,6 +921,10 @@
 
       // Butonları oluştur ve tarih aralığını güncelle
       $('#lastYear').on('click', function () {
+        activeFilters = {};
+        activeFilterType = '';
+        window.reportFilters.filters = {};
+        window.reportFilters.filterType = '';
         $('#daterange').data('daterangepicker').setStartDate(lastYear);
         $('#daterange').data('daterangepicker').setEndDate(today);
         // Filtreleme fonksiyonunu çağır
@@ -892,6 +932,10 @@
       });
 
       $('#lastMonth').on('click', function () {
+        activeFilters = {};
+        activeFilterType = '';
+        window.reportFilters.filters = {};
+        window.reportFilters.filterType = '';
         $('#daterange').data('daterangepicker').setStartDate(lastMonth);
         $('#daterange').data('daterangepicker').setEndDate(today);
         // Filtreleme fonksiyonunu çağır
@@ -899,6 +943,10 @@
       });
 
       $('#lastWeek').on('click', function () {
+        activeFilters = {};
+        activeFilterType = '';
+        window.reportFilters.filters = {};
+        window.reportFilters.filterType = '';
         $('#daterange').data('daterangepicker').setStartDate(lastWeek);
         $('#daterange').data('daterangepicker').setEndDate(today);
         // Filtreleme fonksiyonunu çağır
@@ -906,6 +954,10 @@
       });
 
       $('#yesterday').on('click', function () {
+        activeFilters = {};
+        activeFilterType = '';
+        window.reportFilters.filters = {};
+        window.reportFilters.filterType = '';
         $('#daterange').data('daterangepicker').setStartDate(yesterday);
         $('#daterange').data('daterangepicker').setEndDate(yesterday);
         // Filtreleme fonksiyonunu çağır
@@ -913,6 +965,10 @@
       });
 
       $('#today').on('click', function () {
+        activeFilters = {};
+        activeFilterType = '';
+        window.reportFilters.filters = {};
+        window.reportFilters.filterType = '';
         $('#daterange').data('daterangepicker').setStartDate(today);
         $('#daterange').data('daterangepicker').setEndDate(today);
         // Filtreleme fonksiyonunu çağır
@@ -1010,8 +1066,17 @@
 
 
       var firma_id = {{$firma->id}};
-      let activeFilters = {};
-      let activeFilterType = '';
+      // let activeFilters = {};
+      // let activeFilterType = '';
+
+      var activeFilters = {};  // let yerine var!
+      var activeFilterType = '';  // let yerine var!
+
+      // Window'a da bağla
+      window.reportFilters = {
+          filters: {},
+          filterType: ''
+      };
 
       var table = $('#datatableService').DataTable({
         processing: true,
@@ -1029,6 +1094,10 @@
           url: "{{ route('all.services', $firma->id) }}",
           type: 'GET',
           data: function (data) {
+            //Window'dan al
+            var currentFilters = window.reportFilters.filters;
+            var currentFilterType = window.reportFilters.filterType;
+
             data.search = $('input[type="search"]').val();
             data.device_brands = $('#device_brands').val();
             data.device_types = $('#device_types').val();
@@ -1040,8 +1109,9 @@
             data.to_date = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
 
             //Raporlama filtreleri
-            data.filters = activeFilters;
-            data.filterType = activeFilterType;
+            // Window'dan oku
+            data.filters = currentFilters;
+            data.filterType = currentFilterType;
 
             //Operatör istatistikleri filtreleme için URL parametresi aktarma
             data.operator_id = getUrlParameter('operator_id');
@@ -1237,6 +1307,11 @@
         e.preventDefault();
         activeFilterType = 'operator';
         activeFilters = formToObj($(this)); //form verilerini objeye çevir
+          
+        // Window'a da yaz
+        window.reportFilters.filterType = 'operator';
+        window.reportFilters.filters = formToObj($(this));
+
         table.draw(); // datatable’ı güncelle
         $('#servisRaporlaModal').modal('hide');
       });
@@ -1245,6 +1320,11 @@
         e.preventDefault();
         activeFilterType = 'yapilananketler';
         activeFilters = formToObj($(this)); //form verilerini objeye çevir
+          
+        // Window'a da yaz
+        window.reportFilters.filterType = 'yapilananketler';
+        window.reportFilters.filters = formToObj($(this));
+        
         table.draw(); // datatable’ı güncelle
         $('#anketModal').modal('hide');
       });
@@ -1253,6 +1333,11 @@
         e.preventDefault();
         activeFilterType = 'yapilmayanAnketler';
         activeFilters = formToObj($(this)); //form verilerini objeye çevir
+
+        // Window'a da yaz
+        window.reportFilters.filterType = 'yapilmayanAnketler';
+        window.reportFilters.filters = formToObj($(this));
+
         table.draw(); // datatable’ı güncelle
         $('#anketModal').modal('hide');
       });
@@ -1261,6 +1346,11 @@
         e.preventDefault();
         activeFilterType = 'teknisyen';
         activeFilters = formToObj($(this));
+
+        // Window'a da yaz
+        window.reportFilters.filterType = 'teknisyen';
+        window.reportFilters.filters = formToObj($(this));
+
         table.draw(); // datatable’ı güncelle
         $('#servisRaporlaModal').modal('hide');
       });
@@ -1282,7 +1372,12 @@
         activeFilterType = 'urunSatis';
         activeFilters = postData.filters;
 
+        // Window'a da yaz
+        window.reportFilters.filterType = 'urunSatis';
+        window.reportFilters.filters = postData.filters;
+
         table.draw(); // DataTable yeniden yükle
+
         $('#servisRaporlaModal').modal('hide');
       });
 
@@ -1302,6 +1397,10 @@
 
         activeFilterType = 'bayiArama';
         activeFilters = postData.filters;
+
+        // Window'a da yaz
+        window.reportFilters.filterType = 'bayiArama';
+        window.reportFilters.filters = postData.filters;
 
         table.draw(); // DataTable yeniden yükle
         $('#servisRaporlaModal').modal('hide');
@@ -1323,6 +1422,10 @@
 
         activeFilterType = 'acilArama';
         activeFilters = postData.filters;
+
+        // Window'a da yaz
+        window.reportFilters.filterType = 'acilArama';
+        window.reportFilters.filters = postData.filters;
 
         table.draw(); // DataTable yeniden yükle
         $('#servisRaporlaModal').modal('hide');

@@ -422,14 +422,39 @@
           $('#addInvoiceModal .modal-body').html("");
         });
       });
-    </script>
 
-    <script type="text/javascript">
-      $(document).ready(function () {
-        $('#datatableInvoice').on('click', '.editInvoice', function (e) {
-          var id = $(this).attr("data-bs-id");
-          var firma_id = {{$firma->id}};
-          $.ajax({
+    }
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".addInvoice").click(function(){
+    var firma_id = {{$firma->id}};
+    $.ajax({
+      url: "/" + firma_id + "/fatura/ekle/"
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#addInvoiceModal').modal('show');
+        $('#addInvoiceModal .modal-body').html(data);
+      }
+    });
+  });
+  $("#addInvoiceModal").on("hidden.bs.modal", function() {
+      $('#addInvoiceModal .modal-body').html("");
+    });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    // Edit Invoice Modal - Buton click event'i 
+    $('#datatableInvoice').on('click', '.editInvoice', function(e){
+        var id = $(this).attr("data-bs-id");
+        var firma_id = {{$firma->id}};
+        $.ajax({
+
             url: "/" + firma_id + "/fatura/duzenle/" + id
           }).done(function (data) {
             if ($.trim(data) === "-1") {
@@ -440,67 +465,115 @@
             }
           });
         });
-        $("#editInvoiceModal").on("hidden.bs.modal", function () {
-          $('#editInvoiceModal .modal-body').html("");
-        });
-      });
-    </script>
-    <script>
-      function hesaplaKdv() {
-        const tutar = parseFloat(document.querySelector('.tutar').value.replace(',', '.')) || 0;
-        const kdvOrani = parseFloat(document.querySelector('.kdvOrani').value) || 0;
-        const tevkifatOrani = parseFloat(document.querySelector('.tevkifatOrani').value) || 1;
 
-        const kdvHaricTutar = tutar / (1 + kdvOrani / 100);
-        const kdvTutar = tutar - kdvHaricTutar;
-        const tevkifatTutar = kdvTutar * (1 - tevkifatOrani);
+    });
 
-        document.querySelector('.sonuc').value = kdvHaricTutar.toFixed(2);
-        document.querySelector('.hesaplananKdv').value = kdvTutar.toFixed(2);
-        document.querySelector('.tevkifatTutar').value = tevkifatTutar.toFixed(2);
-      }
+    // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
+    $('#datatableInvoice tbody').on('click', 'tr', function(e) {
+        var $target = $(e.target);
+        
+        // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma (butonun kendi event'i çalışsın)
+        if ($target.closest('.editInvoice').length > 0 ||
+            $target.closest('.btn').length > 0 || 
+            $target.closest('td').index() === 6) {
+            return;
+        }
+        
+        var id = $(this).find('.editInvoice').first().attr('data-bs-id');
+        
+        if (id) {
+            // 1. MODAL'I HEMEN AÇ (AJAX beklemeden)
+            $('#editInvoiceModal').modal('show');
+            
+            // 2. AYNI ANDA AJAX BAŞLAT
+            var firma_id = {{$firma->id}};
+            $.ajax({
+                url: "/" + firma_id + "/fatura/duzenle/" + id
+            }).done(function(data) {
+                if ($.trim(data) === "-1") {
+                    window.location.reload(true);
+                } else {
+                    $('#editInvoiceModal .modal-body').html(data);
+                }
+            });
+        }
+    });
 
-      // input/select değiştikçe çalışsın
-      document.addEventListener('DOMContentLoaded', function () {
-        document.querySelector('.tutar').addEventListener('input', hesaplaKdv);
-        document.querySelector('.kdvOrani').addEventListener('change', hesaplaKdv);
-        document.querySelector('.tevkifatOrani').addEventListener('change', hesaplaKdv);
-      });
-    </script>
+    $("#editInvoiceModal").on("hidden.bs.modal", function() {
+        $('#editInvoiceModal .modal-body').html("");
+    });
+});
+</script>
+<script>
+  function hesaplaKdv() {
+    const tutar = parseFloat(document.querySelector('.tutar').value.replace(',', '.')) || 0;
+    const kdvOrani = parseFloat(document.querySelector('.kdvOrani').value) || 0;
+    const tevkifatOrani = parseFloat(document.querySelector('.tevkifatOrani').value) || 1;
 
-    <script>
-      $(document).ready(function () {
-        var aramaZamanlayici; // Debounce için
+    const kdvHaricTutar = tutar / (1 + kdvOrani / 100);
+    const kdvTutar = tutar - kdvHaricTutar;
+    const tevkifatTutar = kdvTutar * (1 - tevkifatOrani);
 
-        // ✅ AJAX ile dinamik müşteri arama
-        $('#search').keyup(function () {
-          var searchField = $(this).val();
+    document.querySelector('.sonuc').value = kdvHaricTutar.toFixed(2);
+    document.querySelector('.hesaplananKdv').value = kdvTutar.toFixed(2);
+    document.querySelector('.tevkifatTutar').value = tevkifatTutar.toFixed(2);
+  }
 
-          // Önceki zamanlayıcıyı iptal et
-          clearTimeout(aramaZamanlayici);
+  // input/select değiştikçe çalışsın
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelector('.tutar').addEventListener('input', hesaplaKdv);
+    document.querySelector('.kdvOrani').addEventListener('change', hesaplaKdv);
+    document.querySelector('.tevkifatOrani').addEventListener('change', hesaplaKdv);
+  });
+</script>
 
-          // Liste temizle
-          $('#result').html('');
+<script>
+  $(document).ready(function () {
+    var aramaZamanlayici; // Debounce için
 
-          if (searchField.length > 2) { // 3 karakterden sonra ara
-            // 300ms bekle, ardından ara (çok hızlı yazmada gereksiz istekleri önler)
-            aramaZamanlayici = setTimeout(function () {
-              $.ajax({
-                url: "{{ route('search.customer.invoice', $firma->id) }}",
-                method: "POST",
-                data: {
-                  musteriGetir: searchField,
-                  _token: "{{ csrf_token() }}"
-                },
-                beforeSend: function () {
-                  $('#result').html('<li class="list-group-item text-muted">Aranıyor...</li>');
-                },
-                success: function (data) {
-                  $('#result').html('');
+    // ✅ AJAX ile dinamik müşteri arama
+    $('#search').keyup(function () {
+      var searchField = $(this).val();
+      
+      // Önceki zamanlayıcıyı iptal et
+      clearTimeout(aramaZamanlayici);
+      
+      // Liste temizle
+      $('#result').html('');
+      
+      if (searchField.length > 2) { // 3 karakterden sonra ara
+        // 300ms bekle, ardından ara (çok hızlı yazmada gereksiz istekleri önler)
+        aramaZamanlayici = setTimeout(function() {
+          $.ajax({
+            url: "{{ route('search.customer.invoice', $firma->id) }}",
+            method: "POST",
+            data: {
+              musteriGetir: searchField,
+              _token: "{{ csrf_token() }}"
+            },
+            beforeSend: function() {
+              $('#result').html('<li class="list-group-item text-muted">Aranıyor...</li>');
+            },
+            success: function (data) {
+              $('#result').html('');
+              
+              if (data.length === 0) {
+                $('#result').append('<li class="list-group-item text-muted">Sonuç bulunamadı</li>');
+                return;
+              }
+              
+              $.each(data, function (key, value) {
+                var tip = value.musteriTipi == "1" ? "Bireysel" : "Kurumsal";
+                var ilceAdi = value.state ? value.state.ilceName : '';
+                var ilAdi = value.country ? value.country.name : '';
+                
+                // Adres formatla
+                var adresDisplay = '';
+                if (value.adres && value.adres.trim() !== '') {
+                  adresDisplay = value.adres;
+                  if (ilceAdi || ilAdi) {
+                    adresDisplay += ' - ' + ilceAdi + '/' + ilAdi;
 
-                  if (data.length === 0) {
-                    $('#result').append('<li class="list-group-item text-muted">Sonuç bulunamadı</li>');
-                    return;
                   }
 
                   $.each(data, function (key, value) {

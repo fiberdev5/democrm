@@ -198,30 +198,60 @@
     });
   </script>
 
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $('#datatableBayi').on('click', '.editBayi', function (e) {
-        var id = $(this).attr("data-bs-id");
-        var firma_id = {{$firma->id}};
-        $.ajax({
-          url: "/" + firma_id + "/bayi/duzenle/" + id
-        }).done(function (data) {
-          if ($.trim(data) === "-1") {
-            window.location.reload(true);
-          } else {
-            $('#editBayiModal').modal('show');
-            $('#editBayiModal .modal-body').html(data);
-          }
-        });
-      });
-      $("#editBayiModal").on("hidden.bs.modal", function () {
-        $('#editBayiModal .modal-body').html("");
+<script type="text/javascript">
+  $(document).ready(function () {
+    // Edit Bayi Modal - Buton click event'i (mobil ve masaüstü için gerekli)
+    $('#datatableBayi').on('click', '.editBayi', function (e) {
+      var id = $(this).attr("data-bs-id");
+      var firma_id = {{$firma->id}};
+      $.ajax({
+        url: "/" + firma_id + "/bayi/duzenle/" + id
+      }).done(function (data) {
+        if ($.trim(data) === "-1") {
+          window.location.reload(true);
+        } else {
+          $('#editBayiModal').modal('show');
+          $('#editBayiModal .modal-body').html(data);
+        }
       });
     });
 
-    $("#editBayiModal").on("hidden.bs.modal", function() {
+    // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
+    $('#datatableBayi tbody').on('click', 'tr', function(e) {
+      var $target = $(e.target);
+      
+      // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma (butonun kendi event'i çalışsın)
+      if ($target.closest('.editBayi').length > 0 ||
+          $target.closest('.btn').length > 0 || 
+          $target.closest('td').index() === 6) {
+        return;
+      }
+      
+      var id = $(this).find('.editBayi').first().attr('data-bs-id');
+      
+      if (id) {
+        // 1. MODAL'I HEMEN AÇ (AJAX beklemeden)
+        $('#editBayiModal').modal('show');
+        
+        // 2. AYNI ANDA AJAX BAŞLAT
+        var firma_id = {{$firma->id}};
+        $.ajax({
+          url: "/" + firma_id + "/bayi/duzenle/" + id
+        }).done(function(data) {
+          if ($.trim(data) === "-1") {
+            window.location.reload(true);
+          } else {
+            $('#editBayiModal .modal-body').html(data);
+          }
+        });
+      }
+    });
+
+    $("#editBayiModal").on("hidden.bs.modal", function () {
       $('#editBayiModal .modal-body').html("");
     });
+
+  });
 
 </script>
 

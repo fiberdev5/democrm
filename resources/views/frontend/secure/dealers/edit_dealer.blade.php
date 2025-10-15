@@ -177,13 +177,74 @@
   });
 </script>
 <script>
-  // Düzenleme formunda maksimum 2 dosya kontrolü
+  //Dosya türü ve boyut kontrolü ile
   $(document).ready(function() {
+    const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'svg'];
+    const allowedMimeTypes = [
+        'application/pdf',
+        'image/jpeg',
+        'image/jpg', 
+        'image/png',
+        'image/svg+xml'
+    ];
+
     $('#belgePdfEdit').on('change', function() {
-      if (this.files.length > 2) {
-        alert('Maksimum 2 dosya seçebilirsiniz!');
-        this.value = '';
-      }
+        const files = this.files;
+        
+        // Maksimum 2 dosya kontrolü
+        if (files.length > 2) {
+            alert('Maksimum 2 dosya seçebilirsiniz!');
+            this.value = '';
+            return false;
+        }
+
+        // Her dosyanın türünü kontrol et
+        let invalidFiles = [];
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileName = file.name.toLowerCase();
+            const fileExtension = fileName.split('.').pop();
+            const fileMimeType = file.type;
+
+            // Uzantı kontrolü
+            if (!allowedExtensions.includes(fileExtension)) {
+                invalidFiles.push(file.name);
+            }
+            
+            // MIME type kontrolü
+            if (!allowedMimeTypes.includes(fileMimeType)) {
+                if (!invalidFiles.includes(file.name)) {
+                    invalidFiles.push(file.name);
+                }
+            }
+        }
+
+        // Geçersiz dosya varsa
+        if (invalidFiles.length > 0) {
+            alert('❌ Hatalı dosya türü!\n\n' + 
+                  'Geçersiz dosyalar:\n• ' + invalidFiles.join('• ') + 
+                  '\n✅ Sadece PDF, JPG, JPEG, PNG ve SVG dosyaları yükleyebilirsiniz.');
+            this.value = '';
+            return false;
+        }
+
+        // Dosya boyutu kontrolü (5MB)
+        const maxSize = 5 * 1024 * 1024;
+        let oversizedFiles = [];
+        
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].size > maxSize) {
+                oversizedFiles.push(files[i].name + ' (' + (files[i].size / 1024 / 1024).toFixed(2) + ' MB)');
+            }
+        }
+
+        if (oversizedFiles.length > 0) {
+            alert('❌ Dosya boyutu çok büyük!\n\n' + 
+                  'Büyük dosyalar:\n• ' + oversizedFiles.join('\n• ') + 
+                  '\n\n✅ Her dosya maksimum 5MB olmalıdır.');
+            this.value = '';
+            return false;
+        }
     });
   });
 </script>

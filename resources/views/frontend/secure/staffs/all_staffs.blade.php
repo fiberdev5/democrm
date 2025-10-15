@@ -252,9 +252,12 @@
     });
   </script>
 
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $('#datatablePersonel').on('click', '.editPersonel', function (e) {
+
+<script type="text/javascript">
+$(document).ready(function(){
+    // Edit Personel Modal - Buton click event'i 
+    $('#datatablePersonel').on('click', '.editPersonel', function(e){
+
         var id = $(this).attr("data-bs-id");
         var firma_id = {{$firma->id}};
         $.ajax({
@@ -272,39 +275,77 @@
         $('#editPersonelModal .modal-body').html("");
       });
     });
-  </script>
 
-  <script>
-    $(document).ready(function () {
-      var table = $('#datatablePersonel').DataTable({
-        processing: true,
-        serverSide: true,
-        language: {
-          paginate: {
-            previous: "<i class='mdi mdi-chevron-left'>",
-            next: "<i class='mdi mdi-chevron-right'>"
-          }
-        },
-        ajax: {
-          url: "{{ route('staffs', $firma->id) }}",
-          data: function (data) {
-            data.search = $('input[type="search"]').val();
-            data.durum = $('#durum').val();
-            data.grup = $('#rolePers').val();
-          }
-        },
-        'columns': [
-          { data: 'user_id' },
-          { data: 'name' },
-          { data: 'grup', orderable: false },
-          { data: 'tel' },
-          { data: 'address' },
-          { data: 'status' },
-          { data: 'action' }
-        ],
-        drawCallback: function () {
-          $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
-        },
+
+    // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
+    $('#datatablePersonel tbody').on('click', 'tr', function(e) {
+        var $target = $(e.target);
+        
+        // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma (butonun kendi event'i çalışsın)
+        if ($target.closest('.editPersonel').length > 0 ||
+            $target.closest('.btn').length > 0 || 
+            $target.closest('td').index() === 6) {  // Düzenle kolonu 6. index
+            return;
+        }
+        
+        var id = $(this).find('.editPersonel').first().attr('data-bs-id');
+        
+        if (id) {
+            // 1. MODAL'I HEMEN AÇ (AJAX beklemeden)
+            $('#editPersonelModal').modal('show');
+            
+            // 2. AYNI ANDA AJAX BAŞLAT
+            var firma_id = {{$firma->id}};
+            $.ajax({
+                url: "/" + firma_id + "/personel/duzenle/" + id
+            }).done(function(data) {
+                if ($.trim(data) === "-1") {
+                    window.location.reload(true);
+                } else {
+                    $('#editPersonelModal .modal-body').html(data);
+                }
+            });
+        }
+    });
+
+    $("#editPersonelModal").on("hidden.bs.modal", function() {
+        $('#editPersonelModal .modal-body').html("");
+    });
+});
+</script>
+
+<script>
+$(document).ready(function () {
+  var table = $('#datatablePersonel').DataTable({
+      processing: true,
+      serverSide: true,
+      language: {
+        paginate: {
+          previous: "<i class='mdi mdi-chevron-left'>",
+          next: "<i class='mdi mdi-chevron-right'>"
+        }
+      },
+      ajax: {
+        url: "{{ route('staffs',$firma->id) }}",
+        data: function(data) {
+          data.search = $('input[type="search"]').val();
+          data.durum = $('#durum').val();
+          data.grup = $('#rolePers').val();
+        }
+      },
+      'columns': [
+        { data: 'user_id'},
+        { data: 'name' },
+        { data: 'grup', orderable: false },
+        { data: 'tel' },
+        { data: 'address' },
+        { data: 'status' },
+        { data: 'action'}           
+      ],
+      drawCallback: function() {
+        $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+      },
+
         "order": [[0, 'desc']],
         "columnDefs": [{
           "targets": 0,

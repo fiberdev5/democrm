@@ -81,6 +81,7 @@
           </div>
           <div class="card-body card-offer-body">
             <table id="datatableOffer" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+
                 {{-- MASAÜSTÜ GÖRÜNÜMÜ (Orijinal Kodunuz - Hiçbir Değişiklik Yapılmadı) --}}
 {{-- Bu bölüm sadece geniş ekranlarda (lg ve üstü) görünecektir. --}}
 <div class="d-none d-lg-block">
@@ -124,49 +125,46 @@
 </div>
 
 
-<div class="d-lg-none">
-    <div  class="d-flex gap-1 justify-content-between align-items-center mb-2">
-        <a class="btn btn-success btn-sm addOffer" data-bs-toggle="modal" data-bs-target="#addOfferModal">
-            <i class="fas fa-plus"></i><span>Teklif Ekle</span>
-        </a>
-        <div style="margin-top: 0px !important;" class="searchWrap">
-            <div class="btn-group" id="teklif_filtre">
-                <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+              <div class="searchWrap float-end">
+                <div class="btn-group mb-2">
+                  <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Filtrele <i class="mdi mdi-chevron-down"></i>
+
                 </button>
                 <div class="dropdown-menu servisDrop">
+
                     <div class="item">
-                        <div class="row">
-                            <label class="col-sm-4 custom-p  col-4">Durum</label>
-                            <div class="col-sm-8 custom-p col-8">
-                                <select name="teklifDurumu" id="teklifDurumu" class="form-select">
-                                    <option value="">Hepsi</option>
-                                    <option value="0">Beklemede</option>
-                                    <option value="1">Onaylandı</option>
-                                </select>
-                            </div>
+                      <div class="row">
+                        <label class="col-sm-4">Durum</label>
+                        <div class="col-sm-8">
+                          <select name="teklifDurumu" id="teklifDurumu" class="form-select">
+                            <option value="">Hepsi</option>
+                            <option value="0">Beklemede</option>
+                            <option value="1">Onaylandı</option>
+                          </select>
                         </div>
+                      </div>
                     </div>
+      
                     <div class="item">
-                        <div class="row">
-                            <label class="col-sm-4 custom-p  col-4">Tarih Aralığı:</label>
-                            <div class="col-sm-8 custom-p col-8">
-                                <input id="daterange" class="tarih-araligi">
-                                <div class="tarihAraligi mt-2 mb-2">
-                                    <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
-                                    <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
-                                    <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
-                                    <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
-                                    <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
-                                </div>
-                            </div>
+                      <div class="row">
+                        <label class="col-sm-4">Tarih Aralığı:</label>
+                        <div class="col-sm-8">
+                          <input id="daterange" class="tarih-araligi">
+                          <div class="tarihAraligi mt-2 mb-2">
+                            <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
+                            <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
+                            <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                            <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                            <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
+                          </div>
                         </div>
+                      </div>
                     </div>
-                </div>
-            </div><!-- /btn-group -->
-        </div>
-    </div>
-</div>
+                  </div>
+                </div><!-- /btn-group -->
+              </div>
               
               <thead class="title">
                 <tr>
@@ -184,8 +182,8 @@
             </table>
           </div>
         </div>
-      </div> <!-- end col -->
-    </div> <!-- end row -->
+      </div>
+    </div>
   </div>
 </div>
         
@@ -197,13 +195,12 @@
         <h6 class="modal-title" id="myModalLabel">Teklif Ekle</h6>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body p-b">
-      Yükleniyor...
+      <div class="modal-body">
+        Yükleniyor...
       </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
+    </div>
+  </div>
+</div>
 
 <!-- edit modal content -->
 <div id="editOfferModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -216,39 +213,38 @@
       <div class="modal-body">
         Yükleniyor...
       </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+    </div>
+  </div>
+</div>
 
 <script>
   var getUrlParameter = function getUrlParameter(sParam) {
-      var sPageURL = window.location.search.substring(1),
-        sURLVariables = sPageURL.split('&'),
-        sParameterName,
-        i;
-      for (i = 0; i < sURLVariables.length; i++) {
-        sParameterName = sURLVariables[i].split('=');
-
-        if (sParameterName[0] === sParam) {
-            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-        }
+    var sPageURL = window.location.search.substring(1),
+      sURLVariables = sPageURL.split('&'),
+      sParameterName,
+      i;
+    for (i = 0; i < sURLVariables.length; i++) {
+      sParameterName = sURLVariables[i].split('=');
+      if (sParameterName[0] === sParam) {
+        return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
       }
-    };
-
-    var mid = getUrlParameter('did');
-    var firma_id = {{$firma->id}};
-    if(mid){
-      $.ajax({
-        url: "/"+ firma_id + "/teklif-duzenle/"+ mid
-      }).done(function(data) { 
-        if($.trim(data)==="-1"){
-          window.location.reload(true);
-        }else{
-          $('#editOfferModal').modal('show');
-          $('#editOfferModal .modal-body').html(data);
-        }
-      });
     }
+  };
+
+  var mid = getUrlParameter('did');
+  var firma_id = {{$firma->id}};
+  if(mid){
+    $.ajax({
+      url: "/"+ firma_id + "/teklif-duzenle/"+ mid
+    }).done(function(data) { 
+      if($.trim(data)==="-1"){
+        window.location.reload(true);
+      }else{
+        $('#editOfferModal').modal('show');
+        $('#editOfferModal .modal-body').html(data);
+      }
+    });
+  }
 </script>
 
 <script type="text/javascript">
@@ -266,236 +262,263 @@ $(document).ready(function(){
       }
     });
   });
+  
   $("#addOfferModal").on("hidden.bs.modal", function() {
-    $('#addOfferModal .modal-body').html("");
+    $('#addOfferModal .modal-body').html("Yükleniyor...");
+  });
+
+  // Edit Offer Modal - Buton click event'i (mobil ve masaüstü için gerekli)
+  $('#datatableOffer').on('click', '.editOffer', function(e){
+    var id = $(this).attr("data-bs-id");
+    var firma_id = {{$firma->id}};
+    $.ajax({
+      url: "/"+ firma_id + "/teklif-duzenle/" + id
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#editOfferModal').modal('show');
+        $('#editOfferModal .modal-body').html(data);
+      }
+    });
+  });
+
+  // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
+  $('#datatableOffer tbody').on('click', 'tr', function(e) {
+    var $target = $(e.target);
+    
+    // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma (butonun kendi event'i çalışsın)
+    if ($target.closest('.editOffer').length > 0 ||
+        $target.closest('.btn').length > 0 || 
+        $target.closest('td').index() === 5) {
+      return;
+    }
+    
+    var id = $(this).find('.editOffer').first().attr('data-bs-id');
+    
+    if (id) {
+      // 1. MODAL'I HEMEN AÇ (AJAX beklemeden)
+      $('#editOfferModal').modal('show');
+      
+      // 2. AYNI ANDA AJAX BAŞLAT
+      var firma_id = {{$firma->id}};
+      $.ajax({
+        url: "/"+ firma_id + "/teklif-duzenle/" + id
+      }).done(function(data) {
+        if ($.trim(data) === "-1") {
+          window.location.reload(true);
+        } else {
+          $('#editOfferModal .modal-body').html(data);
+        }
+      });
+    }
+  });
+  
+  $("#editOfferModal").on("hidden.bs.modal", function() {
+    $('#editOfferModal .modal-body').html("Yükleniyor...");
   });
 });
 </script>
 
 <script type="text/javascript">
 $(document).ready(function(){
-    $('#datatableOffer').on('click', '.editOffer', function(e){
-        var id = $(this).attr("data-bs-id");
-        var firma_id = {{$firma->id}};
-        $.ajax({
-            url: "/"+ firma_id + "/teklif-duzenle/" + id
-        }).done(function(data) {
-            if ($.trim(data) === "-1") {
-                window.location.reload(true);
-            } else {
-                $('#editOfferModal').modal('show');
-                $('#editOfferModal .modal-body').html(data);
-            }
-        });
+  $('#datatableOffer').on('click', '.editOffer', function(e){
+    var id = $(this).attr("data-bs-id");
+    var firma_id = {{$firma->id}};
+    $.ajax({
+      url: "/"+ firma_id + "/teklif-duzenle/" + id
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#editOfferModal').modal('show');
+        $('#editOfferModal .modal-body').html(data);
+      }
     });
-    $("#editOfferModal").on("hidden.bs.modal", function() {
-      $('#editOfferModal .modal-body').html("");
-    });
-});
-</script>
-
-<script>
-  $(document).ready(function () {
-    // Tarih aralığı seçenekleri
-    var lastYear = moment().subtract(1, 'year');
-    var lastMonth = moment().subtract(1, 'month');
-    var lastWeek = moment().subtract(7, 'days');
-    var yesterday = moment().subtract(1, 'days');
-    var today = moment();
-
-    // Butonları oluştur ve tarih aralığını güncelle
-    $('#lastYear').on('click', function() {
-        $('#daterange').data('daterangepicker').setStartDate(lastYear);
-        $('#daterange').data('daterangepicker').setEndDate(today);
-        // Filtreleme fonksiyonunu çağır
-        filterData();
-    });
-
-    $('#lastMonth').on('click', function() {
-        $('#daterange').data('daterangepicker').setStartDate(lastMonth);
-        $('#daterange').data('daterangepicker').setEndDate(today);
-        // Filtreleme fonksiyonunu çağır
-        filterData();
-    });
-
-    $('#lastWeek').on('click', function() {
-        $('#daterange').data('daterangepicker').setStartDate(lastWeek);
-        $('#daterange').data('daterangepicker').setEndDate(today);
-        // Filtreleme fonksiyonunu çağır
-        filterData();
-    });
-
-    $('#yesterday').on('click', function() {
-        $('#daterange').data('daterangepicker').setStartDate(yesterday);
-        $('#daterange').data('daterangepicker').setEndDate(yesterday);
-        // Filtreleme fonksiyonunu çağır
-        filterData();
-    });
-
-    $('#today').on('click', function() {
-        $('#daterange').data('daterangepicker').setStartDate(today);
-        $('#daterange').data('daterangepicker').setEndDate(today);
-        // Filtreleme fonksiyonunu çağır
-        filterData();
-    });
-    
-    // Filtreleme fonksiyonu
-    function filterData() {
-        $('#datatableOffer').DataTable().draw();
-    }
+  });
+  
+  $("#editOfferModal").on("hidden.bs.modal", function() {
+    $('#editOfferModal .modal-body').html("Yükleniyor...");
+  });
 });
 </script>
 
 <script>
 $(document).ready(function () {
-    // Varsayılan tarih aralığı: Son 3 gün (bugünden 2 gün öncesi - bugün)
-    var start_date = moment().subtract(2, 'days');
-    var end_date = moment(); 
+  // Varsayılan tarih aralığı: Son 3 gün
+  var start_date = moment().subtract(2, 'days');
+  var end_date = moment(); 
 
-    $('#daterange').daterangepicker({
-      startDate : start_date,
-      endDate : end_date,
-      locale: {
-        format: 'DD-MM-YYYY',
-        separator: ' - ',
-        applyLabel: 'Uygula',
-        cancelLabel: 'İptal',
-        weekLabel: 'H',
-        daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
-        monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
-        firstDay: 1
-      }   
-    },
-
-    function(start_date, end_date){
-      $('#daterange').html(start_date.format('DD-MM-YYYY') + '-' + end_date.format('DD-MM-YYYY'));
-      table.draw();
-    });
-
-  var table = $('#datatableOffer').DataTable({
-      processing: true,
-      serverSide: true,
-      order: [[0, 'desc']],
-      language: {
-        paginate: {
-          previous: "<i class='mdi mdi-chevron-left'>",
-          next: "<i class='mdi mdi-chevron-right'>"
-        }
-      },
-      ajax: {
-        url: "{{ route('offers', $firma->id) }}",
-        data: function(data) {
-          data.search = $('input[type="search"]').val();
-          data.teklifDurumu = $('#teklifDurumu').val();
-          data.from_date = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
-          data.to_date = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
-        }
-      },
-      'columns': [
-        { data: 'id', orderable: true},
-        { data: 'created_at', orderable: true},
-        { data: 'mid', orderable: true },
-        { data: 'genelToplam', orderable: true },
-        { data: 'teklifDurumu' , orderable: true},
-        { data: 'action'}           
-      ],
-      drawCallback: function() {
-        $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
-      },
-        "order": [[1, 'desc']],
-        "columnDefs": [{
-          "targets": 0,
-          "className": "gizli"
-        }],
-        "oLanguage": {
-            "sDecimal":        ",",
-          "sEmptyTable":     "Tabloda herhangi bir veri mevcut değil",
-          "sInfo":           "Teklif Sayısı: _TOTAL_",
-          "sInfoEmpty":      "Kayıt yok",
-          "sInfoFiltered":   "",
-          "sInfoPostFix":    "",
-          "sInfoThousands":  ".",
-          "sLengthMenu":     "_MENU_",
-          "sLoadingRecords": "Yükleniyor...",
-          "sProcessing":     "İşleniyor...",
-          "sSearch":         "",
-          "sZeroRecords":    "Eşleşen kayıt bulunamadı",
-          "oPaginate": {
-              "sFirst":    "İlk",
-              "sLast":     "Son",
-              "sNext":     '<i class="fas fa-angle-double-right"></i>',
-              "sPrevious": '<i class="fas fa-angle-double-left"></i>'
-          },
-          "oAria": {
-              "sSortAscending":  ": artan sütun sıralamasını aktifleştir",
-              "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
-          },
-          "select": {
-              "rows": {
-                  "_": "%d kayıt seçildi",
-                  "0": "",
-                  "1": "1 kayıt seçildi"
-              }
-          }
-          },
-        dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
-        "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
-         "initComplete": function(settings, json) {
-    var searchContainer = $('#datatableOffer_filter');
-    var searchInput = searchContainer.find('input');
-
-    // Mobil ve masaüstünde tutarlı bir yapı için mobil görünüme ait filtre butonunu kullanacağız.
-    var filterWrapper = $('.d-lg-none .searchWrap');
-
-    // Arama kutusu ve filtre butonu için yeni bir flex container oluşturuyoruz.
-    var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
-
-    // DataTables'ın varsayılan "Search:" etiketini kaldırıyoruz.
-    searchContainer.find('label').contents().filter(function() {
-        return this.nodeType == 3;
-    }).remove();
-
-    // Arama kutusunu ve kapsayıcısını stillendiriyoruz.
-    searchContainer.addClass('flex-grow-1');
-    searchInput.addClass('w-100');
-    searchInput.attr('placeholder', 'Teklif Ara...');
-
-    // Arama kutusunu ve filtre butonunu yeni flex container'a ekliyoruz.
-    flexContainer.append(searchContainer);
-    flexContainer.append(filterWrapper);
-
-    // Artık ihtiyaç kalmadığı için masaüstü için olan orijinal filtre sarmalayıcısını kaldırıyoruz.
-    $('.d-none.d-lg-block .searchWrap').remove();
-
-    // Oluşturduğumuz yeni ve birleşik arama/filtre çubuğunu tablonun üst kısmına ekliyoruz.
-    $('#datatableOffer_wrapper .top').append(flexContainer);
-
-    // Taşıma işlemi bittikten sonra filtre butonunu görünür yapıyoruz.
-    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
-}
+  $('#daterange').daterangepicker({
+    startDate: start_date,
+    endDate: end_date,
+    locale: {
+      format: 'DD-MM-YYYY',
+      separator: ' - ',
+      applyLabel: 'Uygula',
+      cancelLabel: 'İptal',
+      weekLabel: 'H',
+      daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
+      monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+      firstDay: 1
+    }   
+  }, function(start_date, end_date){
+    $('#daterange').html(start_date.format('DD-MM-YYYY') + ' - ' + end_date.format('DD-MM-YYYY'));
+    table.draw();
   });
 
+  var table = $('#datatableOffer').DataTable({
+    processing: true,
+    serverSide: true,
+    order: [[0, 'desc']],
+    language: {
+      paginate: {
+        previous: "<i class='mdi mdi-chevron-left'>",
+        next: "<i class='mdi mdi-chevron-right'>"
+      }
+    },
+    ajax: {
+      url: "{{ route('offers', $firma->id) }}",
+      data: function(data) {
+        data.search = $('input[type="search"]').val();
+        data.teklifDurumu = $('#teklifDurumu').val();
+        
+        var daterangepicker = $('#daterange').data('daterangepicker');
+        if (daterangepicker && daterangepicker.startDate) {
+          data.from_date = daterangepicker.startDate.format('YYYY-MM-DD');
+          data.to_date = daterangepicker.endDate.format('YYYY-MM-DD');
+        }
+      }
+    },
+    columns: [
+      { data: 'id', orderable: true},
+      { data: 'created_at', orderable: true},
+      { data: 'mid', orderable: true },
+      { data: 'genelToplam', orderable: true },
+      { data: 'teklifDurumu', orderable: true},
+      { data: 'action', orderable: false}           
+    ],
+    drawCallback: function() {
+      $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+    },
+    order: [[1, 'desc']],
+    columnDefs: [{
+      targets: 0,
+      className: "gizli"
+    }],
+    oLanguage: {
+      sDecimal: ",",
+      sEmptyTable: "Tabloda herhangi bir veri mevcut değil",
+      sInfo: "Teklif Sayısı: _TOTAL_",
+      sInfoEmpty: "Kayıt yok",
+      sInfoFiltered: "",
+      sInfoPostFix: "",
+      sInfoThousands: ".",
+      sLengthMenu: "_MENU_",
+      sLoadingRecords: "Yükleniyor...",
+      sProcessing: "İşleniyor...",
+      sSearch: "",
+      sZeroRecords: "Eşleşen kayıt bulunamadı",
+      oPaginate: {
+        sFirst: "İlk",
+        sLast: "Son",
+        sNext: '<i class="fas fa-angle-double-right"></i>',
+        sPrevious: '<i class="fas fa-angle-double-left"></i>'
+      },
+      oAria: {
+        sSortAscending: ": artan sütun sıralamasını aktifleştir",
+        sSortDescending: ": azalan sütun sıralamasını aktifleştir"
+      },
+      select: {
+        rows: {
+          "_": "%d kayıt seçildi",
+          "0": "",
+          "1": "1 kayıt seçildi"
+        }
+      }
+    },
+    dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+    lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
+    initComplete: function(settings, json) {
+      var searchContainer = $('#datatableOffer_filter');
+      var searchInput = searchContainer.find('input');
+      var filterWrapper = $('.searchWrap');
+
+      // Arama kutusu ve filtre butonu için yeni bir flex container oluştur
+      var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
+
+      // DataTables'ın varsayılan "Search:" etiketini kaldır
+      searchContainer.find('label').contents().filter(function() {
+        return this.nodeType == 3;
+      }).remove();
+
+      // Arama kutusunu ve kapsayıcısını stillendir
+      searchContainer.addClass('flex-grow-1');
+      searchInput.addClass('w-100');
+      searchInput.attr('placeholder', 'Teklif Ara...');
+
+      // Arama kutusunu ve filtre butonunu flex container'a ekle
+      flexContainer.append(searchContainer);
+      flexContainer.append(filterWrapper);
+
+      // Yeni flex container'ı tablonun üst kısmına ekle
+      $('#datatableOffer_wrapper .top').append(flexContainer);
+
+      // Filtre butonunu görünür yap
+      $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+    }
+  });
+
+  // Tarih butonları
+  $('#today').on('click', function() {
+    var today = moment();
+    $('#daterange').data('daterangepicker').setStartDate(today);
+    $('#daterange').data('daterangepicker').setEndDate(today);
+    table.draw();
+  });
+
+  $('#yesterday').on('click', function() {
+    var yesterday = moment().subtract(1, 'days');
+    $('#daterange').data('daterangepicker').setStartDate(yesterday);
+    $('#daterange').data('daterangepicker').setEndDate(yesterday);
+    table.draw();
+  });
+
+  $('#lastWeek').on('click', function() {
+    var lastWeek = moment().subtract(7, 'days');
+    $('#daterange').data('daterangepicker').setStartDate(lastWeek);
+    $('#daterange').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#lastMonth').on('click', function() {
+    var lastMonth = moment().subtract(1, 'month');
+    $('#daterange').data('daterangepicker').setStartDate(lastMonth);
+    $('#daterange').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#lastYear').on('click', function() {
+    var lastYear = moment().subtract(1, 'year');
+    $('#daterange').data('daterangepicker').setStartDate(lastYear);
+    $('#daterange').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  // Durum filtresi değiştiğinde
   $('#teklifDurumu').change(function(){
     table.draw();        
   });
 
+  // Filtre butonu metin değiştirme
+  $('.searchWrap').on('show.bs.dropdown', '.btn-group', function () {
+    $(this).find('.filtrele').html('Kapat <i class="mdi mdi-chevron-down"></i>');
+  });
+
+  $('.searchWrap').on('hide.bs.dropdown', '.btn-group', function () {
+    $(this).find('.filtrele').html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+  });
 });
-
-
 </script>
-<script>
-    $(document).ready(function () {
-      // Olay dinleyiciyi, silinmeyen bir üst element olan `.searchWrap` üzerine kuruyoruz.
-      // Bu sayede içindeki elementler taşınsa bile olay dinleyici çalışmaya devam eder.
-      $('.searchWrap').on('show.bs.dropdown', '.btn-group', function () {
-        // Tıklanan `.btn-group` içindeki `.filtrele` butonunu bulup metnini değiştiriyoruz.
-        $(this).find('.filtrele').html('Kapat <i class="mdi mdi-chevron-down"></i>');
-      });
 
-      $('.searchWrap').on('hide.bs.dropdown', '.btn-group', function () {
-        // Menü kapandığında metni tekrar eski haline getiriyoruz.
-        $(this).find('.filtrele').html('Filtrele <i class="mdi mdi-chevron-down"></i>');
-      });
-    });
-</script>
 @endsection
