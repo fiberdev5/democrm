@@ -4,23 +4,49 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-
+<style>
+    
+    .card-statics-t{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-statics-t-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-statics-t-body{padding: 3px 7px !important;}
+  .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
+  .teknisyen-dropdown .tarih-butonlari .btn.active {
+    background-color: #ffffffff !important;
+    color: red !important;
+}
+  @media (max-width: 576px) {
+    .custom-header{display: none !important;}
+    .teknisyen-dropdown .tarih-butonlari .btn {
+    background-color: #5c636a !important;
+    color: white !important;
+}
+.teknisyen-dropdown .tarih-butonlari .btn.active {
+    background-color: #5c636a !important;
+    color: white !important;
+}
+  }
+  
+</style>
 <div class="page-content servis-istatistik">
     <div class="container-fluid">
         @include('frontend.secure.statistics.statistics_menu', ['tenant_id' => $tenant_id])
-        <div class="card">
-            <div class="techinican-p card-header sayfaBaslik d-flex justify-content-between align-items-center">
-                <span>Teknisyen İstatistikleri</span>
+        <div class="card card-statics-t">
+            <div class="techinican-p card-header card-statics-t-header sayfaBaslik d-flex justify-content-between align-items-center">
+                <span class="custom-header">Teknisyen İstatistikleri</span>
                 <!-- Filtre Dropdown -->
                 <div class="dropdown teknisyen-dropdown" id="teknisyenFilterDropdownContainer">
                 <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" id="filtreDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     Filtrele <i class="mdi mdi-chevron-down"></i>
                 </button>
-                <div class="dropdown-menu teknisyen-dropdown-menu p-3 dropdown-menu-end" style="min-width: 300px;">
+                <div class="dropdown-menu servisDrop teknisyen-dropdown-menu p-3 dropdown-menu-end" style="min-width: 300px;">
                         <form id="filtreForm">
                             <div class="row mb-3">
-                                <label class="col-4 col-form-label">Cihaz Türü</label>
-                                <div class="col-8">
+                                <label class="col-5 col-form-label">Cihaz Türü</label>
+                                <div class="col-7">
                                     <select class="form-select" name="cihazTur" id="cihazTur">
                                         <option value="">Hepsi</option>
                                         @foreach($cihazTurleri as $cihaz)
@@ -31,8 +57,8 @@
                             </div>
 
                            <div class="row mb-3">
-                                <label class="col-4 col-form-label">Tarih Aralığı</label>
-                                <div class="col-8">
+                                <label class="col-5 col-form-label">Tarih Aralığı</label>
+                                <div class="col-7">
                                      <input type="text" id="tarihAraligiTeknisyen" class="form-control" style="background:#fff;">
                                 </div>
                             </div>
@@ -49,7 +75,7 @@
                 </div>
             </div>
 
-            <div class="card-body">
+            <div class="card-body card-statics-t-body">
                 <div id="loadingDiv" class="text-center py-4">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Yükleniyor...</span>
@@ -744,6 +770,19 @@ function showDetailError(message) {
 if (typeof moment !== 'undefined') {
     moment.locale('tr');
 }
+</script>
+
+<script>
+  $(document).ready(function () {
+    var dropdownContainer = $('#teknisyenFilterDropdownContainer');
+    var filterButton = dropdownContainer.find('.filtrele');
+    dropdownContainer.on('show.bs.dropdown', function () {
+      filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+    });
+    dropdownContainer.on('hide.bs.dropdown', function () {
+      filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+    });
+  });
 </script>
 @endsection
 

@@ -26,17 +26,17 @@
   
   <div class="row">
     <label class="col-sm-4">Telefon:</label>
-    <div class="col-sm-4">
+    <div class="col-sm-4 col-6  custom-p-r-m-md">
       <input name="tel1" class="form-control phone" value="{{$customer->tel1}}" type="text" required>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4 col-6 custom-p-m-md">
       <input name="tel2" class="form-control phone" value="{{$customer->tel2}}" type="text">
     </div>
   </div>
 
   <div class="row">
     <div class="col-sm-4"><label>İl/İlçe</label></div>
-    <div class="col-sm-4">
+    <div class="col-sm-4 col-6 custom-p-r-m-md">
       <select name="il" id="sehirSelect" class="form-control form-select" style="width:100%!important;">
         <option value="" selected disabled>-Seçiniz-</option>
         @foreach($countries as $item)
@@ -44,7 +44,7 @@
         @endforeach
       </select>
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4 col-6 custom-p-m-md">
       <select name="ilce" id="ilceSelect" class="form-control form-select" style="width:100%!important;">
         <option value="" selected disabled>-Seçiniz-</option>                              
       </select>
@@ -67,11 +67,11 @@
   </div>
     
   <div class="row vergi-box" id="vergiBox">
-    <label class="col-sm-4">Vergi No/Dairesi</label>
-    <div class="col-sm-4">
+    <label class="col-sm-4  ">Vergi No/Dairesi</label>
+    <div class="col-sm-4 col-6 custom-p-r-m-md">
       <input name="vergiNo" id="vergiNo" class="form-control " type="text" placeholder="Vergi No" value="{{$customer->vergiNo}}">
     </div>
-    <div class="col-sm-4">
+    <div class="col-sm-4 col-6 custom-p-m-md">
       <input name="vergiDairesi" class="form-control " type="text" placeholder="Vergi Dairesi" value="{{$customer->vergiDairesi}}">
     </div>
   </div>

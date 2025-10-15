@@ -11,6 +11,9 @@
       opacity: 0;
     }
 
+    .card-invocies{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-invocies-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-invocies-body{padding: 3px 7px !important;}
     @media (max-width: 767px) {
       .pageDetail .searchWrap {
       }
@@ -71,15 +74,15 @@
   <div class="container-fluid">
     <div class="row pageDetail">
       <div class="col-12">
-        <div class="card">
-          <div class="card-header sayfaBaslik">
+        <div class="card card-invocies">
+          <div class="card-header card-invocies-header sayfaBaslik">
              Faturalar
           </div>
-          <div class="card-body">
+          <div class="card-body card-invocies-body">
             <table id="datatableInvoice" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <a class="btn btn-success btn-sm addInvoice" data-bs-toggle="modal" data-bs-target="#addInvoiceModal"><i class="fas fa-plus"></i><span>Fatura Ekle</span></a>
               <div class="searchWrap float-end">
-                <div class="btn-group mb-2 ">
+                <div class="btn-group">
                   <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Filtrele <i class="mdi mdi-chevron-down"></i>
                   </button>
@@ -418,7 +421,7 @@ $(document).ready(function () {
     var searchContainer = $('#datatableInvoice_filter');
     var searchInput = searchContainer.find('input');
     var filterWrapper = $('.searchWrap');
-    var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
+    var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
     searchContainer.find('label').contents().filter(function() {
         return this.nodeType == 3;
     }).remove();

@@ -8,6 +8,10 @@
     padding-left: 0px !important;
   }
 }
+@media (max-width: 767px) {
+#addPers label{margin-bottom: 3px !important;}
+}
+
 </style>
 <form method="post" id="addPers" action="{{ route('store.staff',$firma->id)}}" enctype="multipart/form-data" >
   @csrf   
@@ -33,7 +37,7 @@
   </div>
   <div class="row">
     <div class="col-sm-4 custom-p-r"><label>İl/İlçe</label></div>
-    <div class="col-sm-4 custom-p-l">
+    <div class="col-sm-4 col-6 custom-p-r-m-md custom-p-l">
       <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;">
         <option value="" selected disabled>-Seçiniz-</option>
         @foreach($countries as $item)
@@ -41,7 +45,7 @@
         @endforeach
       </select>
     </div>
-    <div class="col-sm-4 custom-p-l">
+    <div class="col-sm-4 col-6 custom-p-m-md custom-p-l">
       <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;">
         <option value="" selected disabled>-Seçiniz-</option>                              
       </select>

@@ -1,3 +1,12 @@
+<style>
+  .card-offer{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-offer-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-offer-body{padding: 3px 7px !important;}
+
+   @media (max-width: 768px) {
+.custom-gutter{    --bs-gutter-x: 5px !important;}
+ }
+</style>
 <script type="text/javascript">
     function sayiKontrol(v) {
       var isNum = /^[0-9-'.']*$/;
@@ -10,12 +19,12 @@
   <form method="post" id="editOffer" class="servisModal" action="{{ route('update.offer', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
     @csrf
     <div class="row" style="margin: 0">
-      <div class="card col-sm-6 card1">
-        <div class="card-header" style="color: black;font-weight:bold">Müşteri Bilgileri</div>
-        <div class="card-body">
+      <div class="card card-offer col-sm-6 card1">
+        <div class="card-header card-offer-header" style="color: black;font-weight:bold">Müşteri Bilgileri</div>
+        <div class="card-body card-offer-body">
           <div class="row form-group ">
-            <label class="col-sm-3 col-form-label">Müşteri<span style="font-weight: bold; color: red;">*</span></label>
-            <div class="col-md-9">
+            <label class="col-sm-4 rw1 col-form-label">Müşteri<span style="font-weight: bold; color: red;">*</span></label>
+            <div class="col-md-8 rw2">
               <input id="search" type="text" name="adSoyad" class="form-control adSoyad" data-id="" autocomplete="off" placeholder="Müşteri Adı" value="{{$musteri->adSoyad}}" required>
               <input type="hidden" name="musteri" class="mid" value="{{$musteri->id}}"/>
               <ul id="result" style="margin: 0; padding: 0"></ul>
@@ -23,8 +32,8 @@
           </div>
   
           <div class="row form-group">
-            <div class="col-md-3 rw1 col-form-label"><label>Müşteri Bilgileri</label></div>
-            <div class="col-md-9 rw2 col-form-label"><textarea class="form-control musBilgileri" disabled style="height: 77px;resize: none !important">{{$musteri->adSoyad}}
+            <div class="col-md-4 rw1 col-form-label"><label>Müşteri Bilgileri</label></div>
+            <div class="col-md-8 rw2 col-form-label"><textarea class="form-control musBilgileri" disabled style="height: 77px;resize: none !important">{{$musteri->adSoyad}}
 0{{$musteri->tel1}} 
 {{$musteri->adres}} - {{$musteri->state->ilceName}}/{{$musteri->country->name}}</textarea>
             </div>
@@ -32,15 +41,15 @@
         </div>
       </div>
   
-      <div class="card col-sm-6 card2">
-        <div class="card-header" style="color: black;font-weight:bold">Fatura Bilgileri</div>
-        <div class="card-body">
+      <div class="card card-offer col-sm-6 card2">
+        <div class="card-header card-offer-header" style="color: black;font-weight:bold">Fatura Bilgileri</div>
+        <div class="card-body card-offer-body">
           @php 
             $sontarih = \Carbon\Carbon::parse($offer_id->created_at)->format('Y-m-d');
           @endphp
           <div class="row form-group">
             <div class="col-md-3 rw1 col-form-label"><label><span class="musteriAdiSpan">Tarih</span> <span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-9 rw2">
+            <div class="col-md-9 rw2 d-flex gap-2">
               <input name="kayitTarihi" class="form-control datepicker"  type="date" value="{{$sontarih}}" style="width: 110px!important;display: inline-block;background:#fff;text-align:center" required>
               <input type="text" class="form-control bg-danger" readonly="" value="{{$personel->name}}" style="width: 120px;display: inline-block;color: #fff;text-align: center;">
             </div>
@@ -62,11 +71,11 @@
       </div>
     </div>
   
-    <div class="card card3">
-      <div class="card-body">
+    <div class="card card-offer card3 my-2">
+      <div class="card-body card-offer-body">
         <div class="row form-group head">
           <div class="col-5 rw1 col-form-label"><label>Cinsi</label></div>
-          <div class="col-2 rw2 col-form-label"><label>Miktar</label></div>
+          <div class="col-2 rw2 col-form-label "><label>Miktar</label></div>
           <div class="col-2 rw3 col-form-label"><label>Fiyat</label></div>
           <div class="col-3 rw4 col-form-label"><label>Tutar</label></div>
         </div>
@@ -81,9 +90,9 @@
             @endphp
             <div class="row form-group">
               <div class="col-5 rw1 col-form-label"><input type="text" name="aciklama[]" class="form-control buyukYaz aciklama aciklama{{$i}}" value="{{$product->urun}}" placeholder="{{$i}}.Ürün" autocomplete="off"></div>
-              <div class="col-2 rw2 col-form-label"><input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control buyukYaz miktar miktar{{$i}}" value="{{$product->miktar}}" autocomplete="off"></div>
-              <div class="col-2 rw3 col-form-label"><input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control buyukYaz fiyat fiyat{{$i}}" value="{{$product->fiyat}}" autocomplete="off"></div>
-              <div class="col-3 rw4 col-form-label"><input type="text" name="tutar[]" onkeyup="sayiKontrol(this)" class="form-control buyukYaz tutar tutar{{$i}}" value="{{$product->tutar}}" autocomplete="off"></div>       
+              <div class="col-2 rw2 col-form-label custom-gutter"><input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control buyukYaz miktar miktar{{$i}}" value="{{$product->miktar}}" autocomplete="off"></div>
+              <div class="col-2 rw3 col-form-label custom-gutter"><input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control buyukYaz fiyat fiyat{{$i}}" value="{{$product->fiyat}}" autocomplete="off"></div>
+              <div class="col-3 rw4 col-form-label custom-gutter"><input type="text" name="tutar[]" onkeyup="sayiKontrol(this)" class="form-control buyukYaz tutar tutar{{$i}}" value="{{$product->tutar}}" autocomplete="off"></div>       
             </div>
           @endforeach
         </div>
@@ -96,8 +105,8 @@
     </div>
   
     <div class="row" style="margin: 0">
-      <div class="card col-sm-6 card4">
-        <div class="card-body">
+      <div class="card card-offer col-sm-6 card4">
+        <div class="card-body card-offer-body">
           <div class="row form-group" style="border:0">
             <div class="col-md-4 rw1 col-form-label"><label>Durum</label></div>
             <div class="col-md-8 rw2">
@@ -124,27 +133,27 @@
         </div>
       </div>
   
-      <div class="card col-sm-6 card5">
-        <div class="card-body">
+      <div class="card card-offer col-sm-6 card5">
+        <div class="card-body card-offer-body">
           <div class="row form-group">
-            <div class="col-md-8 rw1 col-form-label"><label>Toplam</label></div>
-            <div class="col-md-4 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" value="{{$offer_id->toplam}}" name="toplam" autocomplete="off" class="form-control toplam"></div>
+            <div class="col-md-4 rw1 col-form-label"><label>Toplam</label></div>
+            <div class="col-md-8 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" value="{{$offer_id->toplam}}" name="toplam" autocomplete="off" class="form-control toplam"></div>
           </div>
           
           <div class="row form-group">
-            <div class="col-md-6 rw1 col-form-label"><label>KDV</label></div>
-            <div class="col-md-2 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="{{$offer_id->kdv}}" style="text-align: center;"></div>
-            <div class="col-md-4 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="{{$offer_id->kdvTutar}}"></div>
+            <div class="col-md-4 rw1 col-form-label"><label>KDV</label></div>
+            <div class="col-md-3 rw2 col-form-label col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="{{$offer_id->kdv}}"></div>
+            <div class="col-md-5 rw2 col-form-label col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="{{$offer_id->kdvTutar}}"></div>
           </div>
   
           <div class="row form-group" style="padding-bottom: 0">
-            <div class="col-md-8 rw1 col-form-label"><label>Genel Toplam</label></div>
-            <div class="col-md-4 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" value="{{$offer_id->genelToplam}}" autocomplete="off" class="form-control genelToplam"></div>
+            <div class="col-md-4 rw1 col-form-label"><label>Genel Toplam</label></div>
+            <div class="col-md-8 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" value="{{$offer_id->genelToplam}}" autocomplete="off" class="form-control genelToplam"></div>
           </div>
         </div>
       </div>
   
-      <textarea name="aciklamalar" class="form-control aciklamalar" rows="6" placeholder="Açıklamalar">{!! $offer_id->aciklamalar !!}</textarea>
+      <textarea name="aciklamalar" class="form-control aciklamalar mt-2" rows="6" placeholder="Açıklamalar">{!! $offer_id->aciklamalar !!}</textarea>
     </div>
   
     <div class="row">
@@ -302,7 +311,7 @@
   
       $(".satirEkle").click(function(){
         var dataNum = Number($(this).attr("data-id"));
-        var satirClone = '<div class="row form-group"><div class="col-5 rw1"><input type="text" name="aciklama[]" class="form-control aciklama" placeholder="Ürün" autocomplete="off"></div><div class="col-2 rw2"><input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control miktar miktar'+dataNum+'" autocomplete="off"></div><div class="col-2 rw3"><input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat'+dataNum+'" autocomplete="off"></div><div class="col-3 rw4"><input type="text" name="tutar[]" onkeyup="sayiKontrol(this)" class="form-control tutar tutar'+dataNum+'" autocomplete="off"></div></div>';
+        var satirClone = '<div class="row form-group"><div class="col-5 rw1"><input type="text" name="aciklama[]" class="form-control aciklama" placeholder="Ürün" autocomplete="off"></div><div class="col-2 rw2  custom-gutter"><input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control miktar miktar'+dataNum+'" autocomplete="off"></div><div class="col-2 rw3 custom-gutter"><input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat'+dataNum+'" autocomplete="off"></div><div class="col-3 rw4 custom-gutter"><input type="text" name="tutar[]" onkeyup="sayiKontrol(this)" class="form-control tutar tutar'+dataNum+'" autocomplete="off"></div></div>';
         $(".satirBody").append(satirClone);
         dataNum = dataNum+1;
         $(this).attr("data-id",dataNum);

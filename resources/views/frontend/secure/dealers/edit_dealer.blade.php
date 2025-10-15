@@ -8,6 +8,11 @@
     padding-left: 0px !important;
   }
 }
+@media (max-width: 767px) {
+  #editBayi label{margin-bottom: 3px !important;}
+}
+
+#editBayi{margin-block-end: 0em !important;}
 </style>
 <form method="post" id="editBayi" action="{{ route('update.dealer', [$firma->id, $bayi->user_id]) }}" enctype="multipart/form-data">
   @csrf
@@ -44,15 +49,11 @@
   </div>
 
   <div class="row">
-    <label class="col-sm-4 custom-p-r">Vergi No<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8 custom-p-l">
+    <label class="col-sm-4 custom-p-r">Vergi No/Dairesi<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-4 col-6 custom-p-r-m-md custom-p-l">
       <input name="vergiNo" class="form-control" type="text" value="{{ $bayi->vergiNo }}" required>
     </div>
-  </div>
-
-  <div class="row">
-    <label class="col-sm-4 custom-p-r">Vergi Dairesi<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8 custom-p-l">
+    <div class="col-sm-4 col-6 custom-p-m-md custom-p-l">
       <input name="vergiDairesi" class="form-control" type="text" value="{{ $bayi->vergiDairesi }}" required>
     </div>
   </div>
@@ -100,7 +101,7 @@
 
     <div class="row">
         <div class="col-sm-4 custom-p-r"><label>İl/İlçe<span style="font-weight: bold; color: red;">*</span></label></div>
-        <div class="col-sm-4 custom-p-l">
+        <div class="col-sm-4 col-6 custom-p-r-m-md custom-p-l">
           <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;" required>
             <option value="" selected disabled>-Seçiniz-</option>
             @foreach($countries as $item)
@@ -108,7 +109,7 @@
             @endforeach
           </select>
         </div>
-        <div class="col-sm-4 custom-p-l">
+        <div class="col-sm-4 col-6 custom-p-m-md custom-p-l">
           <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;" required>
             <option value="" selected disabled>-Seçiniz-</option>                              
           </select>

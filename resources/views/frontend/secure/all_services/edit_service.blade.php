@@ -1,6 +1,6 @@
 <ul class="nav nav-pills nav-justified" role="tablist" style="margin-bottom: 5px">
   <li class="nav-item" style="font-size: 14px;"><a class="nav-link nav1 active" data-bs-toggle="pill" href="#tab1" data-id="" role="tab"><i class="fas fa-user"></i><span>Servis Bilgileri</span></a></li>
-  <li class="nav-item" style="font-size: 14px;"><a class="nav-link nav4" data-bs-toggle="pill" href="#tab4" data-id="{{ $service_id->id }}" role="tab"><i class="fas fa-link"></i><span>Para Hareketleri</span></a></li>
+  <li class="nav-item" style="font-size: 14px;"><a class="nav-link nav4" data-bs-toggle="pill" href="#tab4" data-id="{{ $service_id->id }}" role="tab"><i class="fas fa-lira-sign"></i><span>Para Hareketleri</span></a></li>
   <li class="nav-item" style="font-size: 14px;"><a class="nav-link nav5" data-bs-toggle="pill" href="#tab5" data-id="{{ $service_id->id }}" role="tab"><i class="fas fa-text-width"></i><span>Fotoğraflar</span></a></li>
   <li class="nav-item" style="font-size: 14px;"><a class="nav-link nav7" data-bs-toggle="pill" href="#tab7" data-id="{{ $service_id->id }}" role="tab"><i class="fab fa-buysellads"></i><span>Fiş Notu</span></a></li>
   @hasanyrole('Admin|Patron|Operatör|Müdür')

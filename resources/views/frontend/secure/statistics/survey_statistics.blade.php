@@ -7,10 +7,16 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> <!-- Font Awesome Icons -->
     <style>
+        .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
         @media (max-width: 767px) {
             .pageDetail .card-header {
                 padding: 7px 2px !important;
             }
+            .custom-h5{font-size: 13px !important;}
 
             .card-body {
                 padding: 4px !important;
@@ -32,6 +38,21 @@
             .dataTables_filter {
                 margin-right: 0 !important;
             }
+
+            
+            .searchWrap .tarih-araligi {
+    padding: 5px 0px !important;
+}
+.btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+
+  .servis-istatistik .btn-action {
+        padding: 4px 4px !important;
+        font-size: 9px !important;
+    }
         }
     </style>
     <div class="page-content servis-istatistik" id="surveyStats">
@@ -41,7 +62,7 @@
             <div class="row pageDetail mb-4">
                 <div class="col-12">
                     <div class="table-modern">
-                        <div class="card-header">
+                        <div style="font-size: 15px;" class="card-header">
                             Anket Sonuçları
                             <div class="searchWrap float-end">
                                 <div class="btn-group pt-1" id="resultsFilterDropdownContainer">
@@ -49,27 +70,27 @@
                                         data-bs-toggle="dropdown">
                                         Filtrele <i class="mdi mdi-chevron-down"></i>
                                     </button>
-                                    <div class="dropdown-menu p-3" style="min-width: 200px;">
+                                    <div class="dropdown-menu servisDrop p-3" style="min-width: 200px;">
                                         <div class="item">
                                             <div class="row mb-3">
-                                                <label class="col-sm-4">Bayi:</label>
-                                                <div class="col-sm-8">
+                                                <label class="col-sm-4 custom-p-m-k custom-p-r-m-k col-5">Bayi:</label>
+                                                <div class="col-sm-8 col-7 custom-p-m-k custom-p-r-m-k">
                                                     <select id="bayiSelect" class="form-select form-select-sm">
                                                         <option value="">Hepsi</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4">Cihaz Türü:</label>
-                                                <div class="col-sm-8">
+                                                <label class="col-sm-4 custom-p-m-k custom-p-r-m-k col-5">Cihaz Türü:</label>
+                                                <div class="col-sm-8 col-7 custom-p-m-k custom-p-r-m-k">
                                                     <select id="deviceTypeResults" class="form-select form-select-sm">
                                                         <option value="">Hepsi</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4">Tarih Aralığı:</label>
-                                                <div class="col-sm-8">
+                                                <label class="col-sm-4 custom-p-m-k custom-p-r-m-k col-5">Tarih Aralığı:</label>
+                                                <div class="col-sm-8 col-7 custom-p-m-k custom-p-r-m-k">
                                                     <input id="daterangeResults"
                                                         class="form-control form-control-sm tarih-araligi" />
                                                     <div class="tarihAraligi mt-2 mb-2">
@@ -132,7 +153,7 @@
                                 <div class="col-lg-6 d-flex">
                                     <div class="card flex-fill">
                                         <div class="card-header">
-                                            <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Soru Bazında Sonuçlar</h5>
+                                            <h5 class="mb-0 custom-h5"><i class="fas fa-chart-bar me-2"></i>Soru Bazında Sonuçlar</h5>
                                         </div>
                                         <div class="card-body">
                                             <canvas id="surveyChart" width="400" height="300"></canvas>
@@ -142,7 +163,7 @@
                                 <div class="col-lg-6 d-flex">
                                     <div class="card flex-fill">
                                         <div class="card-header">
-                                            <h5 class="mb-0"><i class="fas fa-table me-2"></i>Detaylı Sonuçlar</h5>
+                                            <h5 class="mb-0 custom-h5"><i class="fas fa-table me-2"></i>Detaylı Sonuçlar</h5>
                                         </div>
                                         <div class="card-body">
                                             <div class="table-responsive">
@@ -211,7 +232,7 @@
             <div class="row pageDetail">
                 <div class="col-12">
                     <div class="table-modern">
-                        <div class="card-header">
+                        <div style="font-size: 15px;" class="card-header">
  Personel Bazında Anket İstatistikleri
                             <div class="searchWrap float-end" id="personnelFilterDropdownContainer">
                                 <div class="btn-group pt-1">
@@ -219,19 +240,19 @@
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         Filtrele <i class="mdi mdi-chevron-down"></i>
                                     </button>
-                                    <div class="dropdown-menu dropdown-menu-end p-3" style="min-width: 300px;">
+                                    <div class="dropdown-menu servisDrop dropdown-menu-end p-3" style="min-width: 300px;">
                                         <div class="item">
                                             <div class="row mb-3">
-                                                <label class="col-sm-4">Cihaz Türü:</label>
-                                                <div class="col-sm-8">
+                                                <label class="col-sm-4 custom-p-m-k custom-p-r-m-k col-5">Cihaz Türü:</label>
+                                                <div class="col-sm-8 col-7 custom-p-m-k custom-p-r-m-k">
                                                     <select id="deviceType" class="form-select form-select-sm">
                                                         <option value="">Hepsi</option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="row mb-3">
-                                                <label class="col-sm-4">Tarih Aralığı:</label>
-                                                <div class="col-sm-8">
+                                                <label class="col-sm-4 custom-p-m-k custom-p-r-m-k col-5">Tarih Aralığı:</label>
+                                                <div class="col-sm-8 col-7 custom-p-m-k custom-p-r-m-k">
                                                     <input id="daterange"
                                                         class="form-control form-control-sm tarih-araligi" />
                                                     <div class="tarihAraligi mt-2 mb-2">
@@ -680,7 +701,7 @@
                     <td>${personnel.anket_yapilan_servis_sayisi}</td>
                     <td>
                         <a href="${detailUrl}" target="_blank" class="btn btn-action btn-sm">
-                            <i class="fas fa-eye me-1"></i>Servisleri Gör
+                            <i class="fas fa-eye me-1 d-md-flex d-none"></i>Servisleri Gör
                         </a>
                     </td>
                 </tr>`;
@@ -692,6 +713,37 @@
             loadSurveyStatistics();
         });
 </script>
+<script>
+    $(document).ready(function () {
+        // --- 1. Anket Sonuçları Filtre Butonu ---
+        var resultsDropdownContainer = $('#resultsFilterDropdownContainer');
+        var resultsFilterButton = resultsDropdownContainer.find('.filtrele');
 
+        // Menü açılırken
+        resultsDropdownContainer.on('show.bs.dropdown', function () {
+            resultsFilterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+        });
+
+        // Menü kapanırken
+        resultsDropdownContainer.on('hide.bs.dropdown', function () {
+            resultsFilterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+        });
+
+
+        // --- 2. Personel Bazında İstatistikler Filtre Butonu ---
+        var personnelDropdownContainer = $('#personnelFilterDropdownContainer');
+        var personnelFilterButton = personnelDropdownContainer.find('.filtrele');
+
+        // Menü açılırken
+        personnelDropdownContainer.on('show.bs.dropdown', function () {
+            personnelFilterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+        });
+
+        // Menü kapanırken
+        personnelDropdownContainer.on('hide.bs.dropdown', function () {
+            personnelFilterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+        });
+    });
+</script>
 
 @endsection

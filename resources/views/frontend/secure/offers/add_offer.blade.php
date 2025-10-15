@@ -1,4 +1,12 @@
 <style>
+  .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
+.card-offer{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-offer-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-offer-body{padding: 3px 7px !important;}
   #addOffer .card .form-group .rw2 {
     padding-left: 11px;
     padding-right: 10px;
@@ -17,14 +25,15 @@
   .card-body{
   margin-bottom: 10px !important;
 }
+.custom-gutter{    --bs-gutter-x: 5px !important;}
  }
 
 </style>
 <form method="post" id="addOffer" class="servisModal" action="{{ route('store.offer', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
     @csrf
-    <div class="row" style="margin: 0">
-      <div class="card col-sm-6 card1">
-        <div class="card-header" style="color: black;font-weight:bold">Müşteri Bilgileri</div>
+    <div class="row gx-4" style="margin: 0">
+      <div class="card card-offer col-sm-6 card1">
+        <div class="card-header card-offer-header" style="color: black;font-weight:bold">Müşteri Bilgileri</div>
         <div class="card-body">
           <div class="row form-group ">
             <label class="col-sm-3 col-form-label rw1">Müşteri<span style="font-weight: bold; color: red;">*</span></label>
@@ -42,8 +51,8 @@
         </div>
       </div>
   
-      <div class="card col-sm-6 card2">
-        <div class="card-header" style="color: black;font-weight:bold">Teklif Bilgileri</div>
+      <div class="card card-offer col-sm-6 card2">
+        <div class="card-header card-offer-header" style="color: black;font-weight:bold">Teklif Bilgileri</div>
         <div class="card-body">  
         <div class="row form-group">
             <div class="col-md-3 rw1 col-form-label"><label><span class="musteriAdiSpan">Tarih</span> <span style="font-weight: bold; color: red;">*</span></label></div>
@@ -68,21 +77,21 @@
       </div>
     </div>
   
-    <div class="card card3">
-      <div class="card-body">
+    <div class="card card-offer my-2 card3">
+      <div class="card-body ">
         <div class="row form-group head">
           <div class="col-5 rw1 col-form-label"><label>Cinsi</label></div>
-          <div class="col-2 rw2 col-form-label"><label>Miktar</label></div>
-          <div class="col-2 rw3 col-form-label"><label>Fiyat</label></div>
-          <div class="col-3 rw4 col-form-label"><label>Tutar</label></div>
+          <div class="col-2 rw1 col-form-label"><label>Miktar</label></div>
+          <div class="col-2 rw1 col-form-label"><label>Fiyat</label></div>
+          <div class="col-3 rw1 col-form-label"><label>Tutar</label></div>
         </div>
   
         <div class="satirBody">
           <div class="row form-group">
             <div class="col-5 rw1 col-form-label"><input type="text" name="aciklama[]" class="form-control aciklama aciklama0" placeholder="Ürün" autocomplete="off" required></div>
-            <div class="col-2 rw2 col-form-label"><input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control miktar miktar0" autocomplete="off" required></div>
-            <div class="col-2 rw3 col-form-label"><input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat0" autocomplete="off" required></div>
-            <div class="col-3 rw4 col-form-label"><input type="text" name="tutar[]" onkeyup="sayiKontrol(this)" class="form-control tutar tutar0" autocomplete="off" required></div>
+            <div class="col-2 col-form-label custom-gutter"><input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control miktar miktar0" autocomplete="off" required></div>
+            <div class="col-2 rw3 col-form-label custom-gutter"><input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat0" autocomplete="off" required></div>
+            <div class="col-3 rw4 col-form-label custom-gutter"><input type="text" name="tutar[]" onkeyup="sayiKontrol(this)" class="form-control tutar tutar0" autocomplete="off" required></div>
           </div>
         </div>
   
@@ -93,8 +102,8 @@
     </div>
   
     <div class="row" style="margin: 0">
-      <div class="card col-sm-6 card4">
-        <div class="card-body">
+      <div class="card card-offer col-sm-6 card4">
+        <div class="card-body card-offer-body">
           <div class="row form-group" style="border:0">
             <div class="col-md-4 rw1 col-form-label"><label>Durum</label></div>
             <div class="col-md-8 m-p rw2">
@@ -121,8 +130,8 @@
         </div>
       </div>
   
-      <div class="card col-sm-6 card5">
-        <div class="card-body">
+      <div class="card card-offer col-sm-6 card5">
+        <div class="card-body card-offer-body">
           <div class="row form-group">
             <div class="col-md-4 rw1 col-form-label"><label>Toplam</label></div>
             <div class="col-md-8 m-p rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam"></div>
@@ -130,8 +139,8 @@
           
           <div class="row form-group">
             <div class="col-md-4 rw1 col-form-label"><label>KDV</label></div>
-              <div class="col-md-2 m-p rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20"></div>
-              <div class="col-md-6 m-p rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv"></div>
+              <div class="col-md-2 m-p rw2 col-form-label col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20"></div>
+              <div class="col-md-6 m-p rw2 col-form-label col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv"></div>
             </div>
   
             <div class="row form-group" style="padding-bottom: 0">
@@ -141,7 +150,7 @@
           </div>
         </div>
   
-        <textarea name="aciklamalar" class="form-control aciklamalar" rows="6" placeholder="Açıklamalar"></textarea>
+        <textarea name="aciklamalar" class="form-control aciklamalar mt-2" rows="6" placeholder="Açıklamalar"></textarea>
       </div>
   
       <div class="row">
@@ -339,13 +348,13 @@
         <div class="col-5 rw1">
           <input type="text" name="aciklama[]" class="form-control aciklama" placeholder="Ürün" autocomplete="off">
         </div>
-        <div class="col-2 rw2">
+        <div class="col-2  custom-gutter">
           <input type="text" name="miktar[]" class="form-control miktar" autocomplete="off">
         </div>
-        <div class="col-2 rw3">
+        <div class="col-2 rw3 custom-gutter">
           <input type="text" name="fiyat[]" class="form-control fiyat" autocomplete="off">
         </div>
-        <div class="col-3 rw4">
+        <div class="col-3 rw4 custom-gutter">
           <input type="text" name="tutar[]" class="form-control tutar" autocomplete="off" readonly>
         </div>
       </div>`;

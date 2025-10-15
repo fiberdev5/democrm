@@ -35,11 +35,6 @@
                         </h4>
 
                     </div>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item active">AnaSayfa</li>
-                        </ol>
-                    </div>
                 </div>
             </div>
         </div>
@@ -61,7 +56,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-6 col-md-6 pl custom-p-r-m">
+            <div class="col-xl-3 col-6 col-md-6 pl custom-p-r-min">
                 <div class="card superadmin-dashboard-card superadmin-statistic success dashboard-p">
                     <div class=" card-h-s">
                         <div class="d-flex justify-content-between align-items-start">
@@ -112,7 +107,7 @@
 
     <!-- Grafik ve Sistem Durumu -->
     <div class="row ">
-    <div class="col-lg-8 custom-p-r-m">
+    <div class="col-lg-8 custom-p-r-min">
         <div class="card superadmin-dashboard-card equal-height-container">
             <div class="card-header bg-transparent border-bottom">
                 <h5 class="card-title px-1 py-2 mb-0">
@@ -162,7 +157,7 @@
         <!-- Hızlı Erişim Kartları -->
         <div class="row">
             <!-- Müşteri Yönetimi -->
-            <div class="col-lg-4 custom-p-r-m">
+            <div class="col-lg-4 custom-p-r-min">
                 <div class="card superadmin-dashboard-card">
                     <div class="card-header bg-c-color border-bottom">
                         <h5 class="card-title px-3 py-2 mb-0">
@@ -210,7 +205,7 @@
             </div>
 
             <!-- Destek Talepleri -->
-            <div class="col-lg-4 custom-p-r-m">
+            <div class="col-lg-4 custom-p-r-min">
                 <div class="card superadmin-dashboard-card">
                     <div class="card-header bg-c-color border-bottom">
                         <h5 class="card-title mb-0 px-3 py-2">

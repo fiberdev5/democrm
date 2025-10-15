@@ -6,15 +6,20 @@
   .custom-p-l{
     padding-left: 0px !important;
   }
+  
 }
+@media (max-width: 767px) {
+  label{margin-bottom: 3px !important;}
+}
+
 </style>
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <form method="post" id="addCall" action="{{ route('store.call', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
     @csrf
     <div class="row">
-        <label class="col-sm-3 custom-p-r">Servis Kaynağı<span style="font-weight: bold; color: red;">*</span></label>
-        <div class="col-sm-9 custom-p-l">
+        <label class="col-sm-4 custom-p-r">Servis Kaynağı<span style="font-weight: bold; color: red;">*</span></label>
+        <div class="col-sm-8 custom-p-l">
         <select name="serviceResource" class="form-select" required>
             <option selected disabled value="">-Seçiniz-</option>
             @foreach($service_resources as $resource)
@@ -25,8 +30,8 @@
     </div> <!--end row-->
 
     <div class="row">
-        <label class="col-sm-3 custom-p-r">Marka<span style="font-weight: bold; color: red;">*</span></label>
-        <div class="col-sm-9 custom-p-l">
+        <label class="col-sm-4 custom-p-r">Marka<span style="font-weight: bold; color: red;">*</span></label>
+        <div class="col-sm-8 custom-p-l">
         <select name="deviceBrand" class="form-select" required>
             <option selected disabled value="">-Seçiniz-</option>
             @foreach($device_brands as $brand)
@@ -37,15 +42,15 @@
     </div> <!--end row-->
 
     <div class="row">
-      <div class="col-md-3 custom-p-r rw1"><label style="text-align: left;width: auto;display: inline-block;margin: 0;">Yetkisi Servis Tel </label></div>
-      <div class="col-md-9 custom-p-l">
+      <div class="col-md-4 custom-p-r rw1"><label style="text-align: left;width: auto;display: inline-block;margin: 0;">Yetkisi Servis Tel </label></div>
+      <div class="col-md-8 custom-p-l">
         <input type="text" class="form-control markaTelefon" disabled>
       </div>
     </div>
 
     <div class="row form-group ">
-      <div class="col-md-3 custom-p-r rw1"><label style="text-align: left;width: auto;display: inline-block;margin: 0;">Açıklama <span style="font-weight: bold; color: red;">*</span></label></div>
-      <div class="col-md-9 custom-p-l">
+      <div class="col-md-4 custom-p-r rw1"><label style="text-align: left;width: auto;display: inline-block;margin: 0;">Açıklama <span style="font-weight: bold; color: red;">*</span></label></div>
+      <div class="col-md-8 custom-p-l">
         <input id="arizaSearch" type="text" name="cihazAriza"  class="form-control cihazAriza" autocomplete="off" required>
         <ul id="arizaResult" style="margin: 0;padding: 0"></ul>
       </div>

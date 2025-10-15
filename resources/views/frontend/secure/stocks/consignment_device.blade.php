@@ -19,6 +19,26 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
 @endphp
 
 <style>
+   .servisDrop {
+      transition: none !important;
+      animation: none !important;
+      transform: translate3d(1px, 2px, 0px) !important;
+    }
+
+    .card-consigment {
+      border: 1px solid rgba(0, 0, 0, .125) !important;
+    }
+
+    .card-consigment-header {
+      background-color: #f7f7f7 !important;
+      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+      margin-bottom: 7px !important;
+      padding: 4px 7px !important;
+    }
+
+    .card-consigment-body {
+      padding: 3px 7px !important;
+    }
     /* Genel Stiller */
     .searchWrap {
       visibility: hidden; /* JS ile görünür yapılacak */
@@ -26,7 +46,7 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
     }
     @media (min-width: 768px) {
   .custom-modal-width {
-    max-width: 390px;
+    max-width: 424px;
     margin: 1.75rem auto;
   }
   .searchWrap .dropdown-menu{
@@ -57,7 +77,7 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
         margin-top: 0px !important;
       }
       .pageDetail .searchWrap .dropdown-menu{
-        transform: translate3d(10px, 9px, 0px) !important;
+        transform: translate3d(9px, 9px, 0px) !important;
         min-width: calc(78vw - 20px) !important;
       }
       .searchWrap .dropdown-menu {
@@ -77,18 +97,25 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
         font-size: 15px;
     }
 
+    .consigment-header-top{margin-top: 30px;}
+.btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+
     }
 </style>
 
 <div class="page-content">
-  <div class="container-fluid">
+  <div class="container-fluid consigment-header-top">
     <div class="row pageDetail">
       <div class="col-12">
-        <div class="card">
-          <div class="card-header sayfaBaslik">
+        <div class="card card-consigment">
+          <div class="card-header card-consigment-header sayfaBaslik">
             Konsinye Cihazlar
           </div>
-          <div class="card-body">
+          <div class="card-body card-consigment-body">
             @if(is_null($konsinyeLimit) || $konsinyeLimit == -1 || $stockAll < $konsinyeLimit)
             <a data-bs-toggle="modal" data-bs-target="#addConsignmentModal" class="btn btn-success btn-sm addConsignment">
               <i class="fas fa-plus"></i> <span>Cihaz Ekle</span>
@@ -105,17 +132,17 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
 
             <!-- Filtre dropdown butonu -->
             <div class="searchWrap float-end">
-              <div class="btn-group mb-2 ">
+              <div class="btn-group">
                 <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Filtrele <i class="mdi mdi-chevron-down"></i>
                 </button>
-                <div class="dropdown-menu" style="min-width: 250px;">
+                <div class="dropdown-menu servisDrop" style="min-width: 250px;">
                   
                   <!-- Raf -->
                   <div class="item mb-1">
                     <div class="row align-items-center">
-                      <label class="col-sm-4 custom-p-r-m mb-0">Raf</label>
-                      <div class="col-sm-8 custom-p-m">
+                      <label class="col-sm-5 col-5 custom-p-r-m mb-0 custom-p-m-k">Raf</label>
+                      <div class="col-sm-7 col-7 custom-p-m custom-p-r-m-k">
                         <select id="raf" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($rafListesi as $raf)
@@ -129,8 +156,8 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
                   <!-- Marka -->
                   <div class="item mb-1">
                     <div class="row align-items-center">
-                      <label class="col-sm-4 custom-p-r-m mb-0">Marka</label>
-                      <div class="col-sm-8 custom-p-m">
+                      <label class="col-sm-5 col-5 custom-p-r-m mb-0 custom-p-m-k ">Marka</label>
+                      <div class="col-sm-7 col-7 custom-p-m custom-p-r-m-k">
                         <select id="marka" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($markalar as $marka)
@@ -144,8 +171,8 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
                   <!-- Cihaz -->
                   <div class="item mb-1">
                     <div class="row align-items-center">
-                      <label class="col-sm-4 custom-p-r-m mb-0">Cihaz</label>
-                      <div class="col-sm-8 custom-p-m">
+                      <label class="col-sm-5 col-5 custom-p-r-m mb-0 custom-p-m-k">Cihaz</label>
+                      <div class="col-sm-7 col-7 custom-p-m custom-p-r-m-k">
                         <select id="cihaz" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($cihazlar as $cihaz)
@@ -159,8 +186,8 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
                   <!-- Personel -->
                   <div class="item mb-2">
                     <div class="row align-items-center">
-                      <label class="col-sm-4 custom-p-r-m mb-0">Personel</label>
-                      <div class="col-sm-8 custom-p-m">
+                      <label class="col-sm-5 col-5 custom-p-r-m mb-0 custom-p-m-k">Personel</label>
+                      <div class="col-sm-7 col-7 custom-p-m custom-p-r-m-k">
                         <select id="personel" class="form-select form-select-sm">
                           <option value="">Hepsi</option>
                           @foreach($personeller as $personel)
@@ -173,9 +200,9 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
 
                   {{-- TARİH ARALIĞI FİLTRESİ - DROPDOWN İÇİNDE --}}
                   <div class="item">
-                    <div class="row align-items-center">
-                      <label class="col-sm-5 mb-0">Tarih Aralığı:</label>
-                      <div class="col-sm-7">
+                    <div class="row ">
+                      <label class="col-sm-5 col-5 custom-p-r-m mb-0 custom-p-m-k">Tarih Aralığı:</label>
+                      <div class="col-sm-7 col-7 custom-p-m custom-p-r-m-k">
                         <input id="daterangeConsignment" class="form-control form-control-sm mb-2">
                         <div class="tarihAraligi d-flex flex-wrap gap-1">
                           <button id="lastYearConsignment" class="btn btn-sm btn-secondary">Son 1 Yıl</button>

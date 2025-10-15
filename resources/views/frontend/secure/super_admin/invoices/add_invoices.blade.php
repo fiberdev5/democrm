@@ -5,11 +5,14 @@
   .custom-m{
     margin-bottom: 0px !important;
   }
+  .card-invocies{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-invocies-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-invocies-body{padding: 3px 7px !important;}
 </style>
 <div class="add_invoices_superadmin">
 <form method="post" id="addInvo" action="{{ route('super.admin.invoices.store')}}" enctype="multipart/form-data" class="needs-validation" novalidate>
   @csrf
-  <div class="card f5">
+  <div class="card card-invocies f5">
     <div class="card-header ch1" style="padding: 3px 10px;">
       <div class="tarihWrap">
         <label style="text-align: left;width: auto;display: inline-block;margin: 0;margin-right: 3px;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
@@ -21,9 +24,9 @@
   <div class="row">
     <!-- FİRMA BİLGİSİ -->
     <div class="col-lg-6">
-      <div class="card f2" style="min-height: 106px;">
-        <div class="card-header">FİRMA BİLGİSİ</div>
-<div class="card-body">
+      <div class="card card-invocies f2" style="min-height: 106px;">
+        <div class="card-header card-invocies-header">FİRMA BİLGİSİ</div>
+<div class="card-body card-invocies-body">
 <div class="row form-group">
     <div class="col-md-3 rw1">
         <label>Firma Ara <span style="font-weight: bold; color: red;">*</span></label>
@@ -63,9 +66,9 @@
 
     <!-- ÖDEME SEÇİMİ -->
     <div class="col-lg-6">
-      <div class="card f6">
-        <div class="card-header">ÖDEME SEÇİMİ</div>
-        <div class="card-body">
+      <div class="card card-invocies f6">
+        <div class="card-header card-invocies-header">ÖDEME SEÇİMİ</div>
+        <div class="card-body card-invocies-body">
           <div class="alert alert-info" style="padding: 6px; font-size: 11px;">
             <strong>Bilgi:</strong> Önce bir firma seçin, ardından o firmaya ait tamamlanmış ödemeleri göreceksiniz. Birden fazla ödeme seçebilirsiniz.
           </div>
@@ -100,7 +103,7 @@
   <div id="multipleTotalInputs"></div>
        
   <div class="row cardRow1">
-    <div class="card col-lg-6 f3">
+    <div class="card  col-lg-6 f3">
       <div class="card-body">
         <div class="row" style="border:0">
           <div class="col-md-4 rw1"><label>Ödeme Şekli<span style="font-weight: bold; color: red;"> *</span></label></div>
@@ -166,10 +169,10 @@
                 </div>
               </label>
             </div>
-            <div class="col-md-3 rw2">
+            <div class="col-md-3 rw2 col-6">
               <input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20" style="text-align: center;" title="KDV oranını değiştirebilirsiniz">
             </div>
-            <div class="col-md-4 rw2">
+            <div class="col-md-4 rw2 col-6">
               <input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="0" title="KDV tutarını manuel değiştirebilirsiniz">
             </div>
           </div>

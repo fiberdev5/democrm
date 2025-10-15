@@ -1051,7 +1051,7 @@ form .mb-3 {
   }
 
   .table>tbody>tr>td>.t-link {
-    padding: 5px;
+    padding: 2px 5px;
     margin: 0;
   }
 
@@ -5178,7 +5178,7 @@ div.dataTables_wrapper div.dataTables_filter input {
 .servisAsamaTable .butonCol .musPlanDuzenle {
   border-radius: .2rem !important;
 }
-
+ 
 .servisAsamaTable .butonCol .musteriPlanSil {
   border-radius: .2rem !important;
 }
@@ -6017,8 +6017,44 @@ b, strong {
   padding: 4px 8px;
 }
 
+@media (max-width: 767px) {
+  #serviceHistoryTableBody .btnCS {
+    display: inline-block !important;
+    width: auto !important;
+    padding: 2px 4px !important;
+  }
+
+  #serviceHistoryTableBody tr td.btnCS {
+    text-align: center;
+  }
+
+  #serviceHistoryTableBody .btnCS a {
+    display: inline-block;
+    margin-right: 3px;
+  }
+}
+
+@media (max-width: 767px) {
+
+    /* ... diğer mobil kodlarınız ... */
+
+    /* YENİ EKLENECEK BASİT KOD */
+
+    /* Butonları içeren tek hücreyi flexbox yapıyoruz */
+    #serviceHistoryTableBody .action-buttons-cell {
+        display: flex;
+        justify-content: space-between; /* Butonlar arasında boşluk bırakır */
+    }
+
+    /* Sadece bu tablodaki butonların genişlik sorununu çözüyoruz */
+    #serviceHistoryTableBody .action-buttons-cell .btn-sm {
+        width: auto; /* Genel "width: 100%" kuralını ezer */
+        flex-grow: 1; /* Her butonun mevcut alanı eşit paylaşmasını sağlar */
+    }
+}
 /* Responsive Tasarım */
 @media (max-width: 768px) {
+  
 
   .servis-istatistik .table-modern thead th,
   .servis-istatistik .table-modern tbody td {
@@ -6555,13 +6591,7 @@ b, strong {
   color: #000000;
 }
 
-#editStockModal .card-body {
-  padding: 10px 0px !important;
-}
 
-#editConsignmentModal .card-body {
-  padding: 10px 0px !important;
-}
 
 .fullwidth-app-alert {
   display: flex;
@@ -8039,7 +8069,7 @@ b, strong {
 /****************** Kullanıcı Talep Ekleme Sayfası sonu *******************/
 /*Servislerdeki ilk filtrelemden snraki filtrelemelerde olan sorun için uygulandı*/
 #datatableService_wrapper {
-  min-height: 250px;
+  min-height: 300px;
   transition: min-height 0.2s ease-in-out;
   /* Daha yumuşak bir geçiş için */
 }
@@ -8132,11 +8162,11 @@ b, strong {
 }
 
 #editStockModal .modal-body {
-  padding: 15px !important;
+  padding: 5px !important;
 }
 
 #editConsignmentModal .modal-body {
-  padding: 15px !important;
+  padding: 7px !important;
 }
 
 #tenantUsersContent .table>:not(caption)>*>* {
@@ -8152,8 +8182,32 @@ b, strong {
       .custom-p-r-m{
         padding-right: 0px !important;
       }
+      .custom-p-m-md{
+        padding-left: 2px !important;
+      }
+      .custom-p-r-m-md{
+        padding-right: 2px !important;
+      }
       .custom-b-p{
         margin-bottom: 7px;
+      }
+
+      
+      @media (max-width: 767px) {
+        .custom-p-m-k{
+        padding-left: 0px !important;
+      }
+      #datatableOperatorStats_wrapper{
+        min-height: 300px !important;
+      }
+      .custom-p-r-m-k{
+        padding-right: 0px !important;
+      }
+      }
+      @media (min-width: 767px) {
+      .custom-p-r-min{
+        padding-right: 0px !important;
+      }
       }
 #addCall{
       margin-block-end: 0em !important;
@@ -8252,6 +8306,9 @@ b, strong {
   #datatableCustomer_wrapper .pagination {
     display: inline-flex !important;
     margin: 0 !important;
+  }
+  #datatableCustomer_wrapper{
+    min-height: 300px !important;
   }
 
   #datatableCustomer_wrapper .pagination .page-item {
@@ -8845,9 +8902,7 @@ li.paginate_button.next, li.paginate_button.previous{
     margin-bottom: 10px !important;
   }
 
-  #editStockModal .card-body {
-    padding: 8px !important;
-  }
+
 
   /* Sol ve sağ sütunları alt alta yap */
   #editStockModal .row>.col-lg-5,
@@ -9390,7 +9445,7 @@ li.paginate_button.next, li.paginate_button.previous{
 
   #datatableConsignment_wrapper .pagination .page-link {
     display: block !important;
-    padding: 5px 10px !important;
+    padding: 2px 7px !important;
   }
 
   /* Toplam Bilgiler alanı */
@@ -9428,7 +9483,7 @@ li.paginate_button.next, li.paginate_button.previous{
 
   /* Modal içi genel düzenlemeler */
   #editConsignmentModal .modal-body {
-    padding: 10px !important;
+    padding: 5px !important;
   }
 
   #editConsignmentModal .card {
@@ -9620,7 +9675,7 @@ li.paginate_button.next, li.paginate_button.previous{
 
   /* Modal footer */
   #editConsignmentModal .modal-footer {
-    padding: 8px !important;
+    padding: 5px !important;
     gap: 5px;
   }
 
@@ -9631,6 +9686,7 @@ li.paginate_button.next, li.paginate_button.previous{
 
   /* Hareket Ekle Modal */
   #hareketEkleModal .modal-dialog {
+    padding: 3px !important;
     margin: 10px !important;
     max-width: calc(100% - 20px) !important;
   }
@@ -9766,9 +9822,7 @@ li.paginate_button.next, li.paginate_button.previous{
   }
 
 
-  .pageDetail .searchWrap .dropdown-menu .item {
-    margin-bottom: 10px !important;
-  }
+ 
 
   .pageDetail .searchWrap .dropdown-menu .row {
     margin: 0 !important;
@@ -9946,17 +10000,12 @@ li.paginate_button.next, li.paginate_button.previous{
   #tevkifatHesaplamaModal .form-control,
   #tevkifatHesaplamaModal .form-select {
     font-size: 13px !important;
-    padding: 6px 10px !important;
+    padding: 6px 7px !important;
   }
 
-  #tevkifatHesaplamaModal .col-md-4 {
-    width: 100% !important;
-    margin-bottom: 3px;
-  }
+  
 
-  #tevkifatHesaplamaModal .col-md-8 {
-    width: 100% !important;
-  }
+  
 
   /* Fatura Ekle/Düzenle Modal */
   #addInvoiceModal .modal-dialog,
@@ -10035,7 +10084,7 @@ li.paginate_button.next, li.paginate_button.previous{
 
 
   .pageDetail .searchWrap .dropdown-menu .item {
-    margin-bottom: 10px !important;
+    margin-bottom: 0px !important;
   }
 
   .pageDetail .searchWrap .dropdown-menu .row {
@@ -10136,7 +10185,7 @@ li.paginate_button.next, li.paginate_button.previous{
 
   #datatableOffer_wrapper .pagination .page-link {
     display: block !important;
-    padding: 5px 10px !important;
+    padding: 2px 3px !important;
   }
 
   /* Teklif Ekle/Düzenle Modal */
@@ -10222,9 +10271,7 @@ li.paginate_button.next, li.paginate_button.previous{
   }
 
 
-  .pageDetail .searchWrap .dropdown-menu .item {
-    margin-bottom: 10px !important;
-  }
+  
 
   .pageDetail .searchWrap .dropdown-menu .row {
     margin: 0 !important;
@@ -10315,7 +10362,7 @@ li.paginate_button.next, li.paginate_button.previous{
 
   #datatableKasa_wrapper .pagination .page-link {
     display: block !important;
-    padding: 4px 6px !important;
+    padding: 2px 4px !important;
   }
 
   /* Toplam Bilgiler alanı - Tablo formatı (Kasa için) */
@@ -10461,9 +10508,6 @@ li.paginate_button.next, li.paginate_button.previous{
     border-right: 1px solid #dee2e6;
   }
 
-  .period-tabs-compact .period-tab-compact:nth-last-child(-n+2) {
-    border-bottom: none;
-  }
 
   /* Card body padding'leri azalt */
   .period-accordion .card-body,
@@ -11725,7 +11769,7 @@ canvas {
 @media (max-width: 767px) {
 
   .pageDetail .card-header {
-    padding: 3px 2px !important;
+    padding: 2px 3px !important;
   }
 
 
@@ -11767,7 +11811,7 @@ canvas {
   #datatableService tbody tr {
     display: block;
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -11818,6 +11862,16 @@ canvas {
     margin-left: 10px;
   }
 
+  #datatableService th:nth-last-child(1),
+  #datatableService th:nth-last-child(2) {
+    display: none;
+  }
+
+  /* Tablo gövdesindeki her satırın son iki hücresini gizle */
+  #datatableService td:nth-last-child(1),
+  #datatableService td:nth-last-child(2) {
+    display: none;
+  }
   .action-buttons-container {
     display: flex;
     gap: 1px;
@@ -12280,9 +12334,7 @@ table.dataTable {
   margin-top: 10px !important;
 }
 
-/* TÜM SAYFA AÇILMA ANİMASYONLARINI KALDIR */
 
-/* fadeInUp animasyonunu devre dışı bırak */
 @keyframes fadeInUp {
   from {
     opacity: 1;

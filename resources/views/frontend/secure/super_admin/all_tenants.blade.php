@@ -5,6 +5,9 @@
       visibility: hidden;
       opacity: 0;
     }
+    .card-tenants{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-tenants-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-tenants-body{padding: 3px 7px !important;}
 
     @media (min-width: 767px) {
       .searchWrap .dropdown-menu {
@@ -59,25 +62,25 @@
       .pageDetail .searchWrap {
         margin-bottom: 0px !important;
       }
-
+.staff-header-top{margin-top: 30px;}
     }
   </style>
   <div class="page-content">
-    <div class="container-fluid">
+    <div class="container-fluid staff-header-top">
       <div class="row pageDetail">
         <div class="col-12">
-          <div class="card">
-            <div class="card-header sayfaBaslik d-flex justify-content-between align-items-center">
+          <div class="card card-tenants">
+            <div class="card-header card-tenants-header sayfaBaslik d-flex justify-content-between align-items-center">
               <div>
                 Müşteriler
               </div>
 
             </div>
-            <div class="card-body">
+            <div class="card-body card-tenants-body">
               <table id="datatableTenants" class="table table-bordered dt-responsive nowrap"
                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <div class="searchWrap float-end">
-                  <div class="btn-group mb-2 ">
+                  <div class="btn-group ">
                     <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown"
                       aria-expanded="false">
                       Filtrele <i class="mdi mdi-chevron-down"></i>
@@ -648,5 +651,16 @@
         });
       });
     </script>
-
+<script>
+    $(document).ready(function () {
+        var dropdownContainer = $('.searchWrap .btn-group');
+        var filterButton = dropdownContainer.find('.filtrele');
+        dropdownContainer.on('show.bs.dropdown', function () {
+            filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+        });
+        dropdownContainer.on('hide.bs.dropdown', function () {
+            filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+        });
+    });
+</script>
 @endsection
