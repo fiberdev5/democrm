@@ -1,0 +1,568 @@
+@extends('frontend.secure.user_master')
+@section('user')
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<style>
+/* Geniş ekranlar için özel modal genişliği */
+@media (min-width: 768px) {
+  .custom-modal-width {
+    max-width: 330px;
+    margin: 1.75rem auto;
+  }
+  .searchWrap .dropdown-menu{
+    /* Masaüstü görünümünde dropdown menüsü genişliği */
+    width: 251px !important; 
+  }
+}
+
+/* DataTables arama kutusu inputuna sağ boşluk */
+#datatableCustomer_filter input[type="search"] {
+    padding-right: 12px !important; 
+}
+
+/* Filtreleme kapsayıcısını başlangıçta gizle */
+.searchWrap {
+    visibility: hidden;
+    opacity: 0;
+}
+
+/* DataTables filtre alanının alt boşluğunu ayarla */
+.dataTables_filter{
+      margin-bottom: -11px !important;
+}
+
+/* Mobil görünüm için özel düzenlemeler */
+@media (max-width: 767px) {
+    /* Özel padding'leri sıfırla veya yeniden tanımla */
+    .custom-p{
+        padding-left: 0px !important;
+    }
+    div.dataTables_filter input{margin-left: 0 !important;}
+    .dataTables_filter{
+        margin-right: 0px !important;
+    }
+    .searchWrap{
+        margin-top: 0px !important;
+        /* Mobil görünümde searchWrap'ın genişliğini otomatik yap */
+        width: auto !important; 
+    }
+    .pageDetail .searchWrap{
+        width: auto !important; /* Tekrar otomatik genişlik */
+        margin-bottom: 0px !important;
+    }
+    #datatableCustomer_filter label{width: 100% !important;}
+    
+    /* Filtre dropdown menüsü için kritik düzenlemeler */
+    #musteri_filtre .dropdown-menu {
+        /* Bootstrap'in varsayılan konumlandırma ve transform değerlerini sıfırla */
+        transform: none !important; 
+        right: 0 !important;      /* Ekranın sağ kenarına yasla */
+        left: auto !important;    /* Sol konumlandırmayı kaldır */
+        min-width: 280px;         /* Menünün okunabilir bir minimum genişliğe sahip olmasını sağla */
+        max-width: calc(100vw - 20px); /* Ekran genişliğinden kenar boşlukları çıkararak maksimum genişlik */
+        padding: 15px;            /* Menü içine bolca boşluk ver */
+        box-sizing: border-box;   /* Padding'in toplam genişliği etkilememesini sağla */
+        margin-top: 5px;          /* Filtre butonundan biraz aşağıda başlasın */
+    }
+
+    /* Dropdown menüsü içindeki her bir filtre öğesi arasına boşluk */
+    #musteri_filtre .dropdown-menu .item {
+        margin-bottom: 15px; /* Öğeler arasına daha fazla boşluk */
+    }
+    #musteri_filtre .dropdown-menu .item:last-child {
+        margin-bottom: 0px; /* Son öğede alt boşluğu kaldır */
+    }
+
+    /* Tarih aralığı inputunu tam genişlik yap */
+    .tarih-araligi {
+        width: 100% !important; 
+    }
+
+    /* Tarih aralığı hızlı seçim butonları için düzenlemeler */
+    .tarihAraligi { 
+        display: flex;
+        flex-wrap: wrap; /* Butonların alt satıra geçmesini sağla */
+        gap: 8px; /* Butonlar arasında boşluk */
+        justify-content: space-between; /* Butonları eşit aralıklarla dağıt */
+    }
+    .tarihAraligi button {
+        flex: 1 1 calc(33.33% - 8px); /* Her satırda 3 buton olacak şekilde, gap'i dikkate al */
+        min-width: 80px; /* Butonların minimum genişliği */
+        max-width: calc(33.33% - 8px); /* Her butonun maksimum genişliği */
+        font-size: 0.8rem; /* Yazı boyutunu küçült */
+        padding: 6px 4px; /* Buton iç padding'i ayarla */
+    }
+
+    /* DataTables alt bilgi düzenlemesi */
+    #datatableCustomer_wrapper .bottom {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding-top: 0.85em !important;
+    }
+
+    /* Filtre menüsü içindeki label ve select/input düzenlemesi */
+    #musteri_filtre .dropdown-menu .item .row {
+        align-items: center; /* Label ve select/input'ı dikeyde hizala */
+    }
+    #musteri_filtre .dropdown-menu .item .row label.col-3 {
+        flex: 0 0 30%; /* Label için %30 genişlik, ihtiyaca göre ayarlanabilir */
+        max-width: 30%;
+        padding-right: 5px !important;
+        text-align: right; /* Label'ı sağa hizala */
+    }
+    #musteri_filtre .dropdown-menu .item .row div.col-9 {
+        flex: 0 0 70%; /* Select/input için %70 genişlik */
+        max-width: 70%;
+        padding-left: 5px !important;
+    }
+    #musteri_filtre .dropdown-menu .item .row div.col-9 .form-select,
+    #musteri_filtre .dropdown-menu .item .row div.col-9 .form-control {
+        width: 100%; /* İçindeki form elemanlarını tam genişlik yap */
+    }
+}
+
+/* Tarih aralığı dropdown menü stilini düzelt */
+.daterangepicker.dropdown-menu {
+    z-index: 1060 !important; /* Diğer modal veya dropdownların üstünde görünmesini sağlar */
+}
+
+</style>
+<div class="page-content">
+  <div class="container-fluid">
+    <div class="row pageDetail">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header sayfaBaslik">
+            Müşteriler
+          </div>
+          <div class="card-body">
+            <table id="datatableCustomer" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+
+<div class="d-flex justify-content-between">
+    <!-- Müşteri Ekle Butonu -->
+    <a data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-success btn-sm addCustomer">
+        <i class="fas fa-plus"></i>
+        <span class="d-none d-sm-inline">Müşteri Ekle</span>
+    </a> 
+
+    <!-- Filtreleme ve Arama Alanı (JavaScript ile taşınacak) -->
+    <div class="searchWrap float-end">
+        <div class="btn-group" id="musteri_filtre"> <!-- Tek ID: musteri_filtre -->
+            <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Filtrele <i class="mdi mdi-chevron-down"></i>
+            </button>
+            <div class="dropdown-menu">
+                <div class="item">
+                    <div class="row">
+                        <label class="col-sm-3 custom-p col-3 filtre-i-p">Durum</label>
+                        <div class="filtre-i-p custom-p custom-p-m col-9 col-sm-9">
+                            <select name="musteriTipi" id="musteriTipi" class="form-select">
+                                <option value="">Hepsi</option>
+                                <option value="1" >Bireysel</option>
+                                <option value="2">Kurumsal</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="row">
+                        <label class="col-sm-3 custom-p col-3 filtre-i-p">İl</label>
+                        <div class="col-sm-9 custom-p custom-p-m col-9 filtre-i-p">
+                            <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;">
+                                <option value="" selected disabled>-Seçiniz-</option>
+                                @foreach($countries as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="row">
+                        <label class="col-sm-3 custom-p col-3 filtre-i-p">İlçe</label>
+                        <div class="col-sm-9 custom-p custom-p-m col-9 filtre-i-p">
+                            <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;">
+                                <option value="" selected disabled>-Seçiniz-</option>                              
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- YENİ TARİH FİLTRESİ BAŞLANGICI -->
+                <div class="item">
+                    <div class="row">
+                        <label class="col-sm-3 custom-p col-3 filtre-i-p">Tarih</label>
+                        <div class="col-sm-9 custom-p custom-p-m col-9 filtre-i-p">
+                            <input id="daterangeCustomer" class="tarih-araligi form-control">
+                            <div class="tarihAraligi mt-2 mb-2">
+                                <button id="lastYearCustomer" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
+                                <button id="lastMonthCustomer" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                                <button id="lastWeekCustomer" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                                <button id="yesterdayCustomer" class="btn btn-sm btn-secondary">Dün</button>
+                                <button id="todayCustomer" class="btn btn-sm btn-secondary">Bugün</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- YENİ TARİH FİLTRESİ SONU -->
+            </div>
+        </div><!-- /btn-group -->
+    </div>
+</div>
+              
+              <thead class="title">
+                <tr>
+                  <th style="width: 10px">ID</th>
+                  <th data-priority="2">Ad Soyad</th>
+                  <th>Telefon</th>
+                  <th>Adres</th>
+                  <th data-priority="1" style="width: 96px;">Düzenle</th>
+                </tr>
+              </thead>
+              <tbody>
+               
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div> <!-- end col -->
+    </div> <!-- end row -->
+  </div>
+</div>
+
+<!-- add modal content -->
+<div id="addCustomerModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog custom-modal-width">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" id="myModalLabel">Müşteri Ekle</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      Yükleniyor...
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<!-- edit modal content -->
+<div id="editCustomerModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog custom-modal-width">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h6 class="modal-title" id="myModalLabel">Müşteri Düzenle</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" style="padding: 5px;">
+        Yükleniyor...
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript">
+$(document).ready(function(){
+  var firma_id = {{$firma->id}};
+  $(".addCustomer").click(function(){
+    
+    $.ajax({
+      url: "/"+ firma_id + "/musteri-ekle/"
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#addCustomerModal').modal('show');
+        $('#addCustomerModal .modal-body').html(data);
+      }
+    });
+  });
+  $("#addCustomerModal").on("hidden.bs.modal", function() {
+      $('#addCustomerModal .modal-body').html("");
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#datatableCustomer').on('click', '.editCustomer', function(e){
+        var id = $(this).attr("data-bs-id");
+        var firma_id = {{$firma->id}};
+        $.ajax({
+            url: "/"+ firma_id + "/musteri/duzenle/" + id
+        }).done(function(data) {
+            if ($.trim(data) === "-1") {
+                window.location.reload(true);
+            } else {
+                $('#editCustomerModal').modal('show');
+                $('#editCustomerModal .modal-body').html(data);
+            }
+        });
+    });
+    $("#editCustomerModal").on("hidden.bs.modal", function() {
+      $('#editCustomerModal .modal-body').html("");
+    });
+});
+</script>
+
+<script>
+$(document).ready(function () {
+  // Ülke seçildiğinde şehirleri getir
+  $("#countrySelect").change(function() {
+    var selectedCountryId = $(this).val();
+    if (selectedCountryId) {
+      loadCities(selectedCountryId);
+    }
+  });
+
+  // Şehirleri yüklemek için kullanılan fonksiyon
+  function loadCities(countryId) {
+    var citySelect = $("#citySelect");
+    citySelect.empty(); // Önceki seçenekleri temizle
+    citySelect.append(new Option("Yükleniyor...", "")); // Kullanıcıya yükleniyor bilgisi ver
+
+    // AJAX isteğiyle şehirleri al
+    $.get("/get-states/" + countryId, function(data) {
+      citySelect.empty(); // Yükleniyor mesajını temizle
+      citySelect.append(new Option("-Seçiniz-", "")); // İlk boş seçeneği ekle
+      $.each(data, function(index, city) {
+        citySelect.append(new Option(city.ilceName, city.id));
+      });
+    }).fail(function() {
+      citySelect.empty(); // Hata durumunda temizle
+      citySelect.append(new Option("Unable to load cities", ""));
+    });
+  }
+
+  // Dashboard'dan gelen URL parametrelerini oku
+  const urlParams = new URLSearchParams(window.location.search);
+  const dashboardStartDate = urlParams.get('dashboard_istatistik_tarih1');
+  const dashboardEndDate = urlParams.get('dashboard_istatistik_tarih2');
+
+  // Müşteri filtreleme dropdown'unun daterangepicker ile etkileşimde kapanmasını engelle
+  let preventCustomerDropdownHide = false;
+  $('#musteri_filtre').on('hide.bs.dropdown', function (e) {
+    if (preventCustomerDropdownHide) {
+      e.preventDefault();
+    }
+    preventCustomerDropdownHide = false;
+  });
+  $(document).on('mousedown', function (e) {
+    if ($(e.target).closest('.daterangepicker').length || $(e.target).closest('.tarihAraligi').length) {
+      preventCustomerDropdownHide = true;
+    }
+  });
+  $('#musteri_filtre').find('#daterangeCustomer').on('focus mousedown', function () {
+    preventCustomerDropdownHide = true;
+  });
+  $('#musteri_filtre').find('.tarihAraligi button').on('mousedown', function () {
+    preventCustomerDropdownHide = true;
+  });
+  $('#daterangeCustomer').on('apply.daterangepicker cancel.daterangepicker hide.daterangepicker', function () {
+    preventCustomerDropdownHide = false;
+    $('#musteri_filtre').dropdown('toggle'); // Dropdown'u tekrar kapatmak için tetikle
+  });
+
+  // Müşteriler için daterangepicker başlatma (varsayılan son 3 gün)
+  // Dashboard'dan gelen tarihler varsa onları, yoksa son 3 günü kullan
+  let initialCustomerStartDate = dashboardStartDate ? moment(dashboardStartDate) : moment().subtract(2, 'days').startOf('day');
+  let initialCustomerEndDate = dashboardEndDate ? moment(dashboardEndDate) : moment().endOf('day');
+
+  $('#daterangeCustomer').daterangepicker({
+    startDate: initialCustomerStartDate,
+    endDate: initialCustomerEndDate,
+    locale: {
+      format: 'DD-MM-YYYY',
+      separator: ' - ',
+      applyLabel: 'Uygula',
+      cancelLabel: 'İptal',
+      weekLabel: 'H',
+      daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
+      monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+      firstDay: 1
+    }
+  },
+  function (start_date, end_date) {
+    // daterangepicker değiştiğinde DataTable'ı yeniden çiz
+    $('#daterangeCustomer').val(start_date.format('DD-MM-YYYY') + ' - ' + end_date.format('DD-MM-YYYY'));
+    table.draw();
+  });
+
+  // Hızlı tarih filtreleme butonları
+  $('#lastYearCustomer').on('click', function () {
+    $('#daterangeCustomer').data('daterangepicker').setStartDate(moment().subtract(1, 'year'));
+    $('#daterangeCustomer').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#lastMonthCustomer').on('click', function () {
+    $('#daterangeCustomer').data('daterangepicker').setStartDate(moment().subtract(1, 'month'));
+    $('#daterangeCustomer').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#lastWeekCustomer').on('click', function () {
+    $('#daterangeCustomer').data('daterangepicker').setStartDate(moment().subtract(7, 'days'));
+    $('#daterangeCustomer').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+  $('#yesterdayCustomer').on('click', function () {
+    $('#daterangeCustomer').data('daterangepicker').setStartDate(moment().subtract(1, 'days'));
+    $('#daterangeCustomer').data('daterangepicker').setEndDate(moment().subtract(1, 'days'));
+    table.draw();
+  });
+
+  $('#todayCustomer').on('click', function () {
+    $('#daterangeCustomer').data('daterangepicker').setStartDate(moment());
+    $('#daterangeCustomer').data('daterangepicker').setEndDate(moment());
+    table.draw();
+  });
+
+
+  var table = $('#datatableCustomer').DataTable({
+      processing: false,
+      serverSide: true,
+      language: {
+        paginate: {
+          previous: "<i class='mdi mdi-chevron-left'>",
+          next: "<i class='mdi mdi-chevron-right'>"
+        }
+      },
+      ajax: {
+        url: "{{ route('customers',$firma->id) }}",
+        data: function(data) {
+          data.search = $('input[type="search"]').val();
+          data.tip = $('#musteriTipi').val();
+          data.il = $('#countrySelect').val();
+          data.ilce = $('#citySelect').val();
+
+          // Müşteri tarih aralığını ekle
+          data.from_date_customer = $('#daterangeCustomer').data('daterangepicker').startDate.format('YYYY-MM-DD');
+          data.to_date_customer = $('#daterangeCustomer').data('daterangepicker').endDate.format('YYYY-MM-DD');
+
+          // Eğer URL'den dashboard tarih parametreleri geldiyse, onları da ajax isteğine ekle
+          // Ancak müşteri tarih aralığı filtreleri kullanılıyorsa, dashboard tarihleri override edilmeli.
+          // Controller tarafında öncelik verilecek.
+          if (dashboardStartDate && dashboardEndDate) {
+              data.dashboard_istatistik_tarih1 = dashboardStartDate;
+              data.dashboard_istatistik_tarih2 = dashboardEndDate;
+          }
+        }
+      },
+      'columns': [
+        { data: 'id'},
+        { data: 'name' },
+        { data: 'tel' },
+        { data: 'address' },
+        { data: 'action'}           
+      ],
+      drawCallback: function() {
+        $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+      },
+        "order": [[0, 'desc']],
+        "columnDefs": [{
+          "targets": 0,
+          "className": "gizli"
+        }],
+       
+        "oLanguage": {
+            "sDecimal":        ",",
+          "sEmptyTable":     "Tabloda herhangi bir veri mevcut değil",
+          "sInfo":           "Müşteri Sayısı: _TOTAL_",
+          "sInfoEmpty":      "Kayıt yok",
+          "sInfoFiltered":   "",
+          "sInfoPostFix":    "",
+          "sInfoThousands":  ".",
+          "sLengthMenu":     "_MENU_",
+          "sLoadingRecords": "Yükleniyor...",
+          "sProcessing":     "İşleniyor...",
+          "sSearch":         "",
+          "sZeroRecords":    "Eşleşen kayıt bulunamadı",
+          "oPaginate": {
+              "sFirst":    "İlk",
+              "sLast":     "Son",
+              "sNext":     '<i class="fas fa-angle-double-right"></i>',
+              "sPrevious": '<i class="fas fa-angle-double-left"></i>'
+          },
+          "oAria": {
+              "sSortAscending":  ": artan sütun sıralamasını aktifleştir",
+              "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
+          },
+          "select": {
+              "rows": {
+                  "_": "%d kayıt seçildi",
+                  "0": "",
+                  "1": "1 kayıt seçildi"
+              }
+          }
+          },
+      dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+      "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
+      "initComplete": function(settings, json) {
+          var topContainer = $('#datatableCustomer_wrapper .top');
+          var searchContainer = $('#datatableCustomer_filter');
+          var searchInput = searchContainer.find('input');
+          
+          // Filtre butonunu HTML'den al (artık sadece bir tane var)
+          var filterWrapper = $('.searchWrap');
+
+          // Arama kutusu ve filtreyi sarmalayacak yeni bir flex container oluştur
+          var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
+
+          // DataTables'in varsayılan "Search:" etiketini kaldır ve input'u ayarla
+          searchContainer.find('label').contents().filter(function() {
+              return this.nodeType == 3;
+          }).remove();
+          
+          searchInput.attr('placeholder', 'Müşteri Ara...');
+          searchContainer.addClass('flex-grow-1 me-1'); // Arama kutusunun esnemesini ve sağ boşluk bırakmasını sağla
+          searchInput.addClass('w-100');
+
+          // Ögeleri yeni flex container'a ekle
+          flexContainer.append(searchContainer);
+          flexContainer.append(filterWrapper);
+          
+          // Her şeyi tablonun üstündeki "top" alanına ekle
+          topContainer.html(flexContainer);
+
+          // Görünür yap
+          $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+      }
+  });
+
+  $('#musteriTipi').change(function(){
+    table.draw();        
+  });
+
+  $('#countrySelect').change(function(){
+    table.draw();        
+  });
+
+  $('#citySelect').change(function(){
+    table.draw();        
+  });
+
+  // Tarih aralığı değiştiğinde DataTable'ı yeniden çiz
+  $('#daterangeCustomer').on('apply.daterangepicker', function(ev, picker) {
+      table.draw();
+  });
+
+});
+</script>
+
+<script>
+    $(document).ready(function () {
+      var dropdownContainer = $('#musteri_filtre'); // Tek ID
+      var filterButton = dropdownContainer.find('.filtrele');
+      dropdownContainer.on('show.bs.dropdown', function () {
+        filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+      });
+      dropdownContainer.on('hide.bs.dropdown', function () {
+        filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+      });
+    });
+  </script>
+
+@endsection
