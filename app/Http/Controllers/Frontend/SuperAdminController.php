@@ -380,7 +380,7 @@ public function allTenants(Request $request)
             'ayinBasi' => [
                 'start' => $today->copy()->startOfMonth(),
                 'end' => $today->copy(),
-                'label' => 'Ayın Başından İtibaren'
+                'label' => 'Son Ay'
             ]
         ];
 

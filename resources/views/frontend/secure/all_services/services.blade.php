@@ -5,6 +5,7 @@
     margin: 1.75rem auto;
   }
 }
+
 </style>
 @extends('frontend.secure.user_master')
 @section('user')
@@ -14,6 +15,12 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
   <style>
+    
+    .servisDrop {
+    transition: none !important;
+    animation: none !important;
+        transform: translate3d(1px, 2px, 0px) !important;
+}
     .searchWrap.kullanici_teknisyenfiltre {
       visibility: hidden;
       opacity: 0;

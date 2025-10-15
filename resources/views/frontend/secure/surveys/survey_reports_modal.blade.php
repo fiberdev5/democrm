@@ -1,3 +1,13 @@
+<style>
+  .btn-full{
+    width: 100%;
+  }
+  @media (max-width: 767px) {
+  .btn-full{
+    margin-top: 5px !important;
+  }
+}
+</style>
 <div id="serviceReportAccordion">
   <div class="accordion-item">
     <h2 class="accordion-header" id="heading1">
@@ -48,7 +58,7 @@
 
           <div class="row form-group">
             <div class="col-lg-5 rw1"><label>Tarih Aralığı</label></div>
-            <div class="col-lg-7 rw2">
+            <div class="col-lg-7 d-flex gap-2 rw2">
               <input type="date" name="yapilananket_tarih1" class="form-control tarih1 "  value="{{date('Y-m-d')}}" style="background:#fff;margin-bottom: 3px;">
               <input type="date" name="yapilananket_tarih2" class="form-control tarih2 "  value="{{date('Y-m-d')}}"  style="background:#fff;margin-bottom: 2px;">
             </div>
@@ -56,7 +66,7 @@
 
           <div class="row">
             <div class="col-lg-7 offset-lg-5">
-              <button type="submit" class="btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
+              <button type="submit" class="btn-full btn btn-primary btn-sm inBtn btn-block btnFilter">ARA</button>
             </div>
           </div>
         </form>
@@ -99,7 +109,7 @@
           </div>
          <div class="row form-group">
             <div class="col-lg-5 rw1"><label>Tarih Aralığı</label></div>
-            <div class="col-lg-7 rw2">
+            <div class="col-lg-7 d-flex gap-2 rw2">
               <input type="date" name="yapilmayananket_tarih1" class="form-control tarih1 "  value="{{date('Y-m-d')}}" style="background:#fff;margin-bottom: 3px;">
               <input type="date" name="yapilmayananket_tarih2" class="form-control tarih2 "  value="{{date('Y-m-d')}}"  style="background:#fff;margin-bottom: 2px;">
             </div>
@@ -107,7 +117,7 @@
 
           <div class="row">
             <div class="col-lg-7 offset-lg-5">
-              <button type="submit" class="btn btn-primary btn-sm inBtn btn-block btnFilter ">ARA</button>
+              <button type="submit" class="btn-full btn btn-primary btn-sm inBtn btn-block btnFilter ">ARA</button>
             </div>
           </div>
         </form>

@@ -18,10 +18,10 @@
           $sontarih = \Carbon\Carbon::parse($invoice->faturaTarihi)->format('d/m/Y');
         @endphp  	 
         <tr>
-          <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;">{{$sontarih}}</td>
+          <td style="vertical-align: middle;font-size: 11px; padding:  10px;">{{$sontarih}}</td>
           <!-- Faturanın ürünlerini göster -->
           @if($invoice->invoice_products->count() > 0)
-            <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;">
+            <td style="vertical-align: middle;font-size: 11px; padding:  10px;">
               <ul style="margin:0; padding-left: 15px;">
                 @foreach($invoice->invoice_products as $product)
                   <li>{{ $product->aciklama }}</li>
@@ -29,8 +29,8 @@
               </ul>
             </td>
           @endif
-          <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;"><strong>{{$invoice->genelToplam}}</strong></td>
-          <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;"><strong><a href="{{ route('all.invoices', [$firma->id, 'did' => $invoice->id]) }}" class="btn btn-danger btn-sm editDomain" style="font-size:11px" target="_blank">Detaylar</a></strong></td>
+          <td style="vertical-align: middle;font-size: 11px; padding:  10px;"><strong>{{$invoice->genelToplam}}</strong></td>
+          <td style="vertical-align: middle;font-size: 11px; padding:  10px;"><strong><a href="{{ route('all.invoices', [$firma->id, 'did' => $invoice->id]) }}" class="btn btn-danger btn-sm editDomain" style="font-size:11px" target="_blank">Detaylar</a></strong></td>
         </tr>
       @endforeach
     </tbody>

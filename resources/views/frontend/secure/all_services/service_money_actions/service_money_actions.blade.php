@@ -1,18 +1,23 @@
+<style>
+  .card-border{
+    border: 1px solid rgba(0, 0, 0, .125);
+  }
+</style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div class="card" style="margin-bottom: 3px;margin-top:3px;">
-  <div class="card-header" style="padding: 3px 5px!important;">
+  <div class="card-header card-border d-flex gap-2" style="padding: 3px 5px!important; ">
     <button type="button" class="btn btn-success btn-sm odemeEkleBtn" data-bs-id ={{$servis->id}}>Gelir Ekle</button>
     <button type="button" class="btn btn-danger btn-sm giderEkleBtn" data-bs-id={{$servis->id}}>Gider Ekle</button>
   </div>
 
-  <div class="card-body odemeList" style="padding: 0!important;"></div> 
+  <div class="card-body card-border odemeList" style="padding: 0!important;"></div> 
 </div>
 
 <div class="card">
-  <div class="card-body" style="padding: 0!important">
+  <div class="card-body card-border" style="padding: 0!important">
     <div class="table-responsive" style="margin: 0!important;">
-      <table class="table table-hover table-striped" id="paraHareketTablo" width="100%" cellspacing="0" style="margin: 0">
+      <table class="table table-hover table-striped " id="paraHareketTablo" width="100%" cellspacing="0" style="margin: 0">
         <thead class="title">
           <tr>
             <th style="padding: 5px 10px;font-size: 10px;">Tarih</th>

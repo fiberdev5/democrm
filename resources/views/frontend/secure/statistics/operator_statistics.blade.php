@@ -9,6 +9,14 @@
             visibility: hidden;
             opacity: 0;
         }
+        .card-statics-op{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-statics-op-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-statics-op-body{padding: 3px 7px !important;}
+  .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
         @media (min-width: 768px) {
     .table-modern .card-header {
         display: flex;
@@ -48,7 +56,20 @@
             .pageDetail .searchWrap {
                 margin-bottom: 0px !important;
             }
+                .pageDetail .searchWrap .dropdown-menu {
+        transform: translate3d(-170px, 2px, 0px) !important;
+        min-width: calc(87vw - 20px) !important;
+             inset: 0px auto auto 0px !important;
+    }
+.btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+.searchWrap .tarih-araligi {
+    padding: 5px 0px !important;
 
+}
         }
     </style>
     <div class="page-content servis-istatistik" id="operatorStats">
@@ -60,9 +81,12 @@
 
                     <div class="table-modern">
 
-                        <div class="card-body">
+                        <div class="card-body card-statics-op-body">
                             <div class="card-header">
-                                  <span>Operatör İstatistikleri</span>
+                                  <span style="
+    font-size: 15px;
+    font-weight: 900;
+">Operatör İstatistikleri</span>
 
                             </div>
                             <div class="searchWrap float-end">
@@ -71,11 +95,11 @@
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         Filtrele <i class="mdi mdi-chevron-down"></i>
                                     </button>
-                                    <div class="dropdown-menu">
+                                    <div class="dropdown-menu servisDrop">
                                         <div class="item">
                                             <div class="row">
-                                                <label class="col-sm-4">Tarih Aralığı:</label>
-                                                <div class="col-sm-8">
+                                                <label class="col-sm-4 col-5 custom-p-m-k custom-p-r-m-k">Tarih Aralığı:</label>
+                                                <div class="col-sm-8 col-7 custom-p-m-k">
                                                     <input id="daterange" class="tarih-araligi" />
                                                     <div class="tarihAraligi mt-2 mb-2">
                                                         <button id="lastYear" class="btn btn-sm btn-secondary">Son 1
@@ -282,4 +306,16 @@ lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
             });
         });
     </script>
+    <script>
+    $(document).ready(function () {
+        var dropdownContainer = $('.searchWrap .btn-group');
+        var filterButton = dropdownContainer.find('.filtrele');
+        dropdownContainer.on('show.bs.dropdown', function () {
+            filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+        });
+        dropdownContainer.on('hide.bs.dropdown', function () {
+            filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+        });
+    });
+</script>
 @endsection

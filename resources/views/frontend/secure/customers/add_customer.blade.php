@@ -7,6 +7,7 @@
   .custom-p-l{
     padding-left: 0px !important;
   }
+
 }
 </style>
 <form method="post" id="addCust" action="{{ route('store.customer', $firma->id)}}" enctype="multipart/form-data" >
@@ -30,16 +31,16 @@
   
   <div class="row">
     <label class="col-sm-4 custom-p-r">Telefon</label>
-    <div class="col-sm-4 custom-p-l">
+    <div class="col-sm-4 col-6 custom-p-r-m-md custom-p-l">
       <input name="tel1" class="form-control phone" type="text" placeholder="Telefon 1" required>
     </div>
-    <div class="col-sm-4 custom-p-l">
+    <div class="col-sm-4 col-6 custom-p-m-md custom-p-l">
       <input name="tel2" class="form-control phone" type="text" placeholder="Telefon 2" >
     </div>
   </div>
   <div class="row">
     <div class="col-sm-4 custom-p-r"><label>İl/İlçe</label></div>
-    <div class="col-sm-4 custom-p-l ">
+    <div class="col-sm-4 col-6 custom-p-r-m-md custom-p-l ">
       <select name="il" id="country" class="form-control form-select" style="width:100%!important;">
         <option value="" selected disabled>-Seçiniz-</option>
         @foreach($countries as $item)
@@ -47,7 +48,7 @@
         @endforeach
       </select>
     </div>
-    <div class="col-sm-4 custom-p-l">
+    <div class="col-sm-4 col-6 custom-p-m-md custom-p-l">
       <select name="ilce" id="city" class="form-control form-select" style="width:100%!important;">
         <option value="" selected disabled>-Seçiniz-</option>                              
       </select>

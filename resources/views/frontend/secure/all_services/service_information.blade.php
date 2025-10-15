@@ -1,4 +1,32 @@
 <style>
+  .card1{
+        border: 1px solid rgba(0, 0, 0, .125);
+  }
+  .ch1{
+        background-color: #f7f7f7;
+  }
+  .cardWrap2{
+    margin-top: 8px;
+  }
+  .card2 .card-header{
+    border: 1px solid rgba(0, 0, 0, .125);
+     background-color: #f7f7f7;
+     border-bottom:1px solid rgba(0, 0, 0, .125) !important;
+  }
+  #card2{
+    border: 1px solid rgba(0, 0, 0, .125);
+  }
+  .card5 .card-header{
+    border: 1px solid rgba(0, 0, 0, .125);
+     background-color: #f7f7f7;
+     border-bottom:1px solid rgba(0, 0, 0, .125) !important;
+  }
+  .card5 .card-body{
+    border: 1px solid rgba(0, 0, 0, .125);
+  }
+  .b1{
+    border: 1px solid rgba(0, 0, 0, .125);
+  }
 @media (max-width: 767px) {
  .text-align-right{
   text-align: left !important;
@@ -13,11 +41,12 @@
 .servisSil2{
   width: 100%;
 }
-.btn-sm{
+.btn-sm-custom{
   width: 100%;
   margin-top: 4px;
 }
-
+.edit-padding{padding: 6px 8px !important;}
+label{margin-bottom: 3px !important;}
 }
 </style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -66,10 +95,10 @@
       </div>
     </div>
     <div class="card b1">
-      <div class="card-body" style="padding-top: 6px;">
+      <div class="card-body edit-padding" style="padding-top: 6px;">
         <div class="row form-group" style="border: 0;margin-bottom:0;">
           <div class="col-md-4 rw1"><label>Müsait Olma Zamanı</label></div>
-            <div class="col-md-8 rw2">
+            <div class="col-md-8 rw2 d-flex gap-2">
               <input name="musaitTarih" type="date" class="form-control datepicker kayitTarihi" value="{{$service_id->musaitTarih}}" style="background:#fff;display: inline-block;" data-has-listeners="true">
               <select name="musaitSaat1" class="form-control form-select musaitSaat1" style="display: inline-block;">
                 @php
@@ -130,7 +159,7 @@
     
     <div class="col-sm-6">
       <div class="card card5">
-        <div class="card-header" style="padding:3px 7px!important;">CİHAZ BİLGİSİ</div>
+        <div class="card-header" style="padding:7px 10px!important;">CİHAZ BİLGİSİ</div>
         <div class="card-body">
                 <div class="row form-group ">
                   <div class="col-md-4 rw1"><label>Cihaz Markası <span style="font-weight: bold; color: red;">*</span></label></div>
@@ -211,7 +240,7 @@
   </div>
 </div>
 <input type="hidden" name="servisid" class="servisid" value="{{$service_id->id}}"/>
-<input type="submit" class="btn btn-primary btn-sm" style="display: none;">
+<input type="submit" class="btn btn-primary btn-sm btn-sm-custom" style="display: none;">
 </form>
 
 <div class="servisAsamalari">
@@ -272,12 +301,12 @@
   <div class="card-header" style="padding: 3px 5px;">
     <div class="row">
       <div class="col-12 col-sm-1">
-        <input type="button" class="btn btn-danger btn-sm servisSil2" data-id="" value="Sil"/>
+        <input type="button" class="btn btn-danger btn-sm btn-sm-custom servisSil2" data-id="" value="Sil"/>
       </div>
       <div class="col-sm-11" style="text-align: right;">
-        <a href="#" class="btn btn-warning btn-sm servisMusteriAnketiBtn" data-id="{{ $service_id->id }}">Müşteri Anketi</a>
-        <a href="{{ route('serviceto.pdf', [$firma->id, $service_id->id]) }}" target="_blank" class="btn btn-warning btn-sm servisA4YazdirBtn">Yazdır</a>
-        <input type="button" class="btn btn-info btn-sm servisGuncelleBtn" value="Servis Güncelle"/>
+        <a href="#" class="btn btn-warning btn-sm btn-sm-custom servisMusteriAnketiBtn" data-id="{{ $service_id->id }}">Müşteri Anketi</a>
+        <a href="{{ route('serviceto.pdf', [$firma->id, $service_id->id]) }}" target="_blank" class="btn btn-warning btn-sm btn-sm-custom servisA4YazdirBtn">Yazdır</a>
+        <input type="button" class="btn btn-info btn-sm btn-sm-custom servisGuncelleBtn" value="Servis Güncelle"/>
         <div class="clearfix"></div>
       </div>
     </div>
@@ -344,10 +373,10 @@ function renderServiceHistory(data) {
     if (data.acilIslem) {
         var acilRow = `
           <tr class="acilRow">
-            <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 11px; padding: 5px;">${data.acilIslem.tarih}</td>
-            <td style="vertical-align: middle;font-size: 11px; padding: 5px;"><strong>NOT</strong></td>
-            <td style="vertical-align: middle;font-size: 11px; padding: 5px;"><strong>Servis Acil Aşamasındadır.</strong></td>
-            <td style="vertical-align: middle;font-size: 11px; padding: 5px;" colspan="3">Servis işlemi bittiğinde acil işaretini kaldırın.</td>
+            <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 13px; padding: 5px;">${data.acilIslem.tarih}</td>
+            <td style="vertical-align: middle;font-size: 13px; padding: 5px;"><strong>NOT</strong></td>
+            <td style="vertical-align: middle;font-size: 13px; padding: 5px;"><strong>Servis Acil Aşamasındadır.</strong></td>
+            <td style="vertical-align: middle;font-size: 13px; padding: 5px;" colspan="3">Servis işlemi bittiğinde acil işaretini kaldırın.</td>
           </tr>
         `;
         tbody.append(acilRow);
@@ -357,10 +386,10 @@ function renderServiceHistory(data) {
     data.notlar.forEach(function(not) {
         var notRow = `
             <tr>
-                <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 11px; padding: 5px;">${not.tarih}</td>
-                <td style="vertical-align: middle;font-size: 11px; padding: 5px;">${not.personel}</td>
-                <td style="vertical-align: middle;font-size: 11px; padding: 5px;color:#ec0000;"><strong>Operatör Notu</strong></td>
-                <td style="vertical-align: middle;font-size: 11px; padding: 5px;" colspan="3"><strong>${not.aciklama}</strong></td>
+                <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 13px; padding: 5px;">${not.tarih}</td>
+                <td style="vertical-align: middle;font-size: 13px; padding: 5px;">${not.personel}</td>
+                <td style="vertical-align: middle;font-size: 13px; padding: 5px;color:#ec0000;"><strong>Operatör Notu</strong></td>
+                <td style="vertical-align: middle;font-size: 13px; padding: 5px;" colspan="3"><strong>${not.aciklama}</strong></td>
             </tr>
         `;
         tbody.append(notRow);
@@ -371,33 +400,45 @@ function renderServiceHistory(data) {
         if (islem.type === 'para') {
             var paraRow = `
                 <tr>
-                    <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 11px; padding: 5px;">${islem.tarih}</td>
-                    <td style="vertical-align: middle;font-size: 11px; padding: 5px;">${islem.personel}</td>
-                    <td style="vertical-align: middle;font-size: 11px; padding: 5px;"><strong>${islem.islem}</strong></td>
-                    <td style="vertical-align: middle;font-size: 11px; padding: 5px;" colspan="3"><strong>${islem.aciklama}</strong></td>
+                    <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 13px; padding: 5px;">${islem.tarih}</td>
+                    <td style="vertical-align: middle;font-size: 13px; padding: 5px;">${islem.personel}</td>
+                    <td style="vertical-align: middle;font-size: 13px; padding: 5px;"><strong>${islem.islem}</strong></td>
+                    <td style="vertical-align: middle;font-size: 13px; padding: 5px;" colspan="3"><strong>${islem.aciklama}</strong></td>
                 </tr>
             `;
             tbody.append(paraRow);
         } else {
             var buttons = '';
             
-                buttons = '<td class="btnCS" style="vertical-align: middle;width: 25px;padding: 0 5px;">';
-                
-                buttons += `<a href="#" id="servisPlanSil" style="font-size: 11px;" class="btn btn-outline-danger btn-sm servisPlanSil" data-id="${islem.id}"> <i class="fas fa-trash-alt"></i></a>`;
-                
-                buttons += '</td><td class="btnCS" style="vertical-align: middle;width: 70px;padding: 0 5px;">';
-                
-                buttons += `<a href="#" data-bs-id="${islem.id}" style="font-size: 11px;" class="btn btn-outline-warning btn-sm servisPlanDuzenleBtn"> <i class="fas fa-edit"></i></a>`;
-                 
-                buttons += '</td>';
+                if (islem.pid == currentUserId) {
+            // Butonları tek bir hücre ('td') içine alıyoruz.
+            // colspan="2" masaüstü düzeninin bozulmamasını sağlar.
+            // action-buttons-cell adında özel bir class ekliyoruz.
+            buttons += '<td class="action-buttons-cell" colspan="2">';
+
+            // Sil butonu (Sadece ikon)
+            buttons += `<a href="#" id="servisPlanSil" style="font-size: 13px;" class="btn btn-outline-danger btn-sm  btn-sm-custom servisPlanSil" data-id="${islem.id}"> <i class="fas fa-trash-alt"></i></a>`;
+            
+            // Düzenle butonu (Sadece ikon ve aralarında boşluk)
+            buttons += `<a href="#" data-bs-id="${islem.id}" style="font-size: 13px; margin-left: 8px;" class="btn btn-outline-warning btn-sm btn-sm-custom servisPlanDuzenleBtn"> <i class="fas fa-edit"></i></a>`;
+             
+            buttons += '</td>'; // Tek hücreyi kapatıyoruz
+        } else {
+            // Yetkiniz yoksa olan kısım
+            buttons += `
+                <td colspan="2" style="font-size: 11px; color: red; text-align: center;">
+                    <strong>Yetkiniz yok</strong>
+                </td>
+            `;
+        }
             
             
             var islemRow = `
                 <tr>
-                    <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 11px; padding: 0 5px;">${islem.tarih}</td>
-                    <td style="vertical-align: middle;font-size: 11px; padding: 0 5px;">${islem.personel}</td>
-                    <td class="islemAsamaCS" style="vertical-align: middle;font-size: 11px; padding: 0 5px;"><strong>${islem.asama}</strong></td>
-                    <td class="islemAciklamaCS" style="vertical-align: middle;font-size: 11px;padding: 0 5px;width: 300px;text-transform: capitalize;">${islem.aciklamalar.join('<br>')}</td>
+                    <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 13px; padding: 0 5px;">${islem.tarih}</td>
+                    <td style="vertical-align: middle;font-size: 13px; padding:  5px;">${islem.personel}</td>
+                    <td class="islemAsamaCS" style="vertical-align: middle;font-size: 13px; padding:  5px;"><strong>${islem.asama}</strong></td>
+                    <td class="islemAciklamaCS" style="vertical-align: middle;font-size: 13px;padding: 5px;width: 300px;text-transform: capitalize;">${islem.aciklamalar.join('<br>')}</td>
                     ${buttons}
                 </tr>
             `;
@@ -409,10 +450,10 @@ function renderServiceHistory(data) {
     data.paraHareketleri.forEach(function(para) {
         var paraRow = `
             <tr>
-                <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 11px; padding: 5px;">${para.tarih}</td>
-                <td style="vertical-align: middle;font-size: 11px; padding: 5px;">${para.personel}</td>
-                <td style="vertical-align: middle;font-size: 11px; padding: 5px;"><strong>${para.islem}</strong></td>
-                <td style="vertical-align: middle;font-size: 11px; padding: 5px;" colspan="3"><strong>${para.aciklama}</strong></td>
+                <td class="kayitTarihiCS" style="vertical-align: middle;width: 100px; font-size: 13px; padding: 5px;">${para.tarih}</td>
+                <td style="vertical-align: middle;font-size: 13px; padding: 5px;">${para.personel}</td>
+                <td style="vertical-align: middle;font-size: 13px; padding: 5px;"><strong>${para.islem}</strong></td>
+                <td style="vertical-align: middle;font-size: 13px; padding: 5px;" colspan="3"><strong>${para.aciklama}</strong></td>
             </tr>
         `;
         tbody.append(paraRow);

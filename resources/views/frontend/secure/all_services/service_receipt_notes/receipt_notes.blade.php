@@ -34,17 +34,26 @@
                 <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;">
                   <strong>{{ $item->aciklama }}</strong>
                 </td>
-                @if($item->kid == auth()->user()->user_id)
-                  <td style="vertical-align: middle;width: 55px;padding: 0 10px;">
-                    <a href="#" style="font-size: 11px;" class="btn btn-primary btn-sm fisNotuDuzenle" data-bs-id="{{ $item->id }}">Düzenle</a>
-                  </td>
-                  <td style="vertical-align: middle;width: 55px;padding: 0 10px;">
-                    <a href="#" style="font-size: 11px;" class="btn btn-danger btn-sm fisNotuSil" data-id="{{ $item->id }}">Sil</a>
-                  </td>
-                @else
-                  <td style="vertical-align: middle;width: 55px;padding: 0 10px;font-size:11px;">Yetkiniz Yok</td>
-                  <td style="vertical-align: middle;width: 55px;padding: 0 10px;font-size:11px;">Yetkiniz Yok</td>
-                @endif                                   
+               @if($item->kid == auth()->user()->user_id)
+  {{-- Düzenle Butonu (İkonlu) --}}
+  <td style="vertical-align: middle; width: 45px; text-align: center; padding: 0 10px;">
+    <a href="#" class="btn btn-outline-warning btn-sm fisNotuDuzenle" data-bs-id="{{ $item->id }}" title="Düzenle">
+      <i class="fas fa-edit"></i>
+    </a>
+  </td>
+  
+  {{-- Sil Butonu (İkonlu) --}}
+  <td style="vertical-align: middle; width: 45px; text-align: center; padding: 0 10px;">
+    <a href="#" class="btn btn-outline-danger  btn-sm fisNotuSil" data-id="{{ $item->id }}" title="Sil">
+      <i class="fas fa-trash-alt"></i>
+    </a>
+  </td>
+@else
+  {{-- Yetki Yok Durumu (Tek hücrede birleştirilmiş) --}}
+  <td colspan="2" style="vertical-align: middle; text-align: center; padding: 0 10px; font-size: 11px;">
+    Yetkiniz Yok
+  </td>
+@endif                                 
               </tr>
             @endforeach
           </tbody>

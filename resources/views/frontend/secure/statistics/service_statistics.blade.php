@@ -6,6 +6,11 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <style>
     @media (max-width: 576px) {
+        .tarihAraligi{
+        display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 2px !important;
+        }
         .head-b {
             font-size: 17px !important;
         }
@@ -28,6 +33,14 @@
         .tarih-m-l{
             margin-left: -46px;
         }
+            .servisSayilariChart .nav-link, .servisSaatleriChart .nav-link {
+        padding: 0.35rem 0.3rem !important;
+    }
+    .btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
     }
     @media (min-width: 576px) {
         .calendar{
@@ -58,13 +71,22 @@
     .col-j{
         background-color:#e5e4e4 !important ;
     }
+
+    .card-statics{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-statics-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-statics-body{padding: 3px 7px !important;}
+  .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
 </style>
 <div class="page-content servis-istatistik-genel">
     <div class="container-fluid">
         @include('frontend.secure.statistics.statistics_menu', ['tenant_id' => $tenant_id])
            <!-- Modern Header Card -->
-            <div class="card shadow-sm istatistik-card mt-2">
-                <div class="card-header sayfaBaslik d-flex justify-content-between align-items-center col-c">
+            <div class="card card-statics shadow-sm istatistik-card mt-2">
+                <div class="card-header card-statics-header sayfaBaslik d-flex justify-content-between align-items-center col-c">
                     <h5 class="mb-0 d-flex align-items-center head-b">
                         <i class="fas fa-chart-line me-1"></i> <!-- ikon -->
                         Servis İstatistikleri
@@ -73,7 +95,7 @@
                     <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown">
                         Filtrele <i class="mdi mdi-chevron-down"></i>
                     </button>
-                   <div class="dropdown-menu dropdown-menu-end servisDrop p-3" style="min-width: 320px;">
+                   <div class="dropdown-menu dropdown-menu-end servisDrop p-3 servisDrop" style="min-width: 320px;">
                     <form id="istatistikAra" action="{{ route('statistics', $tenant_id) }}" method="get">
                         {{-- Personel --}}
                         <div class="row g-2 align-items-center mb-3">
@@ -346,8 +368,8 @@
         <div class="row grafik-t-c">
             <!-- Servis Sayıları Grafiği -->
             <div class="col-lg-7">
-                <div class="card shadow-sm servisSayilariChart" style="height: 300px;">
-                    <div class="card-header  d-flex justify-content-between align-items-center col-c">
+                <div class="card card-statics shadow-sm servisSayilariChart" style="height: 300px;">
+                    <div class="card-header card-statics-header  d-flex justify-content-between align-items-center col-c">
                         <div class="d-flex px-1 align-items-center head-padding">
                             <h5 class="mb-0"><i class="fas fa-chart-line me-1"></i>Servis Sayıları</h6>
                         </div>
@@ -363,7 +385,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="card-body" style="height: calc(100% - 70px);">
+                    <div class="card-body card-statics-body" style="height: calc(100% - 70px);">
                         <div class="tab-content h-100">
                             <div id="gun7" class="tab-pane fade show active h-100">
                                 <canvas id="myAreaChart" style="height: 100% !important;"></canvas>
@@ -380,8 +402,8 @@
             </div>
             <!-- Saatlik Dağılım Grafiği -->
             <div class="col-lg-5">
-                <div class="card shadow-sm servisSaatleriChart" style="height: 300px;">
-                    <div class="card-header  d-flex justify-content-between align-items-center col-j">
+                <div class="card card-statics shadow-sm servisSaatleriChart" style="height: 300px;">
+                    <div class="card-header card-statics-header  d-flex justify-content-between align-items-center col-j">
                         <div class="d-flex align-items-center head-padding px-1">
                             <h5 class="mb-0"><i class="fas fa-clock me-1"></i>Saat Aralıkları</h6>
                         </div>
@@ -401,7 +423,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="card-body" style="height: calc(100% - 70px);">
+                    <div class="card-body card-statics-body" style="height: calc(100% - 70px);">
                         <div class="tab-content h-100">
                             <div id="saat7" class="tab-pane fade show active h-100">
                                 <canvas id="saatArea7" style="height: 100% !important;"></canvas>

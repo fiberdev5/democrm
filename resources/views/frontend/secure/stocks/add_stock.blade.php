@@ -10,6 +10,10 @@
     padding-left: 0px !important;
   }
 }
+@media (max-width: 767px) {
+#addStock label{margin-bottom: 3px !important;}
+}
+
 </style>
 
 <form method="post" id="addStock" action="{{ route('store.stock', $firma->id) }}" enctype="multipart/form-data">

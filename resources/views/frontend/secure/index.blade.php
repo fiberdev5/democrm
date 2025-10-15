@@ -23,6 +23,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
 <style>
+    .custom-padding{
+        margin-bottom: 12px;
+    }
     body {
         min-height: 100vh;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -86,7 +89,7 @@
 
     .service-summary h5 {
         color: #333;
-        margin-bottom: 15px; /* Reduced margin */
+        margin-bottom: 11px; /* Reduced margin */
         font-weight: 600;
         display: flex;
         align-items: center;
@@ -506,13 +509,14 @@
         .chart-container, .dashboard-card { height: auto; min-height: 320px; }
         .time-filter { flex-wrap: wrap; }
         .filter-btn { font-size: 0.75rem; padding: 5px 12px; }
-        .service-summary { padding: 15px 5px; }
+        .service-summary { padding: 0; margin-top: 10px !important;padding-bottom: 20px !important;}
         .service-item { padding: 0px; }
         .service-count { font-size: 1.6rem; }
         .main-page-custom{margin-top: 37px;}
         .chart-header {
     align-items: flex-start !important;
 }
+
     }
 
     .row { margin-left: -8px; margin-right: -8px; }
@@ -560,7 +564,7 @@
     <!-- Servis Özeti -->
     <div class="service-summary">
         <h5><i class="fas fa-chart-bar"></i> Servis Sayıları</h5>
-        <div class="row">
+        <div class="row custom-padding">
             <div class="col-md-4">
                 <a href="#" class="service-item today" id="todayServicesCard">
                     <div class="service-count" id="todayServices">-</div>

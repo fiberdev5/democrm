@@ -10,9 +10,15 @@
     max-width: 330px;
     margin: 1.75rem auto;
   }
+  .custom-modal-width-edit{
+    max-width: 365px;
+    margin: 1.75rem auto;
+  }
   .searchWrap .dropdown-menu{
     width: 251px !important;
   }
+  .pageDetail .searchWrap .dropdown-menu{transform: translate3d(-178px, 1px, 0px) !important;min-width: 100% !important;}
+  
 }
 #datatableCustomer_filter input[type="search"] {
     padding-right: 12px !important; 
@@ -25,9 +31,16 @@
 .dataTables_filter{
       margin-bottom: -11px !important;
 }
-
+.card-customer{    border: 1px solid rgba(0, 0, 0, .125);}
+.card-header-custom{background-color: #f7f7f7;border-bottom: 1px solid rgba(0, 0, 0, .125);margin-bottom: 7px;padding: 4px 7px  !important;}
+  .card-customer-body{padding: 3px 7px !important;} 
 @media (max-width: 767px) {
-
+      .pageDetail .card-header{padding: 4px 7px !important;}
+.btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
 .custom-p{
         padding-left: 0px !important;
       }
@@ -40,7 +53,7 @@ margin-right: 0px !important;
     .pageDetail .searchWrap{width: 30% !important;}
     .pageDetail .searchWrap{margin-bottom: 0px !important;}
       #datatableCustomer_filter label{width: 100% !important;}
-          .pageDetail .searchWrap .dropdown-menu{transform: translate3d(11px, 3px, 0px) !important;min-width: 100% !important;}
+          .pageDetail .searchWrap .dropdown-menu{transform: translate3d(13px, 2px, 0px) !important;min-width: calc(80vw - 20px) !important;}
 .pageDetail .searchWrap .dropdown-menu .item {
     margin-bottom: 0px !important;
   }
@@ -50,14 +63,22 @@ margin-right: 0px !important;
     align-items: center !important;
     padding-top: 0.85em !important;
 }
+.searchWrap .dropdown-menu {
+    padding: 5px 1px;
+}
+.custom-p-r-m-c{
+  padding-right: 0px !important;
+}
+.customer-header-top{margin-top: 30px;}
+
 }
 </style>
 <div class="page-content">
-  <div class="container-fluid">
+  <div class="container-fluid customer-header-top">
     <div class="row pageDetail">
       <div class="col-12">
-        <div class="card">
-          <div class="card-header sayfaBaslik">
+        <div class="card card-customer">
+          <div class="card-header card-header-custom sayfaBaslik">
             Müşteriler
           </div>
           <div class="card-body">
@@ -80,8 +101,8 @@ margin-right: 0px !important;
             <div class="dropdown-menu">
                 <div class="item">
                     <div class="row">
-                        <label class="col-sm-3 custom-p col-3 filtre-i-p">Durum</label>
-                        <div class="filtre-i-p custom-p custom-p-m col-9 col-sm-9">
+                        <label class="col-sm-5 custom-p col-5 filtre-i-p">Durum</label>
+                        <div class="filtre-i-p custom-p custom-p-m col-7 col-sm-7">
                             <select name="musteriTipi" id="musteriTipi" class="form-select">
                                 <option value="">Hepsi</option>
                                 <option value="1" >Bireysel</option>
@@ -92,8 +113,8 @@ margin-right: 0px !important;
                 </div>
                 <div class="item">
                     <div class="row">
-                        <label class="col-sm-3 custom-p col-3 filtre-i-p">İl</label>
-                        <div class="col-sm-9 custom-p custom-p-m col-9 filtre-i-p">
+                        <label class="col-sm-5 custom-p col-5 filtre-i-p">İl</label>
+                        <div class="col-sm-7 custom-p custom-p-m col-7 filtre-i-p">
                             <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;">
                                 <option value="" selected disabled>-Seçiniz-</option>
                                 @foreach($countries as $item)
@@ -105,8 +126,8 @@ margin-right: 0px !important;
                 </div>
                 <div class="item">
                     <div class="row">
-                        <label class="col-sm-3 custom-p col-3 filtre-i-p">İlçe</label>
-                        <div class="col-sm-9 custom-p custom-p-m col-9 filtre-i-p">
+                        <label class="col-sm-5 custom-p col-5 filtre-i-p">İlçe</label>
+                        <div class="col-sm-7 custom-p custom-p-m col-7 filtre-i-p">
                             <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;">
                                 <option value="" selected disabled>-Seçiniz-</option>                              
                             </select>
@@ -116,8 +137,8 @@ margin-right: 0px !important;
                 <!-- YENİ TARİH FİLTRESİ BAŞLANGICI -->
                 <div class="item">
                     <div class="row">
-                        <label class="col-sm-5">Tarih Aralığı:</label>
-                        <div class="col-sm-7">
+                        <label class="col-sm-5 col-5 custom-p">Tarih Aralığı</label>
+                        <div class="col-sm-7 custom-p col-7 custom-p-m custom-p-r-m-c">
                             <input id="daterangeCustomer" class="tarih-araligi form-control">
                             <div class="tarihAraligi mt-2 mb-2">
                                 <button id="lastYearCustomer" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
@@ -174,7 +195,7 @@ margin-right: 0px !important;
 
 <!-- edit modal content -->
 <div id="editCustomerModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog custom-modal-width">
+  <div class="modal-dialog custom-modal-width-edit">
     <div class="modal-content">
       <div class="modal-header">
         <h6 class="modal-title" id="myModalLabel">Müşteri Düzenle</h6>
