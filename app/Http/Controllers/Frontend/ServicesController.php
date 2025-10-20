@@ -682,7 +682,7 @@ private function formatStokList(string $value): string
     $deleteButton = '';
     if (Auth::user()->can('Servisleri Silebilir')) {
         $deleteButton = '<a href="'.$deleteUrl.'" 
-                            class="btn btn-sm btn-outline-danger mobilBtn mbuton3" 
+                            class="btn btn-sm btn-outline-danger mobilBtn mbuton3 delete-button" 
                             id="delete" title="Sil">
                             <i class="fas fa-trash-alt"></i> <span> Sil</span>
                          </a>';

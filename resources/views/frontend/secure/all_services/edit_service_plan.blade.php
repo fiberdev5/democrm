@@ -8,10 +8,10 @@
 
         {{-- İşlemi Yapan Personel Seçimi --}}
         <div class="row form-group">
-          <div class="col-lg-4">
+          <div class="col-lg-12">
             <label>İşlemi Yapan</label>
           </div>
-          <div class="col-lg-8">
+          <div class="col-lg-12">
             <select name="planIslemiYapan" class="form-control planIslemiYapan">
               @foreach($personellerAll as $personel)
                 <option value="{{ $personel->user_id }}" 

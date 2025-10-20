@@ -99,6 +99,10 @@
     #kasaArama {
       background-color: #343a40 !important;
     }
+    .kasaArama {
+          background-color: #343a40;
+    color: white;
+    }
 
     .card-allcash {
       border: 1px solid rgba(0, 0, 0, .125) !important;
@@ -402,19 +406,54 @@
   </div><!-- /.modal -->
 
   <script>
-    var getUrlParameter = function getUrlParameter(sParam) {
-      var sPageURL = window.location.search.substring(1),
-        sURLVariables = sPageURL.split('&'),
-        sParameterName,
-        i;
-      for (i = 0; i < sURLVariables.length; i++) {
-        sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] === sParam) {
-          return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-        }
+  var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+    sURLVariables = sPageURL.split('&'),
+    sParameterName,
+    i;
+    for (i = 0; i < sURLVariables.length; i++) {
+      sParameterName = sURLVariables[i].split('=');
+      if (sParameterName[0] === sParam) {
+        return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
       }
-    };
+    }
+  };
 
+  var mid = getUrlParameter('did');
+  if(mid){
+    $.ajax({
+      url: "/kasa-hareketi/duzenle/"+ mid
+    }).done(function(data) { 
+      if($.trim(data)==="-1"){
+        window.location.reload(true);
+      }else{
+        $('#editCashTransctionsModal').modal('show');
+        $('#editCashTransactionsModal .modal-body').html(data);
+      }
+    });
+  }
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".addCashTransactions").click(function(){
+    var firma_id = {{$firma->id}};
+    $.ajax({
+      url: "/" + firma_id + "/kasa-hareketi/ekle/"
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#addCashTransactionsModal').modal('show');
+        $('#addCashTransactionsModal .modal-body').html(data);
+      }
+    });
+  });
+  $("#addCashTransactionsModal").on("hidden.bs.modal", function() {
+    $('#addCashTransactionsModal .modal-body').html("");
+  });
+});
+</script>
 
 <script type="text/javascript">
   $(document).ready(function(){
@@ -422,39 +461,17 @@
     $('#datatableKasa').on('click', '.editCashTransactions', function(e){
       var id = $(this).attr("data-bs-id");
       var firma_id = {{$firma->id}};
-
       $.ajax({
-        url: "/kasa-hareketi/duzenle/" + mid
-      }).done(function (data) {
+        url: "/" + firma_id + "/kasa-hareketi/duzenle/" + id
+      }).done(function(data) {
         if ($.trim(data) === "-1") {
           window.location.reload(true);
         } else {
-          $('#editCashTransctionsModal').modal('show');
+          $('#editCashTransactionsModal').modal('show');
           $('#editCashTransactionsModal .modal-body').html(data);
         }
       });
-  </script>
-
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $(".addCashTransactions").click(function () {
-        var firma_id = {{$firma->id}};
-        $.ajax({
-          url: "/" + firma_id + "/kasa-hareketi/ekle/"
-        }).done(function (data) {
-          if ($.trim(data) === "-1") {
-            window.location.reload(true);
-          } else {
-            $('#addCashTransactionsModal').modal('show');
-            $('#addCashTransactionsModal .modal-body').html(data);
-          }
-        });
-      });
-      $("#addCashTransactionsModal").on("hidden.bs.modal", function () {
-        $('#addCashTransactionsModal .modal-body').html("");
-      });
     });
-
 
     // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
     $('#datatableKasa tbody').on('click', 'tr', function(e) {
@@ -489,217 +506,196 @@
 
     $("#editCashTransactionsModal").on("hidden.bs.modal", function() {
       $('#editCashTransactionsModal .modal-body').html("");
-
     });
-  </script>
+  });
+</script>
 
-  <script type="text/javascript">
-    $(document).ready(function () {
-      $(".statistics").click(function () {
-        $.ajax({
-          url: "/kasa-istatistik/"
-        }).done(function (data) {
-          if ($.trim(data) === "-1") {
-            window.location.reload(true);
-          } else {
-            $('#cashTransactionStatisticsModal').modal('show');
-            $('#cashTransactionStatisticsModal .modal-body').html(data);
-          }
-        });
+<script type="text/javascript">
+  $(document).ready(function(){
+    $(".statistics").click(function(){
+      $.ajax({
+        url: "/kasa-istatistik/"
+      }).done(function(data) {
+        if ($.trim(data) === "-1") {
+          window.location.reload(true);
+        } else {
+          $('#cashTransactionStatisticsModal').modal('show');
+          $('#cashTransactionStatisticsModal .modal-body').html(data);
+        }
       });
     });
-  </script>
+  });
+</script>
 
-  <script>
-    $(document).ready(function () {
-      var aramaZamanlayici; // Debounce için
+<script>
+  $(document).ready(function () {
+    var aramaZamanlayici; // Debounce için
 
-      // ✅ AJAX ile dinamik müşteri arama
-      $('#search').keyup(function () {
-        var searchField = $(this).val();
-
-        // Önceki zamanlayıcıyı iptal et
-        clearTimeout(aramaZamanlayici);
-
-        // Liste temizle
-        $('#result').html('');
-
-        if (searchField.length > 2) { // 3 karakterden sonra ara
-          // 300ms bekle, ardından ara
-          aramaZamanlayici = setTimeout(function () {
-            $.ajax({
-              url: "{{ route('search.customer.kasa', $firma->id) }}",
-              method: "POST",
-              data: {
-                musteriGetir: searchField,
-                _token: "{{ csrf_token() }}"
-              },
-              beforeSend: function () {
-                $('#result').html('<li class="list-group-item text-muted">Aranıyor...</li>');
-              },
-              success: function (data) {
-                $('#result').html('');
-
-                if (data.length === 0) {
-                  $('#result').append('<li class="list-group-item text-muted">Sonuç bulunamadı</li>');
-                  return;
-                }
-
-                $.each(data, function (key, value) {
-                  var tip = value.musteriTipi == "1" ? "Bireysel" : "Kurumsal";
-                  var ilceAdi = value.state ? value.state.ilceName : '';
-                  var ilAdi = value.country ? value.country.name : '';
-
-                  // Adres formatla
-                  var adresDisplay = value.adres || '';
-                  if (ilceAdi || ilAdi) {
-                    adresDisplay += (adresDisplay ? ' - ' : '') + ilceAdi + '/' + ilAdi;
-                  }
-
-                  $('#result').append(
-                    '<li class="list-group-item link-class" ' +
-                    'data-id="' + value.id + '" ' +
-                    'data-adSoyad="' + (value.adSoyad || value.m_adi) + '" ' +
-                    'data-firmaAdi="' + (value.firma_adi || '') + '" ' +
-                    'data-tel="' + (value.tel1 || value.telefon) + '" ' +
-                    'data-adres="' + adresDisplay + '">' +
-                    '<span style="font-weight:500;">Ad Soyad: </span>' + (value.adSoyad || value.m_adi) +
-                    ' (' + (value.firma_adi || '') + ') <span style="color: #666;">(' + tip + ')</span><br>' +
-                    '<span style="font-weight:500;">Telefon: </span>' + (value.tel1 || value.telefon) + '<br>' +
-                    '<span style="font-weight:500;">Adres: </span>' + adresDisplay +
-                    '</li>'
-                  );
-                });
-              },
-              error: function (xhr, status, error) {
-                console.error('Arama hatası:', error);
-                $('#result').html('<li class="list-group-item text-danger">Bir hata oluştu</li>');
+    // ✅ AJAX ile dinamik müşteri arama
+    $('#search').keyup(function () {
+      var searchField = $(this).val();
+      
+      // Önceki zamanlayıcıyı iptal et
+      clearTimeout(aramaZamanlayici);
+      
+      // Liste temizle
+      $('#result').html('');
+      
+      if (searchField.length > 2) { // 3 karakterden sonra ara
+        // 300ms bekle, ardından ara
+        aramaZamanlayici = setTimeout(function() {
+          $.ajax({
+            url: "{{ route('search.customer.kasa', $firma->id) }}",
+            method: "POST",
+            data: {
+              musteriGetir: searchField,
+              _token: "{{ csrf_token() }}"
+            },
+            beforeSend: function() {
+              $('#result').html('<li class="list-group-item text-muted">Aranıyor...</li>');
+            },
+            success: function (data) {
+              $('#result').html('');
+              
+              if (data.length === 0) {
+                $('#result').append('<li class="list-group-item text-muted">Sonuç bulunamadı</li>');
+                return;
               }
-            });
-          }, 300); // 300ms gecikme
-
-        } else if (searchField.length === 0) {
-          // Arama kutusu boşaltılırsa temizle
-          $('#result').html('');
-        }
-      });
-
-      // Müşteri seçme
-      $('#result').on('click', 'li.link-class', function () {
-        var click_id = $(this).attr('data-id');
-        var click_adSoyad = $(this).attr('data-adSoyad');
-
-        $('#alici').val(click_id);
-        $('.mid').val(click_id);
-        $('.musteriAdSoyad').val(click_adSoyad);
-        $("#result").html('');
-
-        // Tabloyu güncelle
-        $('#datatableKasa').DataTable().draw();
-      });
-
-      // Dışarı tıklanınca kapat
-      $(document).click(function (e) {
-        if (!$(e.target).closest('#search, #result').length) {
-          $("#result").html('');
-        }
-      });
+              
+              $.each(data, function (key, value) {
+                var tip = value.musteriTipi == "1" ? "Bireysel" : "Kurumsal";
+                var ilceAdi = value.state ? value.state.ilceName : '';
+                var ilAdi = value.country ? value.country.name : '';
+                
+                // Adres formatla
+                var adresDisplay = value.adres || '';
+                if (ilceAdi || ilAdi) {
+                  adresDisplay += (adresDisplay ? ' - ' : '') + ilceAdi + '/' + ilAdi;
+                }
+                
+                $('#result').append(
+                  '<li class="list-group-item link-class" ' +
+                  'data-id="' + value.id + '" ' +
+                  'data-adSoyad="' + (value.adSoyad || value.m_adi) + '" ' +
+                  'data-firmaAdi="' + (value.firma_adi || '') + '" ' +
+                  'data-tel="' + (value.tel1 || value.telefon) + '" ' +
+                  'data-adres="' + adresDisplay + '">' +
+                  '<span style="font-weight:500;">Ad Soyad: </span>' + (value.adSoyad || value.m_adi) + 
+                  ' (' + (value.firma_adi || '') + ') <span style="color: #666;">(' + tip + ')</span><br>' +
+                  '<span style="font-weight:500;">Telefon: </span>' + (value.tel1 || value.telefon) + '<br>' +
+                  '<span style="font-weight:500;">Adres: </span>' + adresDisplay + 
+                  '</li>'
+                );
+              });
+            },
+            error: function(xhr, status, error) {
+              console.error('Arama hatası:', error);
+              $('#result').html('<li class="list-group-item text-danger">Bir hata oluştu</li>');
+            }
+          });
+        }, 300); // 300ms gecikme
+        
+      } else if (searchField.length === 0) {
+        // Arama kutusu boşaltılırsa temizle
+        $('#result').html('');
+      }
     });
-  </script>
-  <script>
-    $(document).ready(function () {
-      // Bu bayrak, daterangepicker veya kısa yol butonlarına tıklandığında dropdown'ın kapanmasını engellemek için kullanılır.
-      let preventDropdownHide = false;
-      // Dropdown'ın kapanma olayını dinliyoruz
-      $('#kasaFilterDropdownContainer').on('hide.bs.dropdown', function (e) {
+
+    // Müşteri seçme
+    $('#result').on('click', 'li.link-class', function () {
+      var click_id = $(this).attr('data-id');
+      var click_adSoyad = $(this).attr('data-adSoyad');
+      
+      $('#alici').val(click_id);
+      $('.mid').val(click_id);
+      $('.musteriAdSoyad').val(click_adSoyad);
+      $("#result").html('');
+      
+      // Tabloyu güncelle
+      $('#datatableKasa').DataTable().draw();
+    });
+
+    // Dışarı tıklanınca kapat
+    $(document).click(function (e) {
+      if (!$(e.target).closest('#search, #result').length) {
+        $("#result").html('');
+      }
+    });
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    // Bu bayrak, daterangepicker veya kısa yol butonlarına tıklandığında dropdown'ın kapanmasını engellemek için kullanılır.
+    let preventDropdownHide = false;
+    // Dropdown'ın kapanma olayını dinliyoruz
+    $('#kasaFilterDropdownContainer').on('hide.bs.dropdown', function(e) {
         // Eğer bayrak 'true' ise, yani tıklama daterangepicker'dan geldiyse...
         if (preventDropdownHide) {
-          e.preventDefault(); // Bootstrap'ın dropdown'ı kapatmasını engelle.
+            e.preventDefault(); // Bootstrap'ın dropdown'ı kapatmasını engelle.
         }
         // Olay kontrol edildikten sonra bayrağı her zaman sıfırla ki bir sonraki normal tıklamada dropdown kapanabilsin.
         preventDropdownHide = false;
-      });
-      // daterangepicker'ın takvim arayüzü içindeki herhangi bir tıklamayı yakala
-      $(document).on('mousedown', function (e) {
+    });
+    // daterangepicker'ın takvim arayüzü içindeki herhangi bir tıklamayı yakala
+    $(document).on('mousedown', function(e) {
         // Eğer tıklama .daterangepicker sınıfına sahip bir elementin içindeyse...
         if ($(e.target).closest('.daterangepicker').length) {
-          preventDropdownHide = true; // Bayrağı ayarla.
+            preventDropdownHide = true; // Bayrağı ayarla.
         }
-      });
-      // Dropdown içindeki daterangepicker input alanına tıklandığında bayrağı ayarla
-      $('#kasaFilterDropdownContainer').find('#daterange').on('focus mousedown', function () {
+    });
+    // Dropdown içindeki daterangepicker input alanına tıklandığında bayrağı ayarla
+    $('#kasaFilterDropdownContainer').find('#daterange').on('focus mousedown', function() {
         preventDropdownHide = true;
-      });
-      // Dropdown içindeki tarih kısayol butonlarına tıklandığında bayrağı ayarla
-      $('#kasaFilterDropdownContainer').find('.tarihAraligi button').on('mousedown', function () {
+    });
+    // Dropdown içindeki tarih kısayol butonlarına tıklandığında bayrağı ayarla
+    $('#kasaFilterDropdownContainer').find('.tarihAraligi button').on('mousedown', function() {
         preventDropdownHide = true;
-      });
-      // daterangepicker "Uygula", "İptal" butonlarına basıldığında veya kapandığında bayrağı sıfırla.
-      // Bu, daterangepicker ile işimiz bittikten sonra dropdown'ın normal şekilde kapanabilmesini sağlar.
-      $('#daterange').on('apply.daterangepicker cancel.daterangepicker hide.daterangepicker', function () {
+    });
+    // daterangepicker "Uygula", "İptal" butonlarına basıldığında veya kapandığında bayrağı sıfırla.
+    // Bu, daterangepicker ile işimiz bittikten sonra dropdown'ın normal şekilde kapanabilmesini sağlar.
+    $('#daterange').on('apply.daterangepicker cancel.daterangepicker hide.daterangepicker', function() {
         preventDropdownHide = false;
-      });
-
-
-      // Tarih aralığı seçenekleri
-      var lastYear = moment().subtract(1, 'year');
-      var lastMonth = moment().subtract(1, 'month');
-      var lastWeek = moment().subtract(7, 'days');
-      var yesterday = moment().subtract(1, 'days');
-      var today = moment();
-      var baslangicYil = '01-01-2025';
-
-      // Butonları oluştur ve tarih aralığını güncelle
-      $('#lastYear').on('click', function () {
-        $('#daterange').data('daterangepicker').setStartDate(lastYear);
-        $('#daterange').data('daterangepicker').setEndDate(today);
-        filterData();
-      });
-
-      $('#lastMonth').on('click', function () {
-        $('#daterange').data('daterangepicker').setStartDate(lastMonth);
-        $('#daterange').data('daterangepicker').setEndDate(today);
-        filterData();
-      });
-
-      $('#lastWeek').on('click', function () {
-        $('#daterange').data('daterangepicker').setStartDate(lastWeek);
-        $('#daterange').data('daterangepicker').setEndDate(today);
-        filterData();
-      });
-
-      $('#yesterday').on('click', function () {
-        $('#daterange').data('daterangepicker').setStartDate(yesterday);
-        $('#daterange').data('daterangepicker').setEndDate(yesterday);
-        filterData();
-      });
-
-      $('#today').on('click', function () {
-        $('#daterange').data('daterangepicker').setStartDate(today);
-        $('#daterange').data('daterangepicker').setEndDate(today);
-        filterData();
-      });
-
-      $('#kasaArama').on('click', function () {
-        $('#daterange').data('daterangepicker').setStartDate(baslangicYil);
-        $('#daterange').data('daterangepicker').setEndDate(today);
-        filterData();
-      });
-
-      // Filtreleme fonksiyonu
-      function filterData() {
-        $('#datatableKasa').DataTable().draw();
-      }
-    });
-  </script>
-
-  <script>
-    $(document).ready(function () {
-      $('#kasaArama').click(function () {
-        $('#baslangicYil').trigger('click');
-      });
     });
 
+
+    // Tarih aralığı seçenekleri
+    var lastYear = moment().subtract(1, 'year');
+    var lastMonth = moment().subtract(1, 'month');
+    var lastWeek = moment().subtract(7, 'days');
+    var yesterday = moment().subtract(1, 'days');
+    var today = moment();
+    var baslangicYil = '01-01-2025';
+
+    // Butonları oluştur ve tarih aralığını güncelle
+    $('#lastYear').on('click', function() {
+      $('#daterange').data('daterangepicker').setStartDate(lastYear);
+      $('#daterange').data('daterangepicker').setEndDate(today);
+      filterData();
+    });
+
+    $('#lastMonth').on('click', function() {
+      $('#daterange').data('daterangepicker').setStartDate(lastMonth);
+      $('#daterange').data('daterangepicker').setEndDate(today);
+      filterData();
+    });
+
+    $('#lastWeek').on('click', function() {
+      $('#daterange').data('daterangepicker').setStartDate(lastWeek);
+      $('#daterange').data('daterangepicker').setEndDate(today);
+      filterData();
+    });
+
+    $('#yesterday').on('click', function() {
+      $('#daterange').data('daterangepicker').setStartDate(yesterday);
+      $('#daterange').data('daterangepicker').setEndDate(yesterday);
+      filterData();
+    });
+
+    $('#today').on('click', function() {
+      $('#daterange').data('daterangepicker').setStartDate(today);
+      $('#daterange').data('daterangepicker').setEndDate(today);
+      filterData();
+    });
 
     $('.kasaArama').on('click', function() {
       var baslangicYil = '01-01-2025';
@@ -712,283 +708,287 @@
     // Filtreleme fonksiyonu
     function filterData() {
       $('#datatableKasa').DataTable().draw();
-
     }
-
-    function setDateRangeToToday() {
-      var today = moment();
-      $('#daterange').data('daterangepicker').setStartDate(today);
-      $('#daterange').data('daterangepicker').setEndDate(today);
-    }
-  </script>
-
-  <script>
-    $(document).ready(function () {
-      var start_date = moment();
-      var end_date = moment();
-      $('#daterange').daterangepicker({
-        startDate: start_date,
-        endDate: end_date,
-        locale: {
-          format: 'DD-MM-YYYY',
-          separator: ' - ',
-          applyLabel: 'Uygula',
-          cancelLabel: 'İptal',
-          weekLabel: 'H',
-          daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
-          monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
-          firstDay: 1,
-        }
-      },
-        function (start_date, end_date) {
-          $('#daterange').html(start_date.format('DD-MM-YYYY') + '-' + end_date.format('DD-MM-YYYY'));
-          table.draw();
-          updateValues();
-        });
-
-      // Dashboard istatistiklerinden gelen filtreyi kontrol et
-      var dashboard_filter = getUrlParameter('dashboard_filter');
-      var dashboard_istatistik_tarih1 = getUrlParameter('dashboard_istatistik_tarih1');
-      var dashboard_istatistik_tarih2 = getUrlParameter('dashboard_istatistik_tarih2');
-
-      if (dashboard_filter && dashboard_istatistik_tarih1 && dashboard_istatistik_tarih2) {
-        $('#daterange').data('daterangepicker').setStartDate(moment(dashboard_istatistik_tarih1));
-        $('#daterange').data('daterangepicker').setEndDate(moment(dashboard_istatistik_tarih2));
-      }
-
-
-      var table = $('#datatableKasa').DataTable({
-        processing: true,
-        serverSide: true,
-        order: [[0, 'desc']],
-        language: {
-          paginate: {
-            previous: "<i class='mdi mdi-chevron-left'>",
-            next: "<i class='mdi mdi-chevron-right'>"
-          }
-        },
-        ajax: {
-          url: "{{ route('kasa.filter', $firma->id) }}",
-          data: function (data) {
-            data.search = $('input[type="search"]').val();
-            data.odemeTuru = $('#odemeTuru').val();
-            data.from_date = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
-            data.to_date = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
-            data.customer = $('#customer').val();
-            data.odemeSekil = $('#odemeSekil').val();
-            data.staff = $('#staff').val();
-            data.tedarikci = $('#tedarikci').val();
-            data.marka = $('#marka').val();
-            data.cihaz = $('#cihaz').val();
-            data.odemeYonu = $('#odemeYonu').val();
-            data.musteri = $('.mid').val();
-            data.odemeDurum = $('#odemeDurumu').val();
-            data.bayi = $('#bayi').val();
-
-            //Dashboard kasa filtreleri
-            data.dashboard_filter = getUrlParameter('dashboard_filter');
-            data.dashboard_istatistik_tarih1 = getUrlParameter('dashboard_istatistik_tarih1');
-            data.dashboard_istatistik_tarih2 = getUrlParameter('dashboard_istatistik_tarih2');
-          }
-        },
-        'columns': [
-          { data: 'id' },
-          { data: 'created_at' },
-          { data: 'pid' },
-          { data: 'odemeTuru' },
-          { data: 'aciklama' },
-          { data: 'odemeSekli' },
-          { data: 'odemeYonuBorc', orderable: false },
-          { data: 'odemeYonuAlacak', orderable: false },
-          { data: 'fiyat' },
-          { data: 'action' }
-        ],
-        drawCallback: function (settings) {
-          $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
-        },
-        order: [[1, 'desc']],
-        "columnDefs": [{
-          "targets": 0,
-          "className": "gizli"
-        }],
-        "oLanguage": {
-          "sDecimal": ",",
-          "sEmptyTable": "Tabloda herhangi bir veri mevcut değil",
-          "sInfo": "Kasa Hareketi Sayısı: _TOTAL_",
-          "sInfoEmpty": "Kayıt yok",
-          "sInfoFiltered": "",
-          "sInfoPostFix": "",
-          "sInfoThousands": ".",
-          "sLengthMenu": "_MENU_",
-          "sLoadingRecords": "Yükleniyor...",
-          "sProcessing": "İşleniyor...",
-          "sSearch": "",
-          "sZeroRecords": "Eşleşen kayıt bulunamadı",
-          "oPaginate": {
-            "sFirst": "İlk",
-            "sLast": "Son",
-            "sNext": '<i class="fas fa-angle-double-right"></i>',
-            "sPrevious": '<i class="fas fa-angle-double-left"></i>'
-          },
-          "oAria": {
-            "sSortAscending": ": artan sütun sıralamasını aktifleştir",
-            "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
-          },
-          "select": {
-            "rows": {
-              "_": "%d kayıt seçildi",
-              "0": "",
-              "1": "1 kayıt seçildi"
-            }
-          }
-        },
-        dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
-        "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
-        "initComplete": function (settings, json) {
-
-          var searchContainer = $('#datatableKasa_filter');
-          var searchInput = searchContainer.find('input');
-          var filterWrapper = $('.searchWrap');
-          var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
-
-          // --- DEĞİŞTİRİLEN BÖLÜM BAŞLANGICI ---
-
-          // 1. Sadece masaüstü görünümündeki arama butonunu bul.
-          var kasaAramaButton = $('.d-none.d-lg-block .kasaArama');
-
-          // 2. Filtrele ve arama butonunu yan yana getirmek için ana sarmalayıcıya flex özellikleri ekle.
-          filterWrapper.addClass('d-flex align-items-center');
-
-          // 3. Bulunan arama butonunu, "Filtrele" butonunu içeren sarmalayıcının içine taşı.
-          // .append() ile sona eklenir, yani "Filtrele" butonunun sağına gelir.
-          filterWrapper.append(kasaAramaButton);
-
-          // --- DEĞİŞTİRİLEN BÖLÜM SONU ---
-
-          // Varsayılan "Search:" etiketini kaldır
-          searchContainer.find('label').contents().filter(function () {
-            return this.nodeType == 3;
-          }).remove();
-
-          // Arama kutusunu ve filtreyi sarmalamak için
-          searchContainer.addClass('flex-grow-1 me-2');
-          searchInput.addClass('w-100');
-          searchInput.attr('placeholder', 'Kasa Hareketi Ara...');
-
-          // Ögeleri flex container'a ekle
-          flexContainer.append(searchContainer);
-          flexContainer.append(filterWrapper); // filterWrapper artık hem "Filtrele" hem de arama butonunu içeriyor.
-
-          // Flex container'ı tablonun üstüne ekle
-          $('#datatableKasa_wrapper .top').append(flexContainer);
-
-          // Hazır olduğunda görünür yap
-          $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
-          $('.tableToplamaAlani').insertBefore('#datatableKasa_wrapper .bottom');
-        }
-      });
-
-      // Kullanıcının filtreleme yaptığını takip etmek için flag
-      var userHasFiltered = false;
-
-      // Filtre değişikliklerini dinle
-      const filtreElementleri = ['#odemeTuru', '#customer', '#odemeSekil', '#staff', '#odemeYonu', '#tedarikci', '#marka', '#cihaz', '#odemeDurumu', '#bayi'];
-
-      filtreElementleri.forEach(function (id) {
-        $(id).change(function () {
-          var selectedValue = $(this).val();
-
-          // Kullanıcı bir filtre seçti (boş değil)
-          if (selectedValue && selectedValue !== '' && selectedValue !== '0') {
-            userHasFiltered = true;
-            // Filtre seçildiğinde tarih aralığını genişlet
-            setDateRangeToFull();
-          }
-          // Kullanıcı "Hepsi" seçti
-          else {
-            // Eğer daha önce filtreleme yapılmışsa, tarih aralığını geniş tut
-            if (userHasFiltered) {
-              setDateRangeToFull();
-            }
-            // Eğer hiç filtreleme yapılmamışsa, bugünkü tarihe dön
-            else {
-              setDateRangeToToday();
-            }
-          }
-
-          table.draw();
-        });
-      });
-
-      $('#result').on('click', 'li', function () {
-        var selectedCustomerId = $(this).attr('data-id');
-        table.column('musteri:name').search(selectedCustomerId).draw();
-      });
-
-      table.on('draw.dt', function () {
-        updateValues();
-      });
-
-      var updateValues = function () {
-        var startDate = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
-        var endDate = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
-        var odemeTuru = $('#odemeTuru').val();
-        var odemeYonu = $('#odemeYonu').val();
-        var customer = $('#customer').val();
-        var odemeSekil = $('#odemeSekil').val();
-        var staff = $('#staff').val();
-        var tedarikci = $('#tedarikci').val();
-        var marka = $('#marka').val();
-        var cihaz = $('#cihaz').val();
-        var musteri = $('.mid').val();
-        var odemeDurum = $('#odemeDurumu').val();
-        var bayi = $('#bayi').val();
-        $.ajax({
-          url: '/{{$firma->id}}/kasa-toplam',
-          method: 'GET',
-          data: {
-            from_date: startDate,
-            to_date: endDate,
-            odemeTuru: odemeTuru,
-            odemeYonu: odemeYonu,
-            customer: customer,
-            odemeSekil: odemeSekil,
-            staff: staff,
-            tedarikci: tedarikci,
-            marka: marka,
-            cihaz: cihaz,
-            musteri: musteri,
-            odemeDurum: odemeDurum,
-            bayi: bayi,
-          },
-          success: function (response) {
-            $('.gelenNakitTL').html('<span>Nakit:</span> ' + response.gelenNakitTL);
-            $('.gelenHavaleTL').html('<span>EFT/Havale:</span> ' + response.gelenHavaleTL);
-            $('.gelenKartTL').html('<span>Kredi Kartı:</span> ' + response.gelenKartTL);
-            $('.gelenToplamTL').html('<span>Toplam:</span> ' + response.gelenToplamTL);
-            $('.gidenNakitTL').html('<span>Nakit:</span> ' + response.gidenNakitTL);
-            $('.gidenHavaleTL').html('<span>EFT/Havale:</span> ' + response.gidenHavaleTL);
-            $('.gidenKartTL').html('<span>Kredi Kartı:</span> ' + response.gidenKartTL);
-            $('.gidenToplamTL').html('<span>Toplam:</span> ' + response.gidenToplamTL);
-            $('.genelToplamTL').html('<span>Toplam:</span> ' + response.genelToplamTL);
-          },
-          error: function (xhr, status, error) {
-            console.error(error);
-          }
-        });
-      }
-    });
-  </script>
-<script>
-  $(document).ready(function () {
-    var dropdownContainer = $('#kasaFilterDropdownContainer');
-    var filterButton = dropdownContainer.find('.filtrele');
-    dropdownContainer.on('show.bs.dropdown', function () {
-      filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
-    });
-    dropdownContainer.on('hide.bs.dropdown', function () {
-      filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
-    });
   });
 </script>
+
+<script>
+  $(document).ready(function () {
+    $('#kasaArama').click(function() {
+      $('#baslangicYil').trigger('click');
+    });
+  });
+
+  function setDateRangeToFull() {
+    var baslangicYil = moment('01-01-2025', 'DD-MM-YYYY');
+    var today = moment();
+    $('#daterange').data('daterangepicker').setStartDate(baslangicYil);
+    $('#daterange').data('daterangepicker').setEndDate(today);
+  }
+
+  function setDateRangeToToday() {
+        var today = moment();
+        $('#daterange').data('daterangepicker').setStartDate(today);
+        $('#daterange').data('daterangepicker').setEndDate(today);
+    }
+</script>
+
+<script>
+  $(document).ready(function () {
+    var start_date = moment();
+    var end_date = moment();
+    $('#daterange').daterangepicker({
+      startDate : start_date,
+      endDate : end_date,
+      locale: {
+        format: 'DD-MM-YYYY',
+        separator: ' - ',
+        applyLabel: 'Uygula',
+        cancelLabel: 'İptal',
+        weekLabel: 'H',
+        daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
+        monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+        firstDay: 1,
+      }
+    },
+    function(start_date, end_date){
+      $('#daterange').html(start_date.format('DD-MM-YYYY') + '-' + end_date.format('DD-MM-YYYY'));
+      table.draw();
+      updateValues();
+    });
+
+    // Dashboard istatistiklerinden gelen filtreyi kontrol et
+    var dashboard_filter = getUrlParameter('dashboard_filter');
+    var dashboard_istatistik_tarih1 = getUrlParameter('dashboard_istatistik_tarih1');
+    var dashboard_istatistik_tarih2 = getUrlParameter('dashboard_istatistik_tarih2');
+
+    if (dashboard_filter && dashboard_istatistik_tarih1 && dashboard_istatistik_tarih2) {
+        $('#daterange').data('daterangepicker').setStartDate(moment(dashboard_istatistik_tarih1));
+        $('#daterange').data('daterangepicker').setEndDate(moment(dashboard_istatistik_tarih2));
+    }
+
+
+    var table = $('#datatableKasa').DataTable({
+      processing: true,
+      serverSide: true,
+      order: [[0, 'desc']],
+      language: {
+        paginate: {
+          previous: "<i class='mdi mdi-chevron-left'>",
+          next: "<i class='mdi mdi-chevron-right'>"
+        }
+      },
+      ajax: {
+        url: "{{ route('kasa.filter',$firma->id) }}",
+        data: function(data) {
+          data.search = $('input[type="search"]').val();
+          data.odemeTuru = $('#odemeTuru').val();
+          data.from_date = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
+          data.to_date = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
+          data.customer = $('#customer').val();
+          data.odemeSekil = $('#odemeSekil').val();
+          data.staff = $('#staff').val();
+          data.tedarikci = $('#tedarikci').val();
+          data.marka = $('#marka').val();
+          data.cihaz = $('#cihaz').val();
+          data.odemeYonu = $('#odemeYonu').val();
+          data.musteri = $('.mid').val();
+          data.odemeDurum = $('#odemeDurumu').val();
+          data.bayi = $('#bayi').val();
+
+          //Dashboard kasa filtreleri
+          data.dashboard_filter = getUrlParameter('dashboard_filter');
+          data.dashboard_istatistik_tarih1 = getUrlParameter('dashboard_istatistik_tarih1');
+          data.dashboard_istatistik_tarih2 = getUrlParameter('dashboard_istatistik_tarih2');
+        }
+      },
+      'columns': [
+        { data: 'id' },
+        { data: 'created_at' },
+        { data: 'pid' },
+        { data: 'odemeTuru' },
+        { data: 'aciklama' },
+        { data: 'odemeSekli' },
+        { data: 'odemeYonuBorc', orderable:false },
+        { data: 'odemeYonuAlacak', orderable:false},
+        { data: 'fiyat' },
+        { data: 'action'}           
+      ],
+      drawCallback: function(settings) {
+        $(".dataTables_paginate > .pagination").addClass("pagination-rounded");    
+      },
+      order: [[1, 'desc']],
+      "columnDefs": [{
+        "targets": 0,
+        "className": "gizli"
+      }],
+      "oLanguage": {
+        "sDecimal":        ",",
+        "sEmptyTable":     "Tabloda herhangi bir veri mevcut değil",
+        "sInfo":           "Kasa Hareketi Sayısı: _TOTAL_",
+        "sInfoEmpty":      "Kayıt yok",
+        "sInfoFiltered":   "",
+        "sInfoPostFix":    "",
+        "sInfoThousands":  ".",
+        "sLengthMenu":     "_MENU_",
+        "sLoadingRecords": "Yükleniyor...",
+        "sProcessing":     "İşleniyor...",
+        "sSearch":         "",
+        "sZeroRecords":    "Eşleşen kayıt bulunamadı",
+        "oPaginate": {
+          "sFirst":    "İlk",
+          "sLast":     "Son",
+          "sNext":     '<i class="fas fa-angle-double-right"></i>',
+          "sPrevious": '<i class="fas fa-angle-double-left"></i>'
+        },
+        "oAria": {
+          "sSortAscending":  ": artan sütun sıralamasını aktifleştir",
+          "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
+        },
+        "select": {
+          "rows": {
+            "_": "%d kayıt seçildi",
+            "0": "",
+            "1": "1 kayıt seçildi"
+          }
+        }
+      },
+       dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+      "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
+      "initComplete": function(settings, json) {
+
+    var searchContainer = $('#datatableKasa_filter');
+    var searchInput = searchContainer.find('input');
+    var filterWrapper = $('.searchWrap');
+    var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
+
+    // --- DEĞİŞTİRİLEN BÖLÜM BAŞLANGICI ---
+
+    // 1. Sadece masaüstü görünümündeki arama butonunu bul.
+    var kasaAramaButton = $('.d-none.d-lg-block .kasaArama');
+
+    // 2. Filtrele ve arama butonunu yan yana getirmek için ana sarmalayıcıya flex özellikleri ekle.
+    filterWrapper.addClass('d-flex align-items-center');
+
+    // 3. Bulunan arama butonunu, "Filtrele" butonunu içeren sarmalayıcının içine taşı.
+    // .append() ile sona eklenir, yani "Filtrele" butonunun sağına gelir.
+    filterWrapper.append(kasaAramaButton);
+
+    // --- DEĞİŞTİRİLEN BÖLÜM SONU ---
+
+    // Varsayılan "Search:" etiketini kaldır
+    searchContainer.find('label').contents().filter(function() {
+        return this.nodeType == 3;
+    }).remove();
+
+    // Arama kutusunu ve filtreyi sarmalamak için
+    searchContainer.addClass('flex-grow-1 me-2');
+    searchInput.addClass('w-100');
+    searchInput.attr('placeholder', 'Kasa Hareketi Ara...');
+
+    // Ögeleri flex container'a ekle
+    flexContainer.append(searchContainer);
+    flexContainer.append(filterWrapper); // filterWrapper artık hem "Filtrele" hem de arama butonunu içeriyor.
+
+    // Flex container'ı tablonun üstüne ekle
+    $('#datatableKasa_wrapper .top').append(flexContainer);
+
+    // Hazır olduğunda görünür yap
+    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+     $('.tableToplamaAlani').insertBefore('#datatableKasa_wrapper .bottom');
+}
+    });
+
+    // Kullanıcının filtreleme yaptığını takip etmek için flag
+    var userHasFiltered = false;
+
+    // Filtre değişikliklerini dinle
+    const filtreElementleri = ['#odemeTuru', '#customer', '#odemeSekil', '#staff', '#odemeYonu', '#tedarikci','#marka','#cihaz','#odemeDurumu','#bayi'];
+
+    filtreElementleri.forEach(function(id) {
+        $(id).change(function() {
+            var selectedValue = $(this).val();
+            
+            // Kullanıcı bir filtre seçti (boş değil)
+            if (selectedValue && selectedValue !== '' && selectedValue !== '0') {
+                userHasFiltered = true;
+                // Filtre seçildiğinde tarih aralığını genişlet
+                setDateRangeToFull();
+            } 
+            // Kullanıcı "Hepsi" seçti
+            else {
+                // Eğer daha önce filtreleme yapılmışsa, tarih aralığını geniş tut
+                if (userHasFiltered) {
+                    setDateRangeToFull();
+                }
+                // Eğer hiç filtreleme yapılmamışsa, bugünkü tarihe dön
+                else {
+                    setDateRangeToToday();
+                }
+            }
+            
+            table.draw();
+        });
+    });
+
+    $('#result').on('click', 'li', function () {
+      var selectedCustomerId = $(this).attr('data-id');
+      table.column('musteri:name').search(selectedCustomerId).draw();
+    });
+
+    table.on('draw.dt', function () {
+      updateValues();
+    });
+
+    var updateValues = function() {
+      var startDate = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
+      var endDate = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
+      var odemeTuru = $('#odemeTuru').val();
+      var odemeYonu = $('#odemeYonu').val();
+      var customer = $('#customer').val();
+      var odemeSekil = $('#odemeSekil').val();
+      var staff = $('#staff').val();
+      var tedarikci = $('#tedarikci').val();
+      var marka = $('#marka').val();
+      var cihaz = $('#cihaz').val();
+      var musteri = $('.mid').val();
+      var odemeDurum = $('#odemeDurumu').val();
+      var bayi = $('#bayi').val();
+      $.ajax({
+        url: '/{{$firma->id}}/kasa-toplam',
+        method: 'GET',
+        data: {
+          from_date: startDate,
+          to_date: endDate,
+          odemeTuru:odemeTuru,
+          odemeYonu:odemeYonu,
+          customer:customer,
+          odemeSekil:odemeSekil,
+          staff:staff,
+          tedarikci:tedarikci,
+          marka:marka,
+          cihaz:cihaz,
+          musteri:musteri,
+          odemeDurum:odemeDurum,
+          bayi:bayi,
+        },
+        success: function(response) {
+          $('.gelenNakitTL').html('<span>Nakit:</span> ' + response.gelenNakitTL);
+          $('.gelenHavaleTL').html('<span>EFT/Havale:</span> ' + response.gelenHavaleTL);
+          $('.gelenKartTL').html('<span>Kredi Kartı:</span> ' + response.gelenKartTL);
+          $('.gelenToplamTL').html('<span>Toplam:</span> ' + response.gelenToplamTL);
+          $('.gidenNakitTL').html('<span>Nakit:</span> ' + response.gidenNakitTL);
+          $('.gidenHavaleTL').html('<span>EFT/Havale:</span> ' + response.gidenHavaleTL);
+          $('.gidenKartTL').html('<span>Kredi Kartı:</span> ' + response.gidenKartTL);
+          $('.gidenToplamTL').html('<span>Toplam:</span> ' + response.gidenToplamTL);
+          $('.genelToplamTL').html('<span>Toplam:</span> ' + response.genelToplamTL);
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+    }
+  });
+</script>
+
 @endsection

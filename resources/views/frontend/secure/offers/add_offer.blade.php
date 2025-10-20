@@ -95,8 +95,8 @@
           </div>
         </div>
   
-        <div class="row form-group" >
-          <button type="button" class="col-xs-12 form-control btn btn-primary2 satirEkle" data-id="1" style="color: #fff;display: inline-block;margin: 5px">Satır Ekle</button>
+        <div class="row form-group">
+          <button type="button" class="col-xs-12 form-control btn btn-primary2 satirEkle" data-id="1" style="color: #fff;display: inline-block;margin-top: 5px">Satır Ekle</button>
         </div>
       </div>
     </div>

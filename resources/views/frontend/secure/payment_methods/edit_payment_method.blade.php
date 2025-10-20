@@ -1,8 +1,8 @@
 <form method="post" id="editPaymentMethod" action="{{ route('update.payment.method', $firma->id) }}" enctype="multipart/form-data" class="needs-validation" novalidate>
     @csrf
     <div class="row mb-3">
-      <label class="col-sm-3">Ödeme Şekli:</label>
-      <div class="col-sm-9">
+      <label class="col-sm-4">Ödeme Şekli:</label>
+      <div class="col-sm-8">
         <input name="odemeSekli" class="form-control" value="{{ $method_id->odemeSekli }}" type="text" required>
       </div>
     </div>

@@ -19,13 +19,12 @@
           <!-- end row -->
 
           <div class="row">
-            <label class="col-sm-4 col-form-label"></label>
+            <label class="col-sm-4 col-form-label d-none"></label>
             <div class="col-sm-8">
               <input type="submit" class="btn btn-info waves-effect waves-light" value="Kaydet">
             </div>
           </div>
         </form>
-
 <script>
   $(document).ready(function () {
     $('#serviceFormSettings').submit(function (event) {

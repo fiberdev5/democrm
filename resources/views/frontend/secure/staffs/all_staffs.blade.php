@@ -311,7 +311,7 @@ $(document).ready(function(){
     $("#editPersonelModal").on("hidden.bs.modal", function() {
         $('#editPersonelModal .modal-body').html("");
     });
-});
+
 </script>
 
 <script>

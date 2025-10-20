@@ -79,7 +79,7 @@
   <div class="row">
     <div class="col-sm-12 gonderBtn">
       <input type="hidden" name="id" value="{{$customer->id}}">
-      <input type="submit" class="btn btn-sm btn-info waves-effect waves-light" value="Kaydet">
+      <input style="background-color: #344a40;border-color:#344a40" type="submit" class="btn btn-sm btn-info waves-effect waves-light" value="Kaydet">
     </div>
   </div>
 </form>

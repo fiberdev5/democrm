@@ -106,12 +106,12 @@
   @if (strpos($cash_payment_id["cevaplar"], '3') !== false)
     <div class="row ">
       <div class="col-sm-4 custom-p-r"><label>Servis</label></div>
-      <div class="col-sm-8 custom-p-l" style="align-items: center;justify-content: space-between;display: flex;">
-        <input type="text" name="servis" class="form-control servis" style="font-weight: 500;width: fit-content;display: inline-block;" data-id="" autocomplete="off" value="{{$cash_transaction_id->servis}}" disabled>
-        <div class="text-danger mt-1" id="servisHata"></div>
-        <a href="{{ route('all.services', [$firma->id, 'did' => $cash_transaction_id->servis]) }}" target="_blank" style="font-weight: 500;font-size: 13px;color: red">Servisi Göster</a>
-      <input type="hidden" name="servisler" value="{{$cash_transaction_id->servis}}">
-      </div>
+      <div class="col-sm-8 custom-p-l" style="align-items: center; justify-content: space-between; display: flex;">
+    <input type="text" name="servis" class="form-control servis" style="font-weight: 500; width: fit-content; display: inline-block;" data-id="" autocomplete="off" value="{{$cash_transaction_id->servis}}" disabled>
+    <div class="text-danger mt-1" id="servisHata"></div>
+    <a href="{{ route('all.services', [$firma->id, 'did' => $cash_transaction_id->servis]) }}" target="_blank" style="font-weight: 500; font-size: 12px; color: white; background-color: #f32f53; padding: 4px; border-radius: 5px; text-decoration: none;">Servisi Göster</a>
+    <input type="hidden" name="servisler" value="{{$cash_transaction_id->servis}}">
+</div>
     </div>
   @endif
 
