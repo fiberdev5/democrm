@@ -1290,23 +1290,23 @@ function createPaymentRow(payment) {
   }
 
   // Aksiyon butonları oluştur
-function createActionButtons(payment) {
-  let buttons = '';
-  
-  // Fatura butonu
-  if (payment.invoice_path) {
-      let invoPath = '/' + payment.invoice_path;
-      buttons += `<a href="${invoPath}" class="btn btn-outline-primary btn-sm" title="Faturayı Görüntüle" target="_blank" onclick="event.stopPropagation();">
-                    <i class="fas fa-file-pdf"></i>
-                  </a>`;
-  }
-  
-  // Detay butonu
-  buttons += `<button class="btn btn-outline-info btn-sm" onclick="PaymentModule.showPaymentDetail('${payment.type}', ${payment.id}); event.stopPropagation();" title="Detayları Görüntüle">
-                <i class="fas fa-info-circle"></i>
-              </button>`;
-  
-  return buttons || '<span class="text-muted">-</span>';
+
+  function createActionButtons(payment) {
+    let buttons = '';
+    if (payment.invoice_path) {
+        let invoPath = '/' + payment.invoice_path; // veya asset URL'nizi buraya
+        buttons += `<a href="${invoPath}" class="btn btn-outline-primary btn-sm" title="Faturayı Görüntüle" target="_blank">
+                      <i class="fas fa-file-pdf"></i>
+                    </a>`;
+    }
+    
+    // Detay butonu
+    // buttons += `<button class="btn btn-outline-info btn-sm" onclick="PaymentModule.showPaymentDetail('${payment.type}', ${payment.id})" title="Detayları Görüntüle">
+    //               <i class="fas fa-info-circle"></i>
+    //             </button>`;
+    
+    return buttons || '<span class="text-muted">-</span>';
+
 }
 
   // Sayfalama güncelle

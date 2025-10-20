@@ -45,7 +45,18 @@
                         </p>
 
                         <!-- Tüm flash mesajları için kontrol ekleyin -->
+        @if(session('message'))
+            <div class="alert alert-{{ session('alert-type', 'info') }}">
+                {{ session('message') }}
+            </div>
+        @endif
         
+        <!-- Mevcut success kontrolü -->
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
                         <!-- Success/Error Messages -->
                         @if(session('success'))
