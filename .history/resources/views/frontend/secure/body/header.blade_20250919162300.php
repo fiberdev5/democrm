@@ -49,7 +49,7 @@ $user = Auth::user();
                 <a class="dropdown-item" href="{{ route('payment-history.index', $user->tenant_id) }}"><i class="fas fa-receipt align-middle me-1"></i>Ödeme Geçmişi</a>
 
                 @endif
-                <a class="dropdown-item" href="{{route('general.settings', $user->tenant_id)}}"><i class="ri-settings-3-fill align-middle me-1"></i>Genel Ayarlar</a>
+                    <a class="dropdown-item" href="{{route('general.settings', $user->tenant_id)}}"><i class="ri-settings-3-fill align-middle me-1"></i>Genel Ayarlar</a>
 
             <div class="dropdown-divider"></div>
               <a class="dropdown-item text-danger" href="{{ route('logout') }}"><i class="ri-shut-down-line align-middle me-1 text-danger"></i> Çıkış yap</a>

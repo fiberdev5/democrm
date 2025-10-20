@@ -1143,11 +1143,12 @@ window.PaymentModule = (function() {
   // Aksiyon butonları oluştur
   function createActionButtons(payment) {
     let buttons = '';
+    let invoPath = {{asset(payment.invoice_path)}};
+    // Fatura butonu
     if (payment.invoice_path) {
-        let invoPath = '/' + payment.invoice_path; // veya asset URL'nizi buraya
-        buttons += `<a href="${invoPath}" class="btn btn-outline-primary btn-sm" title="Faturayı Görüntüle" target="_blank">
-                      <i class="fas fa-file-pdf"></i>
-                    </a>`;
+      buttons += `<a href="${invoPath}" class="btn btn-outline-primary btn-sm" title="Faturayı Görüntüle" target="_blank">
+                    <i class="fas fa-file-pdf"></i>
+                  </a>`;
     }
     
     // Detay butonu

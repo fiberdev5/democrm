@@ -1144,7 +1144,7 @@ window.PaymentModule = (function() {
   function createActionButtons(payment) {
     let buttons = '';
     if (payment.invoice_path) {
-        let invoPath = '/' + payment.invoice_path; // veya asset URL'nizi buraya
+        let invoPath = '/upload/uploads/' + payment.invoice_path; // veya asset URL'nizi buraya
         buttons += `<a href="${invoPath}" class="btn btn-outline-primary btn-sm" title="Faturayı Görüntüle" target="_blank">
                       <i class="fas fa-file-pdf"></i>
                     </a>`;
