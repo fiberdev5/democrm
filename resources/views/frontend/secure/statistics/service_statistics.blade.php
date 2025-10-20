@@ -4,22 +4,98 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<style>
+    @media (max-width: 576px) {
+        .tarihAraligi{
+        display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 2px !important;
+        }
+        .head-b {
+            font-size: 17px !important;
+        }
+        .head-padding h5{
+            font-size: 14px;
+            margin-top: 5px !important;
+        }
+        .col-c{
+            flex-direction: row !important;
+        }
+        .col-j{
+            align-items: flex-start !important;
+            margin-top: 3px;
+        }
+        .grafik-csutom{
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .tarih-m-l{
+            margin-left: -46px;
+        }
+            .servisSayilariChart .nav-link, .servisSaatleriChart .nav-link {
+        padding: 0.35rem 0.3rem !important;
+    }
+    .btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+    }
+    @media (min-width: 576px) {
+        .calendar{
+        margin-top: 4px !important;
+        margin-right: 5px !important;
+    }
+    }
+    
+    .period-statistics{
+    border: 1px solid #d7d7d7;
+    padding: 5px;
+    }
+    .sayfaBaslik .btn-group {
+        padding-right: 5px !important;
+         padding-top: 5px !important;
+    }
+    .istatistik-card  .sayfaBaslik{ padding: 5px;
+    padding-left: 9px !important;   background-color: #e5e4e4;}
+    .card-p-c{
+        margin-bottom: 0px !important;
+    }
+    .grafik-t-c{
+        margin-top: 10px !important;
+    }
+    .col-c{
+        background-color:#e5e4e4 !important ;
+    }
+    .col-j{
+        background-color:#e5e4e4 !important ;
+    }
 
+    .card-statics{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-statics-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-statics-body{padding: 3px 7px !important;}
+  .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
+</style>
 <div class="page-content servis-istatistik-genel">
     <div class="container-fluid">
         @include('frontend.secure.statistics.statistics_menu', ['tenant_id' => $tenant_id])
            <!-- Modern Header Card -->
-            <div class="card shadow-sm istatistik-card">
-                <div class="card-header sayfaBaslik d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 d-flex align-items-center">
+            <div class="card card-statics shadow-sm istatistik-card mt-2">
+                <div class="card-header card-statics-header sayfaBaslik d-flex justify-content-between align-items-center col-c">
+                    <h5 class="mb-0 d-flex align-items-center head-b">
                         <i class="fas fa-chart-line me-1"></i> <!-- ikon -->
                         Servis İstatistikleri
                     </h5>
-                <div class="btn-group mb-3">
+                <div class="btn-group mb-1" id="servis_s_filtre">
                     <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown">
                         Filtrele <i class="mdi mdi-chevron-down"></i>
                     </button>
-                   <div class="dropdown-menu dropdown-menu-end servisDrop p-3" style="min-width: 320px;">
+                   <div class="dropdown-menu dropdown-menu-end servisDrop p-3 servisDrop" style="min-width: 320px;">
                     <form id="istatistikAra" action="{{ route('statistics', $tenant_id) }}" method="get">
                         {{-- Personel --}}
                         <div class="row g-2 align-items-center mb-3">
@@ -207,7 +283,7 @@
                                     <div class="row g-4">
                                         <!-- Markalar -->
                                         <div class="col-lg-3 col-md-6">
-                                            <div class="card border-secondary">
+                                            <div class="card border-secondary card-p-c">
                                                 <div class="card-header bg-secondary text-white text-center">
                                                     <small><i class="fas fa-tags me-1"></i>Markalar</small>
                                                 </div>
@@ -226,7 +302,7 @@
 
                                         <!-- Türler -->
                                         <div class="col-lg-3 col-md-6">
-                                            <div class="card border-secondary">
+                                            <div class="card border-secondary card-p-c">
                                                 <div class="card-header bg-secondary text-white text-center">
                                                     <small><i class="fas fa-cube me-1"></i>Türler</small>
                                                 </div>
@@ -245,7 +321,7 @@
 
                                         <!-- Kaynaklar -->
                                         <div class="col-lg-3 col-md-6">
-                                            <div class="card border-secondary">
+                                            <div class="card border-secondary card-p-c">
                                                 <div class="card-header bg-secondary text-white text-center">
                                                     <small><i class="fas fa-compass me-1"></i>Kaynaklar</small>
                                                 </div>
@@ -264,7 +340,7 @@
 
                                         <!-- Operatörler -->
                                         <div class="col-lg-3 col-md-6">
-                                            <div class="card border-secondary">
+                                            <div class="card border-secondary card-p-c">
                                                 <div class="card-header bg-secondary text-white text-center">
                                                     <small><i class="fas fa-users me-1"></i>Personeller</small>
                                                 </div>
@@ -289,12 +365,12 @@
             </div>
         @endif
         <!-- Grafik Bölümleri -->
-        <div class="row mt-5">
+        <div class="row grafik-t-c">
             <!-- Servis Sayıları Grafiği -->
             <div class="col-lg-7">
-                <div class="card shadow-sm servisSayilariChart" style="height: 300px;">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
+                <div class="card card-statics shadow-sm servisSayilariChart" style="height: 300px;">
+                    <div class="card-header card-statics-header  d-flex justify-content-between align-items-center col-c">
+                        <div class="d-flex px-1 align-items-center head-padding">
                             <h5 class="mb-0"><i class="fas fa-chart-line me-1"></i>Servis Sayıları</h6>
                         </div>
                         <ul class="nav nav-tabs border-0" role="tablist">
@@ -309,7 +385,7 @@
                             </li>
                         </ul>
                     </div>
-                    <div class="card-body" style="height: calc(100% - 70px);">
+                    <div class="card-body card-statics-body" style="height: calc(100% - 70px);">
                         <div class="tab-content h-100">
                             <div id="gun7" class="tab-pane fade show active h-100">
                                 <canvas id="myAreaChart" style="height: 100% !important;"></canvas>
@@ -326,28 +402,28 @@
             </div>
             <!-- Saatlik Dağılım Grafiği -->
             <div class="col-lg-5">
-                <div class="card shadow-sm servisSaatleriChart" style="height: 300px;">
-                    <div class="card-header  d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center">
+                <div class="card card-statics shadow-sm servisSaatleriChart" style="height: 300px;">
+                    <div class="card-header card-statics-header  d-flex justify-content-between align-items-center col-j">
+                        <div class="d-flex align-items-center head-padding px-1">
                             <h5 class="mb-0"><i class="fas fa-clock me-1"></i>Saat Aralıkları</h6>
                         </div>
                         <!-- Tab Navigation -->
-                        <ul class="nav nav-tabs border-0" role="tablist">
-                            <li class="nav-item">
+                        <ul class="nav nav-tabs border-0 grafik-csutom" role="tablist">
+                            <li class="nav-item  calendar">
                             <input type="date" name="saatTarih" class="form-control form-control-sm saatTarih" style="max-width: 100px;" value="{{ date('Y-m-d') }}">
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link active hourly-tab" data-bs-toggle="tab" href="#saat7" data-type="7days">7 Gün</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item tarih-m-l">
                                 <a class="nav-link hourly-tab" data-bs-toggle="tab" href="#saat15" data-type="15days">15 Gün</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item tarih-m-l">
                                 <a class="nav-link hourly-tab" data-bs-toggle="tab" href="#saat30" data-type="30days">30 Gün</a>
                             </li>
                         </ul>
                     </div>
-                    <div class="card-body" style="height: calc(100% - 70px);">
+                    <div class="card-body card-statics-body" style="height: calc(100% - 70px);">
                         <div class="tab-content h-100">
                             <div id="saat7" class="tab-pane fade show active h-100">
                                 <canvas id="saatArea7" style="height: 100% !important;"></canvas>
@@ -775,4 +851,16 @@ $(document).ready(function () {
     });
 });
 </script>
+<script>
+    $(document).ready(function () {
+      var dropdownContainer = $('#servis_s_filtre');
+      var filterButton = dropdownContainer.find('.filtrele');
+      dropdownContainer.on('show.bs.dropdown', function () {
+        filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+      });
+      dropdownContainer.on('hide.bs.dropdown', function () {
+        filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+      });
+    });
+  </script>
 @endsection

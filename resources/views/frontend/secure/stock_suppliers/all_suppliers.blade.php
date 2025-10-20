@@ -32,7 +32,7 @@
   <!-- add modal content -->
   <div id="addStockSupplierModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content device_brands">
         <div class="modal-header">
           <h6 class="modal-title" id="myModalLabel">Stok Tedarikçi Ekle</h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -47,7 +47,7 @@
   <!-- edit modal content -->
   <div id="editStockSupplierModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content device_brands">
         <div class="modal-header">
           <h6 class="modal-title" id="myModalLabel">Stok Tedarikçi Düzenle</h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

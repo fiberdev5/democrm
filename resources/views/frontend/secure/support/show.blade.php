@@ -92,7 +92,7 @@
                             </div>
                         </div>
                         <div class="col-md-4 text-md-end">
-                            <div class="card border-0 bg-white">
+                            <div class="card support-message border-0 bg-white">
                                 <div class="card-body p-3">
                                     <div class="d-flex align-items-center mb-2">
                                         <i class="fas fa-calendar-plus text-success me-2"></i>

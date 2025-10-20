@@ -1,10 +1,48 @@
+<style>
+  form {
+    margin-block-end: 0em !important;
+}
+  .card{
+      border: 1px solid rgba(0, 0, 0, .125);
+      margin-bottom: 7px;
+    }
+    .card-header{
+          background-color: #f7f7f7 !important;
+              padding: 7px 10px !important;
+    border-bottom: 1px solid rgba(0, 0, 0, .12);
+    }
+    #addServiceModal .form-group {
+    border-bottom: 1px solid #e4e7ed !important;
+}
+@media (max-width: 767px) {
+  .row1{
+    margin-right:0px !important ;
+  }
+  .card-header{
+        margin-bottom: 5px;
+  }
+  .ch1{
+     border-bottom: none !important;
+     margin-bottom: 0px !important;
+        padding: 5px 10px !important;
+  }
+  label{
+    margin-bottom: 3px !important;
+  }
+  .c2{
+    padding-right: 0 !important;
+  }
+  
+
+}
+</style>
 <div class="container">
   <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <form method="post" id="servisEkle" class="servisModal" action="{{ route('store.service', $firma->id) }}">
     @csrf
-    <div class="card" style="margin-bottom: 3px;">
-      <div class="card-header ch1" style="padding: 3px 10px!important;">
+    <div class="card" style="margin-bottom: 10px;">
+      <div class="card-header ch1" >
         <div class="row">
           <div class="col-sm-6 c1">
             <label style="text-align: left;width: auto;display: inline-block;margin: 0;">Kayıt Tarihi: </label>
@@ -33,7 +71,7 @@
     <div class="row row1">
       <div class="col-sm-6 c1">
         <div class="card">
-          <div class="card-header" style="padding: 3px 10px!important;font-size:13px;">MÜŞTERİ BİLGİSİ
+          <div class="card-header" style="font-size:13px;">MÜŞTERİ BİLGİSİ
             <span class="musteriCikart"><i class="mid"></i> <i class="fas fa-times-circle"></i></span>
             <input type="hidden" name="eskiMusteriId" class="eskiMusteriId">
             <div class="clearfix"></div>
@@ -58,12 +96,12 @@
                 </div>
                 <div class="row form-group">
                   <div class="col-md-4 rw1"><label>Telefon <span style="font-weight: bold; color: red;">*</span></label></div>
-                  <div class="col-md-4 rw2"><input type="text" name="tel1" class="form-control phone tel1" autocomplete="off" placeholder="Telefon 1" required></div>
-                  <div class="col-md-4 rw2"><input type="text" name="tel2" class="form-control phone tel2" autocomplete="off" placeholder="Telefon 2"></div>
+                  <div class="col-md-4 col-6 custom-p-r-m-md rw2"><input type="text" name="tel1" class="form-control phone tel1" autocomplete="off" placeholder="Telefon 1" required></div>
+                  <div class="col-md-4 col-6 custom-p-m-md rw2"><input type="text" name="tel2" class="form-control phone tel2" autocomplete="off" placeholder="Telefon 2"></div>
                 </div>
                 <div class="row form-group">
                   <div class="col-md-4 rw1"><label>İl/İlçe <span style="font-weight: bold; color: red;">*</span></label></div>
-                  <div class="col-md-4 rw2">
+                  <div class="col-md-4 col-6 custom-p-r-m-md rw2">
                     <select class="form-control form-select il" name="il" id="countrySelect" required>
                       <option value="">-Seçiniz-</option>
                       @foreach($iller as $il)
@@ -71,7 +109,7 @@
                       @endforeach
                     </select>
                   </div>
-                  <div class="col-md-4 rw2">
+                  <div class="col-md-4 col-6 custom-p-m-md rw2">
                     <select class="form-control form-select ilce" name="ilce" id="citySelect" required>
                       <option value="">-İLÇE SEÇİNİZ-</option>
                     </select>
@@ -99,7 +137,7 @@
           </div>
           <div class="col-sm-6 c2">
             <div class="card" style="margin-bottom: 5px;">
-              <div class="card-header" style="padding: 3px 10px!important;font-size:13px;">CİHAZ BİLGİSİ</div>
+              <div class="card-header" style="font-size:13px;">CİHAZ BİLGİSİ</div>
               <div class="card-body">
                 <div class="row form-group ">
                   <div class="col-md-4 rw1"><label>Cihaz Markası <span style="font-weight: bold; color: red;">*</span></label></div>
@@ -170,7 +208,7 @@
                       $formattedDate = $musaitTarihArray[2]."/".$musaitTarihArray[1]."/".$musaitTarihArray[0];
                     @endphp
                     <input name="kayitTarihi" class="form-control datepicker kayitTarihi" type="date" value="{{$musaitTarih}}" style="width: 100px;display: inline-block;background:#fff;text-align:center;" required>
-                    <select name="musaitSaat1" class="form-control form-select musaitSaat1" style="width: 85px;display: inline-block;background-position: right 0.15rem center;">
+                    <select name="musaitSaat1" class="form-control form-select musaitSaat1" style="width: 106px;display: inline-block;background-position: right 0.15rem center;">
                       <option value="08:00">08:00</option>
                       <option value="08:30">08:30</option>
                       <option value="09:00" selected>09:00</option>
@@ -199,7 +237,7 @@
                       <option value="20:30">20:30</option>
                       <option value="21:00">21:00</option>
                     </select>
-                    <select name="musaitSaat2" class="form-control form-select musaitSaat2" style="width: 85px;display: inline-block;background-position: right 0.15rem center;">
+                    <select name="musaitSaat2" class="form-control form-select musaitSaat2" style="width: 106px;display: inline-block;background-position: right 0.15rem center;">
                       <option value="08:00">08:00</option>
                       <option value="08:30">08:30</option>
                       <option value="09:00">09:00</option>
@@ -241,7 +279,7 @@
         
           <div class="gonderBtnWrap" style="text-align: center;margin-top: 5px;">
             <input type="hidden" name="servisEkle" value="Ekle"/>
-            <input type="submit" class="btn btn-info btn-sm" value="Servis Kaydet"/>
+            <input style="background-color: #343a40;border-color: #343a40;" type="submit" class="btn btn-info btn-sm" value="Servis Kaydet"/>
           </div>
 
           <div class="yukleniyor" style="text-align: center;margin-top: 5px;display: none;">

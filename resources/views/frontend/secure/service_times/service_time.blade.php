@@ -7,7 +7,7 @@
 </div>
     
 
-        <form id="serviceTime" method="post" action="{{ route('update.service.time',$firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate style="width: 50%;">
+        <form id="serviceTime" method="post" action="{{ route('update.service.time',$firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate style="width: 20%;">
           @csrf
           <input type="hidden" name="id" value="{{ $service_time ? $service_time->id : '' }}">
 

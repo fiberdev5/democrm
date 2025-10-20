@@ -1,16 +1,32 @@
+<style>
+  
+@media (min-width: 767px) {
+.custom-p-r{
+    padding-right: 0px !important;
+  }
+  .custom-p-l{
+    padding-left: 0px !important;
+  }
+}
+@media (max-width: 767px) {
+  #editBayi label{margin-bottom: 3px !important;}
+}
+
+#editBayi{margin-block-end: 0em !important;}
+</style>
 <form method="post" id="editBayi" action="{{ route('update.dealer', [$firma->id, $bayi->user_id]) }}" enctype="multipart/form-data">
   @csrf
 
   <div class="row">
-    <label class="col-sm-4">Başlama Tarihi<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Başlama Tarihi<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="baslamaTarihi" class="form-control datepicker" type="date" value="{{ $bayi->baslamaTarihi }}" required>
     </div>
   </div>
 
   <div class="row">
-      <label class="col-sm-4">Bayi Durumu:<span style="font-weight: bold; color: red;">*</span></label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Bayi Durumu:<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-sm-8 custom-p-l">
         <select name="status" class="form-select durum" required>
           <option value="1" {{ $bayi->status == "1" ? 'selected' : ''}}>Çalışıyor</option>
           <option value="0" {{ $bayi->status == "0" ? 'selected' : ''}}>Ayrıldı</option>
@@ -19,37 +35,33 @@
   </div> <!--end row-->
   
   <div class="row ayrilmaTarihi">
-      <label class="col-sm-4">Ayrılma Tarihi:<span style="font-weight: bold; color: red;">*</span></label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Ayrılma Tarihi:<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-sm-8 custom-p-l">
           <input name="ayrilmaTarihi" class="form-control datepicker ayrilmaTarihi" type="date" value="{{$bayi->ayrilmaTarihi}}" style="border: 1px solid #ced4da;">
       </div>
   </div>
 
   <div class="row">
-    <label class="col-sm-4">Ad Soyad<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Ad Soyad<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="name" class="form-control" type="text" value="{{ $bayi->name }}" required>
     </div>
   </div>
 
   <div class="row">
-    <label class="col-sm-4">Vergi No<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Vergi No/Dairesi<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-4 col-6 custom-p-r-m-md custom-p-l">
       <input name="vergiNo" class="form-control" type="text" value="{{ $bayi->vergiNo }}" required>
     </div>
-  </div>
-
-  <div class="row">
-    <label class="col-sm-4">Vergi Dairesi<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <div class="col-sm-4 col-6 custom-p-m-md custom-p-l">
       <input name="vergiDairesi" class="form-control" type="text" value="{{ $bayi->vergiDairesi }}" required>
     </div>
   </div>
 
   
  <div class="row">
-    <label class="col-sm-4">Bayi Belgesi</label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Bayi Belgesi</label>
+    <div class="col-sm-8 custom-p-l">
       @if($bayi->belgePdf)
         @php
           $belgeler = json_decode($bayi->belgePdf, true) ?: [$bayi->belgePdf];
@@ -88,8 +100,8 @@
 
 
     <div class="row">
-        <div class="col-sm-4"><label>İl/İlçe<span style="font-weight: bold; color: red;">*</span></label></div>
-        <div class="col-sm-4">
+        <div class="col-sm-4 custom-p-r"><label>İl/İlçe<span style="font-weight: bold; color: red;">*</span></label></div>
+        <div class="col-sm-4 col-6 custom-p-r-m-md custom-p-l">
           <select name="il" id="countrySelect" class="form-control form-select" style="width:100%!important;" required>
             <option value="" selected disabled>-Seçiniz-</option>
             @foreach($countries as $item)
@@ -97,7 +109,7 @@
             @endforeach
           </select>
         </div>
-        <div class="col-sm-4">
+        <div class="col-sm-4 col-6 custom-p-m-md custom-p-l">
           <select name="ilce" id="citySelect" class="form-control form-select" style="width:100%!important;" required>
             <option value="" selected disabled>-Seçiniz-</option>                              
           </select>
@@ -106,29 +118,29 @@
 
 
     <div class="row">
-      <label class="col-sm-4">Telefon<span style="font-weight: bold; color: red;">*</span></label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Telefon<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-sm-8 custom-p-l">
         <input name="tel" id="tel" class="form-control phone" type="text" value="{{ $bayi->tel }}" required>
       </div>
     </div>
 
     <div class="row">
-      <label class="col-sm-4">Adress:</label>
-      <div class="col-sm-8">
+      <label class="col-sm-4 custom-p-r">Adress:</label>
+      <div class="col-sm-8 custom-p-l">
       <textarea name="address" type="text" class="form-control">{{$bayi->address}}</textarea>
       </div>
     </div>
 
   <div class="row">
-    <label class="col-sm-4">Kullanıcı Adı<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Kullanıcı Adı<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="username" class="form-control" type="text" value="{{ $bayi->username }}" required>
     </div>
   </div>
 
   <div class="row">
-    <label class="col-sm-4">Yeni Şifre:<span style="font-weight: bold; color: red;">*</span></label>
-    <div class="col-sm-8">
+    <label class="col-sm-4 custom-p-r">Yeni Şifre:<span style="font-weight: bold; color: red;">*</span></label>
+    <div class="col-sm-8 custom-p-l">
       <input name="password" class="form-control" type="password" placeholder="Şifre değiştirmek istemiyorsan boş bırak">
     </div>
   </div>
@@ -165,13 +177,74 @@
   });
 </script>
 <script>
-  // Düzenleme formunda maksimum 2 dosya kontrolü
+  //Dosya türü ve boyut kontrolü ile
   $(document).ready(function() {
+    const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png', 'svg'];
+    const allowedMimeTypes = [
+        'application/pdf',
+        'image/jpeg',
+        'image/jpg', 
+        'image/png',
+        'image/svg+xml'
+    ];
+
     $('#belgePdfEdit').on('change', function() {
-      if (this.files.length > 2) {
-        alert('Maksimum 2 dosya seçebilirsiniz!');
-        this.value = '';
-      }
+        const files = this.files;
+        
+        // Maksimum 2 dosya kontrolü
+        if (files.length > 2) {
+            alert('Maksimum 2 dosya seçebilirsiniz!');
+            this.value = '';
+            return false;
+        }
+
+        // Her dosyanın türünü kontrol et
+        let invalidFiles = [];
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const fileName = file.name.toLowerCase();
+            const fileExtension = fileName.split('.').pop();
+            const fileMimeType = file.type;
+
+            // Uzantı kontrolü
+            if (!allowedExtensions.includes(fileExtension)) {
+                invalidFiles.push(file.name);
+            }
+            
+            // MIME type kontrolü
+            if (!allowedMimeTypes.includes(fileMimeType)) {
+                if (!invalidFiles.includes(file.name)) {
+                    invalidFiles.push(file.name);
+                }
+            }
+        }
+
+        // Geçersiz dosya varsa
+        if (invalidFiles.length > 0) {
+            alert('❌ Hatalı dosya türü!\n\n' + 
+                  'Geçersiz dosyalar:\n• ' + invalidFiles.join('• ') + 
+                  '\n✅ Sadece PDF, JPG, JPEG, PNG ve SVG dosyaları yükleyebilirsiniz.');
+            this.value = '';
+            return false;
+        }
+
+        // Dosya boyutu kontrolü (5MB)
+        const maxSize = 5 * 1024 * 1024;
+        let oversizedFiles = [];
+        
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].size > maxSize) {
+                oversizedFiles.push(files[i].name + ' (' + (files[i].size / 1024 / 1024).toFixed(2) + ' MB)');
+            }
+        }
+
+        if (oversizedFiles.length > 0) {
+            alert('❌ Dosya boyutu çok büyük!\n\n' + 
+                  'Büyük dosyalar:\n• ' + oversizedFiles.join('\n• ') + 
+                  '\n\n✅ Her dosya maksimum 5MB olmalıdır.');
+            this.value = '';
+            return false;
+        }
     });
   });
 </script>

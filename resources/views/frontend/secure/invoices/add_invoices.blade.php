@@ -23,15 +23,45 @@
     font-size: 12px;
     color: #6c757d;
   }
+  .servisiAc{
+    color: #fff !important;
+    background-color: #f32f53 !important;
+  }
+
+  .card-invoices {
+      border: 1px solid rgba(0, 0, 0, .125) !important;
+    }
+
+    .card-invoices-header {
+      background-color: #f7f7f7 !important;
+      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+      margin-bottom: 7px !important;
+      padding: 4px 7px !important;
+    }
+
+    .card-invoices-body {
+      padding: 3px 7px !important;
+    }
+    .card-header:first-child {
+    border-radius: 0.55rem .55rem 0 0 !important;
+}
+  @media (max-width: 767px) {
+    .fatura-mobil-add{
+    --bs-gutter-x: 2px !important;
+  }
+  .satir{--bs-gutter-x: 2px !important;}
+  #addInvo label{margin-bottom: 3px !important;}
+  }
+  
 </style>
 
 
 <form method="post" id="addInvo" action="{{ route('store.invoices', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
   @csrf
-  <div class="card f5">
-    <div class="card-header ch1" style="padding: 3px 10px;">
-      <div class="tarihWrap">
-        <label style="text-align: left;width: auto;display: inline-block;margin: 0;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
+  <div class="card card-invoices d-md-none d-flex  f5">
+    <div class="ch1" style="padding: 3px 10px;">
+      <div class="tarihWrap ">
+        <label style="text-align: left;width: auto;display: inline-block;margin: 0; margin-right: 2px;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
         <input type="date" name="faturaTarihi" class="form-control datepicker kayitTarihi"  value="{{date('Y-m-d')}}" style="width: 150px!important;display: inline-block;background:#fff" required>
       </div>
 
@@ -39,14 +69,20 @@
     </div>
   </div> 
 
-  <div class="card f2">
-     <div class="card-header">MÜŞTERİ BİLGİSİ</div>
-     <div class="card-body">
+  <div class="card card-invoices f2">
+     <div class="card-header card-invoices-header d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
+    <span>MÜŞTERİ BİLGİSİ</span>
+    <div class="tarihWrap d-md-flex d-none mt-2 mt-md-0">
+        <label style="text-align: left;width: auto;display: inline-block;margin: 0; margin-right: 2px;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
+        <input type="date" name="faturaTarihi" class="form-control datepicker kayitTarihi" value="{{date('Y-m-d')}}" style="width: 150px!important;display: inline-block;background:#fff" required>
+    </div>
+</div>
+     <div class="card-body card-invoices-body">
         <div class="row">
            <div class="col-sm-6 s1">
-              <div class="row form-group">
+              <div class="row form-group ">
                 <div class="col-md-4 rw1"><label>Servis Ara</label></div>
-                <div class="col-md-8 rw2 d-flex flex-wrap align-items-center gap-2">
+                <div class="col-md-8 rw2 d-flex flex-wrap align-items-center gap-3">
                     <input id="search" type="text" name="servisid" class="form-control servisid" data-bs-id="" autocomplete="off" placeholder="Servis ID" style="flex: 1 1 auto; max-width: 160px;">
 
                     <a href="#" target="_blank" class="servisiAc btn btn-outline-danger px-2 py-1"style="font-size: 13px; line-height: 1.3;">Servisi Aç</a>
@@ -73,7 +109,7 @@
            <div class="col-sm-6 s2">
               <div class="row form-group">
                  <div class="col-sm-2"><label>İl/İlçe</label></div>
-                <div class="col-sm-5">
+                <div class="col-sm-5 col-6">
                 <select name="il" id="country" class="form-control form-select" style="width:100%!important;">
                     <option value="" selected disabled>-Seçiniz-</option>
                     @foreach($countries as $item)
@@ -81,7 +117,7 @@
                     @endforeach
                 </select>
                 </div>
-                <div class="col-sm-5">
+                <div class="col-sm-5 col-6">
                 <select name="ilce" id="city" class="form-control form-select" style="width:100%!important;">
                     <option value="" selected disabled>-Seçiniz-</option>                              
                 </select>
@@ -97,20 +133,20 @@
      </div>
   </div>
 
-  <div class="card f2">
-    <div class="card-body">
+  <div class="card card-invoices f2">
+    <div class="card-body card-invoices-body">
       <div class="row form-group head">
-        <div class="col-5 rw1 "><label>Cinsi</label></div>
-        <div class="col-2 rw2 "><label>Miktar</label></div>
-        <div class="col-2 rw3 "><label>Fiyat</label></div>
+        <div class="col-3 rw1 "><label>Cinsi</label></div>
+        <div class="col-3 rw2 "><label>Miktar</label></div>
+        <div class="col-3 rw3 "><label>Fiyat</label></div>
         <div class="col-3 rw4 "><label>Tutar</label></div>
       </div>
 
-      <div class="satirBody">
-        <div class="row form-group">
-          <div class="col-5 rw1 "><input type="text" name="aciklama[]" class="form-control aciklama aciklama0 buyukYaz" placeholder="Ürün" autocomplete="off"></div>
-          <div class="col-2 rw2 "><input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control miktar miktar0" autocomplete="off"></div>
-          <div class="col-2 rw3 "><input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat0" autocomplete="off"></div>
+      <div class="satirBody mb-1">
+        <div class="row form-group fatura-mobil-add">
+          <div class="col-3 rw1 "><input type="text" name="aciklama[]" class="form-control aciklama aciklama0 buyukYaz" placeholder="Ürün" autocomplete="off"></div>
+          <div class="col-3 rw2 "><input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control miktar miktar0" autocomplete="off"></div>
+          <div class="col-3 rw3 "><input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat0" autocomplete="off"></div>
           <div class="col-3 rw4 "><input type="text" name="tutar[]" onkeyup="sayiKontrol(this)" class="form-control tutar tutar0" autocomplete="off"></div>
         </div>
       </div>
@@ -121,11 +157,15 @@
     </div>
   </div>
        
-  <div class="row cardRow1">
-    <div class="card col-lg-6 f3">
-      <div class="card-body">
-        <div class="row" style="border:0">
-          <div class="col-md-4 rw1"><label>Ödeme Şekli<span style="font-weight: bold; color: red;">*</span></label></div>
+  <!-- Ana satır. Sütunlar arasına boşluk koymak için Bootstrap 4'te varsayılan olarak boşluk vardır. -->
+<div class="row cardRow1 mb-1 fatura-mobil-add">
+
+    <!-- 1. Sütun (Sol Taraf) -->
+    <div class="col-lg-6 mb-3 mb-lg-0 custom-p-m">
+      <div class="card card-invoices f3 h-100"> <!-- h-100 ile kart yüksekliğini eşitleyebilirsiniz -->
+        <div class="card-body card-invoices-body">
+          <div class="row" style="border:0">
+            <div class="col-md-4 rw1"><label>Ödeme Şekli<span style="font-weight: bold; color: red;">*</span></label></div>
             <div class="col-md-8 rw2">
               <select class="form-select odemeSekilleri" name="odemeSekli" required>
                 <option value="">Seçiniz</option>
@@ -134,7 +174,6 @@
                 @endforeach
               </select>
             </div>
-           
           </div>
 
           <div class="row form-group" style="border:0">
@@ -157,37 +196,41 @@
           </div>       
         </div>
       </div>
+    </div>
 
-      <div class="card col-lg-6 f4">
-        <div class="card-body" style="padding:17px 5px">
+    <!-- 2. Sütun (Sağ Taraf) -->
+    <div class="col-lg-6 custom-p-r-m">
+      <div class="card card-invoices f4 h-100">
+        <div class="card-body card-invoices-body" style="padding:17px 5px">
           <div class="row form-group">
-            <div class="col-md-8 rw1"><label>Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam" required></div>
+            <div class="col-md-4 rw1"><label>Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam" required></div>
           </div>
 
           <div class="row form-group">
-          <div class="col-md-8 rw1"><label>İndirim</label></div>
-          <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" autocomplete="off" class="form-control indirim" value="0.00"></div>
-        </div>
-        <div class="row form-group">
-          <div class="col-md-8 rw1"><label>Ara Toplam</label></div>
-          <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" autocomplete="off" class="form-control araToplam"></div>
-        </div>
+            <div class="col-md-4 rw1"><label>İndirim</label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" autocomplete="off" class="form-control indirim" value="0.00"></div>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-4 rw1"><label>Ara Toplam</label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" autocomplete="off" class="form-control araToplam"></div>
+          </div>
 
           <div class="row form-group">
-            <div class="col-md-6 rw1"><label>KDV %</label></div>
-            <div class="col-md-2 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20" style="text-align: center;"></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="0"></div>
+            <div class="col-md-4 rw1"><label>KDV %</label></div>
+            <div class="col-md-2 col-6 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20" ></div>
+            <div class="col-md-6 col-6 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="0"></div>
           </div>
 
           <div class="row form-group" style="padding-bottom: 0">
-            <div class="col-md-8 rw1"><label>Genel Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam" required></div>
+            <div class="col-md-4 rw1"><label>Genel Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam" required></div>
           </div>
                
         </div>
       </div>
     </div>
+</div>
     <div class="row">
       <div class="col-sm-12 gonderBtn">
         <input type="submit" class="btn btn-sm btn-info waves-effect waves-light" value="Kaydet">
@@ -275,21 +318,19 @@
       var dataNum = Number($(this).attr("data-id")); 
       var satirClone = `
         <div class="row form-group align-items-center satir">
-          <div class="col-5 rw1">
+          <div class="col-3 rw1">
             <input type="text" name="aciklama[]" class="form-control aciklama aciklama0 buyukYaz" placeholder="Ürün" autocomplete="off">
           </div>
-          <div class="col-2 rw2">
+          <div class="col-3 rw2">
             <input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control miktar miktar${dataNum}" autocomplete="off">
           </div>
-          <div class="col-2 rw3">
+          <div class="col-3 rw3">
             <input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat${dataNum}" autocomplete="off">
           </div>
-          <div class="col-2 rw4">
+          <div class="col-3 rw4">
             <input type="text" name="tutar[]" onkeyup="sayiKontrol(this)" class="form-control tutar tutar${dataNum}" autocomplete="off">
           </div>
-          <div class="col-1 text-end">
-            <button type="button" class="btn btn-danger btn-sm satirSil" title="Satırı Sil"><strong>&times;</strong></button>
-          </div>
+
         </div>
       `;  
       $(".satirBody").append(satirClone);
@@ -455,6 +496,57 @@
 </script>
 
 <script>
+//E-Arşiv dosya türü ve boyut kontrolü
+$(document).ready(function() {
+    const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
+    const allowedMimeTypes = [
+        'application/pdf',
+        'image/jpeg',
+        'image/jpg', 
+        'image/png'
+    ];
+
+    $('#customFile').on('change', function() {
+        const file = this.files[0];
+        
+        if (!file) return;
+
+        const fileName = file.name.toLowerCase();
+        const fileExtension = fileName.split('.').pop();
+        const fileMimeType = file.type;
+
+        // Uzantı kontrolü
+        if (!allowedExtensions.includes(fileExtension)) {
+            alert('❌ Hatalı dosya türü!\n' + 
+                  'Dosya: ' + file.name + 
+                  '\n✅ Sadece PDF, JPG, JPEG ve PNG dosyaları yükleyebilirsiniz.');
+            this.value = '';
+            return false;
+        }
+        
+        // MIME type kontrolü
+        if (!allowedMimeTypes.includes(fileMimeType)) {
+            alert('❌ Hatalı dosya türü!\n' + 
+                  'Dosya: ' + file.name + 
+                  '\n✅ Sadece PDF, JPG, JPEG ve PNG dosyaları yükleyebilirsiniz.');
+            this.value = '';
+            return false;
+        }
+
+        // Dosya boyutu kontrolü (5MB)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert('❌ Dosya boyutu çok büyük!\n' + 
+                  'Dosya: ' + file.name + ' (' + (file.size / 1024 / 1024).toFixed(2) + ' MB)' +
+                  '\n✅ Maksimum dosya boyutu 2MB olmalıdır.');
+            this.value = '';
+            return false;
+        }
+    });
+});
+</script>
+
+<script>
 $(document).ready(function() {
     $('#addInvo').submit(function(e) {
         e.preventDefault(); // Normal submit'i engelle
@@ -511,10 +603,10 @@ $(document).ready(function() {
                 } else {
                     alert('Sunucu hatası oluştu');
                 }
-                // Hata durumunda da sayfayı yenile
-                setTimeout(function() {
-                    window.location.reload();
-                }, 1000);
+                // // Hata durumunda da sayfayı yenile
+                // setTimeout(function() {
+                //     window.location.reload();
+                // }, 1000);
             }
         });
     });

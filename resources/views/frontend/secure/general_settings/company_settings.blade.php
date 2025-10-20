@@ -1,24 +1,24 @@
 <div class="row mt-3 mb-2">
   <div class="col-12">
     <div class=" d-sm-flex align-items-center justify-content-between">
-      <h4 class="mb-sm-0 fw-bold text-gray border-bottom pb-2" style="font-size: 16px;">Firma Ayarları</h4>
+      <h4 class="mb-sm-0 fw-bold text-gray border-bottom" style="font-size: 16px;">Firma Ayarları</h4>
     </div>
   </div>
 </div>
   
 
-        <form id="companySettings" method="post" action="{{ route('update.firma',$firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate style="width: 50%;">
+        <form id="companySettings" method="post" action="{{ route('update.firma',$firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate style="width: 32%;">
           @csrf
           <input type="hidden" name="id" value="{{ $firma->id }}">
           
-          <div class="row mb-3">
+          <div class="row align-items-center">
             <label class="col-sm-4 col-form-label">Kayıt Tarihi<span style="font-weight: bold; color: red;">*</span></label>
             <div class="col-sm-8">
               <input name="kayitTarihi" class="form-control datepicker kayitTarihi" type="date" value="{{\Carbon\Carbon::parse($firma->kayitTarihi)->format('Y-m-d')}}" style="border: 1px solid #ced4da;" required>
             </div>
           </div>
 
-          <div class="row mb-3">
+          <div class="row align-items-center">
             <label class="col-sm-4 col-form-label">Firma Adı:</label>
             <div class="col-sm-8">
               <input class="form-control" name="company_name" type="text" value="{{ $firma->firma_adi}}" required>
@@ -26,19 +26,19 @@
           </div>
           <!-- end row -->
 
-          <div class="row mb-3">
+          <div class="row align-items-center">
             <label class="col-sm-4 col-form-label">Telefon</label>
-            <div class="col-sm-4">
+            <div class="col-sm-4 col-6">
               <input name="tel1" class="form-control phone" type="text" placeholder="Telefon 1" value="{{$firma->tel1}}" required>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-4 col-6">
               <input name="tel2" class="form-control phone" type="text" placeholder="Telefon 2" value="{{$firma->tel2}}">
             </div>
           </div>
 
-          <div class="row mb-3">
+          <div class="row align-items-center ">
             <div class="col-sm-4 col-form-label"><label>İl/İlçe</label></div>
-            <div class="col-sm-4">
+            <div class="col-sm-4 col-6">
               <select name="il" id="sehirSelect" class="form-control form-select" style="width:100%!important;">
                 <option value="" selected disabled>-Seçiniz-</option>
                 @foreach($countries as $item)
@@ -46,14 +46,14 @@
                 @endforeach
               </select>
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-4 col-6">
               <select name="ilce" id="ilceSelect" class="form-control form-select" style="width:100%!important;">
                 <option value="" selected disabled>-Seçiniz-</option>                              
               </select>
             </div>
           </div> 
   
-          <div class="row mb-3">
+          <div class="row align-items-center">
             <label class="col-sm-4 col-form-label">Firma Adresi:</label>
             <div class="col-sm-8">
               <input class="form-control" name="company_address" type="text" value="{{ $firma->adres}}">
@@ -61,7 +61,7 @@
           </div>
           <!-- end row -->
 
-          <div class="row mb-3">
+          <div class="row align-items-center">
             <label class="col-sm-4 col-form-label">Email:</label>
             <div class="col-sm-8">
               <input class="form-control" name="company_email" type="email" value="{{ $firma->eposta}}">
@@ -69,7 +69,7 @@
           </div>
           <!-- end row -->
   
-          <div class="row mb-3">
+          <div class="row  align-items-center">
             <label class="col-sm-4 col-form-label">Web Sitesi:</label>
             <div class="col-sm-8">
               <input class="form-control" name="web_sitesi" type="text" value="{{ $firma->webSitesi}}">
@@ -77,7 +77,7 @@
           </div>
           <!-- end row -->
   
-          <div class="row mb-3">
+          <div class="row align-items-center">
             <label class="col-sm-4 col-form-label">İban:</label>
             <div class="col-sm-8">
               <input class="form-control" name="iban" type="text" value="{{ $firma->iban}}">
@@ -85,18 +85,18 @@
           </div>
           <!-- end row -->
   
-          <div class="row mb-3">
+          <div class="row align-items-center">
             <label class="col-sm-4 col-form-label">Vergi No/Dairesi:</label>
-            <div class="col-sm-4">
+            <div class="col-sm-4 col-6">
               <input class="form-control" name="tax_no" type="text" value="{{ $firma->vergiNo}}">
             </div>
-            <div class="col-sm-4">
+            <div class="col-sm-4 col-6">
               <input class="form-control" name="tax_office" type="text" value="{{ $firma->vergiDairesi}}">
             </div>
           </div>
           <!-- end row -->
 
-          <div class="row mb-3">
+          <div class="row align-items-center">
             <label class="col-sm-4 col-form-label">Foto:</label>
             <div class="col-sm-8">
               <input class="form-control" name="logo" type="file" id="logo">
@@ -108,7 +108,7 @@
           </div>
           <!-- end row -->
 
-          <div class="row mb-3">
+          <div class="row align-items-center">
             <label class="col-sm-4 col-form-label"></label>
             <div class="col-sm-8">
               <img class="img-thumbnail" id="showImage" width="180" src="{{ asset($firma->logo) }}" data-holder-rendered="true">
@@ -116,7 +116,7 @@
           </div>
           <!-- end row -->
   
-          <div class="row">
+          <div class="row align-items-center">
             <label class="col-sm-4 col-form-label"></label>
             <div class="col-sm-8">
               <input type="submit" class="btn btn-info waves-effect waves-light" value="Kaydet">

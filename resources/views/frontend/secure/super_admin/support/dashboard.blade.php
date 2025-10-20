@@ -1,10 +1,32 @@
 {{-- resources/views/frontend/secure/super_admin/support/dashboard.blade.php --}}
 @extends('frontend.secure.user_master')
 @section('user')
+<style>
+    @media (max-width: 768px) {
+        .custom-header{
+            margin-top: 34px !important;
+        }
+        .page-title-box{
+            padding-bottom: 7px !important;
+        }
+        .quick-action-btn{
+            margin-bottom: 0px !important;
+        }
+        .btn-secondary{
+            padding: 5px 6px !important;
+        }
+        .fa-arrow-right{
+            font-size: 11px;
+        }
+        .support-dashboard-table-modern .table td{
+            padding:5px 4.85rem !important;
+        }
+    }
+</style>
 <div class="page-content">
     <div class="container-fluid">
         <!-- Başlık -->
-        <div class="row">
+        <div class="row custom-header">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                     <h4 class="mb-sm-0">
@@ -25,9 +47,9 @@
             <div class="col-12">
                 <div class="card quick-action-card shadow-sm">
                     <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex justify-content-between align-items-center px-2 py-2 mb-1">
                             <div class="d-flex align-items-center">
-                                <div class="avatarsupport-sm me-3">
+                                <div class="avatarsupport-sm me-3 d-none">
                                     <div class="avatarsupport-title bg-primary bg-opacity-10 text-primary rounded">
                                         <i class="fas fa-bolt"></i>
                                     </div>
@@ -57,7 +79,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-lg-3 col-md-6">
+                            <div  class="col-lg-3 col-md-6 support-admin-card">
                                 <a href="{{ route('super.admin.destek.index', ['status' => 'acik']) }}" class="quick-action-btn btn-open btn w-100 d-flex align-items-center">
                                     <div class="quick-action-content">
                                         <div class="quick-action-info d-flex align-items-center">
@@ -75,7 +97,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-lg-3 col-md-6">
+                            <div class="col-lg-3 col-md-6 support-admin-card">
                                 <a href="{{ route('super.admin.destek.index', ['priority' => 'acil']) }}" class="quick-action-btn btn-urgent btn w-100 d-flex align-items-center">
                                     <div class="quick-action-content">
                                         <div class="quick-action-info d-flex align-items-center">
@@ -93,7 +115,7 @@
                                     </div>
                                 </a>
                             </div>
-                            <div class="col-lg-3 col-md-6">
+                            <div class="col-lg-3 col-md-6 support-admin-card">
                                 <a href="{{ route('super.admin.destek.index', ['status' => 'cevaplandi']) }}" class="quick-action-btn btn-answered btn w-100 d-flex align-items-center">
                                     <div class="quick-action-content">
                                         <div class="quick-action-info d-flex align-items-center">
@@ -122,23 +144,25 @@
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0 py-3">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center py-2 ms-3">
+                        <div class="d-flex justify-content-between align-items-center px-1">
+                            <div class="d-flex align-items-center py-2 px-2">
                                 <div>
                                     <h5 class="card-title mb-0">Son Destek Talepleri</h5>
                                     <p class="text-muted mb-0 small">En son oluşturulan destek talepleri</p>
                                 </div>
                             </div>
                             <a href="{{ route('super.admin.destek.index') }}" class="btn btn-secondary">
-                                <i class="fas fa-arrow-right me-1"></i> Tümünü Görüntüle
-                            </a>
+    <i class="fas fa-arrow-right me-1"></i> 
+    <span class="d-sm-none">Görüntüle</span>
+    <span class="d-none d-sm-inline">Tümünü Görüntüle</span>
+</a>
                         </div>
                     </div>
                     
                     <div class="card-body p-0">
                         @if(isset($recentTickets) && $recentTickets->count() > 0)
                             <div class="table-responsive support-dashboard-table-modern">
-                                <table class="table table-hover mb-0">
+                                <table id="destek-talepleri-tablosu" class="table table-hover mb-0">
                                     <thead class="table-light">
                                         <tr>
                                             <th class="border-0 fw-bold">Talep No</th>
@@ -154,7 +178,7 @@
                                     <tbody>
                                         @foreach($recentTickets as $ticket)
                                             <tr class="align-middle">
-                                                <td>
+                                                <td data-label="Talep No">
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatarsupport-xs me-2">
                                                             <div class="avatarsupport-title rounded-circle bg-light text-primary">
@@ -164,7 +188,7 @@
                                                         <span class="fw-bold">{{ $ticket->ticket_number }}</span>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Firma">
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatarsupport-xs me-2">
                                                             <div class="avatarsupport-title rounded-circle bg-soft-primary text-primary">
@@ -174,7 +198,7 @@
                                                         <span>{{ $ticket->tenant->firma_adi ?? 'N/A' }}</span>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Kullanıcı">
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatarsupport-xs me-2">
                                                             <div class="avatarsupport-title rounded-circle bg-soft-primary text-primary">
@@ -184,7 +208,7 @@
                                                         <span>{{ $ticket->user->name }}</span>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Konu">
                                                     <div style="max-width: 200px;">
                                                         <h6 class="mb-0">{{ Str::limit($ticket->subject, 40) }}</h6>
                                                         <small class="text-muted">
@@ -192,7 +216,7 @@
                                                         </small>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Durum">
                                                     @php
                                                        $statusConfig = [
                                                             'acik' => ['color' => 'primary', 'icon' => 'fas fa-spinner', 'text' => 'Açık'],
@@ -206,7 +230,7 @@
                                                         <i class="{{ $currentStatus['icon'] }} me-1"></i>{{ $currentStatus['text'] }}
                                                     </span>
                                                 </td>
-                                                <td>
+                                                <td data-label="Öncelik">
                                                     @php
                                                         $priorityColors = [
                                                             'acil' => 'danger',
@@ -230,13 +254,13 @@
                                                         {{ $ticket->priority_text ?? ucfirst($ticket->priority) }}
                                                     </span>
                                                 </td>
-                                                <td>
+                                                <td data-label="Tarih">
                                                     <div class="text-nowrap">
                                                         <div class="fw-medium">{{ $ticket->created_at->format('d.m.Y') }}</div>
                                                         <small class="text-muted">{{ $ticket->created_at->format('H:i') }}</small>
                                                     </div>
                                                 </td>
-                                                <td class="text-center">
+                                                <td data-label="İşlem" class="text-center">
                                                     <a href="{{ route('super.admin.destek.show', $ticket->id) }}" 
                                                     class="btn btn-sm btn-outline-primary rounded-pill px-3" 
                                                     title="Detay">
@@ -276,7 +300,7 @@
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-lg-8">
-                                <div class="d-flex align-items-center">
+                                <div class="d-flex align-items-center pt-3">
                                     <div class="flex-shrink-0">
                                         <div class="avatarsupport-sm">
                                             <div class="avatarsupport-title rounded-circle bg-warning bg-opacity-10 text-warning">
@@ -284,7 +308,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="flex-grow-1 ms-3">
+                                    <div class="flex-grow-1 ms-1">
                                         <h6 class="mb-1">Super Admin Destek Yönetimi</h6>
                                         <p class="mb-0 text-muted">Sistemdeki tüm destek taleplerini buradan yönetebilir, istatistiklerini takip edebilir ve raporlar oluşturabilirsiniz.</p>
                                     </div>
@@ -306,3 +330,77 @@
     </div>
 </div>
 @endsection
+
+
+<script>
+$(document).ready(function() {
+    var table = $('#destek-talepleri-tablosu').DataTable({
+        responsive: true,
+        language: {
+            "sDecimal":        ",",
+            "sEmptyTable":     "Tabloda herhangi bir veri mevcut değil",
+            "sInfo":           "_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor",
+            "sInfoEmpty":      "Kayıt yok",
+            "sInfoFiltered":   "(_MAX_ kayıt içerisinden bulunan)",
+            "sInfoPostFix":    "",
+            "sInfoThousands":  ".",
+            "sLengthMenu":     "Sayfada _MENU_ kayıt göster",
+            "sLoadingRecords": "Yükleniyor...",
+            "sProcessing":     "İşleniyor...",
+            "sSearch":         "Ara:",
+            "sZeroRecords":    "Eşleşen kayıt bulunamadı",
+            "oPaginate": {
+                "sFirst":    "İlk",
+                "sLast":     "Son",
+                "sNext":     "Sonraki",
+                "sPrevious": "Önceki"
+            },
+            "oAria": {
+                "sSortAscending":  ": artan sütun sıralamasını aktifleştir",
+                "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
+            }
+        },
+        dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+             '<"row"<"col-sm-12"tr>>' +
+             '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+        
+        "drawCallback": function( settings ) {
+            addEventListenersToRows();
+        }
+    });
+
+    function addEventListenersToRows() {
+        const tableRows = document.querySelectorAll('#destek-talepleri-tablosu tbody tr');
+        
+        tableRows.forEach(function(row) {
+            row.style.cursor = 'pointer';
+            row.style.transition = 'all 0.2s ease-in-out';
+            const detailButton = row.querySelector('a[title="Detay"]');
+            
+            if (detailButton) {
+                const detailUrl = detailButton.getAttribute('href');
+                const newRow = row.cloneNode(true);
+                row.parentNode.replaceChild(newRow, row);
+
+
+                newRow.addEventListener('click', function(e) {
+                    if (e.target.closest('a, button')) {
+                        return;
+                    }
+                    window.location.href = detailUrl;
+                });
+                
+                newRow.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(0, 123, 255, 0.05)';
+                });
+                
+                newRow.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            }
+        });
+    }
+
+    addEventListenersToRows();
+});
+</script>

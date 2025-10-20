@@ -88,7 +88,7 @@
 
         /* Tab content için stil */
         .tab-content {
-            min-height: 100px;
+            min-height: 314px;
             background: #fff;
             border-radius: 6px;
             padding: 5px;
@@ -107,6 +107,9 @@
 
         /* Responsive tasarım için */
         @media (max-width: 768px) {
+          .kasaSubMenu{
+            margin-top: 36px ;
+          }
             .kasaSubMenu .nav-pills {
                 flex-direction: column;
             }
@@ -304,7 +307,7 @@
             <i class="fas fa-money custom-icon"></i>Yazıcı Fiş Tasarımı
           </a>
             <a class="dropdown-item nav25" data-bs-toggle="pill" href="#tab25" data-id="" role="tab">
-            <i class="fas fa-history custom-icon"></i>Sistem Log Kayıtları
+            <i class="fas  custom-icon"></i>Sistem Log Kayıtları
           </a>
           
         </div>

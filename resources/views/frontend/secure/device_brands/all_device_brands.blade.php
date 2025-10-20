@@ -6,7 +6,9 @@
   </div>
 </div>
         <div id="sifreKate">
-          <table id="datatableDeviceBrand" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+
+    <div class="d-none d-lg-block">
+        <table id="datatableDeviceBrand" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
             <a  class="btn btn-success btn-sm mb-1 addDevice" data-bs-toggle="modal" data-bs-target="#addDeviceModal"><i class="fas fa-plus"></i><span>Marka Ekle</span></a>
             <thead class="title">
               <tr>
@@ -36,14 +38,60 @@
                 </tr>
               @endforeach
             </tbody>
-          </table>
-        </div>
+        </table>
+    </div>
+
+    <div class="d-lg-none">
+        <a class="btn btn-success btn-sm mb-3 addDevice" data-bs-toggle="modal" data-bs-target="#addDeviceModal"><i class="fas fa-plus"></i><span> Marka Ekle</span></a>
+
+        @foreach($device_brands as $item)
+            <div class="card shadow-sm mb-3" data-id="{{$item->id}}">
+                <div class="card-body p-3">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="text-muted">Marka</span>
+                            <a href="javascript:void(0);" class="t-link editDevice" data-bs-id="{{$item->id}}" data-bs-toggle="modal" data-bs-target="#editDeviceModal">
+                                <h6 class="mb-0 fw-bold d-inline">{{ $item->marka }}</h6>
+                            </a>
+                        </div>
+                        <span class="badge bg-light text-primary border">ID: {{ $item->id }}</span>
+                    </div>
+
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">Telefon:</span>
+                            <span class="fw-bold">{{ $item->aciklama }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">S. Ücreti:</span>
+                            <span class="fw-bold">{{ $item->servisUcreti }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">Operatör Prim:</span>
+                            <span class="fw-bold">{{ $item->operatorPrim }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                            <span class="text-muted">Atolye Prim:</span>
+                            <span class="fw-bold">{{ $item->atolyePrim }}</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="card-footer bg-white d-flex justify-content-end gap-2 p-2">
+                    <a href="javascript:void(0);" class="btn btn-outline-primary btn-sm editDevice mobilBtn mbuton1" data-bs-id="{{$item->id}}" data-bs-toggle="modal" data-bs-target="#editDeviceModal" title="Göster"><i class="fas fa-eye"></i> <span> Düzenle</span></a>
+                    <a href="javascript:void(0);" class="btn btn-outline-warning btn-sm editDevice mobilBtn mbuton1" data-bs-id="{{$item->id}}" data-bs-toggle="modal" data-bs-target="#editDeviceModal" title="Düzenle"><i class="fas fa-edit"></i> <span> Düzenle</span></a>
+                    <a href="javascript:void(0);"  class="btn btn-outline-danger btn-sm mobilBtn deleteDevice" data-bs-id="{{$item->id}}" title="Sil"><i class="fas fa-trash-alt"></i> <span> Sil</span></a>
+                </div>
+            </div>
+        @endforeach
+    </div>
+</div>
 
   
   <!-- add modal content -->
   <div id="addDeviceModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content device_brands">
         <div class="modal-header">
           <h6 class="modal-title" id="myModalLabel">Marka Ekle</h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -57,8 +105,8 @@
   
   <!-- edit modal content -->
   <div id="editDeviceModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
+    <div class="modal-dialog ">
+      <div class="modal-content device_brands">
         <div class="modal-header">
           <h6 class="modal-title" id="myModalLabel">Marka Düzenle</h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

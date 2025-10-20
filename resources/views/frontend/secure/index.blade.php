@@ -23,6 +23,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
 <style>
+    .custom-padding{
+        margin-bottom: 12px;
+    }
     body {
         min-height: 100vh;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -56,10 +59,11 @@
 .stat-card:hover {
     color: white; /* Renk değişimini engelle */
     text-decoration: none;
+   background: linear-gradient(135deg, #3c4248, #333436);;
 }
 
 .stat-card:hover .stat-label {
-    text-decoration: underline; /* Sadece başlığın altını çiz */
+    text-decoration: none; /* Sadece başlığın altını çiz */
 }
 
     
@@ -77,19 +81,26 @@
     .service-summary {
         background: white;
         border-radius: 16px;
-        padding: 15px; /* Reduced padding */
+        padding: 0; /* Reduced padding */
         margin: 0 0 16px 0; /* Adjusted margin */
         box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        border: 1px solid rgba(0, 0, 0, .125);
+        
     }
 
     .service-summary h5 {
         color: #333;
-        margin-bottom: 15px; /* Reduced margin */
+        margin-bottom: 11px; /* Reduced margin */
         font-weight: 600;
         display: flex;
         align-items: center;
+        padding: 9px 17px; /* Reduced padding */
         gap: 10px;
         font-size: 1.1rem;
+        background-color: #f7f7f7;
+        border-bottom: 1px solid rgba(0, 0, 0, .125);
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
     }
 
     .service-item {
@@ -120,7 +131,7 @@
     }
 
     .service-item:hover div:not(.service-count) {
-        text-decoration: underline; /* sadece açıklama yazısının altını çiz */
+        text-decoration: none; /* sadece açıklama yazısının altını çiz */
     }
     
     .service-count {
@@ -135,18 +146,237 @@
     .service-item.in-process .service-count { color: #ffc107; } /* Added for consistency */
 
 
-    /* Chart Containers - Fixed Overflow Issue */
+/* Chart Containers - Responsive */
+.chart-container {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    position: relative;
+    height: 370px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container-cash {
+    height: 280px;
+    position: relative;
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-canvas {
+    position: relative;
+    flex-grow: 1;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
+.chart-canvas canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1200px) {
     .chart-container {
-        background: white;
-        border-radius: 16px;
-        padding: 20px;
-        margin-bottom: 16px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        position: relative;
-        height: 370px; /* Set a fixed height for the container */
-        display: flex; /* Use flexbox for layout */
-        flex-direction: column; /* Stack children vertically */
+        height: 350px;
+        padding: 18px;
     }
+    
+    .chart-container-cash {
+        height: 260px;
+        padding: 18px;
+    }
+}
+
+@media (max-width: 992px) {
+    .chart-container {
+        height: 320px;
+        padding: 16px;
+    }
+    
+    .chart-container-cash {
+        height: 240px;
+        padding: 16px;
+    }
+    
+    .chart-header h5 {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-container { 
+        margin: 8px;
+        padding: 12px;
+    }
+    
+    .stat-card { 
+        margin-bottom: 8px;
+        padding: 14px 18px;
+    }
+    
+    .stat-value { font-size: 1.8rem; }
+    .stat-icon { font-size: 1.5rem; }
+    
+    .row { 
+        margin-left: -6px;
+        margin-right: -6px; 
+    }
+    
+    .row > [class*="col-"] { 
+        padding-left: 6px;
+        padding-right: 6px; 
+    }
+}
+
+/* 576px breakpoint'i 768px'den SONRA gelmeli */
+@media (max-width: 576px) {
+    .stat-card { 
+        margin-bottom: 2px !important;   
+        padding: 6px 13px !important;   
+    }
+    
+    .stat-value { font-size: 1.6rem !important; }
+    .stat-icon { font-size: 1.3rem !important; }
+    
+    .dashboard-container {
+        margin: 5px !important;
+        padding: 10px !important;
+    }
+}
+@media (max-width: 768px) {
+    .chart-container {
+        height: 280px;
+        padding: 15px;
+        margin: 0 0 12px 0;
+    }
+    
+    .chart-container-cash {
+        height: 220px;
+        padding: 15px;
+        margin: 0 0 12px 0;
+    }
+    
+    .chart-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+    
+    .chart-header h5 {
+        font-size: 15px !important;
+        margin-bottom: 0;
+    }
+    .dashboard-card-header h5{font-size: 15px !important;}
+    .dashboard-card-header .view-all-btn{font-size: 10px !important;}
+    .time-filter {
+        align-self: stretch;
+        justify-content: left !important;
+            gap: 0px !important;
+    padding: 1px 0px !important;
+    }
+    
+    .filter-btn {
+        font-size: 0.75rem;
+        padding: 5px 12px;
+    }
+    
+    /* Chart text ve font boyutları için */
+    .chart-canvas {
+        font-size: 12px;
+    }
+    
+    /* Kasa sayfası özel elementler */
+    .gelir .adi,
+    .gelir .para,
+    .gider .adi,
+    .gider .para {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .chart-container {
+        height: 250px;
+        padding: 12px;
+    }
+    
+    .chart-container-cash {
+        height: 200px;
+        padding: 12px;
+    }
+    
+    .chart-header {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+    }
+    
+    .chart-header h5 {
+        font-size: 0.9rem;
+    }
+    
+    .time-filter {
+        gap: 4px;
+        padding: 2px 4px;
+    }
+    
+    .filter-btn {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+    
+    /* Chart canvas için minimum boyutlar */
+    .chart-canvas {
+        min-height: 150px;
+    }
+}
+
+/* Chart.js için özel responsive ayarları */
+@media (max-width: 768px) {
+    .chart-container .chart-canvas canvas,
+    .chart-container-cash .chart-canvas canvas {
+        font-size: 11px !important;
+    }
+}
+
+/* Flexbox düzenlemeleri */
+.row {
+    margin-left: -8px;
+    margin-right: -8px;
+}
+
+.row > [class*="col-"] {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+/* Dashboard container responsive */
+@media (max-width: 768px) {
+    .dashboard-container {
+        margin: 10px;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .dashboard-container {
+        margin: 5px;
+        padding: 10px;
+    }
+}
 
     .chart-header {
         display: flex;
@@ -280,9 +510,14 @@
         .chart-container, .dashboard-card { height: auto; min-height: 320px; }
         .time-filter { flex-wrap: wrap; }
         .filter-btn { font-size: 0.75rem; padding: 5px 12px; }
-        .service-summary { padding: 16px; }
-        .service-item { padding: 14px 12px; }
+        .service-summary { padding: 0; margin-top: 10px !important;padding-bottom: 20px !important;}
+        .service-item { padding: 0px; }
         .service-count { font-size: 1.6rem; }
+        .main-page-custom{margin-top: 37px;}
+        .chart-header {
+    align-items: flex-start !important;
+}
+
     }
 
     .row { margin-left: -8px; margin-right: -8px; }
@@ -296,29 +531,29 @@
     <div id="errorMessage" class="error-message"></div>
     
     <!-- Üst İstatistik Kartları -->
-    <div class="row">
-        <div class="col-lg-3 col-md-6 mb-4">
+    <div class="row main-page-custom">
+        <div class="col-lg-3 col-md-6">
             <a href="#" class="stat-card blue" id="totalServicesCard">
                 <i class="fas fa-tools stat-icon"></i>
                 <div class="stat-value" id="totalServices">-</div>
                 <div class="stat-label">Aylık Servis Sayısı</div>
             </a>
         </div>
-        <div class="col-lg-3 col-md-6 mb-4">
+        <div class="col-lg-3 col-md-6">
             <a href="#" class="stat-card green" id="totalCustomersCard">
                 <i class="fas fa-users stat-icon"></i>
                 <div class="stat-value" id="totalCustomers">-</div>
                 <div class="stat-label">Aylık Müşteri Sayısı</div>
             </a>
         </div>
-        <div class="col-lg-3 col-md-6 mb-4">
+        <div class="col-lg-3 col-md-6">
             <a href="{{ route('staffs', ['tenant_id' => request()->route('tenant_id')]) }}" class="stat-card red" id="totalPersonnelCard">
                 <i class="fas fa-user-tie stat-icon"></i>
                 <div class="stat-value" id="totalPersonnel">-</div>
                 <div class="stat-label">Aktif Personel Sayısı</div>
             </a>
         </div>
-        <div class="col-lg-3 col-md-6 mb-4">
+        <div class="col-lg-3 col-md-6">
             <a href="#" onclick="window.location.href = buildCashUrl('total')" class="stat-card teal" id="totalCashCard">
                 <i class="fas fa-lira-sign stat-icon"></i>
                 <div class="stat-value" id="totalCash">0,00 TL</div>
@@ -330,7 +565,7 @@
     <!-- Servis Özeti -->
     <div class="service-summary">
         <h5><i class="fas fa-chart-bar"></i> Servis Sayıları</h5>
-        <div class="row">
+        <div class="row custom-padding">
             <div class="col-md-4">
                 <a href="#" class="service-item today" id="todayServicesCard">
                     <div class="service-count" id="todayServices">-</div>

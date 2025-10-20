@@ -42,35 +42,73 @@
     border-radius: 6px;
     border: 1px solid #ced4da;
   }
+
+  .card-invoices {
+      border: 1px solid rgba(0, 0, 0, .125) !important;
+    }
+
+    .card-invoices-header {
+      background-color: #f7f7f7 !important;
+      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+      margin-bottom: 7px !important;
+      padding: 4px 7px !important;
+    }
+
+    .card-invoices-body {
+      padding: 3px 7px !important;
+    }
+    .card-header:first-child {
+    border-radius: 0.55rem .55rem 0 0 !important;
+}
+
+.btn-outline-danger-custom {
+    color: #fff;
+    background-color: #f32f53;
+    border-color: #f32f53;
+}
+@media (max-width: 767px) {
+  .custom-rw1{--bs-gutter-x: 4px;}
+  .pr-custom{padding-right: 14px;}
+}
+
 </style>
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <form method="post" id="editInvo" action="{{ route('update.invoices', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
   @csrf
-  <div class="card f5">
-    <div class="card-header ch1" style="padding: 3px 10px;">
-      <div class="tarihWrap" >
-        <label style="text-align: left;width: auto;display: inline-block;margin: 0;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
-        <input type="date" name="faturaTarihi" class="form-control datepicker kayitTarihi"  value="{{ \Carbon\Carbon::parse($invoice_id->faturaTarihi)->format('Y-m-d')}}" style="width: 150px;display: inline-block;background:#fff" required>
-      
-    <span><a href="#" data-id="{{$invoice_id->musteriid}}"  class="faturaMusteriDuzenleBtn"><i class="fas fa-edit" style="font-size: 15px;color: red;text-shadow: none;float: right;"></i></a></span>
-      <div class="clearfix"></div>
+  <div class="card f5 card-invoices">
+    <div class=" ch1" style="padding: 3px 10px;">
+      <div class="tarihWrap d-flex justify-content-between align-items-center">
+    
+    <!-- Sol Taraf Grubu (Etiket ve Input) -->
+    <div class="d-flex align-items-center">
+        <label class="me-2 mb-0">Tarih<span style="font-weight: bold; color: red;">*</span></label>
+        <input type="date" name="faturaTarihi" class="form-control datepicker kayitTarihi" value="{{ \Carbon\Carbon::parse($invoice_id->faturaTarihi)->format('Y-m-d')}}" style="width: 150px; background:#fff" required>
     </div>
+
+    <!-- Sağ Taraf Grubu (İkon) -->
+    <span>
+        <a href="#" data-id="{{$invoice_id->musteriid}}" class="faturaMusteriDuzenleBtn">
+            <i class="fas fa-edit" style="font-size: 15px; color: red; text-shadow: none;"></i>
+        </a>
+    </span>
+    
+</div>
     </div>
   </div> 
 
-  <div class="card f2">
-     <div class="card-header">MÜŞTERİ BİLGİSİ</div>
-     <div class="card-body">
+  <div class="card card-invoices f2">
+     <div class="card-header card-invoices-header">MÜŞTERİ BİLGİSİ</div>
+     <div class="card-body card-invoices-body">
         <div class="row" style="font-size: 14px;">
     <!-- Sol sütun: Servis -->
-    <div class="col-md-6 d-flex flex-column gap-2 border-end" style="padding-right: 15px;">
-        <span> <strong> SERVİS İD: {{ $invoice_id->servisid }} </strong> </span>
-        <a href="{{ route('all.services', [$firma->id, 'did' => $invoice_id->servisid]) }}" target="_blank" class="servisiAc btn btn-outline-danger px-2 py-1" style="font-size: 13px; line-height: 1.3;">
-            Servisi Aç
-        </a>
-    </div>
+    <div class="col-md-6 d-flex flex-row align-items-center gap-2 border-end" style="padding-right: 15px;">
+    <span> <strong> SERVİS İD: {{ $invoice_id->servisid }} </strong> </span>
+    <a href="{{ route('all.services', [$firma->id, 'did' => $invoice_id->servisid]) }}" target="_blank" class="servisiAc btn btn-outline-danger btn-outline-danger-custom col-md-3  px-2 py-1" style="font-size: 13px; line-height: 1.3;">
+        Servisi Aç
+    </a>
+</div>
 
     <!-- Sağ sütun: Müşteri Bilgisi -->
     <div class="col-md-6 d-flex flex-column gap-1" style="padding-left: 15px;">
@@ -98,28 +136,28 @@
      </div>
   </div>
 
-  <div class="card f2">
-    <div class="card-body">
+  <div class="card card-invoices f2">
+    <div class="card-body card-invoices-body">
         <div class="row form-group head">
-            <div class="col-5 rw1 "><label>Cinsi</label></div>
-            <div class="col-2 rw2 "><label>Miktar</label></div>
-            <div class="col-2 rw3 "><label>Fiyat</label></div>
-            <div class="col-3 rw4 "><label>Tutar</label></div>
+            <div class="col-5 rw1 col-sm-6"><label>Cinsi</label></div>
+            <div class="col-2 rw2 col-sm-2"><label>Miktar</label></div>
+            <div class="col-2 rw3 col-sm-2"><label>Fiyat</label></div>
+            <div class="col-3 rw4 col-sm-2"><label>Tutar</label></div>
         </div>
 
         <div class="satirBody">
             @foreach($invoice_id->invoice_products as $key => $product)
                 <div class="row form-group">
-                    <div class="col-5 rw1 ">
+                    <div class="col-5 rw1 col-sm-6">
                         <input type="text" name="aciklama[]" value="{{ $product->aciklama }}" class="form-control aciklama aciklama{{ $key }} buyukYaz" placeholder="Ürün" autocomplete="off">
                     </div>
-                    <div class="col-2 rw2">
+                    <div class="col-2 col-sm-2 rw2 custom-rw1">
                         <input type="text" name="miktar[]" value="{{ $product->miktar }}" onkeyup="sayiKontrol(this)" class="form-control miktar miktar{{ $key }}" autocomplete="off">
                     </div>
-                    <div class="col-2 rw3 ">
+                    <div class="col-2 col-sm-2 rw3 custom-rw1">
                         <input type="text" name="fiyat[]" value="{{ $product->fiyat }}" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat{{ $key }}" autocomplete="off">
                     </div>
-                    <div class="col-3 rw4">
+                    <div class="col-3 rw4 col-sm-2 custom-rw1 pr-custom">
                         <input type="text" name="tutar[]" value="{{ $product->tutar }}" onkeyup="sayiKontrol(this)" class="form-control tutar tutar{{ $key }}" autocomplete="off">
                     </div>
                 </div>
@@ -132,11 +170,15 @@
     </div>
   </div>
        
-  <div class="row cardRow1">
-    <div class="card col-lg-6 f3">
-      <div class="card-body">
-        <div class="row" style="border:0">
-          <div class="col-md-4 rw1"><label>Ödeme Şekli<span style="font-weight: bold; color: red;">*</span></label></div>
+ 
+<div class="row cardRow1 mb-1">
+
+    <!-- 1. Sütun (Sol Taraf) -->
+    <div class="col-lg-6 mb-3 mb-lg-0 custom-p-m custom-p-r-m-k">
+      <div class="card card-invoices f3 h-100"> <!-- h-100 ile kart yükseklikleri eşitlenir -->
+        <div class="card-body card-invoices-body">
+          <div class="row" style="border:0">
+            <div class="col-md-4 rw1"><label>Ödeme Şekli<span style="font-weight: bold; color: red;">*</span></label></div>
             <div class="col-md-8 rw2">
               <select class="form-select odemeSekilleri" name="odemeSekli" required>
                 <option value="">Seçiniz</option>
@@ -145,21 +187,19 @@
                 @endforeach
               </select>
             </div>
-           
-        </div>
+          </div>
 
-        <div class="row" style="border:0">
-          <div class="col-md-4 rw1"><label>Fatura Durumu<span style="font-weight: bold; color: red;">*</span></label></div>
+          <div class="row" style="border:0">
+            <div class="col-md-4 rw1"><label>Fatura Durumu<span style="font-weight: bold; color: red;">*</span></label></div>
             <div class="col-md-8 rw2">
               <select class="form-select faturaDurumu" name="faturaDurumu" required>
                 <option value="">Seçiniz</option>
-                  <option value="draft" {{$invoice_id->faturaDurumu == 'draft' ? 'selected' : ''}}>Beklemede</option>
-                  <option value="sent" {{$invoice_id->faturaDurumu == 'sent' ? 'selected' : ''}}>Gönderildi</option>
-                  <option value="error" {{$invoice_id->faturaDurumu == 'error' ? 'selected' : ''}}>Gönderilmedi</option>
+                <option value="draft" {{$invoice_id->faturaDurumu == 'draft' ? 'selected' : ''}}>Beklemede</option>
+                <option value="sent" {{$invoice_id->faturaDurumu == 'sent' ? 'selected' : ''}}>Gönderildi</option>
+                <option value="error" {{$invoice_id->faturaDurumu == 'error' ? 'selected' : ''}}>Gönderilmedi</option>
               </select>
             </div>
-           
-        </div>
+          </div>
 
           <div class="row form-group" style="border:0">
             <div class="col-md-4 rw1"><label>Toplam Yazıyla</label></div>
@@ -176,50 +216,54 @@
           <div class="row form-group" style="border:0">
             <div class="col-md-4 rw1"><label>E-Arşiv<span style="font-weight: bold; color: red;">*</span></label></div>
             <div class="col-md-8 rw2">
-                <div class="btnWrap ">
+              <div class="btnWrap ">
                 @if($invoice_id->faturaPdf == null)
                 <a href="{{asset($invoice_id->faturaPdf)}}" target="_blank" class="btn btn-warning btn-sm btn-block d-none">Görüntüle</a>
                 @else
                 <a href="{{asset($invoice_id->faturaPdf)}}" target="_blank" class="btn btn-warning btn-sm btn-block">Görüntüle</a>
                 @endif
                 <a href="javascript:void(0);" data-bs-id="{{$invoice_id->id}}" class="btn btn-warning btn-sm invoic_e" title="Düzenle"><i class="fas fa-edit"></i></a>
-                <a href="" class="btn btn-danger btn-sm btn-block eArsivSil"   data-id="{{$invoice_id->id}}">Sil</a>
+                <a href="" class="btn btn-danger btn-sm btn-block eArsivSil" data-id="{{$invoice_id->id}}">Sil</a>
               </div>
             </div>
-          </div>       
-        </div>
-      </div>
-
-      <div class="card col-lg-6 f4">
-        <div class="card-body" style="padding:17px 5px">
-          <div class="row form-group">
-            <div class="col-md-8 rw1"><label>Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" value="{{$invoice_id->toplam}}" autocomplete="off" class="form-control toplam" required></div>
           </div>
-
-          <div class="row form-group">
-          <div class="col-md-8 rw1"><label>İndirim</label></div>
-          <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" value="{{$invoice_id->indirim}}" autocomplete="off" class="form-control indirim"></div>
-        </div>
-        <div class="row form-group">
-          <div class="col-md-8 rw1"><label>Ara Toplam</label></div>
-          <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" value="{{$invoice_id->toplam-$invoice_id->indirim}}.00" autocomplete="off" class="form-control araToplam"></div>
-        </div>
-
-          <div class="row form-group">
-            <div class="col-md-6 rw1"><label>KDV %</label></div>
-            <div class="col-md-2 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20" style="text-align: center;"></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="{{$invoice_id->kdv}}"></div>
-          </div>
-
-          <div class="row form-group" style="padding-bottom: 0">  
-            <div class="col-md-8 rw1"><label>Genel Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-4 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" value="{{$invoice_id->genelToplam}}" autocomplete="off" class="form-control genelToplam" required></div>
-          </div>
-               
         </div>
       </div>
     </div>
+
+    <!-- 2. Sütun (Sağ Taraf) -->
+    <div class="col-lg-6 custom-p-r-min custom-p-m-k custom-p-r-m-k">
+      <div class="card card-invoices f4 h-100">
+        <div class="card-body card-invoices-body" style="padding:17px 5px">
+          <div class="row form-group">
+            <div class="col-md-4 rw1"><label>Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" value="{{$invoice_id->toplam}}" autocomplete="off" class="form-control toplam" required></div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col-md-4 rw1"><label>İndirim</label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" value="{{$invoice_id->indirim}}" autocomplete="off" class="form-control indirim"></div>
+          </div>
+          <div class="row form-group">
+            <div class="col-md-4 rw1"><label>Ara Toplam</label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" value="{{$invoice_id->toplam-$invoice_id->indirim}}.00" autocomplete="off" class="form-control araToplam"></div>
+          </div>
+
+          <div class="row form-group">
+            <div class="col-md-4 rw1"><label>KDV %</label></div>
+            <div class="col-md-3 rw2 col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20"></div>
+            <div class="col-md-5 rw2 col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="{{$invoice_id->kdv}}"></div>
+          </div>
+
+          <div class="row form-group" style="padding-bottom: 0">
+            <div class="col-md-4 rw1"><label>Genel Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
+            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" value="{{$invoice_id->genelToplam}}" autocomplete="off" class="form-control genelToplam" required></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+</div>
     <div class="row">
       <div class="col-sm-12 gonderBtn">
         <input type="hidden" name="id" value="{{ $invoice_id->id }}">
@@ -280,20 +324,17 @@ $(document).ready(function(){
         var index = $(".satirBody .row").length; // Mevcut satır sayısı
         var satirClone = `
           <div class="row form-group align-items-center satir">
-            <div class="col-5 rw1">
+            <div class="col-5 rw1 col-sm-6">
               <input type="text" name="aciklama[]" class="form-control aciklama aciklama${index} buyukYaz" placeholder="Ürün" autocomplete="off">
             </div>
-            <div class="col-2 rw2">
+            <div class="col-2 rw2 custom-rw1 col-sm-2">
               <input type="text" name="miktar[]" onkeyup="sayiKontrol(this)" class="form-control miktar miktar${index}" autocomplete="off">
             </div>
-            <div class="col-2 rw3">
+            <div class="col-2 rw3 custom-rw1 col-sm-2">
               <input type="text" name="fiyat[]" onkeyup="sayiKontrol(this)" class="form-control fiyat fiyat${index}" autocomplete="off">
             </div>
-            <div class="col-2 rw4">
+            <div class="col-3 rw4 custom-rw1 pr-custom col-sm-2">
               <input type="text" name="tutar[]" onkeyup="sayiKontrol(this)" class="form-control tutar tutar${index}" autocomplete="off">
-            </div>
-            <div class="col-1 text-end">
-              <button type="button" class="btn btn-danger btn-sm satirSil" title="Satırı Sil"><strong>&times;</strong></button>
             </div>
           </div>
         `;

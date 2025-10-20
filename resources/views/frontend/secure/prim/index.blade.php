@@ -1,23 +1,49 @@
+<style>
+  .card-header-custom{
+    border: 1px solid rgba(0, 0, 0, .125);
+  }
+  .card-body-custom{
+        border: 1px solid rgba(0, 0, 0, .125);
+  }
+  .staff-header{
+        padding: 6px 13px;
+    margin-bottom: 0px !important;
+  }
+  .card-custom{
+    margin-bottom: 4px !important;
+    padding: 3px;
+  }
+  @media (max-width: 767px) {
+    .border-none{
+    border: none !important;
+  }
+  #ozetKartlari .col-md-3{font-size: 13px !important;}
+  .prim-hesapla{flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 5px !important;}
+  }
+  
+</style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div class="container-fluid mt-1" >
   <div class="row">
     <div class="col-12">
       <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-          <h4 class="card-title">Personel Prim Hesaplama</h4> 
+        <div class="card-header card-header-custom d-flex justify-content-between align-items-center">
+          <h4 class="card-title staff-header">Personel Prim Hesaplama</h4> 
         </div>
-        <div class="card-body">
+        <div class="card-body card-body-custom">
           <!-- Prim Ayarları Özeti -->
-          <div class="row mb-1">
+          <div class="row mb-1 mt-1">
             <div class="col-12">
               <div class="alert alert-info">
                 <h6><i class="fas fa-info-circle"></i> Aktif Prim Ayarları:</h6>
                 <div class="row">
                   @foreach($primAyarlari as $ayar)
                     <div class="col-md-4">
-                      <div class="card bg-light" style="margin-bottom: 0;">
-                        <div class="card-body p-2">
+                      <div class="card bg-light p-1" style="margin-bottom: 0;">
+                        <div class="card-body p-2 border-none">
                           <h6 class="card-title mb-1">Teknisyen</h6>
                           <small class="text-muted">
                             Günlük {{ number_format($ayar->teknisyenPrimTutari, 0, ',', '.') }} TL üzeri teklif = %{{ $ayar->teknisyenPrim }} prim </span>
@@ -86,15 +112,15 @@
   <div class="row mt-1" id="sonuclarContainer" style="display: none;">
     <div class="col-12">
       <div class="card" style="margin-bottom: 0!important;">
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card-header d-flex justify-content-between align-items-center prim-hesapla">
           <h5 class="card-title mb-0">Prim Hesaplama Sonuçları</h5>
           <div id="sonucBilgi" class="text-muted small"></div>
         </div>
         <div class="card-body">
           <!-- Özet Kartları -->
-          <div class="row mb-1" id="ozetKartlari">
-            <div class="col-md-3">
-              <div class="card bg-primary text-white" style="margin-bottom: 0!important;">
+          <div class="row my-1" id="ozetKartlari">
+            <div class="col-md-3 col-6 custom-prim-r custom-prim-r-m ">
+              <div class="card card-custom bg-primary text-white">
                 <div class="card-body">
                   <div class="d-flex justify-content-between">
                     <div>
@@ -102,14 +128,15 @@
                       <small>Toplam Prim</small>
                     </div>
                     <div class="align-self-center">
-                      <i class="fas fa-money-bill-wave fa-2x"></i>
+                      <i class="fas fa-money-bill-wave fa-2x d-none d-md-inline"></i>
+                       <i class="fas fa-money-bill-wave fa-x d-inline d-md-none"></i>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="card bg-success text-white">
+            <div class="col-md-3 col-6 custom-prim-l custom-prim-r-m ">
+              <div class="card card-custom bg-success text-white">
                 <div class="card-body">
                   <div class="d-flex justify-content-between">
                     <div>
@@ -117,14 +144,15 @@
                       <small>Primli Gün Sayısı</small>
                     </div>
                     <div class="align-self-center">
-                      <i class="fas fa-calendar-check fa-2x"></i>
+                      <i class="fas fa-calendar-check fa-2x d-none d-md-inline"></i>
+                      <i class="fas fa-calendar-check fa-x d-inline d-md-none"></i>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="card bg-info text-white">
+            <div class="col-md-3 col-6 custom-prim-r custom-prim-r-m ">
+              <div class="card card-custom bg-info text-white">
                 <div class="card-body">
                   <div class="d-flex justify-content-between">
                     <div>
@@ -132,14 +160,15 @@
                       <small>Ortalama Günlük Prim</small>
                     </div>
                     <div class="align-self-center">
-                      <i class="fas fa-chart-line fa-2x"></i>
+                      <i class="fas fa-chart-line fa-2x d-none d-md-inline"></i>
+                      <i class="fas fa-chart-line fa-x d-inline d-md-none"></i>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="card bg-warning text-white">
+            <div class="col-md-3 col-6 custom-prim-l ">
+              <div class="card card-custom bg-warning text-white">
                 <div class="card-body">
                   <div class="d-flex justify-content-between">
                     <div>
@@ -147,7 +176,8 @@
                       <small>Toplam Performans</small>
                     </div>
                     <div class="align-self-center">
-                      <i class="fas fa-trophy fa-2x"></i>
+                      <i class="fas fa-trophy fa-2x d-none d-md-inline"></i>
+                      <i class="fas fa-trophy fa-x d-inline d-md-none"></i>
                     </div>
                   </div>
                 </div>

@@ -4,23 +4,49 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-
+<style>
+    
+    .card-statics-t{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-statics-t-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-statics-t-body{padding: 3px 7px !important;}
+  .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
+  .teknisyen-dropdown .tarih-butonlari .btn.active {
+    background-color: #ffffffff !important;
+    color: red !important;
+}
+  @media (max-width: 576px) {
+    .custom-header{display: none !important;}
+    .teknisyen-dropdown .tarih-butonlari .btn {
+    background-color: #5c636a !important;
+    color: white !important;
+}
+.teknisyen-dropdown .tarih-butonlari .btn.active {
+    background-color: #5c636a !important;
+    color: white !important;
+}
+  }
+  
+</style>
 <div class="page-content servis-istatistik">
     <div class="container-fluid">
         @include('frontend.secure.statistics.statistics_menu', ['tenant_id' => $tenant_id])
-        <div class="card">
-            <div class="card-header sayfaBaslik d-flex justify-content-between align-items-center">
-                <span>Teknisyen İstatistikleri</span>
+        <div class="card card-statics-t">
+            <div class="techinican-p card-header card-statics-t-header sayfaBaslik d-flex justify-content-between align-items-center">
+                <span class="custom-header">Teknisyen İstatistikleri</span>
                 <!-- Filtre Dropdown -->
                 <div class="dropdown teknisyen-dropdown" id="teknisyenFilterDropdownContainer">
                 <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" id="filtreDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     Filtrele <i class="mdi mdi-chevron-down"></i>
                 </button>
-                <div class="dropdown-menu teknisyen-dropdown-menu p-3 dropdown-menu-end" style="min-width: 300px;">
+                <div class="dropdown-menu servisDrop teknisyen-dropdown-menu p-3 dropdown-menu-end" style="min-width: 300px;">
                         <form id="filtreForm">
                             <div class="row mb-3">
-                                <label class="col-4 col-form-label">Cihaz Türü</label>
-                                <div class="col-8">
+                                <label class="col-5 col-form-label">Cihaz Türü</label>
+                                <div class="col-7">
                                     <select class="form-select" name="cihazTur" id="cihazTur">
                                         <option value="">Hepsi</option>
                                         @foreach($cihazTurleri as $cihaz)
@@ -31,8 +57,8 @@
                             </div>
 
                            <div class="row mb-3">
-                                <label class="col-4 col-form-label">Tarih Aralığı</label>
-                                <div class="col-8">
+                                <label class="col-5 col-form-label">Tarih Aralığı</label>
+                                <div class="col-7">
                                      <input type="text" id="tarihAraligiTeknisyen" class="form-control" style="background:#fff;">
                                 </div>
                             </div>
@@ -49,7 +75,7 @@
                 </div>
             </div>
 
-            <div class="card-body">
+            <div class="card-body card-statics-t-body">
                 <div id="loadingDiv" class="text-center py-4">
                     <div class="spinner-border text-primary" role="status">
                         <span class="visually-hidden">Yükleniyor...</span>
@@ -356,72 +382,72 @@ function loadTechnicianDetail(teknisyenId) {
 
 // Teknisyen detayını render et
 function renderTechnicianDetail(data) {
-    const detayHtml = `
-        <td colspan="9">
-            <div class="p-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-                <!-- ... diğer içerik ... -->
+const detayHtml = `
+    <td colspan="9">
+        <div class="detay-loading" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+            <!-- ... diğer içerik ... -->
 
-                <!-- Grafikler - Düzeltilmiş boyutlar -->
-                <div class="row mb-4">
-                    <div class="col-md-4">
-                        <div class="card shadow-sm" style="min-height: 250px;">
-                            <div class="card-body">
-                                <h6 class="card-title text-success">Tamamlanan Servisler</h6>
-                                <div style="position: relative; height: 180px; width: 100%;">
-                                    <canvas 
-                                        id="tamamlananChart_${data.id}" 
-                                        style="width: 100% !important; height: 100% !important;"
-                                    ></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card shadow-sm" style="min-height: 250px;">
-                            <div class="card-body">
-                                <h6 class="card-title text-danger">İptal Servisler</h6>
-                                <div style="position: relative; height: 180px; width: 100%;">
-                                    <canvas 
-                                        id="iptalChart_${data.id}" 
-                                        style="width: 100% !important; height: 100% !important;"
-                                    ></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card shadow-sm" style="min-height: 250px;">
-                            <div class="card-body">
-                                <h6 class="card-title text-info">Alınan Ücretler</h6>
-                                <div style="position: relative; height: 180px; width: 100%;">
-                                    <canvas 
-                                        id="gelirChart_${data.id}" 
-                                        style="width: 100% !important; height: 100% !important;"
-                                    ></canvas>
-                                </div>
+            <!-- Grafikler - Düzeltilmiş boyutlar -->
+           <div class="row mb-lg-4">
+                <div class="col-md-4">
+                    <div class="card shadow-sm" style="min-height: 250px;">
+                        <div class="card-body">
+                            <h6 class="card-title text-success">Tamamlanan Servisler</h6>
+                            <div style="position: relative; height: 180px; width: 100%;">
+                                <canvas 
+                                    id="tamamlananChart_${data.id}" 
+                                    style="width: 100% !important; height: 100% !important;"
+                                ></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Detaylı Aşama Sayıları -->
-                <div class="row">
-                    <div class="col-12">
-                        <h6 class="text-dark mb-3">
-                            <i class="fas fa-chart-bar me-2"></i>
-                            Servis Aşamaları Detay
-                        </h6>
+                <div class="col-md-4">
+                    <div class="card shadow-sm" style="min-height: 250px;">
+                        <div class="card-body">
+                            <h6 class="card-title text-danger">İptal Servisler</h6>
+                            <div style="position: relative; height: 180px; width: 100%;">
+                                <canvas 
+                                    id="iptalChart_${data.id}" 
+                                    style="width: 100% !important; height: 100% !important;"
+                                ></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="row g-3">
-                    ${generateStageCards(data.detay_sayilari)}
+                <div class="col-md-4">
+                    <div class="card shadow-sm" style="min-height: 250px;">
+                        <div class="card-body">
+                            <h6 class="card-title text-info">Alınan Ücretler</h6>
+                            <div style="position: relative; height: 180px; width: 100%;">
+                                <canvas 
+                                    id="gelirChart_${data.id}" 
+                                    style="width: 100% !important; height: 100% !important;"
+                                ></canvas>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </td>
-    `;
-    
-    $('.detay-satir').html(detayHtml);
+
+            <!-- Detaylı Aşama Sayıları -->
+            <div class="row">
+                <div class="col-12">
+                    <h6 class="text-dark mb-3">
+                        Servis Aşamaları Detay
+                    </h6>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                ${generateStageCards(data.detay_sayilari)}
+            </div>
+        </div>
+    </td>
+`;
+
+$('.detay-satir').html(detayHtml);
+
     
     // Grafikleri DOM'a eklendikten sonra çiz
     setTimeout(() => {
@@ -475,7 +501,7 @@ function generateStageCards(detaySayilari) {
         html += `
             <div class="col-lg-3 col-md-4 col-sm-6">
                 <div class="card h-100 shadow-sm">
-                    <div class="card-body text-center p-3">
+                    <div class="card-body technician_statistics_card text-center p-3">
                         <div class="mb-2">
                             <span class="badge ${badgeClass} fs-6 px-3 py-2">${value}</span>
                         </div>
@@ -744,6 +770,19 @@ function showDetailError(message) {
 if (typeof moment !== 'undefined') {
     moment.locale('tr');
 }
+</script>
+
+<script>
+  $(document).ready(function () {
+    var dropdownContainer = $('#teknisyenFilterDropdownContainer');
+    var filterButton = dropdownContainer.find('.filtrele');
+    dropdownContainer.on('show.bs.dropdown', function () {
+      filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+    });
+    dropdownContainer.on('hide.bs.dropdown', function () {
+      filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+    });
+  });
 </script>
 @endsection
 

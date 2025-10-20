@@ -6,7 +6,7 @@
       <div class="col-lg-7">
         <input type="date" name="tarih" class="form-control datepicker" 
           value="{{ \Carbon\Carbon::parse($servisPara->created_at)->format('Y-m-d') }}" 
-          style="width: 105px; display: inline-block; background:#fff">
+          style=" display: inline-block; background:#fff">
       </div>
     </div>
                             

@@ -1,10 +1,33 @@
 {{-- resources/views/frontend/secure/super_admin/support/index.blade.php --}}
 @extends('frontend.secure.user_master')
 @section('user')
+<style>
+    .filter-card{
+        margin-bottom: 0px !important;
+    }
+    .card-header{
+        padding: 5px 6px !important;
+    }
+    .custom-none{
+        display: block !important;
+    }
+    @media (max-width: 768px) {
+      .header-t{
+        margin-top: 37px;
+    }  
+    .page-title-box{
+        padding-bottom: 7px !important;
+    }
+        .support-index-page .table td, .support-index-page .table th{
+            padding:7px 5.95rem !important;
+        }
+    }
+    
+</style>
 <div class="page-content support-index-page">
     <div class="container-fluid">
         <!-- Başlık -->
-        <div class="row">
+        <div class="row header-t">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                     <h4 class="mb-sm-0">
@@ -26,8 +49,8 @@
             <div class="col-12">
                 <div class="card filter-card">
                     <div class="card-body">
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="fas fa-filter text-primary me-2"></i>
+                        <div class="d-flex align-items-center mb-2 pt-2">
+                            <i class="fas fa-filter text-primary me-2 d-none"></i>
                             <h6 class="mb-0 text-dark">Filtreler</h6>
                         </div>
                         <form method="GET" class="row g-3">
@@ -41,7 +64,7 @@
                                 </select>
                             </div>
                         
-                            <div class="col-md-2">
+                            <div class="col-md-2 all-support">
                                 <label class="form-label text-muted small">Öncelik</label>
                                 <select name="priority" class="form-select">
                                     <option value="">Tüm Öncelikler</option>
@@ -52,7 +75,7 @@
                                     <option value="dusuk" {{ request('priority') == 'dusuk' ? 'selected' : '' }}>Düşük</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2 all-support">
                                 <label class="form-label text-muted small">Kategori</label>
                                 <select name="category" class="form-select">
                                     <option value="">Tüm Kategoriler</option>
@@ -65,7 +88,7 @@
                                     @endif
                                 </select>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-2 all-support">
                                 <label class="form-label text-muted small">Firma</label>
                                 <select name="tenant_id" class="form-select">
                                     <option value="">Tüm Firmalar</option>
@@ -78,14 +101,14 @@
                                     @endif
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 all-support">
                                 <label class="form-label text-muted small">Arama</label>
-                                <input type="text" name="search" class="form-control" 
+                                <input type="text" name="search" class="form-control mb-1" 
                                        placeholder="Talep no, konu veya kullanıcı ara..." 
                                        value="{{ request('search') }}">
                             </div>
 
-                            <div class="col-md-1 d-flex align-items-end">
+                            <div class="col-md-1 d-flex align-items-end mt-1">
                                 <button type="submit" class="btn btn-secondary w-100" style="border: 1px solid black">
                                     <i class="fas fa-search me-1"></i>
                                     Filtrele
@@ -113,7 +136,7 @@
             <div class="col-12">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-0 py-3">
-                        <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex justify-content-between align-items-center p-1">
                             <h5 class="card-title mb-0 d-flex align-items-center">
                                 Destek Talepleri
                                 @if(isset($tickets) && $tickets->count() > 0)
@@ -127,8 +150,8 @@
                         @if(isset($tickets) && $tickets->count() > 0)
                             <div class="table-responsive">
                                 <table class="table table-hover mb-0" id="superAdminSupportTable">
-                                    <thead class="table-light">
-                                        <tr>
+                                    <thead class="">
+                                        <tr style="background-color: #efefef !important;">
                                             <th class="border-0 fw-bold">Talep No</th>
                                             <th class="border-0 fw-bold">Firma</th>
                                             <th class="border-0 fw-bold">Kullanıcı</th>
@@ -138,13 +161,13 @@
                                             <th class="border-0 fw-bold">Durum</th>
                                             <th class="border-0 fw-bold">Oluşturma</th>
                                             <th class="border-0 fw-bold">Son Yanıt</th>
-                                            <th class="border-0 fw-bold text-center">İşlemler</th>
+                                            <th class="border-0 custom-none fw-bold text-center">İşlemler</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach($tickets as $ticket)
                                             <tr class="align-middle">
-                                                <td>
+                                                <td data-label="Talep No">
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatar-xs me-2">
                                                             <div class="avatar-title rounded-circle bg-light text-primary">
@@ -154,7 +177,7 @@
                                                         <span class="fw-bold">{{ $ticket->ticket_number }}</span>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Firma">
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatar-xs me-2">
                                                             <div class="avatar-title rounded-circle bg-soft-primary text-primary">
@@ -164,7 +187,7 @@
                                                         <span>{{ $ticket->tenant->firma_adi ?? 'Bilinmiyor' }}</span>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Kullanıcı">
                                                     <div class="d-flex align-items-center">
                                                         <div class="avatar-xs me-2">
                                                             <div class="avatar-title rounded-circle bg-soft-primary text-primary">
@@ -174,7 +197,7 @@
                                                         <span>{{ $ticket->user->name ?? 'Bilinmiyor' }}</span>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Konu">
                                                     <div style="max-width: 200px;">
                                                         <h6 class="mb-0">{{ Str::limit($ticket->subject, 40) }}</h6>
                                                         <small class="text-muted">
@@ -182,7 +205,7 @@
                                                         </small>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Kategori">
                                                     @switch($ticket->category)
                                                         @case('teknik_sorun')
                                                             <span class="badge bg-soft-danger text-danger border border-danger border-opacity-25">
@@ -213,7 +236,7 @@
                                                             <span class="badge bg-soft-secondary text-secondary">{{ $ticket->category }}</span>
                                                     @endswitch
                                                 </td>
-                                                <td>
+                                                <td data-label="Öncelik">
                                                     @switch($ticket->priority)
                                                         @case('acil')
                                                             <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">
@@ -246,7 +269,7 @@
                                                             </span>
                                                     @endswitch
                                                 </td>
-                                                <td>
+                                                <td data-label="Durum">
                                                     @php
                                                         $statusConfig = [
                                                             'acik' => ['color' => 'primary', 'icon' => 'fas fa-spinner', 'text' => 'Açık'],
@@ -260,13 +283,13 @@
                                                         <i class="{{ $currentStatus['icon'] }} me-1"></i>{{ $currentStatus['text'] }}
                                                     </span>
                                                 </td>
-                                                <td>
+                                                <td data-label="Oluşturma">
                                                     <div class="text-nowrap">
                                                         <div class="fw-medium">{{ $ticket->created_at->format('d.m.Y') }}</div>
                                                         <small class="text-muted">{{ $ticket->created_at->format('H:i') }}</small>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td data-label="Son Yanıt">
                                                     <div class="text-nowrap">
                                                         @if($ticket->last_reply_at)
                                                             <div class="fw-medium">{{ $ticket->last_reply_at->format('d.m.Y') }}</div>
@@ -276,7 +299,7 @@
                                                         @endif
                                                     </div>
                                                 </td>
-                                                <td class="text-center">
+                                                <td data-label="İşlemler" class="text-center">
                                                     <div class="d-flex gap-1 justify-content-center">
                                                          <a href="{{ route('super.admin.destek.show', $ticket->id) }}" 
                                                             class="btn btn-sm btn-outline-primary rounded-pill px-3" 
@@ -347,37 +370,68 @@
 
 <script>
 $(document).ready(function() {
+    var customSearchInput = $('input[name="search"]');
+    var filterCard = $('.filter-card');
+    var dataTableSearchBox = $('#superAdminSupportTable_filter');
+    dataTableSearchBox.hide();
+
     var table = $('#superAdminSupportTable').DataTable({
-        processing: false,
-        serverSide: false,
-        ordering: false, // Tüm sıralamaları devre dışı bırak
+        responsive: true,
+        ordering: false, 
+        paging: false,   
+        info: false,   
         
         language: {
-            paginate: {
-                previous: "<i class='mdi mdi-chevron-left'>",
-                next: "<i class='mdi mdi-chevron-right'>"
-            },
-            sEmptyTable: "Henüz sistemde destek talebi bulunmuyor",
-            sInfo: "Toplam Talep: _TOTAL_",
-            sInfoEmpty: "Kayıt yok",
-            sSearch: "Talep Ara:",
-            sZeroRecords: "Eşleşen kayıt bulunamadı",
-            sLengthMenu: "_MENU_",
-            oPaginate: {
-                sFirst: "İlk",
-                sLast: "Son",
-                sNext: '<i class="fas fa-angle-right"></i>',
-                sPrevious: '<i class="fas fa-angle-left"></i>'
-            }
+            "sEmptyTable":     "Tabloda herhangi bir veri mevcut değil",
+            "sZeroRecords":    "Eşleşen kayıt bulunamadı",
+        },
+
+        "search": {
+            "search": customSearchInput.val()
         },
         
-        drawCallback: function() {
-            $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
-        },
-        
-        dom: '<"top">rt<"bottom"i<"float-end"lp>><"clear">',
-        lengthMenu: [ [25, 50, 100], [25, 50, 100] ]
+        "drawCallback": function( settings ) {
+            addEventListenersToRows();
+        }
     });
+
+    customSearchInput.on('keyup', function () {
+        table.search(this.value).draw();
+    });
+
+    function addEventListenersToRows() {
+        const tableRows = document.querySelectorAll('#superAdminSupportTable tbody tr');
+        
+        tableRows.forEach(function(row) {
+            row.style.cursor = 'pointer';
+            
+            const detailButton = row.querySelector('a[title="Detay"]');
+            
+            if (detailButton) {
+                const detailUrl = detailButton.getAttribute('href');
+                
+                const newRow = row.cloneNode(true);
+                row.parentNode.replaceChild(newRow, row);
+
+                newRow.addEventListener('click', function(e) {
+                    if (e.target.closest('a, button, form')) {
+                        return;
+                    }
+                    window.location.href = detailUrl;
+                });
+                
+                newRow.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(0, 123, 255, 0.05)';
+                });
+                
+                newRow.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                });
+            }
+        });
+    }
+
+    addEventListenersToRows();
 });
 </script>
 

@@ -1,13 +1,131 @@
 @extends('frontend.secure.user_master')
 @section('user')
 
-<meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script> 
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+  <style>
+    @media (max-width: 767px) {
 
+      li.paginate_button.next,
+      li.paginate_button.previous {
+        display: inline-block;
+        font-size: 16px !important;
+      }
+
+      #datatableKasa_wrapper .dataTables_info {
+        text-align: left !important;
+      }
+
+      .pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+      }
+
+      .searchWrap .dropdown-menu {
+        padding: 0px !important;
+      }
+
+      .pageDetail .searchWrap .dropdown-menu {
+        min-width: calc(93vw - 20px) !important;
+        transform: translate3d(10.600006px, 4px, 0px) !important;
+            inset: 0px 0px auto auto !important;
+      }
+
+      .pageDetail .searchWrap .tarihAraligi .btn {
+        color: #fff !important;
+        background-color: #5c636a !important;
+        border-color: #565e64 !important;
+      }
+
+      .searchWrap .tarih-araligi {
+        padding: 5px 6px !important;
+      }
+
+      .searchWrap {
+        margin-top: 0px !important;
+      }
+
+      .pageDetail .searchWrap {
+        width: 30% !important;
+      }
+
+      .pageDetail .searchWrap {
+        margin-bottom: 0px !important;
+      }
+
+      div.dataTables_filter input {
+        margin-left: 0 !important;
+      }
+
+      .dataTables_filter {
+        margin-right: 0px !important;
+      }
+
+      .pageDetail .kasaArama {
+        margin-right: 0px !important;
+
+      }
+
+      #datatableKasa_wrapper .kasaArama {
+        display: none;
+      }
+
+      #datatableKasa_filter label {
+        width: 100% !important;
+      }
+
+      #datatableKasa_filter label {
+        margin-bottom: 0px !important;
+      }
+
+      #datatableKasa_wrapper .dataTables_filter {
+        margin-bottom: -1px !important;
+      }
+
+      
+
+    }
+
+    @media (min-width: 768px) {
+      .custom-modal-width {
+        max-width: 390px;
+        margin: 1.75rem auto;
+      }
+    }
+
+    #kasaArama {
+      background-color: #343a40 !important;
+    }
+    .kasaArama {
+          background-color: #343a40;
+    color: white;
+    }
+
+    .card-allcash {
+      border: 1px solid rgba(0, 0, 0, .125) !important;
+    }
+
+    .card-allcash-header {
+      background-color: #f7f7f7 !important;
+      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+      margin-bottom: 7px !important;
+      padding: 4px 7px !important;
+    }
+
+    .card-allcash-body {
+      padding: 3px 7px !important;
+    }
+
+    .servisDrop {
+      transition: none !important;
+      animation: none !important;
+      transform: translate3d(1px, 2px, 0px) !important;
+    }
+
+</style>
 <div class="page-content" id="cash_transactions">
   <div class="container-fluid">
     <div class="row pageDetail">
@@ -16,252 +134,278 @@
           <div class="card-header sayfaBaslik">Kasa Hareketleri</div>
           <div class="card-body">
             <table id="datatableKasa" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-              @if(Auth::user()->can('Kasa Hareketi Ekleyebilir'))
-                <a class="btn btn-success btn-sm addCashTransactions" data-bs-toggle="modal" data-bs-target="#addCashTransactionsModal"><i class="fas fa-plus"></i> <span>Kasa Hareketi Ekle</span></a>
-              @endif  
-              <button type="submit" id="kasaArama" class="btn btn-sm btn-dark searchBtn kasaArama float-end"><i class="fas fa-search"></i></button>
+<!-- Masaüstü -->
+<div class="d-none d-lg-block">
+    @if(Auth::user()->can('Kasa Hareketi Ekleyebilir'))
+        <a class="btn btn-success btn-sm addCashTransactions" data-bs-toggle="modal" data-bs-target="#addCashTransactionsModal">
+            <i class="fas fa-plus"></i> <span>Kasa Hareketi Ekle</span>
+        </a>
+    @endif  
+    <button type="button" class="btn btn-sm btn-dark searchBtn kasaArama float-end">
+        <i class="fas fa-search"></i>
+    </button>
+</div>
+
+<!-- Mobil -->
+<div class="d-lg-none">
+    <div class="d-flex gap-1 justify-content-between align-items-center">
+        <div>
+            @if(Auth::user()->can('Kasa Hareketi Ekleyebilir'))
+                <a class="btn btn-success btn-sm addCashTransactions" data-bs-toggle="modal" data-bs-target="#addCashTransactionsModal">
+                    <i class="fas fa-plus"></i> <span>Kasa Hareketi Ekle</span>
+                </a>
+            @endif
+        </div>
+        <button type="button" class="btn btn-sm btn-dark searchBtn kasaArama">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+</div>
 
               <div class="searchWrap float-end">
-                <div class="btn-group mb-2 " id="kasaFilterDropdownContainer">
+                <div class="btn-group" id="kasaFilterDropdownContainer">
                   <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Filtrele <i class="mdi mdi-chevron-down"></i>
                   </button>
                   <div class="dropdown-menu">
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Ödeme Yönü:</label>
-                        <div class="col-sm-8">
+                        <label class="col-4 col-sm-4">Ödeme Yönü:</label>
+                        <div class="col-8 col-sm-8">
                           <select name="odeme_yonu" id="odemeYonu" class="form-select">
                             <option value="">Hepsi</option>
                             <option value="1">Gelen Ödeme(Borç)</option>
                             <option value="2">Giden Ödeme(Alacak)</option>
                           </select>
+
                         </div>
                       </div>
-                    </div>
-                    <div class="item">
-                      <div class="row">
-                        <label class="col-sm-4">Ödeme Türü:</label>
-                        <div class="col-sm-8">
-                          <select name="odeme_turu" id="odemeTuru" class="form-select">
-                            <option value="">Hepsi</option>
-                            @foreach($payment_types as $type)
-                              <option value="{{$type->id}}">{{$type->odemeTuru}}</option>
-                            @endforeach
-                          </select>
+                      <div class="item">
+                        <div class="row">
+                          <label class="col-4 col-sm-4">Ödeme Türü:</label>
+                          <div class="col-8 col-sm-8">
+                            <select name="odeme_turu" id="odemeTuru" class="form-select">
+                              <option value="">Hepsi</option>
+                              @foreach($payment_types as $type)
+                                <option value="{{$type->id}}">{{$type->odemeTuru}}</option>
+                              @endforeach
+                            </select>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="item">
-                      <div class="row">
-                        <label class="col-sm-4">Ödeme Şekli:</label>
-                        <div class="col-sm-8">
-                          <select name="odeme_sekil" id="odemeSekil" class="form-select">
-                            <option value="">Hepsi</option>
-                            @foreach($payment_methods as $method)
-                              <option value="{{$method->id}}">{{$method->odemeSekli}}</option>
-                            @endforeach
-                          </select>
+                      <div class="item">
+                        <div class="row">
+                          <label class="col-4 col-sm-4">Ödeme Şekli:</label>
+                          <div class="col-8 col-sm-8">
+                            <select name="odeme_sekil" id="odemeSekil" class="form-select">
+                              <option value="">Hepsi</option>
+                              @foreach($payment_methods as $method)
+                                <option value="{{$method->id}}">{{$method->odemeSekli}}</option>
+                              @endforeach
+                            </select>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="item">
-                      <div class="row">
-                        <label class="col-sm-4">Durumu:</label>
-                        <div class="col-sm-8">
-                          <select name="odeme_durumu" id="odemeDurumu" class="form-select">
-                            <option value="0">Hepsi</option>
-                            <option value="2">Tamamlanmadı</option>
+                      <div class="item">
+                        <div class="row">
+                          <label class="col-4 col-sm-4">Durumu:</label>
+                          <div class="col-8 col-sm-8">
+                            <select name="odeme_durumu" id="odemeDurumu" class="form-select">
+                              <option value="0">Hepsi</option>
+                              <option value="2">Tamamlanmadı</option>
                               <option value="1">Tamamlandı</option>
-                          </select>
+                            </select>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div class="item">
-                      <div class="row">
-                        <label class="col-sm-4">Personel:</label>
-                        <div class="col-sm-8">
-                          <select name="staff" id="staff" class="form-select">
-                            <option value="">Hepsi</option>
-                            @foreach($personel as $person)
-                              <option value="{{$person->user_id}}">{{$person->name}}</option>
-                            @endforeach
-                          </select>
+                      <div class="item">
+                        <div class="row">
+                          <label class="col-4 col-sm-4">Personel:</label>
+                          <div class="col-8 col-sm-8">
+                            <select name="staff" id="staff" class="form-select">
+                              <option value="">Hepsi</option>
+                              @foreach($personel as $person)
+                                <option value="{{$person->user_id}}">{{$person->name}}</option>
+                              @endforeach
+                            </select>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div class="item">
-                      <div class="row">
-                        <label class="col-sm-4">Bayiler:</label>
-                        <div class="col-sm-8">
-                          <select name="bayi" id="bayi" class="form-select">
-                            <option value="">Hepsi</option>
-                            @foreach($bayiler as $bayi)
-                              <option value="{{$bayi->user_id}}">{{$bayi->name}}</option>
-                            @endforeach
-                          </select>
+                      <div class="item">
+                        <div class="row">
+                          <label class="col-4 col-sm-4">Bayiler:</label>
+                          <div class="col-8 col-sm-8">
+                            <select name="bayi" id="bayi" class="form-select">
+                              <option value="">Hepsi</option>
+                              @foreach($bayiler as $bayi)
+                                <option value="{{$bayi->user_id}}">{{$bayi->name}}</option>
+                              @endforeach
+                            </select>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div class="item">
-                      <div class="row">
-                        <label class="col-sm-4">Tedarikçiler:</label>
-                        <div class="col-sm-8">
-                          <select name="tedarikci" id="tedarikci" class="form-select">
-                            <option value="">Hepsi</option>
-                            @foreach($tedarikciler as $item)
-                              <option value="{{$item->id}}">{{$item->tedarikci}}</option>
-                            @endforeach
-                          </select>
+                      <div class="item">
+                        <div class="row">
+                          <label class="col-4 col-sm-4">Tedarikçiler:</label>
+                          <div class="col-8 col-sm-8">
+                            <select name="tedarikci" id="tedarikci" class="form-select">
+                              <option value="">Hepsi</option>
+                              @foreach($tedarikciler as $item)
+                                <option value="{{$item->id}}">{{$item->tedarikci}}</option>
+                              @endforeach
+                            </select>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div class="item">
-                      <div class="row">
-                        <label class="col-sm-4">Marka:</label>
-                        <div class="col-sm-8">
-                          <select name="marka" id="marka" class="form-select">
-                            <option value="">Hepsi</option>
-                            @foreach($markalar as $item)
-                              <option value="{{$item->id}}">{{$item->marka}}</option>
-                            @endforeach
-                          </select>
+                      <div class="item">
+                        <div class="row">
+                          <label class="col-4 col-sm-4">Marka:</label>
+                          <div class="col-8 col-sm-8">
+                            <select name="marka" id="marka" class="form-select">
+                              <option value="">Hepsi</option>
+                              @foreach($markalar as $item)
+                                <option value="{{$item->id}}">{{$item->marka}}</option>
+                              @endforeach
+                            </select>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div class="item">
-                      <div class="row">
-                        <label class="col-sm-4">Cihaz:</label>
-                        <div class="col-sm-8">
-                          <select name="cihaz" id="cihaz" class="form-select">
-                            <option value="">Hepsi</option>
-                            @foreach($cihazlar as $item)
-                              <option value="{{$item->id}}">{{$item->cihaz}}</option>
-                            @endforeach
-                          </select>
+                      <div class="item">
+                        <div class="row">
+                          <label class="col-4 col-sm-4">Cihaz:</label>
+                          <div class="col-8 col-sm-8">
+                            <select name="cihaz" id="cihaz" class="form-select">
+                              <option value="">Hepsi</option>
+                              @foreach($cihazlar as $item)
+                                <option value="{{$item->id}}">{{$item->cihaz}}</option>
+                              @endforeach
+                            </select>
+                          </div>
                         </div>
                       </div>
-                    </div>
-        
-                    <div class="item">
-                      <div class="row">
-                        <label class="col-sm-4">Tarih Aralığı:</label>
-                        <div class="col-sm-8">
-                          <input id="daterange" class="tarih-araligi" >
-                          <div class="tarihAraligi mt-2 mb-2">
-                            <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
-                            <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
-                            <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
-                            <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
-                            <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
+
+                      <div class="item">
+                        <div class="row">
+                          <label class="col-4 col-sm-4">Tarih Aralığı:</label>
+                          <div class="col-8 col-sm-8">
+                            <input id="daterange" class="tarih-araligi">
+                            <div class="tarihAraligi mt-2 mb-2">
+                              <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
+                              <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                              <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                              <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
+                              <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
+                  </div><!-- /btn-group -->
+                </div>
+
+                <thead class="title">
+                  <tr>
+                    <th style="width: 10px">ID</th>
+                    <th data-priority="2" style="width: 10px">Tarih</th>
+                    <th data-priority="3" style="width: 20px">Personel</th>
+                    <th style="width: 10px;">Türü</th>
+                    <th>Açıklama</th>
+                    <th style="width: 10px;">Şekli</th>
+                    <th style="width: 90px;">Borç(Gelen)</th>
+                    <th style="width: 90px;">Alacak(Giden)</th>
+                    <th style="width: 90px;">Bakiye(Toplam)</th>
+                    <th data-priority="1" style="width: 96px;">Düzenle</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+
+              <div class="tableToplamaAlani kasaToplamaAlani">
+                <div class="row r1">
+                  <div class="sol"><strong>Borç</strong></div>
+                  <div class="sag">
+                    <div class="tur t1 gelenNakitTL"><span>Nakit: </span></div>
+                    <div class="tur t2 gelenHavaleTL"><span>EFT/Havale: </span></div>
+                    <div class="tur t3 gelenKartTL"><span>Kredi Kartı: </span></div>
+                    <div class="tur t4 gelenToplamTL"><span>Toplam: </span></div>
                   </div>
-                </div><!-- /btn-group -->
-              </div> 
-              
-              <thead class="title">
-                <tr>
-                  <th style="width: 10px">ID</th>
-                  <th data-priority="2" style="width: 10px">Tarih</th>
-                  <th data-priority="3" style="width: 20px">Personel</th>
-                  <th style="width: 10px;">Türü</th>
-                  <th>Açıklama</th>
-                  <th style="width: 10px;">Şekli</th>
-                  <th style="width: 90px;">Borç(Gelen)</th>
-                  <th style="width: 90px;">Alacak(Giden)</th>
-                  <th style="width: 90px;">Bakiye(Toplam)</th>
-                  <th data-priority="1" style="width: 96px;">Düzenle</th>
-                </tr>
-              </thead>
-              <tbody></tbody> 
-            </table>
-            
-            <div class="tableToplamaAlani kasaToplamaAlani">
-              <div class="row r1">
-                <div class="sol"><strong>Borç</strong></div>
-                <div class="sag">
-                  <div class="tur t1 gelenNakitTL"><span>Nakit: </span></div>
-                  <div class="tur t2 gelenHavaleTL"><span>EFT/Havale: </span></div>
-                  <div class="tur t3 gelenKartTL"><span>Kredi Kartı: </span></div>
-                  <div class="tur t4 gelenToplamTL"><span>Toplam: </span></div>
                 </div>
-              </div>  
-              <div class="row r2">
-                <div class="sol"><strong>Alacak</strong></div>
-                <div class="sag">
-                  <div class="tur t1 gidenNakitTL"><span>Nakit: </span></div>
-                  <div class="tur t2 gidenHavaleTL"><span>EFT/Havale: </span></div>
-                  <div class="tur t3 gidenKartTL"><span>Kredi Kartı: </span></div>
-                  <div class="tur t4 gidenToplamTL"><span>Toplam: </span></div>
+                <div class="row r2">
+                  <div class="sol"><strong>Alacak</strong></div>
+                  <div class="sag">
+                    <div class="tur t1 gidenNakitTL"><span>Nakit: </span></div>
+                    <div class="tur t2 gidenHavaleTL"><span>EFT/Havale: </span></div>
+                    <div class="tur t3 gidenKartTL"><span>Kredi Kartı: </span></div>
+                    <div class="tur t4 gidenToplamTL"><span>Toplam: </span></div>
+                  </div>
                 </div>
-              </div>
-              <div class="row r4">
-                <div class="sol"><strong>Bakiye</strong></div>
-                <div class="sag">
-                  <div class="tur t1 genelToplamTL"><span>Toplam: </span></div>
+                <div class="row r4">
+                  <div class="sol"><strong>Bakiye</strong></div>
+                  <div class="sag">
+                    <div class="tur t1 genelToplamTL"><span>Toplam: </span></div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div> <!-- end col -->
-    </div> <!-- end row -->
+        </div> <!-- end col -->
+      </div> <!-- end row -->
+    </div>
   </div>
-</div>
-        
-<!-- add modal content -->
-<div id="addCashTransactionsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h6 class="modal-title" id="myModalLabel">Kasa Hareketi Ekle</h6>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Yükleniyor...
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
 
-<!-- add modal content -->
-<div id="cashTransactionStatisticsModal" class="modal fade bs-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h6 class="modal-title" id="myModalLabel">Kasa İstatistikleri</h6>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body" style="padding: .5rem">
-        Yükleniyor...
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+  <!-- add modal content -->
+  <div id="addCashTransactionsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog custom-modal-width">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title" id="myModalLabel">Kasa Hareketi Ekle</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Yükleniyor...
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 
-<!-- edit modal content -->
-<div id="editCashTransactionsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h6 class="modal-title" id="myModalLabel">Kasa Hareketi Düzenle</h6>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        Yükleniyor...
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+  <!-- add modal content -->
+  <div id="cashTransactionStatisticsModal" class="modal fade bs-example-modal-xl" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title" id="myModalLabel">Kasa İstatistikleri</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" style="padding: .5rem">
+          Yükleniyor...
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 
-<script>
+  <!-- edit modal content -->
+  <div id="editCashTransactionsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog custom-modal-width">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title" id="myModalLabel">Kasa Hareketi Düzenle</h6>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Yükleniyor...
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+  <script>
   var getUrlParameter = function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1),
     sURLVariables = sPageURL.split('&'),
@@ -313,6 +457,7 @@ $(document).ready(function(){
 
 <script type="text/javascript">
   $(document).ready(function(){
+    // Edit Cash Transactions Modal - Buton click event'i (mobil ve masaüstü için gerekli)
     $('#datatableKasa').on('click', '.editCashTransactions', function(e){
       var id = $(this).attr("data-bs-id");
       var firma_id = {{$firma->id}};
@@ -327,9 +472,40 @@ $(document).ready(function(){
         }
       });
     });
-    $("#editCashTransactionsModal").on("hidden.bs.modal", function() {
-          $('#editCashTransactionsModal .modal-body').html("");
 
+    // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
+    $('#datatableKasa tbody').on('click', 'tr', function(e) {
+      var $target = $(e.target);
+      
+      // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma (butonun kendi event'i çalışsın)
+      if ($target.closest('.editCashTransactions').length > 0 ||
+          $target.closest('.btn').length > 0 || 
+          $target.closest('td').index() === 9) {
+        return;
+      }
+      
+      var id = $(this).find('.editCashTransactions').first().attr('data-bs-id');
+      
+      if (id) {
+        // 1. MODAL'I HEMEN AÇ (AJAX beklemeden)
+        $('#editCashTransactionsModal').modal('show');
+        
+        // 2. AYNI ANDA AJAX BAŞLAT
+        var firma_id = {{$firma->id}};
+        $.ajax({
+          url: "/" + firma_id + "/kasa-hareketi/duzenle/" + id
+        }).done(function(data) {
+          if ($.trim(data) === "-1") {
+            window.location.reload(true);
+          } else {
+            $('#editCashTransactionsModal .modal-body').html(data);
+          }
+        });
+      }
+    });
+
+    $("#editCashTransactionsModal").on("hidden.bs.modal", function() {
+      $('#editCashTransactionsModal .modal-body').html("");
     });
   });
 </script>
@@ -352,49 +528,101 @@ $(document).ready(function(){
 </script>
 
 <script>
-  var musteriListesi = @json($musteriler);
-  function turkceKucukHarfeDonustur(text) {
-    if (!text) return '';
-    return text.replace(/Ğ/g, 'ğ')
-               .replace(/Ü/g, 'ü')
-               .replace(/Ş/g, 'ş')
-               .replace(/İ/g, 'i')
-               .replace(/Ö/g, 'ö')
-               .replace(/Ç/g, 'ç')
-               .toLowerCase();
-  }
-
   $(document).ready(function () {
+    var aramaZamanlayici; // Debounce için
+
+    // ✅ AJAX ile dinamik müşteri arama
     $('#search').keyup(function () {
+      var searchField = $(this).val();
+      
+      // Önceki zamanlayıcıyı iptal et
+      clearTimeout(aramaZamanlayici);
+      
+      // Liste temizle
       $('#result').html('');
-      var searchField = turkceKucukHarfeDonustur($('#search').val());
-      var veriler = 'musteriGetir=' + searchField;
-      if (searchField.length > 2) {
-        var filteredMusteriler = musteriListesi.filter(function (musteri) {
-          var adiKucukHarf = turkceKucukHarfeDonustur(musteri.m_adi);
-          var firmaAdiKucukHarf = turkceKucukHarfeDonustur(musteri.firma_adi);
-          return adiKucukHarf.includes(searchField) || firmaAdiKucukHarf.includes(searchField);
-        });
-        $.each(filteredMusteriler, function (key, value) {
-          var tip = value.musteriTipi == "1" ? "Bireysel" : "Kurumsal";
-          $('#result').append('<li class="list-group-item link-class" data-id="' + value.id + '" data-adSoyad="' + value.m_adi + '" data-firmaAdi="' + value.firma_adi + '" data-tel="' + value.telefon + '" data-adres="' + value.adres + '" ><span style="font-weight:500;">Ad Soyad: </span>' + value.m_adi + ' (' + value.firma_adi + ')<br><span style="font-weight:500;">Telefon: </span>' + value.telefon + '<br><span style="font-weight:500;">Adres: </span>' + value.adres + '</li>');
-        });
+      
+      if (searchField.length > 2) { // 3 karakterden sonra ara
+        // 300ms bekle, ardından ara
+        aramaZamanlayici = setTimeout(function() {
+          $.ajax({
+            url: "{{ route('search.customer.kasa', $firma->id) }}",
+            method: "POST",
+            data: {
+              musteriGetir: searchField,
+              _token: "{{ csrf_token() }}"
+            },
+            beforeSend: function() {
+              $('#result').html('<li class="list-group-item text-muted">Aranıyor...</li>');
+            },
+            success: function (data) {
+              $('#result').html('');
+              
+              if (data.length === 0) {
+                $('#result').append('<li class="list-group-item text-muted">Sonuç bulunamadı</li>');
+                return;
+              }
+              
+              $.each(data, function (key, value) {
+                var tip = value.musteriTipi == "1" ? "Bireysel" : "Kurumsal";
+                var ilceAdi = value.state ? value.state.ilceName : '';
+                var ilAdi = value.country ? value.country.name : '';
+                
+                // Adres formatla
+                var adresDisplay = value.adres || '';
+                if (ilceAdi || ilAdi) {
+                  adresDisplay += (adresDisplay ? ' - ' : '') + ilceAdi + '/' + ilAdi;
+                }
+                
+                $('#result').append(
+                  '<li class="list-group-item link-class" ' +
+                  'data-id="' + value.id + '" ' +
+                  'data-adSoyad="' + (value.adSoyad || value.m_adi) + '" ' +
+                  'data-firmaAdi="' + (value.firma_adi || '') + '" ' +
+                  'data-tel="' + (value.tel1 || value.telefon) + '" ' +
+                  'data-adres="' + adresDisplay + '">' +
+                  '<span style="font-weight:500;">Ad Soyad: </span>' + (value.adSoyad || value.m_adi) + 
+                  ' (' + (value.firma_adi || '') + ') <span style="color: #666;">(' + tip + ')</span><br>' +
+                  '<span style="font-weight:500;">Telefon: </span>' + (value.tel1 || value.telefon) + '<br>' +
+                  '<span style="font-weight:500;">Adres: </span>' + adresDisplay + 
+                  '</li>'
+                );
+              });
+            },
+            error: function(xhr, status, error) {
+              console.error('Arama hatası:', error);
+              $('#result').html('<li class="list-group-item text-danger">Bir hata oluştu</li>');
+            }
+          });
+        }, 300); // 300ms gecikme
+        
+      } else if (searchField.length === 0) {
+        // Arama kutusu boşaltılırsa temizle
+        $('#result').html('');
       }
     });
 
-    $('#result').on('click', 'li', function () {
-      $('#result .li:selected').removeAttr('selected');
+    // Müşteri seçme
+    $('#result').on('click', 'li.link-class', function () {
       var click_id = $(this).attr('data-id');
       var click_adSoyad = $(this).attr('data-adSoyad');
-      $('#alici').attr('value', click_id);
-      $('#search').attr('value', click_id);
+      
+      $('#alici').val(click_id);
+      $('.mid').val(click_id);
       $('.musteriAdSoyad').val(click_adSoyad);
       $("#result").html('');
-      return false;
+      
+      // Tabloyu güncelle
+      $('#datatableKasa').DataTable().draw();
+    });
+
+    // Dışarı tıklanınca kapat
+    $(document).click(function (e) {
+      if (!$(e.target).closest('#search, #result').length) {
+        $("#result").html('');
+      }
     });
   });
 </script>
-
 <script>
   $(document).ready(function () {
     // Bu bayrak, daterangepicker veya kısa yol butonlarına tıklandığında dropdown'ın kapanmasını engellemek için kullanılır.
@@ -469,12 +697,14 @@ $(document).ready(function(){
       filterData();
     });
 
-    $('#kasaArama').on('click', function() {
+    $('.kasaArama').on('click', function() {
+      var baslangicYil = '01-01-2025';
+      var today = moment();
       $('#daterange').data('daterangepicker').setStartDate(baslangicYil);
       $('#daterange').data('daterangepicker').setEndDate(today);
       filterData();
     });
-    
+        
     // Filtreleme fonksiyonu
     function filterData() {
       $('#datatableKasa').DataTable().draw();
@@ -603,7 +833,7 @@ $(document).ready(function(){
         "sLengthMenu":     "_MENU_",
         "sLoadingRecords": "Yükleniyor...",
         "sProcessing":     "İşleniyor...",
-        "sSearch":         "Servis Id:",
+        "sSearch":         "",
         "sZeroRecords":    "Eşleşen kayıt bulunamadı",
         "oPaginate": {
           "sFirst":    "İlk",
@@ -625,6 +855,49 @@ $(document).ready(function(){
       },
        dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
       "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
+      "initComplete": function(settings, json) {
+
+    var searchContainer = $('#datatableKasa_filter');
+    var searchInput = searchContainer.find('input');
+    var filterWrapper = $('.searchWrap');
+    var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
+
+
+    // --- DEĞİŞTİRİLEN BÖLÜM BAŞLANGICI ---
+
+    // 1. Sadece masaüstü görünümündeki arama butonunu bul.
+    var kasaAramaButton = $('.d-none.d-lg-block .kasaArama');
+
+    // 2. Filtrele ve arama butonunu yan yana getirmek için ana sarmalayıcıya flex özellikleri ekle.
+    filterWrapper.addClass('d-flex align-items-center');
+
+    // 3. Bulunan arama butonunu, "Filtrele" butonunu içeren sarmalayıcının içine taşı.
+    // .append() ile sona eklenir, yani "Filtrele" butonunun sağına gelir.
+    filterWrapper.append(kasaAramaButton);
+
+    // --- DEĞİŞTİRİLEN BÖLÜM SONU ---
+
+    // Varsayılan "Search:" etiketini kaldır
+    searchContainer.find('label').contents().filter(function() {
+        return this.nodeType == 3;
+    }).remove();
+
+    // Arama kutusunu ve filtreyi sarmalamak için
+    searchContainer.addClass('flex-grow-1 me-2');
+    searchInput.addClass('w-100');
+    searchInput.attr('placeholder', 'Kasa Hareketi Ara...');
+
+    // Ögeleri flex container'a ekle
+    flexContainer.append(searchContainer);
+    flexContainer.append(filterWrapper); // filterWrapper artık hem "Filtrele" hem de arama butonunu içeriyor.
+
+    // Flex container'ı tablonun üstüne ekle
+    $('#datatableKasa_wrapper .top').append(flexContainer);
+
+    // Hazır olduğunda görünür yap
+    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+     $('.tableToplamaAlani').insertBefore('#datatableKasa_wrapper .bottom');
+}
     });
 
     // Kullanıcının filtreleme yaptığını takip etmek için flag

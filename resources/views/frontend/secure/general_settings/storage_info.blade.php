@@ -9,6 +9,51 @@
     $iconClass = 'fas fa-database';
     $statusText = '';
     
+    // Yüzde hesaplama - backend'den gelen değer düşükse manuel hesapla
+    $storageUsagePercent = isset($storageInfo['usage_percentage']) ? floatval($storageInfo['usage_percentage']) : 0;
+    
+    if ($storageUsagePercent <= 0.01) {
+        $usageFormatted = $storageInfo['current_usage_formatted'] ?? '0 B';
+        $limitFormatted = $storageInfo['limit_formatted'] ?? '1 GB';
+        
+        $usageBytes = 0;
+        $limitBytes = 0;
+        
+        // Kullanılan alan hesabı - regex ile daha kesin parsing
+        if (preg_match('/(\d+(?:\.\d+)?)\s*KB/i', $usageFormatted, $matches)) {
+            $usageBytes = floatval($matches[1]) * 1024;
+        } elseif (preg_match('/(\d+(?:\.\d+)?)\s*MB/i', $usageFormatted, $matches)) {
+            $usageBytes = floatval($matches[1]) * 1024 * 1024;
+        } elseif (preg_match('/(\d+(?:\.\d+)?)\s*GB/i', $usageFormatted, $matches)) {
+            $usageBytes = floatval($matches[1]) * 1024 * 1024 * 1024;
+        } elseif (preg_match('/(\d+(?:\.\d+)?)\s*B/i', $usageFormatted, $matches)) {
+            $usageBytes = floatval($matches[1]);
+        }
+        
+        // Limit hesabı - regex ile daha kesin parsing
+        if (preg_match('/(\d+(?:\.\d+)?)\s*KB/i', $limitFormatted, $matches)) {
+            $limitBytes = floatval($matches[1]) * 1024;
+        } elseif (preg_match('/(\d+(?:\.\d+)?)\s*MB/i', $limitFormatted, $matches)) {
+            $limitBytes = floatval($matches[1]) * 1024 * 1024;
+        } elseif (preg_match('/(\d+(?:\.\d+)?)\s*GB/i', $limitFormatted, $matches)) {
+            $limitBytes = floatval($matches[1]) * 1024 * 1024 * 1024;
+        } elseif (preg_match('/(\d+(?:\.\d+)?)\s*B/i', $limitFormatted, $matches)) {
+            $limitBytes = floatval($matches[1]);
+        }
+        
+        // Yüzde hesapla - minimum 0.01% göster
+        if ($limitBytes > 0) {
+            $storageUsagePercent = ($usageBytes / $limitBytes) * 100;
+            if ($storageUsagePercent > 0 && $storageUsagePercent < 0.01) {
+                $storageUsagePercent = 0.01; // En az 0.01% göster
+            }
+            $storageUsagePercent = round($storageUsagePercent, 3);
+        }
+        
+        // storageInfo'yu güncelle
+        $storageInfo['usage_percentage'] = $storageUsagePercent;
+    }
+    
     if ($storageInfo['danger_threshold']) {
         $progressColorClass = 'bg-gradient-danger';
         $iconClass = 'fas fa-exclamation-triangle';
@@ -32,7 +77,7 @@
         <div class="widget-title">
             <i class="{{ $iconClass }} widget-icon"></i>
             <span>Depolama Alanı</span>
-            <span class="status-badge status-{{ $storageInfo['danger_threshold'] ? 'danger' : ($storageInfo['warning_threshold'] ? 'warning' : 'success') }}">
+            <span style="margin-right: 10px;" class="status-badge status-{{ $storageInfo['danger_threshold'] ? 'danger' : ($storageInfo['warning_threshold'] ? 'warning' : 'success') }}">
                 {{ $statusText }}
             </span>
         </div>
@@ -722,14 +767,43 @@ function refreshStorageInfo() {
 }
 
 function updateStorageDisplay(info) {
+    // Yüzdeyi kontrol et ve gerekirse manuel hesapla
+    let usagePercentage = parseFloat(info.usage_percentage) || 0;
+    
+    if (usagePercentage <= 0.01 && info.current_usage_formatted && info.limit_formatted) {
+        // Manuel hesaplama
+        const usageMatch = info.current_usage_formatted.match(/(\d+(?:\.\d+)?)\s*(KB|MB|GB|B)/i);
+        const limitMatch = info.limit_formatted.match(/(\d+(?:\.\d+)?)\s*(KB|MB|GB|B)/i);
+        
+        if (usageMatch && limitMatch) {
+            const usageValue = parseFloat(usageMatch[1]);
+            const usageUnit = usageMatch[2].toUpperCase();
+            const limitValue = parseFloat(limitMatch[1]);
+            const limitUnit = limitMatch[2].toUpperCase();
+            
+            // Byte'a çevir
+            const unitMultipliers = { 'B': 1, 'KB': 1024, 'MB': 1024*1024, 'GB': 1024*1024*1024 };
+            const usageBytes = usageValue * (unitMultipliers[usageUnit] || 1);
+            const limitBytes = limitValue * (unitMultipliers[limitUnit] || 1);
+            
+            if (limitBytes > 0) {
+                usagePercentage = (usageBytes / limitBytes) * 100;
+                if (usagePercentage > 0 && usagePercentage < 0.01) {
+                    usagePercentage = 0.01; // En az 0.01% göster
+                }
+                usagePercentage = Math.round(usagePercentage * 1000) / 1000; // 3 ondalık basamak
+            }
+        }
+    }
+    
     // Update circular progress
     const progressCircle = document.querySelector('.progress-ring-circle');
     const circumference = 314;
-    const offset = circumference - (circumference * info.usage_percentage / 100);
+    const offset = circumference - (circumference * usagePercentage / 100);
     progressCircle.style.strokeDashoffset = offset;
     
     // Update percentage text
-    document.querySelector('.percentage').textContent = info.usage_percentage + '%';
+    document.querySelector('.percentage').textContent = usagePercentage.toFixed(2) + '%';
     
     // Update stat values
     const statValues = document.querySelectorAll('.stat-value');
@@ -739,7 +813,7 @@ function updateStorageDisplay(info) {
     
     // Update linear progress
     const progressFill = document.querySelector('.progress-bar-fill');
-    progressFill.style.width = info.usage_percentage + '%';
+    progressFill.style.width = usagePercentage + '%';
     
     // Update info text
     document.querySelector('.current-usage').textContent = info.current_usage_formatted;

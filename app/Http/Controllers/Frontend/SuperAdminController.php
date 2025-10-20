@@ -380,7 +380,7 @@ public function allTenants(Request $request)
             'ayinBasi' => [
                 'start' => $today->copy()->startOfMonth(),
                 'end' => $today->copy(),
-                'label' => 'Ayın Başından İtibaren'
+                'label' => 'Son Ay'
             ]
         ];
 
@@ -425,13 +425,18 @@ public function allTenants(Request $request)
             ->with('plansubs') // plansubs kullanıyoruz
             ->orderBy('created_at', 'desc')
             ->get();
+
+        // Depolama bilgilerini al
+        $storageInfo = $tenant->getStorageInfo();
+    
             
         return view('frontend.secure.super_admin.edit_tenants', compact(
             'tenant',
             'countries', 
             'periodStats',
             'topServisSayisi',
-            'subscriptionHistory'
+            'subscriptionHistory',
+            'storageInfo'
         ));
     }
 
@@ -566,7 +571,7 @@ public function getTenantPayments($id)
     try {
         $tenant = Tenant::findOrFail($id);
         
-        // Tüm ödemeleri getir (Tenant modelindeki getAllPayments metodunu kullan)
+        // Tüm ödemeleri getir
         $allPayments = $tenant->getAllPayments();
         
         // Ödeme özetini hesapla
@@ -594,20 +599,21 @@ public function getTenantPayments($id)
             }
         }
         
-        // Para birimini formatla
+        // Raw değerler ile formatlanmış değerleri ayrı ayrı gönder
+        $summaryResponse = [];
         foreach ($summary as $key => $value) {
-            if ($key !== 'total_amount') {
-                $summary[$key] = number_format($value, 2, ',', '.');
-            }
+            // Raw değer
+            $summaryResponse[$key] = $value;
+            // Formatlanmış değer - ayrı key ile
+            $summaryResponse[$key . '_formatted'] = number_format($value, 2, '.', ',');
         }
-        $summary['total_amount'] = number_format($summary['total_amount'], 2, ',', '.');
         
-        // Ödemeleri tarih sırasına göre sırala (en yeni önce)
+        // Ödemeleri tarih sırasına göre sırala
         $sortedPayments = $allPayments->sortByDesc('created_at')->values();
         
         return response()->json([
             'success' => true,
-            'summary' => $summary,
+            'summary' => $summaryResponse,  // Bu şekilde gönder
             'payments' => $sortedPayments,
             'tenant_info' => [
                 'id' => $tenant->id,
@@ -771,6 +777,762 @@ public function getPaymentStatistics($tenantId)
         ], 500);
     }
 }
+public function getStorageDetails($tenant_id)
+{
+    try {
+        $tenant = Tenant::findOrFail($tenant_id);
+        
+        $storageInfo = $tenant->getStorageInfo();
+        
+        $details = [
+            'service_photos' => $this->getServicePhotosBreakdown($tenant),
+            'stock_photos' => $this->getStockPhotosBreakdown($tenant),
+            'other_files' => $this->getOtherFilesBreakdown($tenant)
+        ];
+        
+        return response()->json([
+            'success' => true,
+            'storage_info' => $storageInfo,
+            'details' => $details
+        ]);
+        
+    } catch (\Exception $e) {
+        \Log::error('Storage details error', [
+            'tenant_id' => $tenant_id,
+            'error' => $e->getMessage()
+        ]);
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Storage detayları alınırken hata oluştu.'
+        ], 500);
+    }
+}
+/**
+ * Servis fotoğrafları breakdown'ı
+ */
+private function getServicePhotosBreakdown($tenant)
+{
+    $photos = \App\Models\ServicePhoto::where('firma_id', $tenant->id)
+                         ->selectRaw('COUNT(*) as count, SUM(file_size) as total_size, AVG(file_size) as avg_size')
+                         ->first();
+    
+    return [
+        'count' => $photos->count ?? 0,
+        'total_size' => $photos->total_size ?? 0,
+        'total_size_formatted' => $this->formatBytes($photos->total_size ?? 0),
+        'average_size' => $photos->avg_size ?? 0,
+        'average_size_formatted' => $this->formatBytes($photos->avg_size ?? 0),
+    ];
+}
 
+/**
+ * Stok fotoğrafları breakdown'ı
+ */
+private function getStockPhotosBreakdown($tenant)
+{
+    $stockPhotos = \App\Models\stock_photos::where('kid', $tenant->id)
+                              ->selectRaw('COUNT(*) as count, COALESCE(SUM(file_size), 0) as total_size, AVG(file_size) as avg_size')
+                              ->first();
+    
+    return [
+        'count' => $stockPhotos->count ?? 0,
+        'total_size' => $stockPhotos->total_size ?? 0,
+        'total_size_formatted' => $this->formatBytes($stockPhotos->total_size ?? 0),
+        'average_size' => $stockPhotos->avg_size ?? 0,
+        'average_size_formatted' => $this->formatBytes($stockPhotos->avg_size ?? 0),
+    ];
+}
 
+/**
+ * Diğer dosyalar breakdown'ı
+ */
+private function getOtherFilesBreakdown($tenant)
+{
+    $breakdown = [
+        'support_attachments' => $this->getSupportAttachmentsBreakdown($tenant),
+        'dealer_documents' => $this->getDealerDocumentsBreakdown($tenant),
+        'invoice_documents' => $this->getInvoiceDocumentsBreakdown($tenant)
+    ];
+    
+    $totalSize = array_sum(array_column($breakdown, 'size'));
+    $totalCount = array_sum(array_column($breakdown, 'count'));
+    
+    return [
+        'total_count' => $totalCount,
+        'total_size' => $totalSize,
+        'total_size_formatted' => $this->formatBytes($totalSize),
+        'breakdown' => $breakdown
+    ];
+}
+
+private function getSupportAttachmentsBreakdown($tenant)
+{
+    $count = 0;
+    $totalSize = 0;
+
+    // Önce tenant'ın user ID'lerini al
+    $userIds = DB::table('tb_user')
+                 ->where('tenant_id', $tenant->id)
+                 ->pluck('user_id');
+
+    $supportReplies = DB::table('support_ticket_replies')
+                        ->whereIn('user_id', $userIds)
+                        ->whereNotNull('attachments')
+                        ->where('attachments', '!=', '')
+                        ->get();
+
+    foreach ($supportReplies as $reply) {
+        $attachments = json_decode($reply->attachments, true);
+        if (is_array($attachments)) {
+            foreach ($attachments as $attachment) {
+                if (isset($attachment['path'])) {
+                    $filePath = storage_path('app/public/' . $attachment['path']);
+                    if (file_exists($filePath)) {
+                        $size = filesize($filePath);
+                        $totalSize += $size;
+                        $count++;
+                    }
+                }
+            }
+        }
+    }
+
+    return [
+        'count' => $count,
+        'size' => $totalSize,
+        'size_formatted' => $this->formatBytes($totalSize)
+    ];
+}
+
+private function getDealerDocumentsBreakdown($tenant)
+{
+    $dealerDocsPath = storage_path("app/public/dealers-documents/firma_{$tenant->firma_slug}");
+    
+    if (!is_dir($dealerDocsPath)) {
+        return ['count' => 0, 'size' => 0, 'size_formatted' => '0 B'];
+    }
+    
+    $count = $this->countFilesInDirectory($dealerDocsPath);
+    $size = $this->calculateDirectorySize($dealerDocsPath);
+    
+    return [
+        'count' => $count,
+        'size' => $size,
+        'size_formatted' => $this->formatBytes($size)
+    ];
+}
+
+private function getInvoiceDocumentsBreakdown($tenant)
+{
+    $count = 0;
+    $totalSize = 0;
+    
+    $invoices = DB::table('invoices')
+                   ->where('firma_id', $tenant->id)
+                   ->whereNotNull('faturaPdf')
+                   ->where('faturaPdf', '!=', '')
+                   ->get();
+    
+    foreach ($invoices as $invoice) {
+        $filePath = public_path($invoice->faturaPdf);
+        if (file_exists($filePath)) {
+            $size = filesize($filePath);
+            $totalSize += $size;
+            $count++;
+        }
+    }
+    
+    return [
+        'count' => $count,
+        'size' => $totalSize,
+        'size_formatted' => $this->formatBytes($totalSize)
+    ];
+}
+
+private function formatBytes($bytes, $precision = 2)
+{
+    if ($bytes === null || $bytes < 0) {
+        return '0 B';
+    }
+    
+    $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+    
+    for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
+        $bytes /= 1024;
+    }
+    
+    return round($bytes, $precision) . ' ' . $units[$i];
+}
+
+/**
+ * Tüm firmaların ödeme geçmişini listele
+ */
+public function allPaymentHistory(Request $request)
+{
+    $superAdminTenant = Tenant::where('firma_adi', 'Super Admin Panel')
+                             ->orWhere('name', 'Super Admin')
+                             ->first();
+    
+    $superAdminTenantId = $superAdminTenant ? $superAdminTenant->id : null;
+
+    if ($request->ajax()) {
+        // Filtreleme parametreleri
+        $dateFrom = $request->get('date_from', now()->subMonth()->format('Y-m-d'));
+        $dateTo = $request->get('date_to', now()->format('Y-m-d'));
+        $type = $request->get('type', 'all');
+        $tenantId = $request->get('tenant_id');
+        $search = $request->get('search')['value'] ?? '';
+
+        $tenants = Tenant::when($superAdminTenantId, function($query) use ($superAdminTenantId) {
+            return $query->where('id', '!=', $superAdminTenantId);
+        })->orderBy('firma_adi')->get();
+
+        $allPayments = collect();
+
+        $tenantsToProcess = $tenantId 
+            ? Tenant::where('id', $tenantId)->get() 
+            : $tenants;
+
+        foreach ($tenantsToProcess as $tenant) {
+            // Abonelik ödemeleri
+            if (in_array($type, ['all', 'subscription'])) {
+                if (method_exists($tenant, 'subscriptionPayments')) {
+                    $subscriptionPayments = $tenant->subscriptionPayments()
+                        ->when($dateFrom, function($query) use ($dateFrom) {
+                            return $query->where('created_at', '>=', Carbon::parse($dateFrom)->startOfDay());
+                        })
+                        ->when($dateTo, function($query) use ($dateTo) {
+                            return $query->where('created_at', '<=', Carbon::parse($dateTo)->endOfDay());
+                        })
+                        ->orderBy('created_at', 'desc')
+                        ->get()
+                        ->map(function($payment) use ($tenant) {
+                            return [
+                                'id' => $payment->id,
+                                'tenant_id' => $tenant->id,
+                                'tenant_name' => $tenant->firma_adi,
+                                'type' => 'subscription',
+                                'type_label' => 'Abonelik',
+                                'description' => $this->getSubscriptionPaymentDescriptionForAdmin($payment),
+                                'amount' => number_format($payment->amount ?? 0, 2) . ' ' . strtoupper($payment->currency ?? 'TL'),
+                                'status' => $payment->status,
+                                'status_label' => $this->getStatusLabel($payment->status),
+                                'invoice_status' => !empty($payment->invoice_path) ? '<span class=""><i class="fas fa-check mr-1"></i>Mevcut</span>' : '<span class=""><i class="fas fa-clock mr-1"></i>Bekleniyor</span>',
+                                'created_at' => $payment->created_at->format('d.m.Y'),
+                                'created_at_timestamp' => $payment->created_at->timestamp
+                            ];
+                        });
+
+                    $allPayments = $allPayments->concat($subscriptionPayments);
+                }
+            }
+
+            // Depolama ödemeleri
+            if (in_array($type, ['all', 'storage'])) {
+                if (method_exists($tenant, 'storagePurchases')) {
+                    $storagePurchases = $tenant->storagePurchases()
+                        ->when($dateFrom, function($query) use ($dateFrom) {
+                            return $query->where('created_at', '>=', Carbon::parse($dateFrom)->startOfDay());
+                        })
+                        ->when($dateTo, function($query) use ($dateTo) {
+                            return $query->where('created_at', '<=', Carbon::parse($dateTo)->endOfDay());
+                        })
+                        ->orderBy('created_at', 'desc')
+                        ->get()
+                        ->map(function($purchase) use ($tenant) {
+                            $paymentResponse = is_string($purchase->payment_response) 
+                                ? json_decode($purchase->payment_response, true) 
+                                : $purchase->payment_response;
+                                
+                            return [
+                                'id' => $purchase->id,
+                                'tenant_id' => $tenant->id,
+                                'tenant_name' => $tenant->firma_adi,
+                                'type' => 'storage',
+                                'type_label' => 'Depolama',
+                                'description' => $this->getStorageDescriptionForAdmin($purchase),
+                                'amount' => number_format($purchase->amount, 2) . ' ' . strtoupper($paymentResponse['currency'] ?? 'TL'),
+                                'status' => $purchase->status,
+                                'status_label' => $this->getStatusLabel($purchase->status),
+                                'invoice_status' => !empty($purchase->invoice_path) ? '<span class=""><i class="fas fa-check mr-1"></i>Mevcut</span>' : '<span class=""><i class="fas fa-clock mr-1"></i>Bekleniyor</span>',
+                                'created_at' => $purchase->created_at->format('d.m.Y'),
+                                'created_at_timestamp' => $purchase->created_at->timestamp
+                            ];
+                        });
+
+                    $allPayments = $allPayments->concat($storagePurchases);
+                }
+            }
+        }
+
+        // Arama filtresi
+        if (!empty($search)) {
+            $allPayments = $allPayments->filter(function($payment) use ($search) {
+                return stripos($payment['tenant_name'], $search) !== false ||
+                       stripos($payment['description'], $search) !== false ||
+                       stripos($payment['type_label'], $search) !== false;
+            });
+        }
+
+        // Sıralama
+        $allPayments = $allPayments->sortByDesc('created_at_timestamp')->values();
+
+return DataTables::of($allPayments)
+    ->addIndexColumn()
+    ->editColumn('id', function($row) {
+        return '<a href="javascript:void(0);" class="t-link">' . $row['id'] . '</a>';
+    })
+    ->editColumn('tenant_name', function($row) {
+        return '<a href="javascript:void(0);" class="t-link">' . $row['tenant_name'] . '</a>';
+    })
+    ->editColumn('type_label', function($row) {
+        return '<a href="javascript:void(0);" class="t-link">' . $row['type_label'] . '</a>';
+    })
+    ->editColumn('description', function($row) {
+        return '<a href="javascript:void(0);" class="t-link">' . $row['description'] . '</a>';
+    })
+    ->editColumn('amount', function($row) {
+        return '<a href="javascript:void(0);" class="t-link">' . $row['amount'] . '</a>';
+    })
+   ->editColumn('status_label', function($row) {
+    $statusColor = match($row['status']) {
+        'active', 'completed' => '#28a745',
+        'pending' => '#fd7e14',
+        'cancelled', 'failed' => '#dc3545',
+        'expired' => '#6c757d',
+        default => '#343a40'
+    };
+    
+    $icon = match($row['status']) {
+        'active', 'completed' => '<i class="fas fa-check-circle me-1"></i>',
+        'pending' => '<i class="fas fa-clock me-1"></i>',
+        'cancelled', 'failed' => '<i class="fas fa-times-circle me-1"></i>',
+        'expired' => '<i class="fas fa-ban me-1"></i>',
+        default => ''
+    };
+    
+    return '<a href="javascript:void(0);" class="t-link" style="color: ' . $statusColor . ' !important; font-weight: 600;">' 
+           . $icon . $row['status_label'] . 
+           '</a>';
+})
+    ->editColumn('created_at', function($row) {
+        return '<a href="javascript:void(0);" class="t-link">' . $row['created_at'] . '</a>';
+    })
+   ->editColumn('invoice_status', function($row) {
+    $hasInvoice = strpos($row['invoice_status'], 'Mevcut') !== false;
+    
+    $invoiceColor = $hasInvoice ? '#17a2b8' : '#fd7e14';
+    $icon = $hasInvoice 
+        ? '<i class="fas fa-check-circle me-1"></i>' 
+        : '<i class="fas fa-clock me-1"></i>';
+    
+    $text = $hasInvoice ? 'Mevcut' : 'Bekleniyor';
+    
+    return '<a href="javascript:void(0);" class="t-link" style="color: ' . $invoiceColor . ' !important; font-weight: 600;">' 
+           . $icon . $text . 
+           '</a>';
+})
+    ->rawColumns(['id', 'tenant_name', 'type_label', 'description', 'amount', 'status_label', 'invoice_status', 'created_at'])
+    ->make(true);
+    }
+
+    // Normal sayfa yüklemesi için
+    $tenants = Tenant::when($superAdminTenantId, function($query) use ($superAdminTenantId) {
+        return $query->where('id', '!=', $superAdminTenantId);
+    })->orderBy('firma_adi')->get();
+
+    $dateFrom = $request->get('date_from', now()->subMonth()->format('Y-m-d'));
+    $dateTo = $request->get('date_to', now()->format('Y-m-d'));
+    $type = $request->get('type', 'all');
+    $tenantId = $request->get('tenant_id');
+
+    return view('frontend.secure.super_admin.payment_history', compact(
+        'tenants',
+        'dateFrom',
+        'dateTo',
+        'type',
+        'tenantId'
+    ));
+}
+/**
+ * Yardımcı methodlar
+ */
+private function getSubscriptionPaymentDescriptionForAdmin($payment)
+{
+    $description = 'Abonelik Ödemesi';
+    
+    if (!empty($payment->subscription_id)) {
+        $description .= " (ID: {$payment->subscription_id})";
+    }
+    
+    return $description;
+}
+
+private function getStorageDescriptionForAdmin($purchase)
+{
+    return "Ek Depolama - " . ($purchase->storage_gb ?? 0) . " GB";
+}
+
+private function extractPaymentMethodUnifiedForAdmin($purchase)
+{
+    if (!empty($purchase->payment_method)) {
+        return $this->formatPaymentType($purchase->payment_method);
+    }
+    
+    if (!empty($purchase->payment_response)) {
+        $paymentResponse = is_string($purchase->payment_response) 
+            ? json_decode($purchase->payment_response, true) 
+            : $purchase->payment_response;
+        
+        if (is_array($paymentResponse) && isset($paymentResponse['payment_type'])) {
+            return $this->formatPaymentType($paymentResponse['payment_type']);
+        }
+    }
+    
+    return 'Belirtilmemiş';
+}
+
+private function getAllPaymentMethods($tenants)
+{
+    $methods = collect();
+
+    foreach ($tenants as $tenant) {
+        if (method_exists($tenant, 'subscriptionPayments')) {
+            $subscriptionMethods = $tenant->subscriptionPayments()
+                ->whereNotNull('payment_method')
+                ->pluck('payment_method')
+                ->unique();
+            $methods = $methods->concat($subscriptionMethods);
+        }
+    }
+
+    return $methods->unique()->sort()->values();
+}
+
+private function formatPaymentType($paymentType)
+{
+    $types = [
+        'card' => 'Kredi Kartı',
+        'credit_card' => 'Kredi Kartı',
+        'bank_transfer' => 'Banka Havalesi',
+        'eft' => 'EFT',
+        'cash' => 'Nakit',
+        'paytr' => 'PayTR',
+        'iyzico' => 'Iyzico'
+    ];
+
+    return $types[$paymentType] ?? ucfirst(str_replace('_', ' ', $paymentType));
+}
+
+private function getStatusLabel($status)
+{
+    $labels = [
+        'active' => 'Aktif',
+        'completed' => 'Tamamlandı',
+        'pending' => 'Beklemede',
+        'cancelled' => 'İptal Edildi',
+        'expired' => 'Süresi Doldu',
+        'failed' => 'Başarısız',
+        'paid' => 'Ödendi'
+    ];
+
+    return $labels[$status] ?? ucfirst($status);
+}
+/**
+ * Tüm firmaların ödeme geçmişini Excel'e aktar
+ */
+public function exportAllPayments(Request $request)
+{
+    // Super Admin panelini hariç tut
+    $superAdminTenant = Tenant::where('firma_adi', 'Super Admin Panel')
+                             ->orWhere('name', 'Super Admin')
+                             ->first();
+    
+    $superAdminTenantId = $superAdminTenant ? $superAdminTenant->id : null;
+
+    // Filtreleme parametreleri
+    $dateFrom = $request->get('date_from', now()->subMonth()->format('Y-m-d'));
+    $dateTo = $request->get('date_to', now()->format('Y-m-d'));
+    $paymentMethod = $request->get('payment_method');
+    $status = $request->get('status');
+    $type = $request->get('type', 'all');
+    $tenantId = $request->get('tenant_id');
+
+    // Tüm firmaları getir
+    $tenants = Tenant::when($superAdminTenantId, function($query) use ($superAdminTenantId) {
+        return $query->where('id', '!=', $superAdminTenantId);
+    })->orderBy('firma_adi')->get();
+
+    $allPayments = collect();
+
+    // Seçili firma varsa sadece o firmayı, yoksa tüm firmaları işle
+    $tenantsToProcess = $tenantId 
+        ? Tenant::where('id', $tenantId)->get() 
+        : $tenants;
+
+    foreach ($tenantsToProcess as $tenant) {
+        try {
+            // Abonelik ödemeleri
+            $subscriptionPayments = collect();
+            if (method_exists($tenant, 'subscriptionPayments')) {
+                $subscriptionPayments = $tenant->subscriptionPayments()
+                    ->when($dateFrom, function($query) use ($dateFrom) {
+                        return $query->where('created_at', '>=', Carbon::parse($dateFrom)->startOfDay());
+                    })
+                    ->when($dateTo, function($query) use ($dateTo) {
+                        return $query->where('created_at', '<=', Carbon::parse($dateTo)->endOfDay());
+                    })
+                    ->when($paymentMethod, function($query) use ($paymentMethod) {
+                        return $query->where('payment_method', $paymentMethod);
+                    })
+                    ->when($status, function($query) use ($status) {
+                        return $query->where('status', $status);
+                    })
+                    ->when($type && $type !== 'all', function($query) use ($type) {
+                        if ($type === 'storage') {
+                            return $query->whereRaw('1=0');
+                        }
+                        return $query;
+                    })
+                    ->orderBy('created_at', 'desc')
+                    ->get()
+                    ->map(function($payment) use ($tenant) {
+                        return [
+                            'id' => $payment->id,
+                            'tenant_name' => $tenant->firma_adi,
+                            'type_label' => 'Abonelik',
+                            'description' => $this->getSubscriptionPaymentDescriptionForAdmin($payment),
+                            'amount' => number_format($payment->amount ?? 0, 2, ',', '.'),
+                            'currency' => $payment->currency ?? 'TL',
+                            'payment_method' => $payment->payment_method ?: 'Belirtilmemiş',
+                            'status_label' => $this->getStatusLabel($payment->status),
+                            'created_at' => $payment->created_at->format('d.m.Y H:i'),
+                            'paid_at' => $payment->paid_at ? $payment->paid_at->format('d.m.Y H:i') : '-',
+                            'transaction_id' => $payment->transaction_id ?: '-',
+                            'gateway' => $payment->gateway ?: '-',
+                            'has_invoice' => !empty($payment->invoice_path) ? 'Mevcut' : 'Bekleniyor'
+                        ];
+                    });
+            }
+
+            // Depolama ödemeleri
+            $storagePurchases = collect();
+            if (method_exists($tenant, 'storagePurchases')) {
+                $storagePurchases = $tenant->storagePurchases()
+                    ->when($dateFrom, function($query) use ($dateFrom) {
+                        return $query->where('created_at', '>=', Carbon::parse($dateFrom)->startOfDay());
+                    })
+                    ->when($dateTo, function($query) use ($dateTo) {
+                        return $query->where('created_at', '<=', Carbon::parse($dateTo)->endOfDay());
+                    })
+                    ->when($paymentMethod, function($query) use ($paymentMethod) {
+                        return $query->where(function($q) use ($paymentMethod) {
+                            $q->whereJsonContains('payment_response->payment_type', 'card')
+                              ->orWhere('payment_method', $paymentMethod);
+                        });
+                    })
+                    ->when($status, function($query) use ($status) {
+                        return $query->where('status', $status)
+                                     ->orWhereJsonContains('payment_response->status', $status);
+                    })
+                    ->when($type && $type !== 'all', function($query) use ($type) {
+                        if ($type === 'subscription') {
+                            return $query->whereRaw('1=0');
+                        }
+                        return $query;
+                    })
+                    ->orderBy('created_at', 'desc')
+                    ->get()
+                    ->map(function($purchase) use ($tenant) {
+                        $paymentResponse = is_string($purchase->payment_response) 
+                            ? json_decode($purchase->payment_response, true) 
+                            : ($purchase->payment_response ?? []);
+                            
+                        return [
+                            'id' => $purchase->id,
+                            'tenant_name' => $tenant->firma_adi,
+                            'type_label' => 'Depolama',
+                            'description' => $this->getStorageDescriptionForAdmin($purchase),
+                            'amount' => number_format($purchase->amount ?? 0, 2, ',', '.'),
+                            'currency' => $paymentResponse['currency'] ?? 'TL',
+                            'payment_method' => $this->formatPaymentType($paymentResponse['payment_type'] ?? 'Belirtilmemiş'),
+                            'status_label' => $this->getStatusLabel($purchase->status),
+                            'created_at' => $purchase->created_at->format('d.m.Y H:i'),
+                            'paid_at' => isset($purchase->purchased_at) ? $purchase->purchased_at->format('d.m.Y H:i') : '-',
+                            'transaction_id' => $paymentResponse['merchant_oid'] ?? ($purchase->payment_token ?? '-'),
+                            'gateway' => isset($paymentResponse['payment_type']) ? 'PayTR' : 'Depolama Sistemi',
+                            'has_invoice' => !empty($purchase->invoice_path) ? 'Mevcut' : 'Bekleniyor'
+                        ];
+                    });
+            }
+
+            $allPayments = $allPayments->concat($subscriptionPayments)->concat($storagePurchases);
+
+        } catch (\Exception $e) {
+            \Log::error('Export error for tenant: ' . $tenant->id, [
+                'error' => $e->getMessage()
+            ]);
+            continue;
+        }
+    }
+
+    // Tarihe göre sırala
+    $payments = $allPayments->sortByDesc('created_at')->values();
+
+    // CSV dosya adı
+    $filename = 'tum-firmalar-odeme-gecmisi-' . now()->format('Y-m-d') . '.csv';
+    
+    $headers = [
+        'Content-Type' => 'text/csv; charset=UTF-8',
+        'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        'Cache-Control' => 'no-cache, must-revalidate',
+        'Pragma' => 'no-cache',
+        'Expires' => '0'
+    ];
+
+    $callback = function() use ($payments) {
+        $file = fopen('php://output', 'w');
+        
+        // BOM for UTF-8 Excel compatibility
+        fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+        
+        // Header
+        fputcsv($file, [
+            'ID',
+            'Firma',
+            'Tür', 
+            'Açıklama',
+            'Tutar',
+            'Para Birimi',
+            'Ödeme Yöntemi',
+            'Durum',
+            'Oluşturma Tarihi',
+            'Ödeme Tarihi',
+            'İşlem ID',
+            'Gateway',
+            'Fatura Durumu'
+        ], ';');
+
+        // Data
+        foreach ($payments as $payment) {
+            try {
+                fputcsv($file, [
+                    $payment['id'] ?? '',
+                    $payment['tenant_name'] ?? '',
+                    $payment['type_label'] ?? '',
+                    $payment['description'] ?? '',
+                    $payment['amount'] ?? '0,00',
+                    $payment['currency'] ?? 'TL',
+                    $payment['payment_method'] ?? 'Belirtilmemiş',
+                    $payment['status_label'] ?? '',
+                    $payment['created_at'] ?? '',
+                    $payment['paid_at'] ?? '-',
+                    $payment['transaction_id'] ?? '-',
+                    $payment['gateway'] ?? '-',
+                    $payment['has_invoice'] ?? 'Bekleniyor'
+                ], ';');
+            } catch (\Exception $e) {
+                \Log::error('CSV row error: ' . $e->getMessage());
+                continue;
+            }
+        }
+
+        fclose($file);
+    };
+
+    return response()->stream($callback, 200, $headers);
+}
+
+public function getPaymentTotals(Request $request)
+{
+    $superAdminTenant = Tenant::where('firma_adi', 'Super Admin Panel')
+                             ->orWhere('name', 'Super Admin')
+                             ->first();
+    
+    $superAdminTenantId = $superAdminTenant ? $superAdminTenant->id : null;
+
+    $dateFrom = $request->get('date_from', now()->subMonth()->format('Y-m-d'));
+    $dateTo = $request->get('date_to', now()->format('Y-m-d'));
+    $type = $request->get('type', 'all');
+    $tenantId = $request->get('tenant_id');
+
+    $tenants = Tenant::when($superAdminTenantId, function($query) use ($superAdminTenantId) {
+        return $query->where('id', '!=', $superAdminTenantId);
+    })->orderBy('firma_adi')->get();
+
+    $allPayments = collect();
+
+    $tenantsToProcess = $tenantId 
+        ? Tenant::where('id', $tenantId)->get() 
+        : $tenants;
+
+    foreach ($tenantsToProcess as $tenant) {
+        // Abonelik ödemeleri
+        if (in_array($type, ['all', 'subscription'])) {
+            if (method_exists($tenant, 'subscriptionPayments')) {
+                $subscriptionPayments = $tenant->subscriptionPayments()
+                    ->when($dateFrom, function($query) use ($dateFrom) {
+                        return $query->where('created_at', '>=', Carbon::parse($dateFrom)->startOfDay());
+                    })
+                    ->when($dateTo, function($query) use ($dateTo) {
+                        return $query->where('created_at', '<=', Carbon::parse($dateTo)->endOfDay());
+                    })
+                    ->get()
+                    ->map(function($payment) use ($tenant) {
+                        return [
+                            'type' => 'subscription',
+                            'status' => $payment->status,
+                            'amount' => $payment->amount ?? 0
+                        ];
+                    });
+
+                $allPayments = $allPayments->concat($subscriptionPayments);
+            }
+        }
+
+        // Depolama ödemeleri
+        if (in_array($type, ['all', 'storage'])) {
+            if (method_exists($tenant, 'storagePurchases')) {
+                $storagePurchases = $tenant->storagePurchases()
+                    ->when($dateFrom, function($query) use ($dateFrom) {
+                        return $query->where('created_at', '>=', Carbon::parse($dateFrom)->startOfDay());
+                    })
+                    ->when($dateTo, function($query) use ($dateTo) {
+                        return $query->where('created_at', '<=', Carbon::parse($dateTo)->endOfDay());
+                    })
+                    ->get()
+                    ->map(function($purchase) use ($tenant) {
+                        return [
+                            'type' => 'storage',
+                            'status' => $purchase->status,
+                            'amount' => $purchase->amount ?? 0
+                        ];
+                    });
+
+                $allPayments = $allPayments->concat($storagePurchases);
+            }
+        }
+    }
+
+    // Toplamları hesapla
+    $summaryStats = [
+        'completed' => number_format($allPayments->where('status', 'completed')->sum('amount'), 2, ',', '.') . ' ₺',
+        'pending' => number_format($allPayments->where('status', 'pending')->sum('amount'), 2, ',', '.') . ' ₺',
+        'failed' => number_format($allPayments->where('status', 'failed')->sum('amount'), 2, ',', '.') . ' ₺',
+        'total' => number_format($allPayments->sum('amount'), 2, ',', '.') . ' ₺',
+        
+        'subscription_completed' => number_format($allPayments->where('type', 'subscription')->where('status', 'completed')->sum('amount'), 2, ',', '.') . ' ₺',
+        'subscription_pending' => number_format($allPayments->where('type', 'subscription')->where('status', 'pending')->sum('amount'), 2, ',', '.') . ' ₺',
+        'subscription_failed' => number_format($allPayments->where('type', 'subscription')->where('status', 'failed')->sum('amount'), 2, ',', '.') . ' ₺',
+        'subscription_total' => number_format($allPayments->where('type', 'subscription')->sum('amount'), 2, ',', '.') . ' ₺',
+        
+        'storage_completed' => number_format($allPayments->where('type', 'storage')->where('status', 'completed')->sum('amount'), 2, ',', '.') . ' ₺',
+        'storage_pending' => number_format($allPayments->where('type', 'storage')->where('status', 'pending')->sum('amount'), 2, ',', '.') . ' ₺',
+        'storage_failed' => number_format($allPayments->where('type', 'storage')->where('status', 'failed')->sum('amount'), 2, ',', '.') . ' ₺',
+        'storage_total' => number_format($allPayments->where('type', 'storage')->sum('amount'), 2, ',', '.') . ' ₺',
+    ];
+
+    return response()->json($summaryStats);
+}
 }

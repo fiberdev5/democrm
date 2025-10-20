@@ -1,10 +1,32 @@
 @extends('frontend.secure.user_master')
 @section('user')
-
+<style>
+    .sistatistic-label{
+        margin-bottom: 0px !important;
+    }
+    .superadmin-dashboard-card {
+        margin-bottom: 9px !important;
+    }
+    @media (max-width: 768px) {
+       .card-m-h{
+        height: 231px !important;
+    } 
+    .status-item{
+        padding: 4px 34px !important;
+    }
+    .main-top{
+        margin-top: 34px !important;
+    }
+    .page-title-box{
+        padding-bottom: 5px !important;
+    }
+    }
+    
+</style>
 <div class="page-content gradient-bg">
     <div class="container-fluid">
         <!-- Page Title -->
-        <div class="row">
+        <div class="row main-top">
             <div class="col-12">
                 <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                     <div>
@@ -13,19 +35,14 @@
                         </h4>
 
                     </div>
-                    <div class="page-title-right">
-                        <ol class="breadcrumb m-0">
-                            <li class="breadcrumb-item active">AnaSayfa</li>
-                        </ol>
-                    </div>
                 </div>
             </div>
         </div>
         <!-- İstatistik Kartları -->
         <div class="row">
-            <div class="col-xl-3 col-md-6">
-                <div class="card superadmin-dashboard-card superadmin-statistic primary">
-                    <div class="card-body">
+            <div class="col-xl-3 col-6 col-md-6 pr custom-p-r-m">
+                <div class="card superadmin-dashboard-card superadmin-statistic primary dashboard-p">
+                    <div class=" card-h-s">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="sistatistic-label">Toplam Müşteri</p>
@@ -39,9 +56,9 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6">
-                <div class="card superadmin-dashboard-card superadmin-statistic success">
-                    <div class="card-body">
+            <div class="col-xl-3 col-6 col-md-6 pl custom-p-r-min">
+                <div class="card superadmin-dashboard-card superadmin-statistic success dashboard-p">
+                    <div class=" card-h-s">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="sistatistic-label">Aktif Müşteri</p>
@@ -55,9 +72,9 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6 ">
-                <div class="card superadmin-dashboard-card superadmin-statistic info">
-                    <div class="card-body">
+            <div class="col-xl-3 col-6 col-md-6 pr custom-p-r-m">
+                <div class="card superadmin-dashboard-card superadmin-statistic info dashboard-p">
+                    <div class=" card-h-s">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="sistatistic-label">Toplam Kullanıcı</p>
@@ -71,9 +88,9 @@
                 </div>
             </div>
 
-            <div class="col-xl-3 col-md-6">
-                <div class="card superadmin-dashboard-card superadmin-statistic warning">
-                    <div class="card-body">
+            <div class="col-xl-3 col-6 col-md-6 pl">
+                <div class="card superadmin-dashboard-card superadmin-statistic warning dashboard-p">
+                    <div class=" card-h-s">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <p class="sistatistic-label">Aktif Kullanıcı</p>
@@ -90,10 +107,10 @@
 
     <!-- Grafik ve Sistem Durumu -->
     <div class="row ">
-    <div class="col-lg-8">
+    <div class="col-lg-8 custom-p-r-min">
         <div class="card superadmin-dashboard-card equal-height-container">
             <div class="card-header bg-transparent border-bottom">
-                <h5 class="card-title mb-0">
+                <h5 class="card-title px-1 py-2 mb-0">
                     <i class="fas fa-chart-line text-primary me-2"></i>Son 7 Günlük Sistem Aktivitesi
                 </h5>
             </div>
@@ -106,16 +123,16 @@
     </div>
 
     <div class="col-lg-4">
-        <div class="card superadmin-dashboard-card equal-height-container" style="height: 349px">
+        <div class="card superadmin-dashboard-card equal-height-container card-m-h" style="height: 349px">
             <div class="card-header bg-transparent border-bottom">
-                <h5 class="card-title mb-0">
+                <h5 class="card-title px-1 py-2 mb-0">
                     <i class="fas fa-chart-pie text-success me-2"></i>Sistem Durumu
                 </h5>
             </div>
             <div class="card-body">
                 <div class="status-container">
                     <div class="row">
-                        <div class="col-12 ">
+                        <div class="col-12 custom-b-p">
                             <div class="status-item">
                                 <div class="status-percentage {{ $stats['active_tenant_percentage'] >= 80 ? 'high' : ($stats['active_tenant_percentage'] >= 60 ? 'medium' : 'low') }}">
                                     {{ $stats['active_tenant_percentage'] }}%
@@ -140,11 +157,11 @@
         <!-- Hızlı Erişim Kartları -->
         <div class="row">
             <!-- Müşteri Yönetimi -->
-            <div class="col-lg-4">
+            <div class="col-lg-4 custom-p-r-min">
                 <div class="card superadmin-dashboard-card">
-                    <div class="card-header bg-transparent border-bottom">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-building text-primary me-2"></i>Müşteri Yönetimi
+                    <div class="card-header bg-c-color border-bottom">
+                        <h5 class="card-title px-3 py-2 mb-0">
+                           Müşteri Yönetimi
                         </h5>
                     </div>
                     <div class="card-body">
@@ -188,11 +205,11 @@
             </div>
 
             <!-- Destek Talepleri -->
-            <div class="col-lg-4">
+            <div class="col-lg-4 custom-p-r-min">
                 <div class="card superadmin-dashboard-card">
-                    <div class="card-header bg-transparent border-bottom">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-headset text-danger me-2"></i>Destek Talepleri
+                    <div class="card-header bg-c-color border-bottom">
+                        <h5 class="card-title mb-0 px-3 py-2">
+                            Destek Talepleri
                         </h5>
                     </div>
                     <div class="card-body">
@@ -242,9 +259,9 @@
             <!-- Raporlar ve Analiz -->
             <div class="col-lg-4 ">
                 <div class="card superadmin-dashboard-card">
-                    <div class="card-header bg-transparent border-bottom">
-                        <h5 class="card-title mb-0">
-                            <i class="fas fa-chart-bar text-success me-2"></i>Raporlar & Analiz
+                    <div class="card-header bg-c-color border-bottom">
+                        <h5 class="card-title mb-0 px-3 py-2">
+                            Raporlar & Analiz
                         </h5>
                     </div>
                     <div class="card-body">

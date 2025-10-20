@@ -12,24 +12,57 @@
 <!-- Date Range Picker CSS ve JS -->
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script> 
-
+ <style>
+    .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
+        @media (max-width: 767px) {
+            .searchWrap {
+        margin-top: -15px;
+        margin-bottom: 0px;
+    }
+        #giderArea {
+        height: auto !important;
+    }
+    .searchWrap .tarih-araligi {
+    padding: 5px 15px !important;
+}
+    .servisDrop {
+        min-width: 310px !important;
+        max-width: 95vw;
+    }
+.btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+.tarihAraligi{
+        display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 5px;
+}
+        }
+    
+    </style>
 <div class="page-content servis-istatistik">
     <div class="container-fluid">
         @include('frontend.secure.statistics.statistics_menu', ['tenant_id' => $tenant_id])
         
         <div class="card kasaSonuclari" style="margin-bottom: 5px;">
             <div class="card-header sayfaBaslik" style="padding:5px!important;font-weight:500;font-size:18px;">
-                <span style="font-weight: bold;">Kasa İstatistikleri</span>
+                <span style="font-weight: bold;     text-align: left;">Kasa İstatistikleri</span>
                 <div class="searchWrap float-end">
                     <div class="btn-group">
-                        <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button  class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Filtrele <i class="mdi mdi-chevron-down"></i>
                         </button>
-                        <div class="dropdown-menu">
+                        <div style="left: 0px !important" class="dropdown-menu servisDrop" data-bs-offset="50,0">
                             <div class="item">
                                 <div class="row">
-                                    <label class="col-sm-4">Tarih Aralığı:</label>
-                                    <div class="col-sm-8">
+                                    <label class="col-sm-4  custom-p-r-m-k col-5">Tarih Aralığı:</label>
+                                    <div class="col-sm-8 col-7 custom-p-m-k ">
                                         <input id="modalDaterange" class="tarih-araligi" style="z-index: 9999;">          
                                         <div class="tarihAraligi mt-2 mb-2">
                                             <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
@@ -362,5 +395,19 @@ function filterGiderGrafik(startDate, endDate) {
         }
     });
 }
+</script>
+
+<script>
+    $(document).ready(function () {
+
+        var dropdownContainer = $('.searchWrap .btn-group');
+        var filterButton = dropdownContainer.find('.filtrele');
+        dropdownContainer.on('show.bs.dropdown', function () {
+            filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+        });
+        dropdownContainer.on('hide.bs.dropdown', function () {
+            filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+        });
+    });
 </script>
 @endsection

@@ -5,53 +5,119 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<style>
+    .searchWrap {
+      visibility: hidden;
+      opacity: 0;
+    }
 
+    .card-invocies{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-invocies-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-invocies-body{padding: 3px 7px !important;}
+    @media (max-width: 767px) {
+      .pageDetail .searchWrap {
+      }
+    .btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+.pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 10px !important;
+    }
+    .invoices-filtre {
+       width: auto !important;
+    }
+        .pageDetail .searchWrap .dropdown-menu {
+        min-width: calc(90vw - 20px) !important;
+            transform: translate3d(9.274994px, 2px, 0px) !important;
+      }
+      .searchWrap .tarih-araligi {
+    padding: 5px 3px;
+}
+.custom-p-m-m{
+        padding-left: 0px !important;
+      }
+      #datatableInvoice_filter{
+        margin-right: 0px !important;
+      }
+      .dataTables_filter label {
+      }
+
+      .searchWrap {
+        margin-top: 0px !important;
+      }
+
+      div.dataTables_filter input {
+        margin-left: 0px !important;
+      }
+
+      .top {
+        margin-top: 19px;
+      }
+
+      div.dataTables_wrapper div.dataTables_filter input {
+        width: 227px !important;
+      }
+
+      .servisDrop {
+        inset: 0px 0px -412px -213px !important;
+      }
+
+      .pageDetail .searchWrap {
+        margin-bottom: 0px !important;
+      }
+
+    }
+  </style>
 <div class="page-content" id="passwords">
   <div class="container-fluid">
     <div class="row pageDetail">
       <div class="col-12">
-        <div class="card">
-          <div class="card-header sayfaBaslik">
+        <div class="card card-invocies">
+          <div class="card-header card-invocies-header sayfaBaslik">
              Faturalar
           </div>
-          <div class="card-body">
+          <div class="card-body card-invocies-body">
             <table id="datatableInvoice" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                 <a class="btn btn-success btn-sm addInvoice" data-bs-toggle="modal" data-bs-target="#addInvoiceModal"><i class="fas fa-plus"></i><span>Fatura Ekle</span></a>
               <div class="searchWrap float-end">
-                <div class="btn-group mb-2 ">
+                <div class="btn-group">
                   <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Filtrele <i class="mdi mdi-chevron-down"></i>
                   </button>
                   <div class="dropdown-menu">
                     <div class="item">
                       <div class="row form-group">
-                        <label class="col-sm-4">Firma<span style="font-weight: bold; color: red;">*</span></label>
-                        <div class="col-md-8">
+                        <label class="col-sm-4 col-4 custom-p-m-m">Firma<span style="font-weight: bold; color: red;">*</span></label>
+                        <div class="col-md-8 col-8 custom-p-m-m">
                           <select id="firma" name="firma" class="form-select">
-                            <option value="">Tüm Firmalar</option>
-                            @foreach($tenants as $tenant)
-                              <option value="{{$tenant->id}}">{{$tenant->firma_adi}}</option>
-                            @endforeach
+                              <option value="">Tüm Firmalar</option>
+                              @foreach($tenants as $tenant)
+                                @if($tenant->firma_adi !== 'Super Admin Panel')
+                                  <option value="{{$tenant->id}}">{{$tenant->firma_adi}}</option>
+                                @endif
+                              @endforeach
                           </select>
                         </div>
                       </div>
                     </div>
-                    <div class="item">
+                    {{-- <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Durum:</label>
-                        <div class="col-sm-8">
-                          <select name="durum" id="durum" class="form-select">
-                            <option value="">Hepsi</option>
-                              <option value="sent">Gönderildi</option>
-                              <option value="draft">Beklemede</option>
-                          </select>
-                        </div>
+                        <div class="col-md-4 rw1"><label>Fatura Durumu</label></div>
+                          <div class="col-md-8 rw2">
+                              <select class="form-select" name="faturaDurumu">
+                                  <option value="draft">Beklemede</option>
+                                  <option value="sent">Gönderildi</option>
+                                  <option value="error">Hata</option>
+                              </select>
+                          </div>
                       </div>
-                    </div>
+                    </div> --}}
                     <div class="item">
                       <div class="row">
-                        <label class="col-sm-4">Tarih Aralığı:</label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-4 col-4 custom-p-m-m">Tarih Aralığı:</label>
+                        <div class="col-sm-8 col-8 custom-p-m-m">
                           <input id="daterange" class="tarih-araligi">
                           <div class="tarihAraligi mt-2 mb-2">
                             <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
@@ -73,7 +139,7 @@
                   <th>Fatura No</th>
                   <th style="width: 250px">Müşteri Adı</th>
                   <th>Genel Toplam</th>
-                  <th>Durum</th>
+                  {{-- <th>Durum</th> --}}
                   <th data-priority="1" style="width: 96px;">Düzenle</th>
                 </tr>
               </thead>
@@ -295,7 +361,7 @@ $(document).ready(function () {
           data.from_date = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
           data.to_date = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
           data.firma = $('#firma').val();
-          data.durum = $('#durum').val();
+          //data.durum = $('#durum').val();
         }
       },
       'columns': [
@@ -304,7 +370,7 @@ $(document).ready(function () {
         { data: 'faturaNumarasi' },
         { data: 'firma_id' },
         { data: 'genelToplam' },
-        { data: 'odemeDurum' },
+        //{ data: 'faturaDurumu' },
         { data: 'actions'}           
       ],
       
@@ -329,7 +395,7 @@ $(document).ready(function () {
         "sLengthMenu":     "_MENU_",
         "sLoadingRecords": "Yükleniyor...",
         "sProcessing":     "İşleniyor...",
-        "sSearch":         "Ara:",
+        "sSearch":         "",
         "sZeroRecords":    "Eşleşen kayıt bulunamadı",
         "oPaginate": {
           "sFirst":    "İlk",
@@ -349,9 +415,29 @@ $(document).ready(function () {
               }
           }
           },
-          dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+          dom: '<"top"f>rt<"bottom"i<"float-end invoices-filtre"lp>><"clear">',
           "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
-  });
+           "initComplete": function(settings, json) {
+    var searchContainer = $('#datatableInvoice_filter');
+    var searchInput = searchContainer.find('input');
+    var filterWrapper = $('.searchWrap');
+    var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
+    searchContainer.find('label').contents().filter(function() {
+        return this.nodeType == 3;
+    }).remove();
+    searchContainer.addClass('flex-grow-1 me-2');
+    searchInput.addClass('w-100');
+    searchInput.attr('placeholder', 'Fatura Ara...');
+    flexContainer.append(searchContainer);
+    flexContainer.append(filterWrapper);
+    $('#datatableInvoice_wrapper .top').append(flexContainer);
+    $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+
+    $('.tableToplamaAlani').insertBefore('#datatableInvoice_wrapper .bottom');
+}
+  
+  
+    });
 
   $('#firma').change(function(){
     table.draw();        
