@@ -99,10 +99,6 @@
     #kasaArama {
       background-color: #343a40 !important;
     }
-    .kasaArama {
-          background-color: #343a40;
-    color: white;
-    }
 
     .card-allcash {
       border: 1px solid rgba(0, 0, 0, .125) !important;
@@ -860,8 +856,7 @@ $(document).ready(function(){
     var searchContainer = $('#datatableKasa_filter');
     var searchInput = searchContainer.find('input');
     var filterWrapper = $('.searchWrap');
-    var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
-
+    var flexContainer = $('<div class="d-flex justify-content-end w-100 mb-2"></div>');
 
     // --- DEĞİŞTİRİLEN BÖLÜM BAŞLANGICI ---
 

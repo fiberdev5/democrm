@@ -293,6 +293,29 @@
             $('[data-fancybox="gallery"]').fancybox();
         }
 
+
+        const photoId = $(this).data('id');
+        const $photoItem = $(this).closest('.col-md-2, .col-sm-6');
+        const $button = $(this);
+        
+        // Butonu deaktive et
+        $button.prop('disabled', true).text('...');
+
+        $.ajax({
+            url: `/{{ $firma->id }}/servis-foto-sil/${photoId}`,
+            method: 'DELETE',
+            data: {
+                _token: '{{ csrf_token() }}'
+            },
+            success: function(response) {
+                if (response.success) {
+                    $photoItem.fadeOut(300, function() {
+                        $(this).remove();
+                        
+                        // Hiç fotoğraf kalmadıysa mesaj göster
+                        if ($('#photoGallery .col-md-2, #photoGallery .col-sm-6').length === 0) {
+                            $('#noPhotos').show();
+
         // Fotoğraf silme
         $(document).on('click', '.servisFotoSil', function (e) {
             e.preventDefault();
@@ -330,6 +353,7 @@
                             showMessage(response.message || 'Fotoğraf başarıyla silindi.', 'success');
                         } else {
                             alert(response.message || 'Fotoğraf başarıyla silindi.');
+
                         }
                     } else {
                         alert(response.message || 'Silme işlemi başarısız oldu.');

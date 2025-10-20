@@ -1,13 +1,11 @@
 <style>
-  .custom-size{
-    max-width: 376px !important;
-  }
   @media (min-width: 768px) {
   .custom-modal-width {
     max-width: 380px !important;
     margin: 1.75rem auto;
   }
 }
+
 </style>
 @extends('frontend.secure.user_master')
 @section('user')
@@ -116,7 +114,7 @@
 
     }
   </style>
-<div class="page-content" id="customerTable">
+  <div class="page-content" id="customerTable">
     <div class="container-fluid">
       <div class="row pageDetail">
         <div class="col-12">
@@ -200,145 +198,161 @@
               </div>
 
               <div class="searchWrap float-end kullanici_teknisyenfiltre">
-                <div class="btn-group" id="servisFilterDropdownContainer">
-                  {{-- ⭐ Sadece buton @if içinde --}}
-                  @if(auth()->user()->can('Tüm Servisleri Görebilir'))
+                @if(auth()->user()->can('Tüm Servisleri Görebilir'))
+                  <div class="btn-group" id="servisFilterDropdownContainer">
+
                     <button class="btn btn-dark btn-sm dropdown-toggle filtrele kullanici_teknisyenfiltre" type="button"
                       data-bs-toggle="dropdown" aria-expanded="false"> Filtrele <i class="mdi mdi-chevron-down"></i>
                     </button>
-                  @endif
 
-                  {{-- Dropdown menü @if DIŞINDA - Her zaman DOM'da var --}}
-                  <div class="dropdown-menu servisDrop">
-                    <!-- Mobil ve Masaüstü için Esnek Grid Kapsayıcısı -->
-                    <div class="row">
+                    <div class="dropdown-menu servisDrop">
+                      <!-- Mobil ve Masaüstü için Esnek Grid Kapsayıcısı -->
+                      <div class="row">
 
-                      <!-- Her bir filtre elemanı mobil için 6, masaüstü için 12 birim yer kaplar -->
-                      <div class="mt-1 item col-12 col-lg-12">
-                        <div class="row">
-                          <label class="col-4 custom-p col-sm-4">Cihaz Marka:</label>
-                          <div class="col-8 custom-p custom-p-m col-sm-8">
-                            <select name="device_brands" id="device_brands" class="form-select">
-                              <option value="">Hepsi</option>
-                              @foreach($device_brands as $brand)
-                                <option value="{{$brand->id}}">{{$brand->marka}}</option>
-                              @endforeach
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="item col-12 col-lg-12">
-                        <div class="row">
-                          <label class=" col-4 custom-p col-sm-4">Cihaz Türü:</label>
-                          <div class="col-8 custom-p custom-p-m col-sm-8">
-                            <select name="device_types" id="device_types" class="form-select">
-                              <option value="">Hepsi</option>
-                              @foreach($device_types as $type)
-                                <option value="{{$type->id}}">{{$type->cihaz}}</option>
-                              @endforeach
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="item col-12 col-lg-12">
-                        <div class="row">
-                          <label class="col-4 custom-p col-sm-4">Servis Durumu:</label>
-                          <div class="col-8 custom-p custom-p-m col-sm-8">
-                            <select name="stages" id="stages" class="form-select">
-                              <option value="">Hepsi</option>
-                              @foreach($service_stages as $stage)
-                                <option value="{{$stage->id}}">{{$stage->asama}}</option>
-                              @endforeach
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="item col-12 col-lg-12">
-                        <div class="row">
-                          <label class="col-4 custom-p col-sm-4">Servis Kaynağı:</label>
-                          <div class="col-8 custom-p custom-p-m col-sm-8">
-                            <select name="service_resource" id="service_resource" class="form-select">
-                              <option value="">Hepsi</option>
-                              @foreach($service_resources as $resource)
-                                <option value="{{$resource->id}}">{{$resource->kaynak}}</option>
-                              @endforeach
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="item col-12 col-lg-12">
-                        <div class="row">
-                          <label class="col-4 custom-p col-sm-4">İl:</label>
-                          <div class="col-8 custom-p custom-p-m col-sm-8">
-                            <select name="il" id="country2" class="form-control form-select"
-                              style="width:100%!important;">
-                              <option value="" selected>-Seçiniz-</option>
-                              @foreach($states as $item)
-                                <option value="{{ $item->id }}">{{ $item->name}}</option>
-                              @endforeach
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="item col-12 col-lg-12">
-                        <div class="row">
-                          <label class="col-4 custom-p col-sm-4">İlçe:</label>
-                          <div class="col-8 custom-p custom-p-m col-sm-8">
-                            <select name="ilce" id="city2" class="form-control form-select" style="width:100%!important;">
-                              <option value="" selected disabled>-Seçiniz-</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="item col-12">
-                        <div class="row">
-                          <label class="col-4 custom-p col-sm-4">Tarih Aralığı:</label>
-                          <div class="col-8 custom-p custom-p-m col-sm-8">
-                            <input id="daterange" class="tarih-araligi w-100">
-                            <div class="tarihAraligi mt-2 mb-2">
-                              <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
-                              <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
-                              <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
-                              <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
-                              <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
-                          
+                        <!-- Her bir filtre elemanı mobil için 6, masaüstü için 12 birim yer kaplar -->
+                        <div class="mt-1 item col-12 col-lg-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">Cihaz Marka:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="device_brands" id="device_brands" class="form-select">
+                                <option value="">Hepsi</option>
+                                @foreach($device_brands as $brand)
+                                  <option value="{{$brand->id}}">{{$brand->marka}}</option>
+                                @endforeach
+                              </select>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                    </div> <!-- row kapanışı -->
-                  </div>
-                </div><!-- /btn-group -->
-              </div> 
-              
-              <!-- Servisler Tablosu -->
-              <div id="servicesTableSection">
-                <table id="datatableService" class="table table-bordered dt-responsive nowrap"
-                  style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                  <thead class="title">
-                    <tr>
-                      <th style="width: 10px">ID</th>
-                      <th style="width: 10px">Tarih</th>
-                      <th style="width: 250px">Müşteri</th>
-                      <th style="width: 250px">Cihaz</th>
-                      <th>Servis Durumu</th>
-                      <th data-priority="1" style="width: 96px;">Düzenle</th>
-                      <th style="max-width: 40px!important;">Kapat</th>
-                      <th style="width: 50px; text-align: center;">Seç</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  </tbody>
-                </table>
+                        <div class="item col-12 col-lg-12">
+                          <div class="row">
+                            <label class=" col-4 custom-p col-sm-4">Cihaz Türü:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="device_types" id="device_types" class="form-select">
+                                <option value="">Hepsi</option>
+                                @foreach($device_types as $type)
+                                  <option value="{{$type->id}}">{{$type->cihaz}}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item col-12 col-lg-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">Servis Durumu:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="stages" id="stages" class="form-select">
+                                <option value="">Hepsi</option>
+                                @foreach($service_stages as $stage)
+                                  <option value="{{$stage->id}}">{{$stage->asama}}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item col-12 col-lg-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">Servis Kaynağı:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="service_resource" id="service_resource" class="form-select">
+                                <option value="">Hepsi</option>
+                                @foreach($service_resources as $resource)
+                                  <option value="{{$resource->id}}">{{$resource->kaynak}}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item col-12 col-lg-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">İl:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="il" id="country2" class="form-control form-select"
+                                style="width:100%!important;">
+                                <option value="" selected>-Seçiniz-</option>
+                                @foreach($states as $item)
+                                  <option value="{{ $item->id }}">{{ $item->name}}</option>
+                                @endforeach
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="item col-12 col-lg-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">İlçe:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <select name="ilce" id="city2" class="form-control form-select" style="width:100%!important;">
+                                <option value="" selected disabled>-Seçiniz-</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Tarih aralığı daha yüksek olduğu için mobil görünümde tam satırı kaplaması daha iyi olur -->
+                        <div class="item col-12">
+                          <div class="row">
+                            <label class="col-4 custom-p col-sm-4">Tarih Aralığı:</label>
+                            <div class="col-8 custom-p custom-p-m col-sm-8">
+                              <input id="daterange" class="tarih-araligi w-100">
+                              <div class="tarihAraligi mt-2 mb-2">
+                                <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
+                                <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
+                                <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
+                                <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
+                                <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
+                            
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div> <!-- row kapanışı -->
+                    </div>
+                  </div><!-- /btn-group -->
+            @endif
+          </div> <!-- Servisler Tablosu -->
+          <div id="servicesTableSection">
+            <table id="datatableService" class="table table-bordered dt-responsive nowrap"
+              style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+              <thead class="title">
+                <tr>
+                  <th style="width: 10px">ID</th>
+                  <th style="width: 10px">Tarih</th>
+                  <th style="width: 250px">Müşteri</th>
+                  <th style="width: 250px">Cihaz</th>
+                  <th>Servis Durumu</th>
+                  <th data-priority="1" style="width: 96px;">Düzenle</th>
+                  <th style="max-width: 40px!important;">Kapat</th>
+                  <th style="width: 50px; text-align: center;">Seç</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+          {{-- Burası raporlar modalında gelen çağrıları filtrelerken oluşturulan gelen çağrılar tablosu --}}
+          <div id="incomingCallsSection" class="" style="display: none;">
+            <table id="incomingCallsTable" class="table table-striped table-bordered dt-responsive nowrap"
+              style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+              <thead class="title">
+                <tr>
+                  <th>ID</th>
+                  <th>Tarih</th>
+                  <th>Telefon</th>
+                  <th>Marka</th>
+                  <th>Açıklama</th>
+                  <th>Personel</th>
+                  <th>İşlemler</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
               </div>
-              
               {{-- Burası raporlar modalında gelen çağrıları filtrelerken oluşturulan gelen çağrılar tablosu --}}
               <div id="incomingCallsSection" class="" style="display: none;">
                 <table id="incomingCallsTable" class="table table-striped table-bordered dt-responsive nowrap"
@@ -398,7 +412,7 @@
   </div><!-- /.modal -->
   <!-- edit modal content -->
   <div id="editServiceCustomerModal" class="modal fade" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
-    <div class="modal-dialog custom-size">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h6 class="modal-title" id="editCustomerLabel">Servis Müşteri Düzenle</h6>
@@ -599,11 +613,7 @@
     // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
     $('#datatableService tbody').on('click', 'tr', function(e) {
       var $target = $(e.target);
-
-      if ($target.closest('.delete-button').length > 0) {
-    return;
-  }
-
+      
       // Sadece Kapat (6), Seç (7) butonlarına, switch'lere ve checkbox'lara tıklanmışsa engelle
       // Düzenle butonunu (5. kolon) ENGELLEME - kendi event'i çalışsın
       if ($target.closest('.serBilgiDuzenle').length > 0 ||  // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma

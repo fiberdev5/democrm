@@ -1,13 +1,11 @@
 <style>
-  .custom-size{
-    max-width: 376px !important;
-  }
   @media (min-width: 768px) {
   .custom-modal-width {
     max-width: 380px !important;
     margin: 1.75rem auto;
   }
 }
+
 </style>
 @extends('frontend.secure.user_master')
 @section('user')
@@ -208,7 +206,7 @@
                     </button>
                   @endif
 
-                  {{-- Dropdown menü @if DIŞINDA - Her zaman DOM'da var --}}
+                  {{-- ⭐ Dropdown menü @if DIŞINDA - Her zaman DOM'da var --}}
                   <div class="dropdown-menu servisDrop">
                     <!-- Mobil ve Masaüstü için Esnek Grid Kapsayıcısı -->
                     <div class="row">
@@ -296,6 +294,7 @@
                         </div>
                       </div>
 
+                      <!-- Tarih aralığı daha yüksek olduğu için mobil görünümde tam satırı kaplaması daha iyi olur -->
                       <div class="item col-12">
                         <div class="row">
                           <label class="col-4 custom-p col-sm-4">Tarih Aralığı:</label>
@@ -398,7 +397,7 @@
   </div><!-- /.modal -->
   <!-- edit modal content -->
   <div id="editServiceCustomerModal" class="modal fade" style="padding-top: 50px;background: rgba(0, 0, 0, 0.50);">
-    <div class="modal-dialog custom-size">
+    <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h6 class="modal-title" id="editCustomerLabel">Servis Müşteri Düzenle</h6>
@@ -599,11 +598,7 @@
     // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
     $('#datatableService tbody').on('click', 'tr', function(e) {
       var $target = $(e.target);
-
-      if ($target.closest('.delete-button').length > 0) {
-    return;
-  }
-
+      
       // Sadece Kapat (6), Seç (7) butonlarına, switch'lere ve checkbox'lara tıklanmışsa engelle
       // Düzenle butonunu (5. kolon) ENGELLEME - kendi event'i çalışsın
       if ($target.closest('.serBilgiDuzenle').length > 0 ||  // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma
