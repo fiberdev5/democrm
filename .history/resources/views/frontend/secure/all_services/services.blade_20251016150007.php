@@ -5,6 +5,7 @@
     margin: 1.75rem auto;
   }
 }
+
 </style>
 @extends('frontend.secure.user_master')
 @section('user')
@@ -596,10 +597,6 @@
     // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
     $('#datatableService tbody').on('click', 'tr', function(e) {
       var $target = $(e.target);
-      if ($target.closest('.delete-button').length > 0) 
-      {return;
-
-      }
       
       // Sadece Kapat (6), Seç (7) butonlarına, switch'lere ve checkbox'lara tıklanmışsa engelle
       // Düzenle butonunu (5. kolon) ENGELLEME - kendi event'i çalışsın

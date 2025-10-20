@@ -5,6 +5,7 @@
     margin: 1.75rem auto;
   }
 }
+
 </style>
 @extends('frontend.secure.user_master')
 @section('user')
@@ -205,7 +206,7 @@
                     </button>
                   @endif
 
-                  {{-- Dropdown menü @if DIŞINDA - Her zaman DOM'da var --}}
+                  {{-- ⭐ Dropdown menü @if DIŞINDA - Her zaman DOM'da var --}}
                   <div class="dropdown-menu servisDrop">
                     <!-- Mobil ve Masaüstü için Esnek Grid Kapsayıcısı -->
                     <div class="row">
@@ -596,10 +597,6 @@
     // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
     $('#datatableService tbody').on('click', 'tr', function(e) {
       var $target = $(e.target);
-      if ($target.closest('.delete-button').length > 0) 
-      {return;
-
-      }
       
       // Sadece Kapat (6), Seç (7) butonlarına, switch'lere ve checkbox'lara tıklanmışsa engelle
       // Düzenle butonunu (5. kolon) ENGELLEME - kendi event'i çalışsın

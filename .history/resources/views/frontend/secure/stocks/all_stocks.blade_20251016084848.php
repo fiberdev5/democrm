@@ -290,90 +290,90 @@
   </style>
 
   <script>
-$(document).ready(function () {
-  var firma_id = {{ $firma->id }};
+    $(document).ready(function () {
+      var firma_id = {{ $firma->id }};
 
-  $(".addStock").click(function () {
-    $.ajax({
-      url: "/" + firma_id + "/stok-ekle/"
-    }).done(function (data) {
-      if ($.trim(data) === "-1") {
-        location.reload(true);
-      } else {
-        $('#addStockModal').modal('show');
-        $('#addStockModal .modal-body').html(data);
+      $(".addStock").click(function () {
+        $.ajax({
+          url: "/" + firma_id + "/stok-ekle/"
+        }).done(function (data) {
+          if ($.trim(data) === "-1") {
+            location.reload(true);
+          } else {
+            $('#addStockModal').modal('show');
+            $('#addStockModal .modal-body').html(data);
+          }
+        });
+      });
+
+      // Ana modal temizleme işlemi
+      $("#addStockModal").on("hidden.bs.modal", function (e) {
+        var modal = $(this);
+
+        if (e.target === this) {
+          setTimeout(function () {
+            if (!$('.modal.show').length) {
+              console.log("Modal içeriği temizleniyor");
+              modal.find(".modal-body").html("");
+
+              // Tüm backdrop'ları zorla kaldır
+              $('.modal-backdrop').remove();
+
+              // Body'den tüm modal sınıflarını kaldır ve style'ları sıfırla
+              $('body').removeClass('modal-open').removeAttr('style');
+              $('html').removeClass('modal-open').removeAttr('style');
+
+            } else {
+              console.log("Başka modal açık, temizleme yapılmıyor");
+            }
+          }, 100);
+        }
+      });
+
+      // Edit modal için özel temizlik
+      $('#editStockModal').on('hidden.bs.modal', function (e) {
+        // Sadece bu modal kapatılıyorsa (event target kontrolü)
+        if (e.target === this) {
+          setTimeout(function () {
+            // Hiç modal açık değilse backdrop temizliği yap
+            if (!$('.modal.show').length) {
+              $('.modal-backdrop').remove();
+              $('body').removeClass('modal-open').removeAttr('style');
+              $('html').removeClass('modal-open').removeAttr('style');
+            }
+          }, 100);
+        }
+      });
+
+      // Tüm alt modal'lar için ortak temizlik
+      $('#addBrandModal, #addDeviceTypeModal, #addCategoryModal, #addShelfModal, #addSupplierModal, #hareketEkleModal').on('hidden.bs.modal', function (e) {
+        if (e.target === this) {
+          setTimeout(function () {
+            // Ana modal hala açıksa body'ye modal-open sınıfını geri ekle
+            if ($('#addStockModal').hasClass('show') || $('#editStockModal').hasClass('show')) {
+              $('body').addClass('modal-open');
+            } else if (!$('.modal.show').length) {
+              // Hiçbir modal açık değilse tam temizlik
+              $('.modal-backdrop').remove();
+              $('body').removeClass('modal-open').removeAttr('style');
+              $('html').removeClass('modal-open').removeAttr('style');
+            }
+          }, 50);
+
       }
-    });
   });
-
-  // Ana modal temizleme işlemi
-  $("#addStockModal").on("hidden.bs.modal", function (e) {
-    var modal = $(this);
-
-    if (e.target === this) {
-      setTimeout(function () {
-        if (!$('.modal.show').length) {
-          console.log("Modal içeriği temizleniyor");
-          modal.find(".modal-body").html("");
-
-          // Tüm backdrop'ları zorla kaldır
-          $('.modal-backdrop').remove();
-
-          // Body'den tüm modal sınıflarını kaldır ve style'ları sıfırla
-          $('body').removeClass('modal-open').removeAttr('style');
-          $('html').removeClass('modal-open').removeAttr('style');
-
-        } else {
-          console.log("Başka modal açık, temizleme yapılmıyor");
-        }
-      }, 100);
-    }
-  });
-
-  // Edit modal için özel temizlik
-  $('#editStockModal').on('hidden.bs.modal', function (e) {
-    // Sadece bu modal kapatılıyorsa (event target kontrolü)
-    if (e.target === this) {
-      setTimeout(function () {
-        // Hiç modal açık değilse backdrop temizliği yap
-        if (!$('.modal.show').length) {
-          $('.modal-backdrop').remove();
-          $('body').removeClass('modal-open').removeAttr('style');
-          $('html').removeClass('modal-open').removeAttr('style');
-        }
-      }, 100);
-    }
-  });
-
-  // Tüm alt modal'lar için ortak temizlik
-  $('#addBrandModal, #addDeviceTypeModal, #addCategoryModal, #addShelfModal, #addSupplierModal, #hareketEkleModal').on('hidden.bs.modal', function (e) {
-    if (e.target === this) {
-      setTimeout(function () {
-        // Ana modal hala açıksa body'ye modal-open sınıfını geri ekle
-        if ($('#addStockModal').hasClass('show') || $('#editStockModal').hasClass('show')) {
-          $('body').addClass('modal-open');
-        } else if (!$('.modal.show').length) {
-          // Hiçbir modal açık değilse tam temizlik
-          $('.modal-backdrop').remove();
-          $('body').removeClass('modal-open').removeAttr('style');
-          $('html').removeClass('modal-open').removeAttr('style');
-        }
-      }, 50);
-    }
-  });
-
-  // Edit Stock Modal - Buton click event'i 
+ // Edit Stock Modal - Buton click event'i 
   $('#datatableStock').on('click', '.editStock', function(){
     var id = $(this).data('bs-id');
     var modal = $('#editStockModal'); 
    
-    modal.find('.modal-dialog').removeClass('modal-xl').addClass('modal-xl');
+    modal.find('.modal-dialog').removeClass('modal-xl').addClass('modal-xl'); // Boyutu ayarla (her seferinde)
     modal.find('.modal-content').html('<div class="modal-body text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
     
-    // Modal'ı göster
+    // 2. Modal'ı göster
     modal.modal('show');
     
-    // Sunucudan veriyi çek
+    // 3. Sunucudan veriyi çek
     $.ajax({
       url: "/" + firma_id + "/stok/duzenle/" + id,
       dataType: 'json',
@@ -381,19 +381,50 @@ $(document).ready(function () {
         if($.trim(data.html) === "-1"){
           location.reload(true);
         } else {
+          // 4. Gelen tüm HTML'i modal-content'in içine bas
+          // Bu sayede gelen HTML'in kendi header, body, footer'ı kullanılır.
           modal.find('.modal-content').html(data.html);
+
         }
-      },
-      error: function () {
-        modal.find('.modal-content').html('<div class="modal-header"><h5 class="modal-title">Hata</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-danger">İçerik yüklenirken bir hata oluştu.</div></div>');
-      }
+      });
+      $('#datatableStock').on('click', '.editStock', function () {
+        var id = $(this).data('bs-id');
+        var modal = $('#editStockModal');
+
+        modal.find('.modal-dialog').removeClass('modal-xl').addClass('modal-xl'); // Boyutu ayarla (her seferinde)
+        modal.find('.modal-content').html('<div class="modal-body text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
+
+        // 2. Modal'ı göster
+        modal.modal('show');
+
+        // 3. Sunucudan veriyi çek
+        $.ajax({
+          url: "/" + firma_id + "/stok/duzenle/" + id,
+          dataType: 'json',
+          success: function (data) {
+            if ($.trim(data.html) === "-1") {
+              location.reload(true);
+            } else {
+              // 4. Gelen tüm HTML'i modal-content'in içine bas
+              // Bu sayede gelen HTML'in kendi header, body, footer'ı kullanılır.
+              modal.find('.modal-content').html(data.html);
+            }
+          },
+          error: function () {
+            // Hata durumunda içeriği temizle ve hata mesajı göster
+            modal.find('.modal-content').html('<div class="modal-header"><h5 class="modal-title">Hata</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-danger">İçerik yüklenirken bir hata oluştu.</div></div>');
+          }
+        });
+      });
     });
+
   });
 
   // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
   $('#datatableStock tbody').on('click', 'tr', function(e) {
     var $target = $(e.target);
     
+    // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma (butonun kendi event'i çalışsın)
     if ($target.closest('.editStock').length > 0 ||
         $target.closest('.btn').length > 0 || 
         $target.closest('td').index() === 8) {
@@ -405,11 +436,14 @@ $(document).ready(function () {
     if (id) {
       var modal = $('#editStockModal');
       
+      // 1. Modal boyutunu ayarla ve loading göster
       modal.find('.modal-dialog').removeClass('modal-xl').addClass('modal-xl');
       modal.find('.modal-content').html('<div class="modal-body text-center p-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Yükleniyor...</span></div></div>');
       
+      // 2. Modal'ı hemen göster
       modal.modal('show');
       
+      // 3. Sunucudan veriyi çek
       $.ajax({
         url: "/" + firma_id + "/stok/duzenle/" + id,
         dataType: 'json',
@@ -417,16 +451,17 @@ $(document).ready(function () {
           if($.trim(data.html) === "-1"){
             location.reload(true);
           } else {
+            // 4. Gelen tüm HTML'i modal-content'in içine bas
             modal.find('.modal-content').html(data.html);
           }
         },
         error: function() {
+          // Hata durumunda içeriği temizle ve hata mesajı göster
           modal.find('.modal-content').html('<div class="modal-header"><h5 class="modal-title">Hata</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="alert alert-danger">İçerik yüklenirken bir hata oluştu.</div></div>');
         }
       });
     }
   });
-});
 </script>
 
 <script>

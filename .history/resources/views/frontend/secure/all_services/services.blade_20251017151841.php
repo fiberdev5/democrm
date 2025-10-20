@@ -5,6 +5,7 @@
     margin: 1.75rem auto;
   }
 }
+
 </style>
 @extends('frontend.secure.user_master')
 @section('user')
@@ -598,7 +599,7 @@
       var $target = $(e.target);
       if ($target.closest('.delete-button').length > 0) 
       {return;
-
+        
       }
       
       // Sadece Kapat (6), Seç (7) butonlarına, switch'lere ve checkbox'lara tıklanmışsa engelle

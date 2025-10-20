@@ -372,111 +372,138 @@
 
 
 
-<script>
-  var getUrlParameter = function getUrlParameter(sParam) {
-    var sPageURL = window.location.search.substring(1),
-      sURLVariables = sPageURL.split('&'),
-      sParameterName,
-      i;
-    for (i = 0; i < sURLVariables.length; i++) {
-      sParameterName = sURLVariables[i].split('=');
+    <script>
+      var getUrlParameter = function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1),
+          sURLVariables = sPageURL.split('&'),
+          sParameterName,
+          i;
+        for (i = 0; i < sURLVariables.length; i++) {
+          sParameterName = sURLVariables[i].split('=');
 
-      if (sParameterName[0] === sParam) {
-        return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-      }
-    }
-  };
-
-  var mid = getUrlParameter('did');
-  var firma_id = {{$firma->id}};
-  if (mid) {
-    $.ajax({
-      url: "/" + firma_id + "/fatura/duzenle/" + mid
-    }).done(function (data) {
-      if ($.trim(data) === "-1") {
-        window.location.reload(true);
-      } else {
-        $('#editInvoiceModal').modal('show');
-        $('#editInvoiceModal .modal-body').html(data);
-      }
-    });
-  }
-</script>
-
-<script type="text/javascript">
-  $(document).ready(function () {
-    $(".addInvoice").click(function () {
-      var firma_id = {{$firma->id}};
-      $.ajax({
-        url: "/" + firma_id + "/fatura/ekle/"
-      }).done(function (data) {
-        if ($.trim(data) === "-1") {
-          window.location.reload(true);
-        } else {
-          $('#addInvoiceModal').modal('show');
-          $('#addInvoiceModal .modal-body').html(data);
+          if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+          }
         }
-      });
-    });
-    $("#addInvoiceModal").on("hidden.bs.modal", function () {
-      $('#addInvoiceModal .modal-body').html("");
-    });
-  });
-</script>
+      };
 
-<script type="text/javascript">
-  $(document).ready(function(){
-    // Edit Invoice Modal - Buton click event'i 
-    $('#datatableInvoice').on('click', '.editInvoice', function(e){
-      var id = $(this).attr("data-bs-id");
+      var mid = getUrlParameter('did');
       var firma_id = {{$firma->id}};
-      $.ajax({
-        url: "/" + firma_id + "/fatura/duzenle/" + id
-      }).done(function (data) {
-        if ($.trim(data) === "-1") {
-          window.location.reload(true);
-        } else {
-          $('#editInvoiceModal').modal('show');
-          $('#editInvoiceModal .modal-body').html(data);
-        }
-      });
-    });
-
-    // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
-    $('#datatableInvoice tbody').on('click', 'tr', function(e) {
-      var $target = $(e.target);
-      
-      // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma
-      if ($target.closest('.editInvoice').length > 0 ||
-          $target.closest('.btn').length > 0 || 
-          $target.closest('td').index() === 6) {
-        return;
-      }
-      
-      var id = $(this).find('.editInvoice').first().attr('data-bs-id');
-      
-      if (id) {
-        $('#editInvoiceModal').modal('show');
-        
-        var firma_id = {{$firma->id}};
+      if (mid) {
         $.ajax({
-          url: "/" + firma_id + "/fatura/duzenle/" + id
-        }).done(function(data) {
+          url: "/" + firma_id + "/fatura/duzenle/" + mid
+        }).done(function (data) {
           if ($.trim(data) === "-1") {
             window.location.reload(true);
           } else {
+            $('#editInvoiceModal').modal('show');
             $('#editInvoiceModal .modal-body').html(data);
           }
         });
       }
+    </script>
+
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $(".addInvoice").click(function () {
+          var firma_id = {{$firma->id}};
+          $.ajax({
+            url: "/" + firma_id + "/fatura/ekle/"
+          }).done(function (data) {
+            if ($.trim(data) === "-1") {
+              window.location.reload(true);
+            } else {
+              $('#addInvoiceModal').modal('show');
+              $('#addInvoiceModal .modal-body').html(data);
+            }
+          });
+        });
+        $("#addInvoiceModal").on("hidden.bs.modal", function () {
+          $('#addInvoiceModal .modal-body').html("");
+        });
+      });
+
+    
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+  $(".addInvoice").click(function(){
+    var firma_id = {{$firma->id}};
+    $.ajax({
+      url: "/" + firma_id + "/fatura/ekle/"
+    }).done(function(data) {
+      if ($.trim(data) === "-1") {
+        window.location.reload(true);
+      } else {
+        $('#addInvoiceModal').modal('show');
+        $('#addInvoiceModal .modal-body').html(data);
+      }
+    });
+  });
+  $("#addInvoiceModal").on("hidden.bs.modal", function() {
+      $('#addInvoiceModal .modal-body').html("");
+    });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    // Edit Invoice Modal - Buton click event'i 
+    $('#datatableInvoice').on('click', '.editInvoice', function(e){
+        var id = $(this).attr("data-bs-id");
+        var firma_id = {{$firma->id}};
+        $.ajax({
+
+            url: "/" + firma_id + "/fatura/duzenle/" + id
+          }).done(function (data) {
+            if ($.trim(data) === "-1") {
+              window.location.reload(true);
+            } else {
+              $('#editInvoiceModal').modal('show');
+              $('#editInvoiceModal .modal-body').html(data);
+            }
+          });
+        });
+
+    });
+
+    // Mobilde ve masaüstünde satırın boş alanlarına tıklayınca da açılsın
+    $('#datatableInvoice tbody').on('click', 'tr', function(e) {
+        var $target = $(e.target);
+        
+        // Düzenle butonuna tıklandıysa, bu tr event'ini çalıştırma (butonun kendi event'i çalışsın)
+        if ($target.closest('.editInvoice').length > 0 ||
+            $target.closest('.btn').length > 0 || 
+            $target.closest('td').index() === 6) {
+            return;
+        }
+        
+        var id = $(this).find('.editInvoice').first().attr('data-bs-id');
+        
+        if (id) {
+            // 1. MODAL'I HEMEN AÇ (AJAX beklemeden)
+            $('#editInvoiceModal').modal('show');
+            
+            // 2. AYNI ANDA AJAX BAŞLAT
+            var firma_id = {{$firma->id}};
+            $.ajax({
+                url: "/" + firma_id + "/fatura/duzenle/" + id
+            }).done(function(data) {
+                if ($.trim(data) === "-1") {
+                    window.location.reload(true);
+                } else {
+                    $('#editInvoiceModal .modal-body').html(data);
+                }
+            });
+        }
     });
 
     $("#editInvoiceModal").on("hidden.bs.modal", function() {
-      $('#editInvoiceModal .modal-body').html("");
+        $('#editInvoiceModal .modal-body').html("");
     });
-  });
+});
 </script>
-
 <script>
   function hesaplaKdv() {
     const tutar = parseFloat(document.querySelector('.tutar').value.replace(',', '.')) || 0;
@@ -492,6 +519,7 @@
     document.querySelector('.tevkifatTutar').value = tevkifatTutar.toFixed(2);
   }
 
+  // input/select değiştikçe çalışsın
   document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('.tutar').addEventListener('input', hesaplaKdv);
     document.querySelector('.kdvOrani').addEventListener('change', hesaplaKdv);
@@ -501,16 +529,20 @@
 
 <script>
   $(document).ready(function () {
-    var aramaZamanlayici;
+    var aramaZamanlayici; // Debounce için
 
-    // AJAX ile dinamik müşteri arama
+    // ✅ AJAX ile dinamik müşteri arama
     $('#search').keyup(function () {
       var searchField = $(this).val();
       
+      // Önceki zamanlayıcıyı iptal et
       clearTimeout(aramaZamanlayici);
+      
+      // Liste temizle
       $('#result').html('');
       
-      if (searchField.length > 2) {
+      if (searchField.length > 2) { // 3 karakterden sonra ara
+        // 300ms bekle, ardından ara (çok hızlı yazmada gereksiz istekleri önler)
         aramaZamanlayici = setTimeout(function() {
           $.ajax({
             url: "{{ route('search.customer.invoice', $firma->id) }}",
@@ -541,294 +573,331 @@
                   adresDisplay = value.adres;
                   if (ilceAdi || ilAdi) {
                     adresDisplay += ' - ' + ilceAdi + '/' + ilAdi;
+
                   }
-                } else {
-                  adresDisplay = ilceAdi + '/' + ilAdi;
+
+                  $.each(data, function (key, value) {
+                    var tip = value.musteriTipi == "1" ? "Bireysel" : "Kurumsal";
+                    var ilceAdi = value.state ? value.state.ilceName : '';
+                    var ilAdi = value.country ? value.country.name : '';
+
+                    // Adres formatla
+                    var adresDisplay = '';
+                    if (value.adres && value.adres.trim() !== '') {
+                      adresDisplay = value.adres;
+                      if (ilceAdi || ilAdi) {
+                        adresDisplay += ' - ' + ilceAdi + '/' + ilAdi;
+                      }
+                    } else {
+                      adresDisplay = ilceAdi + '/' + ilAdi;
+                    }
+
+                    $('#result').append(
+                      '<li class="list-group-item link-class" ' +
+                      'data-id="' + value.id + '" ' +
+                      'data-adSoyad="' + value.adSoyad + '" ' +
+                      'data-tel="' + value.tel1 + '" ' +
+                      'data-adres="' + adresDisplay + '">' +
+                      '<span style="font-weight:500;">Ad Soyad: </span>' + value.adSoyad +
+                      ' <span style="color: #666;">(' + tip + ')</span><br>' +
+                      '<span style="font-weight:500;">Telefon: </span>' + value.tel1 + '<br>' +
+                      '<span style="font-weight:500;">Adres: </span>' + adresDisplay +
+                      '</li>'
+                    );
+                  });
+                },
+                error: function (xhr, status, error) {
+                  console.error('Arama hatası:', error);
+                  $('#result').html('<li class="list-group-item text-danger">Bir hata oluştu</li>');
                 }
-
-                $('#result').append(
-                  '<li class="list-group-item link-class" ' +
-                  'data-id="' + value.id + '" ' +
-                  'data-adSoyad="' + value.adSoyad + '" ' +
-                  'data-tel="' + value.tel1 + '" ' +
-                  'data-adres="' + adresDisplay + '">' +
-                  '<span style="font-weight:500;">Ad Soyad: </span>' + value.adSoyad +
-                  ' <span style="color: #666;">(' + tip + ')</span><br>' +
-                  '<span style="font-weight:500;">Telefon: </span>' + value.tel1 + '<br>' +
-                  '<span style="font-weight:500;">Adres: </span>' + adresDisplay +
-                  '</li>'
-                );
               });
-            },
-            error: function (xhr, status, error) {
-              console.error('Arama hatası:', error);
-              $('#result').html('<li class="list-group-item text-danger">Bir hata oluştu</li>');
-            }
-          });
-        }, 300);
-      } else if (searchField.length === 0) {
-        $('#result').html('');
-      }
-    });
+            }, 300); // 300ms gecikme
 
-    // Müşteri seçme
-    $('#result').on('click', 'li.link-class', function () {
-      var click_id = $(this).attr('data-id');
-      var click_adSoyad = $(this).attr('data-adSoyad');
-
-      $('#alici').val(click_id);
-      $('.mus_id').val(click_id);
-      $('.musteriAdSoyad').val(click_adSoyad);
-      $("#result").html('');
-
-      $('#datatableInvoice').DataTable().draw();
-    });
-
-    // Dışarı tıklanınca listeyi kapat
-    $(document).click(function (e) {
-      if (!$(e.target).closest('.musteriAdSoyad, #result').length) {
-        $("#result").html('');
-      }
-    });
-  });
-</script>
-
-<script>
-  $(document).ready(function () {
-    var lastYear = moment().subtract(1, 'year');
-    var lastMonth = moment().subtract(1, 'month');
-    var lastWeek = moment().subtract(7, 'days');
-    var yesterday = moment().subtract(1, 'days');
-    var today = moment();
-
-    $('#lastYear').on('click', function () {
-      $('#daterange').data('daterangepicker').setStartDate(lastYear);
-      $('#daterange').data('daterangepicker').setEndDate(today);
-      filterData();
-    });
-
-    $('#lastMonth').on('click', function () {
-      $('#daterange').data('daterangepicker').setStartDate(lastMonth);
-      $('#daterange').data('daterangepicker').setEndDate(today);
-      filterData();
-    });
-
-    $('#lastWeek').on('click', function () {
-      $('#daterange').data('daterangepicker').setStartDate(lastWeek);
-      $('#daterange').data('daterangepicker').setEndDate(today);
-      filterData();
-    });
-
-    $('#yesterday').on('click', function () {
-      $('#daterange').data('daterangepicker').setStartDate(yesterday);
-      $('#daterange').data('daterangepicker').setEndDate(yesterday);
-      filterData();
-    });
-
-    $('#today').on('click', function () {
-      $('#daterange').data('daterangepicker').setStartDate(today);
-      $('#daterange').data('daterangepicker').setEndDate(today);
-      filterData();
-    });
-
-    function filterData() {
-      $('#datatableInvoice').DataTable().draw();
-    }
-  });
-</script>
-
-<script>
-  $(document).ready(function () {
-    var start_date = moment().subtract(2, 'days');
-    var end_date = moment();
-
-    $('#daterange').daterangepicker({
-      startDate: start_date,
-      endDate: end_date,
-      opens: 'right',
-      locale: {
-        format: 'DD-MM-YYYY',
-        separator: ' - ',
-        applyLabel: 'Uygula',
-        cancelLabel: 'İptal',
-        weekLabel: 'H',
-        daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
-        monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
-        firstDay: 1
-      }
-    }, function (start_date, end_date) {
-      $('#daterange').val(start_date.format('DD-MM-YYYY') + ' - ' + end_date.format('DD-MM-YYYY'));
-      table.draw();
-    });
-
-    var table = $('#datatableInvoice').DataTable({
-      processing: true,
-      serverSide: true,
-      language: {
-        paginate: {
-          previous: "<i class='mdi mdi-chevron-left'>",
-          next: "<i class='mdi mdi-chevron-right'>"
-        }
-      },
-      ajax: {
-        url: "{{ route('all.invoices', $firma->id) }}",
-        data: function (data) {
-          data.search = $('input[type="search"]').val();
-          data.from_date = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
-          data.to_date = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
-          data.musteri = $('.mus_id').val();
-          data.durum = $('#durum').val();
-        }
-      },
-      'columns': [
-        { data: 'id' },
-        { data: 'faturaTarihi' },
-        { data: 'faturaNumarasi' },
-        { data: 'mid' },
-        { data: 'genelToplam' },
-        { data: 'odemeDurum' },
-        { data: 'actions' }
-      ],
-      drawCallback: function () {
-        $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
-      },
-      "order": [[1, 'desc']],
-      "columnDefs": [
-        {
-          "targets": 0,
-          "className": "gizli"
-        }
-      ],
-      "oLanguage": {
-        "sDecimal": ",",
-        "sEmptyTable": "Tabloda herhangi bir veri mevcut değil",
-        "sInfo": "Fatura Sayısı: _TOTAL_",
-        "sInfoEmpty": "Kayıt yok",
-        "sInfoFiltered": "",
-        "sInfoPostFix": "",
-        "sInfoThousands": ".",
-        "sLengthMenu": "_MENU_",
-        "sLoadingRecords": "Yükleniyor...",
-        "sProcessing": "İşleniyor...",
-        "sSearch": "",
-        "sZeroRecords": "Eşleşen kayıt bulunamadı",
-        "oPaginate": {
-          "sFirst": "İlk",
-          "sLast": "Son",
-          "sNext": '<i class="fas fa-angle-double-right"></i>',
-          "sPrevious": '<i class="fas fa-angle-double-left"></i>'
-        },
-        "oAria": {
-          "sSortAscending": ": artan sütun sıralamasını aktifleştir",
-          "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
-        },
-        "select": {
-          "rows": {
-            "_": "%d kayıt seçildi",
-            "0": "",
-            "1": "1 kayıt seçildi"
+          } else if (searchField.length === 0) {
+            // Arama kutusu boşaltılırsa temizle
+            $('#result').html('');
           }
-        }
-      },
-      dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
-      "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
-      "initComplete": function (settings, json) {
-        var searchContainer = $('#datatableInvoice_filter');
-        var searchInput = searchContainer.find('input');
-        var filterWrapper = $('.searchWrap');
-        var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
+        });
 
-        searchContainer.find('label').contents().filter(function () {
-          return this.nodeType == 3;
-        }).remove();
+        // Müşteri seçme
+        $('#result').on('click', 'li.link-class', function () {
+          var click_id = $(this).attr('data-id');
+          var click_adSoyad = $(this).attr('data-adSoyad');
 
-        searchContainer.addClass('flex-grow-1');
-        searchInput.addClass('w-100');
-        searchInput.attr('placeholder', 'Fatura Ara...');
+          $('#alici').val(click_id);
+          $('.mus_id').val(click_id);
+          $('.musteriAdSoyad').val(click_adSoyad);
+          $("#result").html('');
 
-        flexContainer.append(searchContainer);
-        flexContainer.append(filterWrapper);
+          // Seçim yapıldığında tabloyu güncelle
+          $('#datatableInvoice').DataTable().draw();
+        });
 
-        $('#datatableInvoice_wrapper .top').append(flexContainer);
+        // Dışarı tıklanınca listeyi kapat
+        $(document).click(function (e) {
+          if (!$(e.target).closest('.musteriAdSoyad, #result').length) {
+            $("#result").html('');
+          }
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        // Tarih aralığı seçenekleri
+        var lastYear = moment().subtract(1, 'year');
+        var lastMonth = moment().subtract(1, 'month');
+        var lastWeek = moment().subtract(7, 'days');
+        var yesterday = moment().subtract(1, 'days');
+        var today = moment();
 
-        $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
-        $('.tableToplamaAlani').insertBefore('#datatableInvoice_wrapper .bottom');
-      }
-    });
+        // Butonları oluştur ve tarih aralığını güncelle
+        $('#lastYear').on('click', function () {
+          $('#daterange').data('daterangepicker').setStartDate(lastYear);
+          $('#daterange').data('daterangepicker').setEndDate(today);
+          filterData();
+        });
 
-    $('#result').on('click', 'li', function () {
-      table.draw();
-    });
+        $('#lastMonth').on('click', function () {
+          $('#daterange').data('daterangepicker').setStartDate(lastMonth);
+          $('#daterange').data('daterangepicker').setEndDate(today);
+          filterData();
+        });
 
-    $('#durum').change(function () {
-      table.draw();
-    });
+        $('#lastWeek').on('click', function () {
+          $('#daterange').data('daterangepicker').setStartDate(lastWeek);
+          $('#daterange').data('daterangepicker').setEndDate(today);
+          filterData();
+        });
 
-    table.on('draw.dt', function () {
-      updateValues();
-    });
+        $('#yesterday').on('click', function () {
+          $('#daterange').data('daterangepicker').setStartDate(yesterday);
+          $('#daterange').data('daterangepicker').setEndDate(yesterday);
+          filterData();
+        });
 
-    var updateValues = function () {
-      var startDate = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
-      var endDate = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
-      var musteri = $('.mus_id').val();
-      var durum = $('#durum').val();
+        $('#today').on('click', function () {
+          $('#daterange').data('daterangepicker').setStartDate(today);
+          $('#daterange').data('daterangepicker').setEndDate(today);
+          filterData();
+        });
 
-      $.ajax({
-        url: '/{{$firma->id}}/fatura-sonuc',
-        method: 'GET',
-        data: {
-          from_date: startDate,
-          to_date: endDate,
-          musteri: musteri,
-          durum: durum,
-        },
-        success: function (response) {
-          $('.toplamNakitTL').html('<span>Nakit:</span> ' + response.toplamNakitTL);
-          $('.toplamHavaleTL').html('<span>EFT/Havale:</span> ' + response.toplamHavaleTL);
-          $('.toplamKartTL ').html('<span>Kredi Kartı:</span> ' + response.toplamKartTL);
-          $('.toplamTutarTL1 ').html('<span>Toplam:</span> ' + response.toplamTutarTL1);
-          $('.kdvNakitTL ').html('<span>Nakit:</span> ' + response.kdvNakitTL);
-          $('.kdvHavaleTL').html('<span>EFT/Havale:</span> ' + response.kdvHavaleTL);
-          $('.kdvKartTL ').html('<span>Kredi Kartı:</span> ' + response.kdvKartTL);
-          $('.toplamTutarTL2 ').html('<span>Toplam:</span> ' + response.toplamTutarTL2);
-          $('.genelNakitTL ').html('<span>Nakit:</span> ' + response.genelNakitTL);
-          $('.genelHavaleTL ').html('<span>EFT/Havale:</span> ' + response.genelHavaleTL);
-          $('.genelKartTL').html('<span>Kredi Kartı:</span> ' + response.genelKartTL);
-          $('.toplamTutarTL3 ').html('<span>Toplam:</span> ' + response.toplamTutarTL3);
-        },
-        error: function (xhr, status, error) {
-          console.error(error);
+        // Filtreleme fonksiyonu
+        function filterData() {
+          $('#datatableInvoice').DataTable().draw();
         }
       });
-    };
+    </script>
 
-    updateValues();
+    <script>
+      $(document).ready(function () {
 
-    table.on('draw.dt', function () {
-      updateValues();
-    });
+        // Varsayılan tarih aralığı: Son 3 gün (bugünden 2 gün öncesi - bugün)
+        var start_date = moment().subtract(2, 'days');
+        var end_date = moment();
 
-    $('#filterButton').click(function () {
-      updateValues();
-    });
+        $('#daterange').daterangepicker({
+          startDate: start_date,
+          endDate: end_date,
+          opens: 'right',
+          locale: {
+            format: 'DD-MM-YYYY',
+            separator: ' - ',
+            applyLabel: 'Uygula',
+            cancelLabel: 'İptal',
+            weekLabel: 'H',
+            daysOfWeek: ['Pz', 'Pzt', 'Sal', 'Çrş', 'Prş', 'Cm', 'Cmt'],
+            monthNames: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'],
+            firstDay: 1
+          }
 
-    $('#daterange').on('apply.daterangepicker', function (ev, picker) {
-      updateValues();
-    });
-  });
-</script>
+        },
 
-<script>
-  $(document).ready(function () {
-    var dropdownContainer = $('#fatura_filtre');
-    var filterButton = dropdownContainer.find('.filtrele');
-    dropdownContainer.on('show.bs.dropdown', function () {
-      filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
-    });
-    dropdownContainer.on('hide.bs.dropdown', function () {
-      filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
-    });
-  });
-</script>
+          function (start_date, end_date) {
+            $('#daterange').val(start_date.format('DD-MM-YYYY') + ' - ' + end_date.format('DD-MM-YYYY'));
+            table.draw();
+          });
+
+        var table = $('#datatableInvoice').DataTable({
+          processing: true,
+          serverSide: true,
+          language: {
+            paginate: {
+              previous: "<i class='mdi mdi-chevron-left'>",
+              next: "<i class='mdi mdi-chevron-right'>"
+            }
+          },
+          ajax: {
+            url: "{{ route('all.invoices', $firma->id) }}",
+            data: function (data) {
+              data.search = $('input[type="search"]').val();
+              data.from_date = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
+              data.to_date = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
+              data.musteri = $('.mus_id').val();
+              data.durum = $('#durum').val();
+            }
+          },
+          'columns': [
+            { data: 'id' },
+            { data: 'faturaTarihi' },
+            { data: 'faturaNumarasi' },
+            { data: 'mid' },
+            { data: 'genelToplam' },
+            { data: 'odemeDurum' },
+            { data: 'actions' }
+          ],
+
+          drawCallback: function () {
+            $(".dataTables_paginate > .pagination").addClass("pagination-rounded");
+          },
+          "order": [[1, 'desc']],
+          "columnDefs": [
+            {
+              "targets": 0,
+              "className": "gizli"
+            }
+          ],
+          "oLanguage": {
+            "sDecimal": ",",
+            "sEmptyTable": "Tabloda herhangi bir veri mevcut değil",
+            "sInfo": "Fatura Sayısı: _TOTAL_",
+            "sInfoEmpty": "Kayıt yok",
+            "sInfoFiltered": "",
+            "sInfoPostFix": "",
+            "sInfoThousands": ".",
+            "sLengthMenu": "_MENU_",
+            "sLoadingRecords": "Yükleniyor...",
+            "sProcessing": "İşleniyor...",
+            "sSearch": "",
+            "sZeroRecords": "Eşleşen kayıt bulunamadı",
+            "oPaginate": {
+              "sFirst": "İlk",
+              "sLast": "Son",
+              "sNext": '<i class="fas fa-angle-double-right"></i>',
+              "sPrevious": '<i class="fas fa-angle-double-left"></i>'
+            },
+            "oAria": {
+              "sSortAscending": ": artan sütun sıralamasını aktifleştir",
+              "sSortDescending": ": azalan sütun sıralamasını aktifleştir"
+            },
+            "select": {
+              "rows": {
+                "_": "%d kayıt seçildi",
+                "0": "",
+                "1": "1 kayıt seçildi"
+              }
+            }
+          },
+          dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+          "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
+          "initComplete": function (settings, json) {
+            var searchContainer = $('#datatableInvoice_filter');
+            var searchInput = searchContainer.find('input');
+            var filterWrapper = $('.searchWrap');
+            var flexContainer = $('<div class="d-flex justify-content-end w-100"></div>');
+
+            // Varsayılan "Search:" etiketini kaldır
+            searchContainer.find('label').contents().filter(function () {
+              return this.nodeType == 3;
+            }).remove();
+
+            // Arama kutusunu ve filtreyi sarmalamak için
+            searchContainer.addClass('flex-grow-1');
+            searchInput.addClass('w-100');
+            searchInput.attr('placeholder', 'Fatura Ara...');
+
+            // Ögeleri flex container'a ekle
+            flexContainer.append(searchContainer);
+            flexContainer.append(filterWrapper);
+
+            // Flex container'ı tablonun üstüne ekle
+            $('#datatableInvoice_wrapper .top').append(flexContainer);
+
+            // Hazır olduğunda görünür yap
+            $('.searchWrap').css({ visibility: 'visible', opacity: 1 });
+
+            $('.tableToplamaAlani').insertBefore('#datatableInvoice_wrapper .bottom');
+
+          }
+        });
+
+        $('#result').on('click', 'li', function () {
+          table.draw();
+        });
+
+        $('#durum').change(function () {
+          table.draw();
+        });
+
+        table.on('draw.dt', function () {
+          updateValues();
+        });
+
+        var updateValues = function () {
+          var startDate = $('#daterange').data('daterangepicker').startDate.format('YYYY-MM-DD');
+          var endDate = $('#daterange').data('daterangepicker').endDate.format('YYYY-MM-DD');
+          var musteri = $('.mus_id').val();
+          var durum = $('#durum').val();
+
+          $.ajax({
+            url: '/{{$firma->id}}/fatura-sonuc',
+            method: 'GET',
+            data: {
+              from_date: startDate,
+              to_date: endDate,
+              musteri: musteri,
+              durum: durum,
+            },
+
+            success: function (response) {
+
+              $('.toplamNakitTL').html('<span>Nakit:</span> ' + response.toplamNakitTL);
+              $('.toplamHavaleTL').html('<span>EFT/Havale:</span> ' + response.toplamHavaleTL);
+              $('.toplamKartTL ').html('<span>Kredi Kartı:</span> ' + response.toplamKartTL);
+              $('.toplamTutarTL1 ').html('<span>Toplam:</span> ' + response.toplamTutarTL1);
+              $('.kdvNakitTL ').html('<span>Nakit:</span> ' + response.kdvNakitTL);
+              $('.kdvHavaleTL').html('<span>EFT/Havale:</span> ' + response.kdvHavaleTL);
+              $('.kdvKartTL ').html('<span>Kredi Kartı:</span> ' + response.kdvKartTL);
+              $('.toplamTutarTL2 ').html('<span>Toplam:</span> ' + response.toplamTutarTL2);
+              $('.genelNakitTL ').html('<span>Nakit:</span> ' + response.genelNakitTL);
+              $('.genelHavaleTL ').html('<span>EFT/Havale:</span> ' + response.genelHavaleTL);
+              $('.genelKartTL').html('<span>Kredi Kartı:</span> ' + response.genelKartTL);
+              $('.toplamTutarTL3 ').html('<span>Toplam:</span> ' + response.toplamTutarTL3);
+
+            },
+            error: function (xhr, status, error) {
+              console.error(error);
+            }
+          });
+        };
+        // Sayfa yüklendiğinde updateValues fonksiyonunu çağır
+        updateValues();
+
+        // DataTables çizeceği zaman updateValues fonksiyonunu çağır
+        table.on('draw.dt', function () {
+          updateValues();
+        });
+
+        // Filter butonuna tıklama olayında updateValues fonksiyonunu çağır
+        $('#filterButton').click(function () {
+          updateValues();
+        });
+
+        // Date range picker değiştiğinde updateValues fonksiyonunu çağır
+        $('#daterange').on('apply.daterangepicker', function (ev, picker) {
+          updateValues();
+        });
+      });
+    </script>
+    <script>
+      $(document).ready(function () {
+        var dropdownContainer = $('#fatura_filtre');
+        var filterButton = dropdownContainer.find('.filtrele');
+        dropdownContainer.on('show.bs.dropdown', function () {
+          filterButton.html('Kapat <i class="mdi mdi-chevron-down"></i>');
+        });
+        dropdownContainer.on('hide.bs.dropdown', function () {
+          filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
+        });
+      });
+    </script>
 @endsection
