@@ -1,14 +1,30 @@
 <!-- resources/views/secure/super_admin/activity_logs.blade.php -->
+<style>
+     .card-log {
+      border: 1px solid rgba(0, 0, 0, .125) !important;
+    }
+
+    .card-log-header {
+      background-color: #f7f7f7 !important;
+      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+      margin-bottom: 7px !important;
+      padding: 4px 7px !important;
+    }
+
+    .card-log-body {
+      padding: 3px 7px !important;
+    }
+</style>
 <div class="container-fluid">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card card-log">
+        <div class="card-header card-log-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">Sistem Log Kayıtları (Son 7 Gün)</h5>
             <small class="text-muted">
                 <i class="fas fa-info-circle"></i> 
                 Log kayıtları 7 gün sonra otomatik olarak silinir
             </small>
         </div>
-        <div class="card-body">
+        <div class="card-body card-log-body">
             <!-- Filtreler - Tek satırda -->
             <div class="row mb-3 align-items-end">
                 <!-- Firma -->

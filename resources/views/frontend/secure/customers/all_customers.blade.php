@@ -17,7 +17,7 @@
   .searchWrap .dropdown-menu{
     width: 251px !important;
   }
-  .pageDetail .searchWrap .dropdown-menu{transform: translate3d(-178px, 1px, 0px) !important;min-width: 100% !important;}
+  .pageDetail .searchWrap .dropdown-menu{transform: translate3d(2px, 1px, 0px) !important;min-width: 100% !important;}
   
 }
 #datatableCustomer_filter input[type="search"] {

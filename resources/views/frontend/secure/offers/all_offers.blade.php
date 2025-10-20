@@ -85,10 +85,10 @@
 
                 {{-- MASAÜSTÜ GÖRÜNÜMÜ (Orijinal Kodunuz - Hiçbir Değişiklik Yapılmadı) --}}
 {{-- Bu bölüm sadece geniş ekranlarda (lg ve üstü) görünecektir. --}}
-<div class="d-none d-lg-block">
+<div class="">
     <a class="btn btn-success btn-sm addOffer" data-bs-toggle="modal" data-bs-target="#addOfferModal"><i class="fas fa-plus"></i><span>Teklif Ekle</span></a> 
     <div class="searchWrap float-end">
-        <div class="btn-group mb-2 ">
+        <div class="btn-group">
             <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Filtrele <i class="mdi mdi-chevron-down"></i>
             </button>

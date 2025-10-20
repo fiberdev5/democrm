@@ -16,11 +16,7 @@
             padding: 1px !important;
             font-size: 13px !important;
         }
-        .btn-outline-danger {
-    color: #fff !important;
-    background-color: #f32f53 !important;
-    border-color: #f32f53 !important;
-}
+
         #editStockModal .row>.col-lg-7{margin-bottom: 0px !important;}
         
     }

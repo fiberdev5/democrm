@@ -1,10 +1,25 @@
 {{-- resources/views/servis/show.blade.php --}}
+<style>
+    .card-own {
+      border: 1px solid rgba(0, 0, 0, .125) !important;
+    }
 
+    .card-own-header {
+      background-color: #f7f7f7 !important;
+      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+      margin-bottom: 7px !important;
+      padding: 4px 7px !important;
+    }
+
+    .card-own-body {
+      padding: 3px 7px !important;
+    }
+</style>
 <div class="servisModal teknisyenServisModal">
     <form method="POST" id="servisDuzenle" action="">
         @csrf        
-        <div class="card" style="margin-bottom: 3px">
-            <div class="card-header ch1" style="padding: 3px 5px!important;">
+        <div class="card card-own" style="margin-bottom: 3px">
+            <div class="card-header  ch1" style="padding: 3px 5px!important;">
                 <div class="row">
                     <div class="col-sm-12" style="text-align: left;">
                         <label style="text-align: left;width: auto;display: inline-block;margin: 0;">
@@ -12,7 +27,7 @@
                             <span style="background: #ec0000;border: 1px solid #ce0000;color: #fff;padding: 0px 5px;border-radius: 3px;margin-left: 5px;max-width: 215px">
                                 {{ $servis->skaynak->kaynak ?? 'Belirtilmemiş' }}
                             </span>
-                        </label>
+</label>
                     </div>
                 </div>
             </div>
@@ -20,9 +35,9 @@
 
         <div class="row row1">
             <div class="col-sm-6 c1">
-                <div class="card">
-                    <div class="card-header">MÜŞTERİ BİLGİSİ</div>
-                    <div class="card-body">
+                <div class="card card-own">
+                    <div class="card-header card-own-header">MÜŞTERİ BİLGİSİ</div>
+                    <div class="card-body card-own-body">
                         <span class="musName">
                             {{ $servis->musteri->adSoyad }}
                             @if($servis->musteri->musteriTipi == 1)
@@ -62,9 +77,9 @@
             </div>
 
             <div class="col-sm-6 c2">
-                <div class="card">
-                    <div class="card-header">CİHAZ BİLGİSİ</div>
-                    <div class="card-body">
+                <div class="card card-own">
+                    <div class="card-header card-own-header">CİHAZ BİLGİSİ</div>
+                    <div class="card-body card-own-body">
                         <span class="cihazName">
                             {{ strtoupper($servis->markaCihaz->marka . ' - ' . $servis->turCihaz->cihaz . ' - ' . $servis->cihazAriza) }}
                         </span>
@@ -108,10 +123,10 @@
     <div class="servisAsamalari">
         @if($kalanGun >= 0)
             @if(!$eskiIslemler2 || $eskiIslemler2->pid != auth()->user()->id)
-                <div class="card" style="margin-top: 5px;">
-                    <div class="card-header ch1" style="padding: 3px 7px!important;">
+                <div class="card card-own" style="margin-top: 5px;">
+                    <div class="card-header card-own-header  ch1" style="padding: 3px 7px!important;">
                         <div class="row">
-                            <div class="col-md-6 col1">
+                            <div class="col-md-6 col1 mb-3 mb-lg-0">
                                 <label class="servisAcilLabel servisAcilBtn" style="user-select: none;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;-webkit-touch-callout: none;position: relative;margin: 0;color: #fff;background: #ec0000;border: 1px solid #ce0000;padding: 0 5px;border-radius: 3px;height: 25px;top: 1px;line-height: 25px;">
                                     <span>Acil</span>
                                     <input type="checkbox" name="acil" {{ $servis->acil ? 'checked' : '' }} style="display: none;">
@@ -134,13 +149,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card-body altSecenekler" style="padding: 0"></div>
+                    <div class="card-body card-own-body altSecenekler" style="padding: 0"></div>
                 </div>
             @endif
         @endif
 
-        <div class="card" style="margin-top: 5px;">
-            <div class="card-body" style="padding: 0">
+        <div class="card card-own" style="margin-top: 5px;">
+            <div class="card-body card-own-body" style="padding: 0">
                 <div id="no-more-tables">
                     <div class="table-responsive" style="margin: 0">
                         <table class="table table-hover table-striped servisAsamaTable" width="100%" cellspacing="0" style="margin: 0">
@@ -167,8 +182,8 @@
     </div>
 
     @if($kalanGun >= 0)
-        <div class="card cf1" style="margin-top: 5px;">
-            <div class="card-header" style="padding: 3px 5px;">
+        <div class="card card-own cf1" style="margin-top: 5px;">
+            <div class="card-header card-own-header" style="padding: 3px 5px;">
                 <div class="row">
                     <div class="col-sm-12" style="text-align: right;">
                         

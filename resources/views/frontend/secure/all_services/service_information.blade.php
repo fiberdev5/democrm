@@ -306,7 +306,7 @@ label{margin-bottom: 3px !important;}
       <div class="col-sm-11" style="text-align: right;">
         <a href="#" class="btn btn-warning btn-sm btn-sm-custom servisMusteriAnketiBtn" data-id="{{ $service_id->id }}">Müşteri Anketi</a>
         <a href="{{ route('serviceto.pdf', [$firma->id, $service_id->id]) }}" target="_blank" class="btn btn-warning btn-sm btn-sm-custom servisA4YazdirBtn">Yazdır</a>
-        <input type="button" class="btn btn-info btn-sm btn-sm-custom servisGuncelleBtn" value="Servis Güncelle"/>
+        <input style="background-color: #343a40;border-color:#343a40" type="button" class="btn btn-info btn-sm btn-sm-custom servisGuncelleBtn" value="Servis Güncelle"/>
         <div class="clearfix"></div>
       </div>
     </div>

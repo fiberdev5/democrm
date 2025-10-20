@@ -301,7 +301,7 @@ $(document).ready(function() {
                 }
             }
         },
-        dom: 'rt<"bottom"i<"float-end"lp>><"clear">',
+        dom: 'rt<"d-flex justify-content-between align-items-center flex-wrap mt-2"i<"d-flex align-items-center"lp>><"clear">',
         lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]]
     });
 

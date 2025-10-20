@@ -58,9 +58,9 @@
 
 <form method="post" id="addInvo" action="{{ route('store.invoices', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
   @csrf
-  <div class="card card-invoices  f5">
+  <div class="card card-invoices d-md-none d-flex  f5">
     <div class="ch1" style="padding: 3px 10px;">
-      <div class="tarihWrap">
+      <div class="tarihWrap ">
         <label style="text-align: left;width: auto;display: inline-block;margin: 0; margin-right: 2px;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
         <input type="date" name="faturaTarihi" class="form-control datepicker kayitTarihi"  value="{{date('Y-m-d')}}" style="width: 150px!important;display: inline-block;background:#fff" required>
       </div>
@@ -70,7 +70,13 @@
   </div> 
 
   <div class="card card-invoices f2">
-     <div class="card-header card-invoices-header">MÜŞTERİ BİLGİSİ</div>
+     <div class="card-header card-invoices-header d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
+    <span>MÜŞTERİ BİLGİSİ</span>
+    <div class="tarihWrap d-md-flex d-none mt-2 mt-md-0">
+        <label style="text-align: left;width: auto;display: inline-block;margin: 0; margin-right: 2px;">Tarih<span style="font-weight: bold; color: red;">*</span></label>
+        <input type="date" name="faturaTarihi" class="form-control datepicker kayitTarihi" value="{{date('Y-m-d')}}" style="width: 150px!important;display: inline-block;background:#fff" required>
+    </div>
+</div>
      <div class="card-body card-invoices-body">
         <div class="row">
            <div class="col-sm-6 s1">

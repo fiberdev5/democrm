@@ -8,7 +8,7 @@
     <div class="row form-group">
       <div class="col-lg-5 rw1"><label>Tarih <span style="font-weight: bold; color: red;">*</span></label></div>
       <div class="col-lg-7 rw2">
-        <input name="tarih" class="form-control datepicker kayitTarihi" type="date" value="{{date('Y-m-d')}}" style="width: 105px;display: inline-block;background:#fff" required>
+        <input name="tarih" class="form-control datepicker kayitTarihi" type="date" value="{{date('Y-m-d')}}" style="display: inline-block;background:#fff" required>
       </div>
     </div>
     <div class="row form-group ">

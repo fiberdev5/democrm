@@ -103,12 +103,12 @@
      <div class="card-body card-invoices-body">
         <div class="row" style="font-size: 14px;">
     <!-- Sol sütun: Servis -->
-    <div class="col-md-6 d-flex flex-column gap-2 border-end" style="padding-right: 15px;">
-        <span> <strong> SERVİS İD: {{ $invoice_id->servisid }} </strong> </span>
-        <a href="{{ route('all.services', [$firma->id, 'did' => $invoice_id->servisid]) }}" target="_blank" class="servisiAc btn btn-outline-danger btn-outline-danger-custom  px-2 py-1" style="font-size: 13px; line-height: 1.3;">
-            Servisi Aç
-        </a>
-    </div>
+    <div class="col-md-6 d-flex flex-row align-items-center gap-2 border-end" style="padding-right: 15px;">
+    <span> <strong> SERVİS İD: {{ $invoice_id->servisid }} </strong> </span>
+    <a href="{{ route('all.services', [$firma->id, 'did' => $invoice_id->servisid]) }}" target="_blank" class="servisiAc btn btn-outline-danger btn-outline-danger-custom col-md-3  px-2 py-1" style="font-size: 13px; line-height: 1.3;">
+        Servisi Aç
+    </a>
+</div>
 
     <!-- Sağ sütun: Müşteri Bilgisi -->
     <div class="col-md-6 d-flex flex-column gap-1" style="padding-left: 15px;">

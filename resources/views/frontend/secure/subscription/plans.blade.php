@@ -160,7 +160,7 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 
-<div class="page-content">
+<div class="page-content plans-container">
   <div class="container-fluid">
 
     {{-- Üst Kısım: Detaylı Abonelik Bilgileri --}}
