@@ -59,10 +59,11 @@
 .stat-card:hover {
     color: white; /* Renk değişimini engelle */
     text-decoration: none;
+   background: linear-gradient(135deg, #3c4248, #333436);;
 }
 
 .stat-card:hover .stat-label {
-    text-decoration: underline; /* Sadece başlığın altını çiz */
+    text-decoration: none; /* Sadece başlığın altını çiz */
 }
 
     
@@ -130,7 +131,7 @@
     }
 
     .service-item:hover div:not(.service-count) {
-        text-decoration: underline; /* sadece açıklama yazısının altını çiz */
+        text-decoration: none; /* sadece açıklama yazısının altını çiz */
     }
     
     .service-count {

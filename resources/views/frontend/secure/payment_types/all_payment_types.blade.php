@@ -18,7 +18,7 @@
               @foreach($payment_types as $item)
                 <tr data-id="{{$item->id}}">
                   <td><a class="t-link editPaymentType" href="javascript:void(0);" data-bs-id="{{$item->id}}" data-bs-toggle="modal" data-bs-target="#editPaymentTypeModal"><div class="mobileTitle">Ö. Türü:</div>{{$item->odemeTuru}}</a></td>
-                  <td class="tabloBtn">
+                  <td class="tabloBtn paymenttypes-mobil">
                     <a href="javascript:void(0);" class="btn btn-outline-primary btn-sm editPaymentType mobilBtn mbuton1" data-bs-id="{{$item->id}}" data-bs-toggle="modal" data-bs-target="#editPaymentTypeModal" title="Görüntüle"><i class="fas fa-eye"></i> <span> Düzenle</span></a>
                     <a href="javascript:void(0);" class="btn btn-outline-warning btn-sm editPaymentType mobilBtn mbuton1" data-bs-id="{{$item->id}}" data-bs-toggle="modal" data-bs-target="#editPaymentTypeModal" title="Düzenle"><i class="fas fa-edit"></i> <span> Düzenle</span></a>
                     <a href="javascript:void(0);" class="btn btn-outline-danger btn-sm mobilBtn deletePaymentType" data-bs-id="{{$item->id}}" title="Sil"><i class="fas fa-trash-alt"></i> <span> Sil</span></a>
@@ -32,7 +32,7 @@
   <!-- add modal content -->
   <div id="addPaymentTypeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
+      <div class="modal-content ">
         <div class="modal-header">
           <h6 class="modal-title" id="myModalLabel">Ödeme Türü Ekle</h6>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

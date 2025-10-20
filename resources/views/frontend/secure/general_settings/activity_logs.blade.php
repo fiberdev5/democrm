@@ -1,9 +1,28 @@
-<!-- resources/views/frontend/secure/general_settings/activity_logs.blade.php -->
-<div class="card">
-    <div class="card-header">
+<!-- resources/views/secure/super_admin/activity_logs.blade.php -->
+<style>
+     .card-log {
+      border: 1px solid rgba(0, 0, 0, .125) !important;
+    }
+
+    .card-log-header {
+      background-color: #f7f7f7 !important;
+      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+      margin-bottom: 7px !important;
+      padding: 4px 7px !important;
+    }
+
+    .card-log-body {
+      padding: 3px 7px !important;
+    }
+    .page-item-custom a{
+    width: 53px !important;
+  }
+</style>
+<div class="card card-log">
+    <div class="card-header card-log-header">
         <h5 class="card-title mb-0">Sistem Log Kayıtları</h5>
     </div>
-    <div class="card-body">
+    <div class="card-body card-log-body">
         <!-- Filtreler - Tek satırda -->
         <div class="row mb-3 align-items-end">
             <!-- Personel -->
@@ -205,7 +224,7 @@ function createPagination(pagination) {
         
         // Sonraki sayfa
         if (pagination.current_page < pagination.last_page) {
-            html += `<li class="page-item">
+            html += `<li class="page-item page-item-custom">
                         <a class="page-link" href="#" onclick="loadLogs(${pagination.current_page + 1})">Sonraki</a>
                     </li>`;
         }

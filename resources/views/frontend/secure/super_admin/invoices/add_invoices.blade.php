@@ -8,6 +8,7 @@
   .card-invocies{border: 1px solid rgba(0, 0, 0, .125) !important;}
 .card-invocies-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
   .card-invocies-body{padding: 3px 7px !important;}
+
 </style>
 <div class="add_invoices_superadmin">
 <form method="post" id="addInvo" action="{{ route('super.admin.invoices.store')}}" enctype="multipart/form-data" class="needs-validation" novalidate>
@@ -103,7 +104,7 @@
   <div id="multipleTotalInputs"></div>
        
   <div class="row cardRow1">
-    <div class="card  col-lg-6 f3">
+    <div class="card card-transform  col-lg-6 f3">
       <div class="card-body">
         <div class="row" style="border:0">
           <div class="col-md-4 rw1"><label>Ödeme Şekli<span style="font-weight: bold; color: red;"> *</span></label></div>

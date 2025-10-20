@@ -86,12 +86,6 @@
           <h4 class="mb-sm-0">
             Ek Storage Paketleri
           </h4>
-          <div class="page-title-right">
-            <ol class="breadcrumb m-0">
-              <li class="breadcrumb-item"><a href="{{ route('secure.home', $firma->id) }}">Ana Sayfa</a></li>
-              <li class="breadcrumb-item active">Storage Paketleri</li>
-            </ol>
-          </div>
         </div>
       </div>
     </div>

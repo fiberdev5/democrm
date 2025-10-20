@@ -88,7 +88,7 @@
 
         /* Tab content için stil */
         .tab-content {
-            min-height: 100px;
+            min-height: 314px;
             background: #fff;
             border-radius: 6px;
             padding: 5px;
@@ -107,6 +107,9 @@
 
         /* Responsive tasarım için */
         @media (max-width: 768px) {
+          .kasaSubMenu{
+            margin-top: 36px ;
+          }
             .kasaSubMenu .nav-pills {
                 flex-direction: column;
             }

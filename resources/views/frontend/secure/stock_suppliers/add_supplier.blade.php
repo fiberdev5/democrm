@@ -1,8 +1,8 @@
 <form method="post" id="addStokSupplier" action="{{ route('store.stock.supplier', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
     @csrf
     <div class="row mb-3">
-      <label class="col-sm-3">Tedarikçi Adı :<span style="font-weight: bold; color: red;">*</span></label>
-      <div class="col-sm-9">
+      <label class="col-sm-4">Tedarikçi Adı :<span style="font-weight: bold; color: red;">*</span></label>
+      <div class="col-sm-8">
         <input name="tedarikci" class="form-control" type="text" required>
       </div>
     </div>

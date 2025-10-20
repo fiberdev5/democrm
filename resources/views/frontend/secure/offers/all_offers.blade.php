@@ -49,6 +49,7 @@
     }
     .searchWrap .tarih-araligi {
     padding: 5px 0px;
+    width: 138px;
 }
         .pageDetail .searchWrap .dropdown-menu {
         min-width: calc(78vw - 20px) !important;
@@ -84,18 +85,18 @@
 
                 {{-- MASAÜSTÜ GÖRÜNÜMÜ (Orijinal Kodunuz - Hiçbir Değişiklik Yapılmadı) --}}
 {{-- Bu bölüm sadece geniş ekranlarda (lg ve üstü) görünecektir. --}}
-<div class="d-none d-lg-block">
+<div class="">
     <a class="btn btn-success btn-sm addOffer" data-bs-toggle="modal" data-bs-target="#addOfferModal"><i class="fas fa-plus"></i><span>Teklif Ekle</span></a> 
     <div class="searchWrap float-end">
-        <div class="btn-group mb-2 ">
+        <div class="btn-group">
             <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Filtrele <i class="mdi mdi-chevron-down"></i>
             </button>
             <div class="dropdown-menu servisDrop">
                 <div class="item">
                     <div class="row">
-                        <label class="col-sm-4">Durum</label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-4 col-5 custom-p-r-m-k">Durum</label>
+                        <div class="col-sm-8 col-7 custom-p-m-k custom-p-r-m-k">
                             <select name="teklifDurumu" id="teklifDurumu" class="form-select">
                                 <option value="">Hepsi</option>
                                 <option value="0">Beklemede</option>
@@ -106,8 +107,8 @@
                 </div>
                 <div class="item">
                     <div class="row">
-                        <label class="col-sm-4">Tarih Aralığı:</label>
-                        <div class="col-sm-8">
+                        <label class="col-sm-4 col-5 custom-p-r-m-k">Tarih Aralığı:</label>
+                        <div class="col-sm-8 col-7 custom-p-m-k custom-p-r-m-k">
                             <input id="daterange" class="tarih-araligi">
                             <div class="tarihAraligi mt-2 mb-2">
                               <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
@@ -126,45 +127,7 @@
 
 
 
-              <div class="searchWrap float-end">
-                <div class="btn-group mb-2">
-                  <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Filtrele <i class="mdi mdi-chevron-down"></i>
-
-                </button>
-                <div class="dropdown-menu servisDrop">
-
-                    <div class="item">
-                      <div class="row">
-                        <label class="col-sm-4">Durum</label>
-                        <div class="col-sm-8">
-                          <select name="teklifDurumu" id="teklifDurumu" class="form-select">
-                            <option value="">Hepsi</option>
-                            <option value="0">Beklemede</option>
-                            <option value="1">Onaylandı</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-      
-                    <div class="item">
-                      <div class="row">
-                        <label class="col-sm-4">Tarih Aralığı:</label>
-                        <div class="col-sm-8">
-                          <input id="daterange" class="tarih-araligi">
-                          <div class="tarihAraligi mt-2 mb-2">
-                            <button id="today" class="btn btn-sm btn-secondary">Bugün</button>
-                            <button id="yesterday" class="btn btn-sm btn-secondary">Dün</button>
-                            <button id="lastWeek" class="btn btn-sm btn-secondary">Son 7 Gün</button>
-                            <button id="lastMonth" class="btn btn-sm btn-secondary">Son 1 Ay</button>
-                            <button id="lastYear" class="btn btn-sm btn-secondary">Son 1 Yıl</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div><!-- /btn-group -->
-              </div>
+            
               
               <thead class="title">
                 <tr>

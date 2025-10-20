@@ -9,10 +9,18 @@
         padding: 6px 13px;
     margin-bottom: 0px !important;
   }
+  .card-custom{
+    margin-bottom: 4px !important;
+    padding: 3px;
+  }
   @media (max-width: 767px) {
     .border-none{
     border: none !important;
   }
+  #ozetKartlari .col-md-3{font-size: 13px !important;}
+  .prim-hesapla{flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 5px !important;}
   }
   
 </style>
@@ -104,15 +112,15 @@
   <div class="row mt-1" id="sonuclarContainer" style="display: none;">
     <div class="col-12">
       <div class="card" style="margin-bottom: 0!important;">
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card-header d-flex justify-content-between align-items-center prim-hesapla">
           <h5 class="card-title mb-0">Prim Hesaplama Sonuçları</h5>
           <div id="sonucBilgi" class="text-muted small"></div>
         </div>
         <div class="card-body">
           <!-- Özet Kartları -->
-          <div class="row mb-1" id="ozetKartlari">
-            <div class="col-md-3">
-              <div class="card bg-primary text-white" style="margin-bottom: 0!important;">
+          <div class="row my-1" id="ozetKartlari">
+            <div class="col-md-3 col-6 custom-prim-r custom-prim-r-m ">
+              <div class="card card-custom bg-primary text-white">
                 <div class="card-body">
                   <div class="d-flex justify-content-between">
                     <div>
@@ -120,14 +128,15 @@
                       <small>Toplam Prim</small>
                     </div>
                     <div class="align-self-center">
-                      <i class="fas fa-money-bill-wave fa-2x"></i>
+                      <i class="fas fa-money-bill-wave fa-2x d-none d-md-inline"></i>
+                       <i class="fas fa-money-bill-wave fa-x d-inline d-md-none"></i>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="card bg-success text-white">
+            <div class="col-md-3 col-6 custom-prim-l custom-prim-r-m ">
+              <div class="card card-custom bg-success text-white">
                 <div class="card-body">
                   <div class="d-flex justify-content-between">
                     <div>
@@ -135,14 +144,15 @@
                       <small>Primli Gün Sayısı</small>
                     </div>
                     <div class="align-self-center">
-                      <i class="fas fa-calendar-check fa-2x"></i>
+                      <i class="fas fa-calendar-check fa-2x d-none d-md-inline"></i>
+                      <i class="fas fa-calendar-check fa-x d-inline d-md-none"></i>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="card bg-info text-white">
+            <div class="col-md-3 col-6 custom-prim-r custom-prim-r-m ">
+              <div class="card card-custom bg-info text-white">
                 <div class="card-body">
                   <div class="d-flex justify-content-between">
                     <div>
@@ -150,14 +160,15 @@
                       <small>Ortalama Günlük Prim</small>
                     </div>
                     <div class="align-self-center">
-                      <i class="fas fa-chart-line fa-2x"></i>
+                      <i class="fas fa-chart-line fa-2x d-none d-md-inline"></i>
+                      <i class="fas fa-chart-line fa-x d-inline d-md-none"></i>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-md-3">
-              <div class="card bg-warning text-white">
+            <div class="col-md-3 col-6 custom-prim-l ">
+              <div class="card card-custom bg-warning text-white">
                 <div class="card-body">
                   <div class="d-flex justify-content-between">
                     <div>
@@ -165,7 +176,8 @@
                       <small>Toplam Performans</small>
                     </div>
                     <div class="align-self-center">
-                      <i class="fas fa-trophy fa-2x"></i>
+                      <i class="fas fa-trophy fa-2x d-none d-md-inline"></i>
+                      <i class="fas fa-trophy fa-x d-inline d-md-none"></i>
                     </div>
                   </div>
                 </div>
