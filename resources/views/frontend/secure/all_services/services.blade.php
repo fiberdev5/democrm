@@ -649,6 +649,7 @@
       }
     };
 
+    $(document).ready(function() {
     var mid = getUrlParameter('did');
     var firma_id = {{$firma->id}};
     if (mid) {
@@ -663,6 +664,7 @@
         }
       });
     }
+     });
   </script>
   <script type="text/javascript">
     $(document).ready(function () {
@@ -740,6 +742,15 @@
           }
         });
       });
+
+      // Modal kapatma butonuna basıldığında sayfayı yenile
+    $('#servisTopluPlanlaModal').on('hide.bs.modal', function (event) {
+        // Eğer kapanan modal, doğrudan servisTopluPlanlaModal'ın kendisiyse
+        // ve bu olay bir child modal tarafından bubble edilmiyorsa
+        if (event.target === this) {
+            window.location.reload(true);
+        }
+    });
     });
   </script>
   <script type="text/javascript">
@@ -1061,6 +1072,8 @@
           filters: {},
           filterType: ''
       };
+
+      
 
       var table = $('#datatableService').DataTable({
         processing: true,

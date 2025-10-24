@@ -72,7 +72,6 @@ margin-right: 0px !important;
 .customer-header-top{margin-top: 30px;}
 
 }
-
 /* Yazdırma stilleri */
 @media print {
     body * {
@@ -122,6 +121,7 @@ margin-right: 0px !important;
         padding-top: 10px;
     }
 }
+
 </style>
 <div class="page-content">
   <div class="container-fluid customer-header-top">
@@ -148,6 +148,7 @@ margin-right: 0px !important;
             <span class="d-none d-sm-inline">Yazdır</span>
         </button>
     </div>
+
     <!-- Filtreleme ve Arama Alanı (JavaScript ile taşınacak) -->
     <div class="searchWrap float-end">
 

@@ -391,7 +391,7 @@
       }
     }
   };
-
+    $(document).ready(function() {
   var mid = getUrlParameter('did');
   var firma_id = {{$firma->id}};
   if (mid) {
@@ -406,6 +406,7 @@
       }
     });
   }
+  });
 </script>
 
 <script type="text/javascript">

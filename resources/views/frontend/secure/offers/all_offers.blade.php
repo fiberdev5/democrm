@@ -189,6 +189,7 @@
 </div>
 
 <script>
+  $(document).ready(function() {
   var getUrlParameter = function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1),
       sURLVariables = sPageURL.split('&'),
@@ -216,6 +217,7 @@
       }
     });
   }
+  });
 </script>
 
 <script type="text/javascript">

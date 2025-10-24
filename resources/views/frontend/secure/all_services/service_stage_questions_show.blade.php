@@ -147,7 +147,7 @@
                                     "20:00-22:00", "21:00-23:00"
                                 ];
                             @endphp
-                            <select class="form-control" name="soru[{{ $stage->id }}]" required>
+                            <select class="form-control" name="soru[{{ $stage->id }}]" >
                                 <option value="">-Seçiniz-</option>
                                 @foreach($hours as $hour)
                                     <option value="{{ $hour }}">{{ $hour }}</option>

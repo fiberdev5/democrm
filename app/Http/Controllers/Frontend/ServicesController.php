@@ -3008,7 +3008,9 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
     public function AddServiceIncome($tenant_id, $service_id) {
         $firma = Tenant::where('id', $tenant_id)->first();
         $servis = Service::where('firma_id', $tenant_id)->where('id', $service_id)->first();
-        $personeller = User::where('tenant_id', $tenant_id)->where('status', '1')->get();
+        $personeller = User::where('tenant_id', $tenant_id)->where('status', '1')->whereDoesntHave('roles', function ($query) {
+        $query->whereIn('name', ['Admin', 'Super Admin']);
+    })->get();
         $odemeSekilleri = PaymentMethod::get();
         return view('frontend.secure.all_services.service_money_actions.add_service_income', compact('firma', 'servis', 'personeller', 'odemeSekilleri'));
     }
@@ -3119,7 +3121,9 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
     public function AddServiceExpense($tenant_id, $service_id) {
         $firma = Tenant::where('id', $tenant_id)->first();
         $servis = Service::where('firma_id', $tenant_id)->where('id', $service_id)->first();
-        $personeller = User::where('tenant_id', $tenant_id)->where('status', '1')->get();
+        $personeller = User::where('tenant_id', $tenant_id)->where('status', '1')->whereDoesntHave('roles', function ($query) {
+        $query->whereIn('name', ['Admin', 'Super Admin']);
+    })->get();
         $odemeSekilleri = PaymentMethod::get();
         return view('frontend.secure.all_services.service_money_actions.add_service_expense', compact('firma', 'servis','personeller','odemeSekilleri'));
     }
