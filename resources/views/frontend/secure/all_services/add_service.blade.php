@@ -292,9 +292,7 @@
           </div>
     </form>
 </div>
-<!-- jQuery (önce) -->
 
-<!-- jQuery Mask Plugin (sonra) -->
 <script type="text/javascript">
   $(document).ready(function(){
     $('.phone').mask('000 000 0000');
@@ -442,7 +440,9 @@ $(document).ready(function () {
         $('#result').html('');
         
         if (!customers || customers.length === 0) {
-           // $('#result').html('<li class="list-group-item text-muted">Müşteri bulunamadı</li>');
+
+            // $('#result').html('<li class="list-group-item text-muted">Müşteri bulunamadı</li>');
+
             return;
         }
         

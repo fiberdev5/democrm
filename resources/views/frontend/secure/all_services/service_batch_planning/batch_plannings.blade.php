@@ -213,20 +213,26 @@
     });
 
     // Diğer modaller kapandığında servis listesini kontrol et
-    $(document).on('hidden.bs.modal', '.modal', function() {
-      var modalId = $(this).attr('id');
-      if (modalId && modalId !== 'servisTopluPlanlaModal') {
-        setTimeout(function() {
-          checkAndRestoreServiceList();
-        }, 300);
-      }
-    });
+  //   $(document).on('hidden.bs.modal', '.modal', function() {
+  //     var modalId = $(this).attr('id');
+  //     if (modalId && modalId !== 'servisTopluPlanlaModal') {
+  //       setTimeout(function() {
+  //         checkAndRestoreServiceList();
+  //       }, 300);
+  //     }
+
+  //     if ($('.modal.show').length === 0) {
+  //   setTimeout(function() {
+  //     checkAndRestoreServiceList();
+  //   }, 400);
+  // }
+  //   });
 
     // Toplu planlama modalı açıldıktan sonra kontrol
-    $(document).on('shown.bs.modal', '#servisTopluPlanlaModal', function() {
-      setTimeout(function() {
-        checkAndRestoreServiceList();
-      }, 100);
-    });
+    // $(document).on('shown.bs.modal', '#servisTopluPlanlaModal', function() {
+    //   setTimeout(function() {
+    //     checkAndRestoreServiceList();
+    //   }, 100);
+    // });
   });
 </script>

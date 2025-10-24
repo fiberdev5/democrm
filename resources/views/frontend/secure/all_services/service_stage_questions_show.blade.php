@@ -52,62 +52,65 @@
                     </div> {{-- .parcalar-dropdown --}}
                     <input type="hidden" name="soru[{{ $stage->id }}]" class="form-control" value="Parca"/>
                   
-                @elseif($stage->cevapTuru == "[Konsinye Cihaz]")
-                    <input id="urunAraInput_konsinye" type="text" class="form-control urunAraInput" autocomplete="off" placeholder="Konsinye cihaz adı veya kodu">
-                    <div class="konsinye-dropdown myKonsinyeList" style="width:100%">
-                        @php $konsinye_say = 0; @endphp
-                        <p>Toplam Konsinye Cihaz Sayısı: {{ $toplamKonsinyeCihazAdedi }}</p>
 
-                        @forelse($konsinyeCihazlar as $konsinyeCihaz)
-                            @php
-                                $konsinyeId = $konsinyeCihaz->id;
-                                $konsinyeAdet = $konsinyeCihaz->current_stock_quantity ?? 0;
-                            @endphp
+@elseif($stage->cevapTuru == "[Konsinye Cihaz]")
+    <input id="urunAraInput_konsinye" type="text" class="form-control urunAraInput" autocomplete="off" placeholder="Konsinye cihaz adı veya kodu">
+    <div class="konsinye-dropdown myKonsinyeList" style="width:100%">
+        @php $konsinye_say = 0; @endphp
+        <p>Toplam Konsinye Cihaz Sayısı: {{ $toplamKonsinyeCihazAdedi }}</p>
 
-                            @if($konsinyeAdet > 0)
-                                @php $konsinye_say++; @endphp
-                                <div class="checkbox stock-item" style="padding:3px 0;" 
-                                     data-product-code="{{ $konsinyeCihaz->urunKodu ?? '' }}" 
-                                     data-product-name="{{ $konsinyeCihaz->urunAdi ?? $konsinyeCihaz->urun_adi ?? 'N/A' }}">
-                                    <label style="width: calc(100% - 40px); display: inline-block; text-transform: capitalize;">
-                                        <input type="checkbox" name="konsinye_cihaz[{{ $stage->id }}][{{ $konsinyeId }}]"
-                                            class="consignment-checkbox"
-                                            value="{{ $konsinyeId }}"
-                                            data-available="{{ $konsinyeAdet }}"
-                                            style="position: relative; top:2px; margin-right:3px;">
-                                        {{ $konsinyeCihaz->urunAdi ?? $konsinyeCihaz->urun_adi ?? 'Ürün Adı Bulunamadı' }} (Mevcut: {{ $konsinyeAdet }})
-                                    </label>
-                                    <input type="number" name="konsinye_adet[{{ $stage->id }}][{{ $konsinyeId }}]"
-                                        value="1" min="1" max="{{ $konsinyeAdet }}"
-                                        class="form-control quantity-input consignment-quantity-input"
-                                        autocomplete="off"
-                                        style="width: 40px; display: inline-block; text-align: center; display: none;">
-                                </div>
-                            @endif
-                        @empty
-                        @endforelse
+        @forelse($konsinyeCihazlar as $konsinyeCihaz)
+            @php
+                $konsinyeId = $konsinyeCihaz->id;
+                $konsinyeAdet = $konsinyeCihaz->current_stock_quantity ?? 0;
+            @endphp
 
-                        @if($konsinye_say == 0)
-                            <label style="color:red">Uyumlu Konsinye Cihaz Bulunamadı.</label>
-                        @endif
-                    </div>
-                    <input type="hidden" name="soru[{{ $stage->id }}]" class="form-control" value="Konsinye Cihaz"/>
-                
+            @if($konsinyeAdet > 0)
+                @php $konsinye_say++; @endphp
+                <div class="checkbox stock-item" style="padding:3px 0;" 
+                     data-product-code="{{ $konsinyeCihaz->urunKodu ?? '' }}" 
+                     data-product-name="{{ $konsinyeCihaz->urunAdi ?? $konsinyeCihaz->urun_adi ?? 'N/A' }}">
+                    <label style="width: calc(100% - 40px); display: inline-block; text-transform: capitalize;">
+                        <input type="checkbox" name="konsinye_cihaz[{{ $stage->id }}][{{ $konsinyeId }}]"
+                            class="consignment-checkbox"
+                            value="{{ $konsinyeId }}"
+                            data-available="{{ $konsinyeAdet }}"
+                            style="position: relative; top:2px; margin-right:3px;">
+                        {{ $konsinyeCihaz->urunAdi ?? $konsinyeCihaz->urun_adi ?? 'Ürün Adı Bulunamadı' }} (Mevcut: {{ $konsinyeAdet }})
+                    </label>
+                    <input type="number" name="konsinye_adet[{{ $stage->id }}][{{ $konsinyeId }}]"
+                        value="1" min="1" max="{{ $konsinyeAdet }}"
+                        class="form-control quantity-input consignment-quantity-input"
+                        autocomplete="off"
+                        style="width: 40px; display: inline-block; text-align: center; display: none;">
+                </div>
+            @endif
+        @empty
+        @endforelse
+
+        @if($konsinye_say == 0)
+            <label style="color:red">Uyumlu Konsinye Cihaz Bulunamadı.</label>
+        @endif
+    </div>
+    <input type="hidden" name="soru[{{ $stage->id }}]" class="form-control" value="Konsinye Cihaz"/>
                 {{-- Diğer Cevap Türleri --}}
                 @else
-                    {{-- İçerideki gereksiz "col-lg-12" div'i kaldırıldı --}}
-                    @if($stage->cevapTuru == "[Aciklama]")
-                        <input type="text" name="soru[{{ $stage->id }}]" class="form-control" autocomplete="off" />
-                    @elseif(str_contains($stage->cevapTuru, 'Grup'))
+                    <div class="col-lg-12" > 
+                        @if($stage->cevapTuru == "[Aciklama]")
+                            <input type="text" name="soru[{{ $stage->id }}]" class="form-control" autocomplete="off" />
+                       @elseif(str_contains($stage->cevapTuru, 'Grup'))
                         @php
                             preg_match('/\[Grup-(\d+)\]/', $stage->cevapTuru, $matches);
                             $grupKodu = $matches[1] ?? null;
+
                             $roller = [];
+
                             if (in_array($grupKodu, [261, 262])) {
                                 $roller = ['Atölye Ustası'];
                             } elseif (in_array($grupKodu, [4, 5])) {
                                 $roller = ['Teknisyen'];
                             }
+
                             $personeller = App\Models\User::where('tenant_id', $firma->id)
                                 ->where('status', '1')
                                 ->whereHas('roles', function($query) use ($roller) {
@@ -115,9 +118,68 @@
                                 })
                                 ->orderBy('name', 'asc')
                                 ->get();
+                            $isRequired = !str_contains($stage->soru, 'Yardımcı');
                         @endphp
 
                         @if($personeller->count())
+                            {{-- 'required' özelliği sadece $isRequired true ise eklenir --}}
+                            <select class="form-control" name="soru[{{ $stage->id }}]" @if($isRequired) required @endif>
+                                <option value="">-Seçiniz-</option>
+                                @foreach($personeller as $personel)
+                                    <option value="{{ $personel->user_id }}">{{ $personel->name }}</option>
+                                @endforeach
+                            </select>
+                        @else
+                            <p>Bu gruba ait personel bulunamadı.</p>
+                        @endif
+
+                        @elseif($stage->cevapTuru == "[Tarih]")
+                            @php
+                                $bugun = date('w');
+                                $date = ($bugun == 6)
+                                    ? date('Y-m-d', strtotime('+2 days'))
+                                    : date('Y-m-d', strtotime('+1 day'));
+                            @endphp
+                            <input type="date" name="soru[{{ $stage->id }}]" class="form-control datepicker" value="{{ $date }}" style="background:#fff;" required>
+                        @elseif($stage->cevapTuru == "[Saat]")
+                            @php
+                                $hours = [
+                                    "08:00-10:00", "09:00-11:00", "10:00-12:00",
+                                    "11:00-13:00", "12:00-14:00", "13:00-15:00",
+                                    "14:00-16:00", "15:00-17:00", "16:00-18:00",
+                                    "17:00-19:00", "18:00-20:00", "19:00-21:00",
+                                    "20:00-22:00", "21:00-23:00"
+                                ];
+                            @endphp
+                            <select class="form-control" name="soru[{{ $stage->id }}]" >
+                                <option value="">-Seçiniz-</option>
+                                @foreach($hours as $hour)
+                                    <option value="{{ $hour }}">{{ $hour }}</option>
+                                @endforeach
+                            </select>
+                        @elseif($stage->cevapTuru == "[Arac]")
+                            <select class="form-control" name="soru[{{ $stage->id }}]" required>
+                                <option value="">-Seçiniz-</option>
+                                @foreach($araclar as $arac)
+                                    <option value="{{ $arac->id }}">{{ $arac->arac }}</option>
+                                @endforeach
+                            </select>
+                        @elseif($stage->cevapTuru == "[Fiyat]")
+                            <input type="number" name="soru[{{ $stage->id }}]" class="form-control" autocomplete="off" required/>
+                        @elseif($stage->cevapTuru == "[Teklif]")
+                            <input type="number" name="soru[{{ $stage->id }}]" class="form-control" autocomplete="off" required/>
+                            <span style="font-size: 12px; color: red; font-weight: 500; margin: 0; padding: 0;display: block;">Bu alan sadece teklif vermek için kullanılır.</span>
+                        @elseif($stage->cevapTuru == "[Bayi]")
+                            @php
+                                $bayiler = App\Models\User::where('tenant_id', $firma->id)
+                                                ->where('status', '1')
+                                                ->whereHas('roles', function($query) {
+                                                    $query->whereIn('name', ['Bayi']);
+                                                })
+                                                ->orderBy('name', 'asc')
+                                                ->get();
+                            @endphp
+
                             <select class="form-control" name="soru[{{ $stage->id }}]" required>
                                 <option value="">-Seçiniz-</option>
                                 @foreach($personeller as $personel)

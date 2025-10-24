@@ -1,5 +1,5 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
-  
+
 <style>
     .upload-zone {
         border: 2px dashed #ddd;
@@ -86,7 +86,6 @@
         }
     }
 </style>
-
 <form id="servisFotoEkle" enctype="multipart/form-data">
     <div class="upload-zone" onclick="document.getElementById('resimInput').click()">
         <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
@@ -291,17 +290,32 @@
                 $('[data-fancybox="gallery"]').fancybox();
             }
 
+
             // Fotoğraf silme
             $(document).on('click', '.servisFotoSil', function(e) {
         e.preventDefault();
         
-        if (!confirm('Bu fotoğrafı silmek istediğinizden emin misiniz?')) {
-            return;
+
+         e.stopImmediatePropagation(); // Event'in birden fazla kez tetiklenmesini engelle
+
+        const $button = $(this);
+    
+        // Zaten işlem yapılıyorsa çık
+        if ($button.prop('disabled') || $button.hasClass('deleting')) {
+            return false;
+
         }
+        
+        // İşlem bayrağı ekle
+        $button.addClass('deleting');
+        
+        if (!confirm('Bu fotoğrafı silmek istediğinizden emin misiniz?')) {
+            $button.removeClass('deleting'); // Bayrağı kaldır
+            return false;
+}
 
         const photoId = $(this).data('id');
         const $photoItem = $(this).closest('.col-md-2, .col-sm-6');
-        const $button = $(this);
         
         // Butonu deaktive et
         $button.prop('disabled', true).text('...');
@@ -377,4 +391,6 @@
                 $('.progress-bar').css('width', '0%');
             }
         });
+
     </script>
+

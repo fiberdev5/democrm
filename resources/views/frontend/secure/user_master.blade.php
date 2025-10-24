@@ -33,10 +33,15 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
 
+
+
+
+
     <link href="{{ asset('backend/assets/css/custom.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('frontend/css/secure.css') }}" rel="stylesheet" type="text/css" />
 
     <script src="{{ asset('backend/assets/libs/jquery/jquery.min.js') }}"></script>
+    
 
     <link href="{{asset('backend/assets/libs/dropzone/min/dropzone.min.css')}}" rel="stylesheet" type="text/css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>

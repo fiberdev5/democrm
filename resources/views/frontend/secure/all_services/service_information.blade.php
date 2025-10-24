@@ -251,19 +251,32 @@ label{margin-bottom: 3px !important;}
           <label class="kayitAlan">  
             <span>{{$service_id->asamalar["asama"]}}</span>                  
           </label>     
-          <label class="servisAcilLabel servisAcilBtn servisAcilLabel-custom" style="user-select: none;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;-webkit-touch-callout: none;position: relative;margin: 0; color: #fff; background: #343a40; border: 1px solid #212529;padding: 0 5px;border-radius: 3px;height: 21.7px;top: -3px;line-height: 20px;">
-              <span>Acil</span>
-              <input type="checkbox" style="display: none;" {{$service_id->acil !== 0 ? 'checked' : ''}}>
-              <div class="checkmark"><i class="fas fa-check"></i></div>
-            </label>
-            <input type="hidden" name="acil" class="acil" value="0"/>    
+
+         <label class="servisAcilLabel servisAcilBtn" style="user-select: none;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;-webkit-touch-callout: none;position: relative;margin: 0; color: #fff; background: #343a40; border: 1px solid #212529;padding: 0 5px;border-radius: 3px;height: 25px;top: 1px;line-height: 25px;cursor: pointer;">
+    <span>Acil</span>
+    <input type="checkbox" class="acilCheckbox" style="display: none;" {{$service_id->acil == 1 ? 'checked' : ''}}>
+    <div class="checkmark" style="display: inline-block; ">
+        <i class="fas fa-check" style="position: absolute; top: -1px; left: 1px; font-size: 10px; {{$service_id->acil == 1 ? 'display: block;' : 'display: none;'}}"></i>
+    </div>
+</label>
+<input type="hidden" name="acil" id="acilHiddenInput" class="acil" value="{{$service_id->acil == 1 ? '1' : '0'}}"/>
+
+<!-- Form içinde servis ID'yi ekleyin -->
+<input type="hidden" name="servisid" value="{{$service_id->id}}"/>   
+
         </div>
+        
         <div class="col-12 col-sm-6 right">
           <label>Yapılacak işlem: </label>
           <select class="form-control altAsamalar" name="altAsamalar" style="padding:3px 5px;">
-            <option value="">-Seçiniz-</option>        
+            <option value="">-Seçiniz-</option> 
+            @php 
+              $user = Auth::user();
+            @endphp       
             @foreach ($altAsamalar as $item)
-                <option value="{{$item->id}}">{{$item->asama}}</option> 
+                @if($item->id != 264 || $user->tenant->canAccessDealersModule())
+                    <option value="{{ $item->id }}">{{ $item->asama }}</option> 
+                @endif
             @endforeach
           </select>
         </div>
@@ -656,41 +669,92 @@ if (islem.pid == currentUserId) {
 </script>
 
 <script type="text/javascript">
-  $(document).ready(function (e) {  
-    $(".servisGuncelleBtn").click( function(){
-      if ($('.servisAcilBtn input').is(":checked")){
-        $("#servisDuzenle .acil").val("1");  //Eğer .servisAcilBtn input (bir checkbox) işaretliyse, #servisDuzenle formundaki .acil alanı 1 olur
-      }else{
-        $("#servisDuzenle .acil").val("0");
-      }
-      
-      $("#servisDuzenle").submit();
+$(document).ready(function() {
+    // Acil butonuna tıklandığında
+    $(".servisAcilBtn").on('click', function(e) {
+        e.preventDefault();
+        
+        var checkbox = $(this).find('.acilCheckbox');
+        var checkIcon = $(this).find('.checkmark i'); // Sadece check işaretini seç
+        var hiddenInput = $('#acilHiddenInput');
+        
+        // Checkbox durumunu toggle et
+        if (checkbox.is(':checked')) {
+            checkbox.prop('checked', false);
+            checkIcon.hide(); // Sadece check işaretini gizle
+            hiddenInput.val('0');
+            $(this).css('background', '#343a40'); // Normal renk
+        } else {
+            checkbox.prop('checked', true);
+            checkIcon.show(); // Sadece check işaretini göster
+            hiddenInput.val('1');
+            $(this).css('background', '#343a40'); // Kırmızı renk (acil)
+        }
+        
+        // Otomatik kaydetme (opsiyonel - hemen kaydetmek isterseniz)
+        // autoSaveAcil();
+    });
+    
+    // Sayfa yüklendiğinde acil durumunu kontrol et
+    if ($('.acilCheckbox').is(':checked')) {
+        $('.servisAcilBtn').css('background', '#dc3545');
+        $('.checkmark i').show(); // Sadece check işaretini göster
+    }
+    
+    // Servis güncelle butonu
+    $(".servisGuncelleBtn").click(function(e) {
+        e.preventDefault();
+        $("#servisDuzenle").submit();
     });
 
-    $("#servisDuzenle").on('submit', (function (e) {
-      var cihazModel = $.trim($("#servisDuzenle .cihazModel").val());  //cihazModel input alanı boş mu?
-      var firma = {{$firma->id}};
-     
-      
-        e.preventDefault();  //Sayfa yenilenmesi engellenir
+    // Form submit işlemi
+    $("#servisDuzenle").on('submit', function(e) {
+        e.preventDefault();
+        
+        var formData = new FormData(this);
+        var firma = {{$firma->id}};
+        
+        // Acil değerinin doğru gönderildiğinden emin ol
+        var acilValue = $('#acilHiddenInput').val();
+        formData.set('acil', acilValue);
+        
+        // Debug için
+        console.log('Acil değeri:', acilValue);
+        console.log('Servis ID:', formData.get('servisid'));
+        
         $.ajax({
-          url: "/" + firma +  "/servis/guncelle",  //ajax ile gonder.php'ye veri gönderilir.
-          type: "POST",
-          data: new FormData(this),
-          contentType: false,
-          cache: false,
-          processData: false,
-          success: function (data) {
-            
-              alert("Servis başarıyla güncellendi.");
-              $('.nav1').trigger('click');
-              
-          },
-          error: function (e) {
-            alert("Servis güncellenirken hatayla karşılaşıldı." + e);
-          }
+            url: "/" + firma + "/servis/guncelle",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            cache: false,
+            processData: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(data) {
+                if (data.success) {
+                    // Başarı mesajı göster
+                    alert('Servis başarıyla güncellendi.');
+                    
+                    // Modal'ı kapat veya sayfayı yenile
+                    setTimeout(function() {
+                        $('.nav1').trigger('click');
+                        loadServiceHistory({{ $service_id->id }});
+                        $('#datatableService').DataTable().ajax.reload();
+                        // veya $('#servisModal').modal('hide');
+                        // veya location.reload();
+                    }, 1000);
+                } else {
+                    alert('Güncelleme başarısız: ' + (data.message || ''));
+                }
+            },
+            error: function(xhr, status, error) {
+                var errorMessage = "Servis güncellenirken hata oluştu.";
+                alert(errorMessage);
+                console.error("Error:", xhr.responseJSON);
+            }
         });
-      
-    }));
-  });
+    });
+});
 </script>

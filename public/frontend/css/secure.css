@@ -3176,7 +3176,7 @@ form .mb-3 {
   #datatableCustomer_filter {
     text-align: center !important;
   }
-
+/* 
   .pageDetail .addCustomer {
     padding: .5rem .5rem;
     border-radius: 0;
@@ -3188,7 +3188,7 @@ form .mb-3 {
 
   .addCustomer i {
     display: block !important;
-  }
+  } */
 
   .pageDetail .addInvoice {
     padding: .5rem .5rem;
@@ -5355,7 +5355,7 @@ div.dataTables_wrapper div.dataTables_filter input {
 
 .supplierBtn {
   position: absolute;
-  left: 127px;
+  left: 121px;
 }
 
 .addStock {
@@ -5457,6 +5457,8 @@ a.link-stock:hover {
   background: #4285f4 !important;
   border-color: #4285f4 !important;
 }
+
+
 
 #servisPersonelAtamaModal {
   z-index: 1060 !important;
@@ -11903,6 +11905,7 @@ canvas {
     left: 0px;
   }
 
+
   .servisPlanlaBtn {
     position: relative !important;
     left: 0px;
@@ -12411,10 +12414,6 @@ table.dataTable {
   animation: none !important;
   transform: none !important;
 }
-.btn-info,.btn-primary{
-  background-color: #343a40 !important;
-  border-color: #343a40 !important;
-}
 
 .select2-container--bootstrap-5 .select2-selection--single .select2-selection__clear{
   position: absolute;
@@ -12429,7 +12428,7 @@ table.dataTable {
     transform: translateY(-50%);
         background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23676a6d'%3E%3Cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3E%3C/svg%3E") 50% / 0.55rem auto no-repeat !important;
 }
-#datatableCustomer_wrapper{min-height: 157px;}
+
 
 @media (min-width: 768px) {
   .custom-service-border{
@@ -12491,4 +12490,451 @@ table.dataTable {
 .servis-sonlandir-switch{    border: 1px solid rgb(109 109 109)!important;}
 .filter-btn.active{box-shadow: none !important;}
 .badge-size-custom{font-size: 13px !important;}
+
+
+
+#datatableCustomer_wrapper{min-height: 157px;}
+
+
+
+/* DataTables Buttons - SADECE DataTables container'ındaki butonları etkile */
+.dataTables_wrapper .dt-buttons {
+  display: none !important; /* DataTables'ın kendi render ettiği buton grubunu gizle */
+}
+
+/* DataTables Buttons CSS'inin diğer butonları etkilememesi için özel selector */
+.dataTables_wrapper .buttons-print,
+.dataTables_wrapper .dt-button {
+  /* DataTables button stilleri sadece wrapper içinde geçerli */
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+}
+
+/* Kendi butonlarınızın etkilenmemesi için koruma */
+.btn:not(.dt-button) {
+  /* Mevcut Bootstrap buton stilleriniz korunur */
+}
+
+/* Yazdırma stilleri */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    #printArea, #printArea * {
+        visibility: visible;
+    }
+    
+    #printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+    
+    .print-header {
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+    }
+    
+    .print-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .print-table th,
+    .print-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    
+    .print-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+    
+    .print-footer {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 12px;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+    }
+}
+
+/*****************************Müşteriler yazdırma ve ekleme butonu*******************************/
+@media (max-width: 767px) {
+
+  /* 1. Kapsayıcıyı Flexbox yapıyoruz */
+  .pageDetail .customer-buttons-container {
+    display: flex;        /* Butonların yan yana gelmesini sağlar */
+    gap: 5px;             /* Aralarındaki boşluk */
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  /* 2. HER İKİ BUTON İÇİN ORTAK KURALLAR */
+  .pageDetail .customer-buttons-container .btn {
+    flex: 1; /* Genişliği eşit paylaştırır (%50 yapar) */
+    width: auto;     /* width: 100%'ü ezer */
+    display: flex;   /* display: block'u ezer ve içeriği ortalar */
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0 !important; /* Eski margin'i sıfırlar */
+    position: static !important; /* position: absolute'yi ezer */
+    border-radius: 4px !important;
+  }
+  
+  .pageDetail .customer-buttons-container .btn i {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Sadece masaüstünde Yazdır butonunu özel konumlandır */
+  .printCustomers {
+    position: absolute;
+    left: 99px;
+  }
+}
+
+/*****************************Personeller yazdırma ve ekleme butonu*******************************/
+@media (max-width: 767px) {
+  .pageDetail .staff-buttons-container {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .pageDetail .staff-buttons-container .btn {
+    flex: 1;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0 !important;
+    position: static !important;
+    border-radius: 4px !important;
+  }
+  
+  .pageDetail .staff-buttons-container .btn i {
+    display: none !important;
+  }
+  
+  /* Bilgi mesajı mobilde */
+  .staff-limit-warning {
+    display: block;
+    margin-top: 5px;
+    margin-left: 0 !important;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Sadece masaüstünde Yazdır butonunu özel konumlandır */
+  .printStaffs {
+    position: absolute;
+    left: 108px;
+  }
+  
+  /* Bilgi mesajı masaüstünde */
+  .staff-limit-warning {
+    position: absolute;
+    left: 175px;
+    top: 55px;
+
+  }
+}
+
+/*****************************Bayiler yazdırma ve ekleme butonu*******************************/
+@media (max-width: 767px) {
+  .pageDetail .dealer-buttons-container {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .pageDetail .dealer-buttons-container .btn {
+    flex: 1;
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0 !important;
+    position: static !important;
+    border-radius: 4px !important;
+  }
+  
+  .pageDetail .dealer-buttons-container .btn i {
+    display: none !important;
+  }
+  
+  /* Bilgi mesajı mobilde */
+  .dealer-limit-warning {
+    display: block;
+    margin-top: 5px;
+    margin-left: 0 !important;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Sadece masaüstünde Yazdır butonunu özel konumlandır */
+  .printDealers {
+    position: absolute;
+    left: 78px;
+  }
+  
+  /* Bilgi mesajı masaüstünde */
+  .dealer-limit-warning {
+    position: absolute;
+    left: 150px;
+    top: 49px;
+  }
+}
+
+/*****************************Depo yazdırma ve ekleme butonu*******************************/
+@media (max-width: 767px) {
+  .pageDetail .stock-buttons-container {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .pageDetail .stock-buttons-container .btn {
+    flex: 1;
+    min-width: calc(50% - 2.5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0 !important;
+    position: static !important;
+    border-radius: 4px !important;
+  }
+  
+  .pageDetail .stock-buttons-container .btn i {
+    display: none !important;
+  }
+  
+  /* Limit uyarısı mobilde */
+  .stock-limit-warning {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+    margin-left: 0 !important;
+    position: static !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .printStocks {
+    position: absolute;
+    left: 257px;
+  }
+  
+  /* Limit uyarısı masaüstünde */
+  .stock-limit-warning {
+    position: absolute;
+    left: 330px;
+    top: 48px;
+  }
+}
+/*****************************Konsinye yazdırma ve ekleme butonu*******************************/
+    @media (max-width: 767px) {
+      .pageDetail .consignment-buttons-container {
+        display: flex;
+        gap: 5px;
+        width: 100%;
+        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      
+      .pageDetail .consignment-buttons-container .btn {
+        flex: 1;
+        min-width: calc(50% - 2.5px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0 !important;
+        position: static !important;
+        border-radius: 4px !important;
+      }
+      
+      .pageDetail .consignment-buttons-container .btn i {
+        display: none !important;
+      }
+      
+      /* Limit uyarısı mobilde */
+      .consignment-limit-warning {
+        display: block;
+        width: 100%;
+        margin-top: 5px;
+        margin-left: 0 !important;
+        position: static !important;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .printConsignment {
+        position: absolute;
+        left: 97px;
+      }
+      
+      /* Limit uyarısı masaüstünde */
+      .consignment-limit-warning {
+        position: absolute;
+        left: 172px;
+        top: 48px;
+      }
+    }
+
+/*****************************Faturalar yazdırma ve ekleme butonu*******************************/
+@media (max-width: 767px) {
+  .pageDetail .invoice-buttons-container {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .pageDetail .invoice-buttons-container .btn {
+    flex: 1;
+    min-width: calc(50% - 2.5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0 !important;
+    position: static !important;
+    border-radius: 4px !important;
+  }
+  
+  .pageDetail .invoice-buttons-container .btn i {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .printInvoices {
+    position: absolute;
+    left: 227px;
+  }
+}    
+
+/*****************************Teklifler yazdırma ve ekleme butonu*******************************/
+@media (max-width: 767px) {
+  .pageDetail .offer-buttons-container {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .pageDetail .offer-buttons-container .btn {
+    flex: 1;
+    min-width: calc(50% - 2.5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0 !important;
+    position: static !important;
+    border-radius: 4px !important;
+  }
+  
+  .pageDetail .offer-buttons-container .btn i {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .printOffers {
+    position: absolute !important;
+    left: 86px !important;
+  }
+}
+/*****************************Kasa yazdırma ve ekleme butonu*******************************/
+@media (max-width: 767px) {
+  .pageDetail .cash-buttons-container {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .pageDetail .cash-buttons-container .btn {
+    flex: 1;
+    min-width: calc(50% - 2.5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0 !important;
+    position: static !important;
+    border-radius: 4px !important;
+  }
+  
+  .pageDetail .cash-buttons-container .btn i {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .printCash {
+    position: absolute;
+    left: 136px;
+  }
+}
+/*****************************Servisler yazdırma ve ekleme butonu*******************************/
+@media (max-width: 767px) {
+  .action-buttons-container {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  
+  .action-buttons-container .col-3 {
+    flex: 1;
+    min-width: calc(25% - 4px);
+    padding: 0;
+  }
+  
+  .action-buttons-container .btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    padding: 6px 4px;
+  }
+  
+}
+
+@media (min-width: 768px) {
+  .action-buttons-container {
+    display: flex;
+    gap: 5px;
+  }
+  
+  .action-buttons-container .col-3 {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 0;
+  }
+
+  .printServices{
+      position: absolute;
+      left: 337px;
+  }
+
+}
+
 

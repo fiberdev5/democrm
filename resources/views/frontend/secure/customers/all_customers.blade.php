@@ -83,14 +83,17 @@ margin-right: 0px !important;
           </div>
           <div class="card-body">
             <table id="datatableCustomer" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-
-<div class="d-flex justify-content-between">
-    <!-- Müşteri Ekle Butonu -->
+<div class="customer-buttons-container d-flex d-sm-block">
     <a data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-success btn-sm addCustomer">
         <i class="fas fa-plus"></i>
-        <span class="d-none d-sm-inline">Müşteri Ekle</span>
-    </a> 
-
+        <span>Müşteri Ekle</span>
+    </a>
+    
+    <button id="printCustomers" class="btn btn-warning btn-sm printCustomers ">
+        <i class="fas fa-print"></i>
+        <span>Yazdır</span>
+    </button>
+</div>
     <!-- Filtreleme ve Arama Alanı (JavaScript ile taşınacak) -->
     <div class="searchWrap float-end">
 
@@ -396,6 +399,45 @@ $(document).ready(function(){
     table.draw();
   });
 
+  // Yazdırma için filtre bilgilerini hazırla
+function getFilterInfoForPrint() {
+  var filters = [];
+  
+  var musteriTipi = $('#musteriTipi').val();
+  if (musteriTipi) {
+      var tipText = musteriTipi == '1' ? 'Bireysel' : 'Kurumsal';
+      filters.push('Müşteri Tipi: ' + tipText);
+  }
+  
+  var il = $('#countrySelect').val();
+  if (il) {
+      var ilText = $('#countrySelect option:selected').text();
+      filters.push('İl: ' + ilText);
+  }
+  
+  var ilce = $('#citySelect').val();
+  if (ilce) {
+      var ilceText = $('#citySelect option:selected').text();
+      filters.push('İlçe: ' + ilceText);
+  }
+  
+  var dateRange = $('#daterangeCustomer').val();
+  if (dateRange) {
+      filters.push('Tarih Aralığı: ' + dateRange);
+  }
+  
+  var searchTerm = $('input[type="search"]').val();
+  if (searchTerm) {
+      filters.push('Arama: ' + searchTerm);
+  }
+  
+  if (filters.length > 0) {
+      return filters.join('<br>');
+  }
+  
+  return 'Filtre uygulanmadı (Tüm müşteriler)';
+}
+
 
   var table = $('#datatableCustomer').DataTable({
       processing: true,
@@ -474,7 +516,85 @@ $(document).ready(function(){
               }
           }
           },
-      dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+      dom: 'B<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+buttons: [{
+  extend: 'print',
+  text: 'Yazdır',
+  autoPrint: true,
+  exportOptions: {
+    columns: [0, 1, 2, 3],
+    format: {
+      body: function (data, row, column, node) {
+        // Her hücredeki "Ad Soyad:", "Telefon:", "Adres:" vb. etiketleri temizle
+        data = data.replace(/Ad Soyad:/gi, '');
+        data = data.replace(/Telefon:/gi, '');
+        data = data.replace(/Adres:/gi, '');
+        data = data.replace(/ID:/gi, '');
+        
+        // Gereksiz boşlukları temizle
+        return data.trim();
+      }
+    }
+  },
+  customize: function (win) {
+    // 1. Mevcut tüm stilleri temizle
+    $(win.document.head).find('style, link').remove();
+    
+    // 2. Özel CSS stilleri ekle
+    $(win.document.head).append(
+      '<style>' +
+      '.print-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px;}' +
+      '.print-title { text-align: left; font-size: 18px; font-weight: bold; margin-bottom: 13px; }' +
+      'table { width: 100%; border-collapse: collapse; }' +
+      'table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left;}' +
+      'table thead { display: table-header-group !important; }' +
+      'table tbody { display: table-row-group !important; }' +
+      // Link stillerini düzenle
+      'a, a:link, a:visited, a:hover, a:active { color: #000 !important; text-decoration: none !important; }' +
+      'table td a, table td a:link, table td a:visited { color: #000 !important; text-decoration: none !important; }' +
+      '.print-footer { margin-top: 15px; text-align: left; border-top: 1px padding-top: 10px; }' +
+      '.page-number-bottom { text-align: center; margin-top: 30px; font-size: 14px; color: #666;font-weight: bold; page-break-after: always; }' +
+      '@page { margin: 5mm; }' +
+      '@media print { ' +
+      '  thead { display: table-header-group; }' +
+      '  tbody { page-break-inside: avoid; }' +
+      '  a, a:link, a:visited { color: #000 !important; text-decoration: none !important; }' +
+      '}' +
+      '</style>'
+    );
+    
+    //Gerekli bilgileri al
+    var printDate = moment().format('DD.MM.YYYY HH:mm');
+    var totalRecords = table.page.info().recordsDisplay;
+    var firmaAdi = '{{ $firma->firma_adi ?? "Firma Adı" }}';
+    
+    //DataTables'ın otomatik eklediği başlık ve sayfa numaralarını kaldır
+    $(win.document.body).find('h1').remove();
+    // $(win.document.body).find('.page-number').remove();
+    
+    //Sayfanın en başına tarih ve firma adını ekle
+    var header = '<div class="print-header">' +
+                 '  <span>' + printDate + '</span>' +
+                 '  <span>' + firmaAdi.toUpperCase() + '</span>' +
+                 '</div>';
+    $(win.document.body).prepend(header);
+    
+    //"Tüm Müşteriler" başlığını ekle
+    var title = '<div class="print-title">Tüm Müşteriler</div>';
+    $(win.document.body).find('table').before(title);
+    
+    //Alt bilgiyi ekle
+    var footer = '<div class="print-footer">' +
+                 '  <span>Listelenen Müşteri Sayısı: ' + totalRecords + ' - Tarih: ' + moment().format('DD/MM/YYYY') + '</span>' +
+                 '</div>';
+    $(win.document.body).find('table').after(footer);
+
+    //SAYFA NUMARASINI EKLE 
+    var pageInfo = '<div class="page-number-bottom">1/1</div>';
+    $(win.document.body).append(pageInfo);
+    
+  }
+}],
       "lengthMenu": [ [25, 50, 100, -1], [25, 50, 100, "Tümü"] ],
      "initComplete": function(settings, json) {
           var topContainer = $('#datatableCustomer_wrapper .top');
@@ -518,8 +638,16 @@ $(document).ready(function(){
   $('#citySelect').change(function(){
     table.draw();        
   });
+ // Yazdır butonu click event'i - DataTables'ın kendi print fonksiyonunu tetikle
+$('#printCustomers').on('click', function() {
+  table.button('.buttons-print').trigger();
+});
+
+
 
 });
+
+
 </script>
 
 <script>
@@ -565,5 +693,6 @@ $(document).ready(function(){
       });
     });
   </script>
+  
 
 @endsection
