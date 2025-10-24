@@ -1,10 +1,4 @@
-<div class="row mt-3 mb-2">
-  <div class="col-12">
-    <div class=" d-sm-flex align-items-center justify-content-between">
-      <h4 class="mb-sm-0 fw-bold text-gray border-bottom pb-2" style="font-size: 15px;">Tedarikçiler</h4>
-    </div>
-  </div>
-</div>
+
         <div id="stokTedarikcileri">
           <table id="datatableStockSupplier" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
             <a  class="btn btn-success btn-sm mb-1 addStockSupplier" data-bs-toggle="modal" data-bs-target="#addStockSupplierModal"><i class="fas fa-plus"></i><span>Stok Tedarikçisi Ekle</span></a>

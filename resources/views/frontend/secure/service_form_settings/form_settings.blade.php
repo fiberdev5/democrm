@@ -1,10 +1,4 @@
-<div class="row mt-3 mb-2">
-  <div class="col-12">
-    <div class=" d-sm-flex align-items-center justify-content-between">
-      <h4 class="mb-sm-0 fw-bold text-gray border-bottom pb-2" style="font-size: 15px;">Servis Form Ayarları</h4>
-    </div>
-  </div>
-</div>
+
         <form id="serviceFormSettings" method="post" action="{{ route('update.service.form.settings',$firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate style="width: 50%;">
           @csrf
           <input type="hidden" name="id" value="{{ $ayar->id ?? '' }}">

@@ -54,7 +54,7 @@
         }
 
         .kasaSubMenu .dropdown-item.active {
-            background-color: #007bff;
+            background-color: #212529;
             color: #fff;
         }
 

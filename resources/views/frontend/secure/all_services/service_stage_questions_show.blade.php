@@ -1,12 +1,15 @@
-{{-- Normal Servis Formu --}}
+
 <form method="post" id="servisPlanKaydet" action="{{ route('save.service.plan', $firma->id) }}" class="col-sm-6" style="margin: 0 auto;padding:10px;">
     @csrf
     @foreach($stage_questions as $stage)
-        {{-- Her bir aşama için yeni bir satır ve sütun başlangıcı --}}
-        <div class="row form-group">
-            <div class="col-lg-12">
-                <label>{{ $stage->soru }}</label>
-                {{-- Parça (Personel Stoğu) Bölümü --}}
+        <div class="row form-group align-items-center custom-service-border">
+
+            <div class="col-lg-4 col-6 custom-p-r-min">
+                <label style="margin-bottom: 0;">{{ $stage->soru }}</label>
+            </div>
+
+
+            <div class="col-lg-8 col-6 custom-p-min">
                 @if($stage->cevapTuru == "[Parca]")
                     <input id="urunAraInput_stok" type="text" class="form-control urunAraInput" autocomplete="off" placeholder="Ürün adı veya kodu">
                     <div class="parcalar-dropdown myParcaList" style="width:100%">
@@ -49,6 +52,7 @@
                     </div> {{-- .parcalar-dropdown --}}
                     <input type="hidden" name="soru[{{ $stage->id }}]" class="form-control" value="Parca"/>
                   
+
 @elseif($stage->cevapTuru == "[Konsinye Cihaz]")
     <input id="urunAraInput_konsinye" type="text" class="form-control urunAraInput" autocomplete="off" placeholder="Konsinye cihaz adı veya kodu">
     <div class="konsinye-dropdown myKonsinyeList" style="width:100%">
@@ -175,22 +179,81 @@
                                                 ->orderBy('name', 'asc')
                                                 ->get();
                             @endphp
+
                             <select class="form-control" name="soru[{{ $stage->id }}]" required>
                                 <option value="">-Seçiniz-</option>
-                                @foreach($bayiler as $bayi)
-                                    <option value="{{ $bayi->user_id }}">{{ $bayi->name }}</option>
+                                @foreach($personeller as $personel)
+                                    <option value="{{ $personel->user_id }}">{{ $personel->name }}</option>
                                 @endforeach
                             </select>
+                        @else
+                            <p>Bu gruba ait personel bulunamadı.</p>
                         @endif
-                    </div> {{-- .col-lg-8 --}}
+
+                    @elseif($stage->cevapTuru == "[Tarih]")
+                        @php
+                            $bugun = date('w');
+                            $date = ($bugun == 6)
+                                ? date('Y-m-d', strtotime('+2 days'))
+                                : date('Y-m-d', strtotime('+1 day'));
+                        @endphp
+                        <input type="date" name="soru[{{ $stage->id }}]" class="form-control datepicker" value="{{ $date }}" style="background:#fff;" required>
+                    
+                    @elseif($stage->cevapTuru == "[Saat]")
+                        @php
+                            $hours = [
+                                "08:00-10:00", "09:00-11:00", "10:00-12:00", "11:00-13:00", "12:00-14:00", 
+                                "13:00-15:00", "14:00-16:00", "15:00-17:00", "16:00-18:00", "17:00-19:00", 
+                                "18:00-20:00", "19:00-21:00", "20:00-22:00", "21:00-23:00"
+                            ];
+                        @endphp
+                        <select class="form-control" name="soru[{{ $stage->id }}]" required>
+                            <option value="">-Seçiniz-</option>
+                            @foreach($hours as $hour)
+                                <option value="{{ $hour }}">{{ $hour }}</option>
+                            @endforeach
+                        </select>
+                    
+                    @elseif($stage->cevapTuru == "[Arac]")
+                        <select class="form-control" name="soru[{{ $stage->id }}]" required>
+                            <option value="">-Seçiniz-</option>
+                            @foreach($araclar as $arac)
+                                <option value="{{ $arac->id }}">{{ $arac->arac }}</option>
+                            @endforeach
+                        </select>
+                    
+                    @elseif($stage->cevapTuru == "[Fiyat]")
+                        <input type="number" name="soru[{{ $stage->id }}]" class="form-control" autocomplete="off" required/>
+                    
+                    @elseif($stage->cevapTuru == "[Teklif]")
+                        <input type="number" name="soru[{{ $stage->id }}]" class="form-control" autocomplete="off" required/>
+                        <span style="font-size: 12px; color: red; font-weight: 500; margin: 0; padding: 0;display: block;">Bu alan sadece teklif vermek için kullanılır.</span>
+                    
+                    @elseif($stage->cevapTuru == "[Bayi]")
+                        @php
+                            $bayiler = App\Models\User::where('tenant_id', $firma->id)
+                                            ->where('status', '1')
+                                            ->whereHas('roles', function($query) {
+                                                $query->whereIn('name', ['Bayi']);
+                                            })
+                                            ->orderBy('name', 'asc')
+                                            ->get();
+                        @endphp
+                        <select class="form-control" name="soru[{{ $stage->id }}]" required>
+                            <option value="">-Seçiniz-</option>
+                            @foreach($bayiler as $bayi)
+                                <option value="{{ $bayi->user_id }}">{{ $bayi->name }}</option>
+                            @endforeach
+                        </select>
+                    @endif
                 @endif {{-- $stage->cevapTuru ifadesinin kapanışı --}}
-            </div> {{-- .col-lg-12 --}}
+            </div> {{-- .col-lg-8 --}}
         </div> {{-- .row form-group --}}
     @endforeach {{-- stage_questions foreach --}}
 
     {{-- Formun diğer kısımları (servis, gelenIslem, gidenIslem, vb.) --}}
     <div class="row">
-        <div class="col-lg-12" style="text-align: center;margin-top: 2px;">
+        <div class="col-lg-12" style="text-align: center;margin-top: 5px;">
             <input type="hidden" name="servis" class="servisid" value="{{ $service_id->id }}"/>
             <input type="hidden" name="gelenIslem" value="{{ json_encode($islem) }}"/>
             <input type="hidden" name="gidenIslem" value="{{ $stage_id->id }}"/>

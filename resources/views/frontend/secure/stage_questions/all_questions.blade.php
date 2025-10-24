@@ -1,10 +1,4 @@
-<div class="row mt-3 mb-2">
-  <div class="col-12">
-    <div class=" d-sm-flex align-items-center justify-content-between">
-      <h4 class="mb-sm-0 fw-bold text-gray border-bottom pb-2" style="font-size: 15px;">Servis Aşama Soruları</h4>
-    </div>
-  </div>
-</div>
+
     <div  id="servisAsamaSoru">
       <a  class="btn btn-success btn-sm mb-2 addStageQuestion" data-bs-toggle="modal" data-bs-target="#addStageQuestionModal"><i class="fas fa-plus"></i><span>Servis Aşama Sorusu Ekle</span></a>
 
@@ -20,7 +14,7 @@
         <button class="accordion-button {{ $loop->first ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" 
           data-bs-target="#collapse{{ $stage->id }}" aria-expanded="{{ $loop->first ? 'true' : 'false' }}" 
           aria-controls="collapse{{ $stage->id }}">
-          <strong>{{ $loop->iteration }}. {{ $stage->asama }}</strong>
+          {{ $loop->iteration }}. {{ $stage->asama }}
           {{-- <span class="badge bg-success ms-2">Tamamlandı</span> --}}
         </button>
       </h2>
@@ -35,13 +29,12 @@
                     
                     <th style="width: 40%">Soru</th>
                     <th style="width: 40%">Cevap Formatı</th>
-                    <th style="width: 15%">İşlemler</th>
+                    <th style="width: 6%">İşlemler</th>
                   </tr>
                 </thead>
                 <tbody>
                   @foreach($groupedQuestions[$stage->id] as $question)
-                    <tr>
-                      
+                    <tr>                      
                       <td style="padding-left: 2px;">{{ $question->soru }}</td>
                       <td style="padding-left: 2px;">
                         @php
@@ -73,7 +66,7 @@
                           }
                         @endphp
                       </td>
-                      <td style="padding-left: 2px;">
+                      <td class="d-flex justify-content-center gap-1">
                         <a href="javascript:void(0);" data-bs-id="{{ $question->id }}" 
                            class="btn btn-outline-warning btn-sm editStageQuestion" 
                            data-bs-toggle="modal" data-bs-target="#editStageQuestionModal" 

@@ -81,9 +81,9 @@
       <div class="card-body ">
         <div class="row form-group head">
           <div class="col-5 rw1 col-form-label"><label>Cinsi</label></div>
-          <div class="col-2 rw1 col-form-label"><label>Miktar</label></div>
-          <div class="col-2 rw1 col-form-label"><label>Fiyat</label></div>
-          <div class="col-3 rw1 col-form-label"><label>Tutar</label></div>
+          <div class="col-2 rw1 col-form-label custom-padding-offer"><label>Miktar</label></div>
+          <div class="col-2 rw1 col-form-label custom-padding-offer"><label>Fiyat</label></div>
+          <div class="col-3 rw1 col-form-label custom-padding-offer"><label>Tutar</label></div>
         </div>
   
         <div class="satirBody">
@@ -134,18 +134,18 @@
         <div class="card-body card-offer-body">
           <div class="row form-group">
             <div class="col-md-4 rw1 col-form-label"><label>Toplam</label></div>
-            <div class="col-md-8 m-p rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam"></div>
+            <div class="col-md-8 custom-rw2 m-p rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam"></div>
           </div>
           
           <div class="row form-group">
-            <div class="col-md-4 rw1 col-form-label"><label>KDV</label></div>
-              <div class="col-md-2 m-p rw2 col-form-label col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20"></div>
-              <div class="col-md-6 m-p rw2 col-form-label col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv"></div>
+            <div class="col-md-1 rw1 col-form-label"><label>KDV</label></div>
+              <div class="col-md-3 m-p rw2 col-form-label col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20"></div>
+              <div class="col-md-8 custom-rw2 m-p rw2 col-form-label col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv"></div>
             </div>
   
             <div class="row form-group" style="padding-bottom: 0">
               <div class="col-md-4 m-p rw1 col-form-label"><label>Genel Toplam</label></div>
-              <div class="col-md-8 rw2 m-p col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam"></div>
+              <div class="col-md-8 rw2 custom-rw2 m-p col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam"></div>
             </div>
           </div>
         </div>

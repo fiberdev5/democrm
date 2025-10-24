@@ -18,7 +18,7 @@ p {font-size: 0.85rem;}
   border-radius: 20px;
   box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
   overflow: hidden;
-  max-width: 420px;
+  max-width: 400px;
   width: 100%;
   min-height: auto;
   padding: 0px;
@@ -279,6 +279,7 @@ p {font-size: 0.85rem;}
             background: #f8f9fa;
             border-radius: 8px;
             padding: 8px 12px;
+            padding-right: 0px !important;
             margin-top: 8px;
             font-size: 0.82rem;
             color: #6c757d;
@@ -537,6 +538,10 @@ p {font-size: 0.85rem;}
         transform: scale(0.9);
         transform-origin: center;
     }
+    .main-container {
+
+  padding: 0px;
+}
 }
 
 /* Alternatif: Tüm form elemanlarını container genişliğine sığdır */

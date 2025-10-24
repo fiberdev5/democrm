@@ -128,6 +128,9 @@ public function AllStocks($tenant_id, Request $request)
         // DataTables
         return DataTables::of($query)
             ->addIndexColumn()
+            ->addColumn('id', function($row) {
+                return '<a href="javascript:void(0);" class="t-link editStock" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editStockModal">' . e($row->id) . '</a>';
+            })
             ->addColumn('urunKodu', function($row) {
                 return '<a href="javascript:void(0);" class="t-link editStock" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editStockModal">' . e($row->urunKodu) . '</a>';
             })
@@ -182,7 +185,7 @@ public function AllStocks($tenant_id, Request $request)
                 }
 
             })
-            ->rawColumns(['urunKodu', 'urunAdi', 'adet', 'toplamTutar', 'raf_adi', 'marka_cihaz', 'created_at', 'action'])
+            ->rawColumns(['id','urunKodu', 'urunAdi', 'adet', 'toplamTutar', 'raf_adi', 'marka_cihaz', 'created_at', 'action'])
             ->with([
                 'toplamAdet' => number_format($toplamAdet),
                 'toplamFiyat' => number_format($toplamFiyat, 2, ',', '.') . ' ₺',
@@ -1286,6 +1289,9 @@ public function consignmentDeviceData(Request $request, $tenant_id)
 
     return DataTables::of($query)
         ->addIndexColumn()
+        ->addColumn('id', function($row) {
+            return '<a href="javascript:void(0);" class="t-link editConsignment" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editConsignmentModal">' . e($row->id) . '</a>';
+        })
         ->addColumn('urunKodu', function($row) {
             return '<a href="javascript:void(0);" class="t-link editConsignment" data-bs-id="'.$row->id.'" data-bs-toggle="modal" data-bs-target="#editConsignmentModal">' . e($row->urunKodu) . '</a>';
         })
@@ -1337,7 +1343,7 @@ public function consignmentDeviceData(Request $request, $tenant_id)
                 });
             }
         })
-        ->rawColumns(['urunKodu', 'urunAdi', 'adet', 'toplamTutar', 'raf_adi', 'marka_cihaz', 'created_at', 'action'])
+        ->rawColumns(['id','urunKodu', 'urunAdi', 'adet', 'toplamTutar', 'raf_adi', 'marka_cihaz', 'created_at', 'action'])
         ->with([
             'toplamAdet' => number_format($toplamAdet),
             'toplamFiyat' => number_format($toplamFiyat, 2, ',', '.') . ' ₺',

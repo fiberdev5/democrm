@@ -24,22 +24,22 @@
   }
 </style>
 <div class="row wrap">
-  <div class="col-lg-4 sol">
+  <div class="col-lg-3 custom-service-r sol">
     <div id="planlamaSearch" class="collapse show">
       <div class="card" style="margin-bottom:0!important;">
-        <div class="card-header" style="padding: 5px!important;">
-          <div class="card-body" style="padding: 5px!important;">
+        <div class="card-header" style="padding:0px 5px!important;">
+          <div class="card-body" style="padding:0px 5px!important;">
           <form id="filterForm">
             <div class="row form-group">
               <div class="col-md-4 rw1"><label>Tarih</label></div>
-              <div class="col-md-8 rw2">
+              <div class="col-md-8  custom-p-min rw2">
                 <input type="date" class="form-control datepicker planTarih" value="{{ $tomorrow }}" style="background:#fff">
               </div>
             </div>
 
             <div class="row form-group">
               <div class="col-md-4 rw1"><label>İl Seç</label></div>
-              <div class="col-md-8 rw2">
+              <div class="col-md-8 custom-p-min  rw2">
                 <select class="form-control il" id="il">
                   @foreach ($iller as $item)
                     <option value="{{$item->id}}" {{ $item->id == 34 ? 'selected' : '' }}>{{$item->name}}</option>
@@ -50,7 +50,7 @@
 
             <div class="row form-group">
               <div class="col-md-4 rw1"><label>Bölgeler</label></div>
-              <div class="col-md-8 rw2">
+              <div class="col-md-8  custom-p-min rw2">
                 <select class="form-control bolgeler" id="ilce" multiple style="height: 155px">
                   <option value="0" selected>HEPSİ</option>
                 </select>
@@ -59,7 +59,7 @@
 
             <div class="row form-group">
               <div class="col-md-4 rw1"><label>Cihazlar</label></div>
-              <div class="col-md-8 rw2">
+              <div class="col-md-8  custom-p-min rw2">
                 <select class="form-control cihazlar" multiple style="height: 155px">
                   <option value="0" selected>HEPSİ</option>
                   @foreach($deviceTypes as $device)
@@ -71,7 +71,7 @@
 
             <div class="row form-group">
               <div class="col-md-4 rw1"><label>Kaynaklar</label></div>
-              <div class="col-md-8 rw2">
+              <div class="col-md-8 rw2  custom-p-min">
                 <select class="form-control kaynaklar" multiple style="height: 100px">
                   <option value="0" selected>HEPSİ</option>
                   @foreach($serviceSources as $source)
@@ -83,7 +83,7 @@
 
             <div class="row form-group">
               <div class="col-md-4 rw1"><label>Durumlar</label></div>
-              <div class="col-md-8 rw2">
+              <div class="col-md-8 custom-p-min rw2">
                 <select class="form-control durumlar">
                   <option value="240">Atölyeye Aldır (Nakliye Gönder)</option>
                   <option value="264">Bayiye Gönder</option>
@@ -99,7 +99,7 @@
               </div>
             </div>
 
-            <div class="col-md-12" style="padding: 0 5px">
+            <div class="col-md-12">
               <input type="submit" class="btn btn-block btn-primary btn-sm servisPlanListele" style="width:100%;" value="Listele">
             </div>
           </form>
@@ -109,7 +109,7 @@
     </div>
   </div>
 
-  <div class="col-lg-8 sag">
+  <div class="col-lg-9 sag">
     <div class="card" style="margin-bottom: 0!important;">
       <div class="servisListe" style="padding: 0">
         <!-- Service list will be loaded here -->

@@ -290,6 +290,7 @@
                 $('[data-fancybox="gallery"]').fancybox();
             }
 
+
             // Fotoğraf silme
             $(document).on('click', '.servisFotoSil', function(e) {
         e.preventDefault();
@@ -302,6 +303,7 @@
         // Zaten işlem yapılıyorsa çık
         if ($button.prop('disabled') || $button.hasClass('deleting')) {
             return false;
+
         }
         
         // İşlem bayrağı ekle
@@ -310,8 +312,7 @@
         if (!confirm('Bu fotoğrafı silmek istediğinizden emin misiniz?')) {
             $button.removeClass('deleting'); // Bayrağı kaldır
             return false;
-
-        }
+}
 
         const photoId = $(this).data('id');
         const $photoItem = $(this).closest('.col-md-2, .col-sm-6');

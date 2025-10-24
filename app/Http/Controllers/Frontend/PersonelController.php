@@ -98,7 +98,7 @@ class PersonelController extends Controller
                 })
                 ->addColumn('grup', function($row){
                     foreach($row->roles as $role){
-                        return '<a class="t-link editPersonel" href="javascript:void(0);" data-bs-id="'.$row->user_id.'" data-bs-toggle="modal" data-bs-target="#editPersonelModal"><div class="mobileTitle">P. Grubu:</div><span class="badge badge-pill bg-danger">'.$role->name.'</span></div></a>';
+                        return '<a class="t-link editPersonel" href="javascript:void(0);" data-bs-id="'.$row->user_id.'" data-bs-toggle="modal" data-bs-target="#editPersonelModal"><div class="mobileTitle">P. Grubu:</div><span class="badge badge-pill bg-danger badge-size-custom">'.$role->name.'</span></div></a>';
                     }          
                 })
                 ->addColumn('tel', function($row){     

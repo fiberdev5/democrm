@@ -18,8 +18,7 @@
               <th style="padding: 5px 10px;font-size: 12px;">Tarih</th>
               <th style="padding: 5px 10px;font-size: 12px;">İşlemi Yapan</th>
               <th style="padding: 5px 10px;font-size: 12px;">Açıklama</th>
-              <th style="padding: 5px 10px;font-size: 12px;"></th>
-              <th style="padding: 5px 10px;font-size: 12px;"></th>
+               <th colspan="2" class="text-end" style="padding: 5px 10px;font-size: 12px;"></th>
             </tr>
           </thead>
           <tbody>
@@ -34,17 +33,26 @@
                 <td style="vertical-align: middle;font-size: 11px; padding: 0 10px;">
                   <strong>{{ $item->aciklama }}</strong>
                 </td>
-                @if($item->pid == auth()->user()->user_id)
-                  <td style="vertical-align: middle;width: 55px;padding: 0 10px;">
-                    <a href="#" style="font-size: 11px;" class="btn btn-primary btn-sm optNotuDuzenle" data-bs-id="{{ $item->id }}">Düzenle</a>
-                  </td>
-                  <td style="vertical-align: middle;width: 55px;padding: 0 10px;">
-                    <a href="#" style="font-size: 11px;" class="btn btn-danger btn-sm optNotuSil" data-id="{{ $item->id }}">Sil</a>
-                  </td>
-                @else
-                  <td style="vertical-align: middle;width: 55px;padding: 0 10px;font-size:11px;">Yetkiniz Yok</td>
-                  <td style="vertical-align: middle;width: 55px;padding: 0 10px;font-size:11px;">Yetkiniz Yok</td>
-                @endif                                   
+                 <td colspan="2" style="vertical-align: middle; padding: 0 10px;">
+          @if($item->pid == auth()->user()->user_id)
+            <div class="d-flex justify-content-end gap-2">
+                {{-- Düzenle Butonu (İkon) --}}
+                <a href="#" style="padding: 6px 6px;color:#e39d23" class="btn btn-outline-warning btn-sm optNotuDuzenle" 
+                   data-bs-id="{{ $item->id }}" title="Düzenle">
+                    <i class="fas fa-edit"></i>
+                </a>
+                {{-- Sil Butonu (İkon) --}}
+                <a style="padding: 6px 7px;" href="#" class="btn btn-outline-danger btn-sm optNotuSil" 
+                   data-id="{{ $item->id }}" title="Sil">
+                    <i class="fas fa-trash-alt"></i>
+                </a>
+            </div>
+          @else
+            <div class="text-end">
+                <span style="font-size:11px; color: #6c757d;">Yetkiniz Yok</span>
+            </div>
+          @endif                                   
+        </td>                                  
               </tr>
             @endforeach
           </tbody>

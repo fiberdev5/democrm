@@ -7,11 +7,11 @@
 
 @media (min-width: 768px) {
   .custom-modal-width {
-    max-width: 330px;
+    max-width: 360px;
     margin: 1.75rem auto;
   }
   .custom-modal-width-edit{
-    max-width: 365px;
+    max-width: 463px;
     margin: 1.75rem auto;
   }
   .searchWrap .dropdown-menu{

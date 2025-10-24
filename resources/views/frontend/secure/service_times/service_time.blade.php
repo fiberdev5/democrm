@@ -1,17 +1,17 @@
 <div class="row mt-3 mb-2">
   <div class="col-12">
-    <div class=" d-sm-flex align-items-center justify-content-between">
-      <h4 class="mb-sm-0 fw-bold text-gray border-bottom pb-2" style="font-size: 15px;">Servis Görüntüleme Zamanı</h4>
+    <div class=" d-sm-flex align-items-center justify-content-center">
+      <h4 class="mb-sm-0 fw-bold text-gray pb-2" style="font-size: 19px;">Servis Görüntüleme Zamanı</h4>
     </div>
   </div>
 </div>
     
-
+<div class="d-flex justify-content-center align-items-center w-100">
         <form id="serviceTime" method="post" action="{{ route('update.service.time',$firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate style="width: 20%;">
           @csrf
           <input type="hidden" name="id" value="{{ $service_time ? $service_time->id : '' }}">
 
-          <div class="row mb-3">
+          <div class="row mb-3 border-bottom custom-border-bottom mb-1">
             <label for="hour" class="col-sm-4">Saat:</label>
             <div class="col-sm-8">
               <select id="hour" name="hour" class="form-select" required>
@@ -22,7 +22,7 @@
               </select>
             </div>
           </div>
-          <div class="row mb-3">
+          <div class="row mb-3 border-bottom custom-border-bottom mb-1">
             <label for="hour" class="col-sm-4">Dakika:</label>
             <div class="col-sm-8">
               <select id="minute" name="minute" class="form-select" required>
@@ -33,7 +33,7 @@
               </select>
             </div>
           </div>
-          <div class="row">
+          <div class="row mt-2">
             <label class="col-sm-4 col-form-label"></label>
             <div class="col-sm-8">
               <input type="submit" class="btn btn-info btn-sm waves-effect waves-light" value="Kaydet">
@@ -41,7 +41,7 @@
           </div>
         </form>
 
-  
+  </div>
 
 <script>
   $(document).ready(function () {

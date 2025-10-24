@@ -237,27 +237,27 @@
         <div class="card-body card-invoices-body" style="padding:17px 5px">
           <div class="row form-group">
             <div class="col-md-4 rw1"><label>Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" value="{{$invoice_id->toplam}}" autocomplete="off" class="form-control toplam" required></div>
+            <div class="col-md-8 rw2 custom-rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" value="{{$invoice_id->toplam}}" autocomplete="off" class="form-control toplam" required></div>
           </div>
 
           <div class="row form-group">
             <div class="col-md-4 rw1"><label>İndirim</label></div>
-            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" value="{{$invoice_id->indirim}}" autocomplete="off" class="form-control indirim"></div>
+            <div class="col-md-8 rw2 custom-rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" value="{{$invoice_id->indirim}}" autocomplete="off" class="form-control indirim"></div>
           </div>
           <div class="row form-group">
             <div class="col-md-4 rw1"><label>Ara Toplam</label></div>
-            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" value="{{$invoice_id->toplam-$invoice_id->indirim}}.00" autocomplete="off" class="form-control araToplam"></div>
+            <div class="col-md-8 rw2 custom-rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" value="{{$invoice_id->toplam-$invoice_id->indirim}}.00" autocomplete="off" class="form-control araToplam"></div>
           </div>
 
           <div class="row form-group">
-            <div class="col-md-4 rw1"><label>KDV %</label></div>
-            <div class="col-md-3 rw2 col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20"></div>
-            <div class="col-md-5 rw2 col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="{{$invoice_id->kdv}}"></div>
+            <div class="col-md-2 rw1"><label>KDV %</label></div>
+            <div class="col-md-2 rw2 col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20"></div>
+            <div class="col-md-8 rw2 custom-rw2 col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="{{$invoice_id->kdv}}"></div>
           </div>
 
           <div class="row form-group" style="padding-bottom: 0">
             <div class="col-md-4 rw1"><label>Genel Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" value="{{$invoice_id->genelToplam}}" autocomplete="off" class="form-control genelToplam" required></div>
+            <div class="col-md-8 rw2 custom-rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" value="{{$invoice_id->genelToplam}}" autocomplete="off" class="form-control genelToplam" required></div>
           </div>
 
         </div>

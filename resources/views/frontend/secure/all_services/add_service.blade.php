@@ -11,9 +11,14 @@
               padding: 7px 10px !important;
     border-bottom: 1px solid rgba(0, 0, 0, .12);
     }
-    #addServiceModal .form-group {
+    .custom-padding-bottom{padding-bottom: 0px !important;
+    padding-top: 10px !important;}
+.custom-padding-bottom{padding-top: 15px !important;
+    padding-bottom: 6px !important;}
+        
+    /*#addServiceModal .form-group {
     border-bottom: 1px solid #e4e7ed !important;
-}
+}*/
 @media (max-width: 767px) {
   .row1{
     margin-right:0px !important ;
@@ -47,7 +52,7 @@
           <div class="col-sm-6 c1">
             <label style="text-align: left;width: auto;display: inline-block;margin: 0;">Kayıt Tarihi: </label>
             <input type="text" class="form-control" disabled value="{{ date('d/m/Y H:i') }}" style="width: 120px;display: inline-block;">
-            <label class="servisAcilLabel servisAcilBtn" style="user-select: none;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;-webkit-touch-callout: none;position: relative;margin: 0; color: #fff; background: #343a40; border: 1px solid #212529;padding: 0 5px;border-radius: 3px;height: 25px;top: 1px;line-height: 25px;">
+            <label class="servisAcilLabel servisAcilBtn" style="user-select: none;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;-webkit-touch-callout: none;position: relative;margin: 0; color: #fff; background: #343a40; border: 1px solid #212529;padding: 0 5px;border-radius: 3px;height: 24px;top: 1px;line-height: 24px;">
               <span>Acil</span>
               <input type="checkbox" style="display: none;">
               <div class="checkmark"><i class="fas fa-check"></i></div>
@@ -57,7 +62,7 @@
 
           <div class="col-sm-6 c2" style="text-align: right;">
             <label style="text-align: left;width: auto;display: inline-block;margin: 0;">Servis Kaynağı: </label>
-            <select class="form-control form-select servisReso" name="servisReso" style="width: 90px; display: inline-block;" required>
+            <select class="form-control form-select servisReso" name="servisReso" style="width: 152px; display: inline-block;" required>
               <option value="">Seçiniz</option>
               @foreach($service_resources as $item)
                 <option value="{{ $item->id }}">{{ $item->kaynak }}</option>
@@ -76,7 +81,7 @@
             <input type="hidden" name="eskiMusteriId" class="eskiMusteriId">
             <div class="clearfix"></div>
           </div>
-          <div class="card-body">
+          <div class="card-body custom-padding-bottom">
             <div class="row form-group ">
               <div class="col-md-4 rw1"><label>Müşteri Tipi <span style="font-weight: bold; color: red;">*</span></label></div>
                 <div class="col-md-8 rw2">
@@ -125,10 +130,10 @@
                 </div>
                 <div class="row form-group" id="vergiBox" style="border: 0;margin-bottom: 0">
                   <div class="col-md-4 rw1"><label>Vergi No/Dairesi</label></div>
-                  <div class="col-md-4 rw2">
+                  <div class="col-md-4 col-6 rw2">
                     <input type="number" name="vergiNo" id="vergiNo" class="form-control vergiNo" placeholder="Vergi No" autocomplete="off">
                   </div>
-                  <div class="col-md-4 rw2">
+                  <div class="col-md-4 col-6 rw2">
                     <input type="text" name="vergiDairesi" class="form-control buyukYaz vergiDairesi" style="text-transform: uppercase;" placeholder="Vergi Dairesi" autocomplete="off">
                   </div>
                 </div>
@@ -138,7 +143,7 @@
           <div class="col-sm-6 c2">
             <div class="card" style="margin-bottom: 5px;">
               <div class="card-header" style="font-size:13px;">CİHAZ BİLGİSİ</div>
-              <div class="card-body">
+              <div class="card-body custom-padding-bottom">
                 <div class="row form-group ">
                   <div class="col-md-4 rw1"><label>Cihaz Markası <span style="font-weight: bold; color: red;">*</span></label></div>
                   <div class="col-md-8">
@@ -193,7 +198,7 @@
             </div>
 
             <div class="card b1" style="margin-top: 5px;">
-              <div class="card-body">
+              <div class="card-body custom-padding-time">
                 <div class="row form-group" style="border: 0;padding-bottom: 0;margin-bottom: 0">
                   <div class="col-md-4 rw1"><label>Müsait Zamanı</label></div>
                   <div class="col-md-8 " style="display: flex; gap: 5px; align-items: center;">
@@ -435,7 +440,9 @@ $(document).ready(function () {
         $('#result').html('');
         
         if (!customers || customers.length === 0) {
+
             // $('#result').html('<li class="list-group-item text-muted">Müşteri bulunamadı</li>');
+
             return;
         }
         

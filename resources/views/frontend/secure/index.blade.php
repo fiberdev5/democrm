@@ -566,20 +566,20 @@
     <div class="service-summary">
         <h5><i class="fas fa-chart-bar"></i> Servis Sayıları</h5>
         <div class="row custom-padding">
-            <div class="col-md-4">
-                <a href="#" class="service-item today" id="todayServicesCard">
+            <div class="col-md-4 main-card-padding-l">
+                <a href="#" class="service-item today index-color" id="todayServicesCard">
                     <div class="service-count" id="todayServices">-</div>
                     <div>BUGÜN Alınan Servis Sayısı</div>
                 </a>
             </div>
             <div class="col-md-4">
-                <a href="#" class="service-item yesterday" id="todayCancelledCard">
+                <a href="#" class="service-item yesterday index-color" id="todayCancelledCard">
                     <div class="service-count" id="todayCancelledServices">-</div>
                     <div>BUGÜN İptal Edilen Servisler</div>
                 </a>
             </div>
-            <div class="col-md-4">
-                <a href="#" class="service-item in-process" id="todayInProcessCard">
+            <div class="col-md-4 main-card-padding-r">
+                <a href="#" class="service-item in-process index-color" id="todayInProcessCard">
                     <div class="service-count" id="todayInProcessServices">-</div>
                     <div>BUGÜN İşlemde Olan Servisler</div>
                 </a>

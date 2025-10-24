@@ -137,18 +137,18 @@
         <div class="card-body card-offer-body">
           <div class="row form-group">
             <div class="col-md-4 rw1 col-form-label"><label>Toplam</label></div>
-            <div class="col-md-8 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" value="{{$offer_id->toplam}}" name="toplam" autocomplete="off" class="form-control toplam"></div>
+            <div class="col-md-8 rw2 custom-rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" value="{{$offer_id->toplam}}" name="toplam" autocomplete="off" class="form-control toplam"></div>
           </div>
           
           <div class="row form-group">
-            <div class="col-md-4 rw1 col-form-label"><label>KDV</label></div>
+            <div class="col-md-1 rw1 col-form-label"><label>KDV</label></div>
             <div class="col-md-3 rw2 col-form-label col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="{{$offer_id->kdv}}"></div>
-            <div class="col-md-5 rw2 col-form-label col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="{{$offer_id->kdvTutar}}"></div>
+            <div class="col-md-8 rw2 custom-rw2 col-form-label col-6"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="{{$offer_id->kdvTutar}}"></div>
           </div>
   
           <div class="row form-group" style="padding-bottom: 0">
             <div class="col-md-4 rw1 col-form-label"><label>Genel Toplam</label></div>
-            <div class="col-md-8 rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" value="{{$offer_id->genelToplam}}" autocomplete="off" class="form-control genelToplam"></div>
+            <div class="col-md-8 rw2 custom-rw2 col-form-label"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" value="{{$offer_id->genelToplam}}" autocomplete="off" class="form-control genelToplam"></div>
           </div>
         </div>
       </div>
