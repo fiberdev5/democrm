@@ -143,47 +143,41 @@
             </div>
             <div class="card-body">
               @if(auth()->user()->can('Tüm Servisleri Görebilir'))
-                <div class="action-buttons-container ">
-                  <div class="col-4">
-                    <a class="btn btn-success btn-sm addService" data-bs-toggle="modal" data-bs-target="#addServiceModal"><i
-                        class="fas fa-plus"></i><span class="d-inline d-md-none">Ekle</span><span
-                        class="d-none d-md-inline">Servis Ekle</span></a>
+               <div class="action-buttons-container">
+                  <div class="col-3">
+                    <a class="btn btn-success btn-sm addService" data-bs-toggle="modal" data-bs-target="#addServiceModal">
+                      <i class="fas fa-plus"></i><span class="d-inline d-md-none">Ekle</span><span class="d-none d-md-inline">Servis Ekle</span>
+                    </a>
                   </div>
-                  <div class="col-4">
-                    <a type="button" class="btn btn-success btn-sm gelenCagriButon" data-bs-toggle="modal"
-                      data-bs-target="#gelenCagriModal">
+                  
+                  <div class="col-3">
+                    <a type="button" class="btn btn-success btn-sm gelenCagriButon" data-bs-toggle="modal" data-bs-target="#gelenCagriModal">
                       <div class="text">
-                        <!-- Mobilde görünecek ikon -->
-                        <i class="fas fa-headset d-inline d-md-none" data-toggle="tooltip"
-                          title="Gereksiz çağrıları kaydetmek için kullanılır."></i>
+                        <i class="fas fa-headset d-inline d-md-none" data-toggle="tooltip" title="Gereksiz çağrıları kaydetmek için kullanılır."></i>
                         <span class="d-inline d-md-none">Çağrılar</span>
                         <span class="d-none d-md-inline">Gelen Çağrılar</span>
-
-                        
-
-                        <!-- Masaüstünde görünecek ikon -->
-                        <i class="fas fa-info-circle d-none d-md-inline" data-toggle="tooltip"
-                          title="Gereksiz çağrıları kaydetmek için kullanılır."></i>
+                        <i class="fas fa-info-circle d-none d-md-inline" data-toggle="tooltip" title="Gereksiz çağrıları kaydetmek için kullanılır."></i>
                       </div>
                     </a>
                   </div>
 
-                  <div class="col-4">
+                  <div class="col-3">
                     <button type="button" class="btn btn-danger btn-sm servisPlanlaBtn">
                       <div class="text">
-                         <i class="fas fa-location-arrow d-inline d-md-none" data-toggle="tooltip"
-                          title="Toplu servis yönlendirmeleri yapmak için kullanılır."></i>
+                        <i class="fas fa-location-arrow d-inline d-md-none" data-toggle="tooltip" title="Toplu servis yönlendirmeleri yapmak için kullanılır."></i>
                         <span class="d-inline d-md-none">Planlama</span>
                         <span class="d-none d-md-inline">Servis Planlama</span>
-
-                        <!-- Mobilde farklı ikon -->
-                       
-
-                        <!-- Masaüstünde aynı ikon -->
-                        <i class="fas fa-info-circle d-none d-md-inline" data-toggle="tooltip"
-                          title="Toplu servis yönlendirmeleri yapmak için kullanılır."></i>
+                        <i class="fas fa-info-circle d-none d-md-inline" data-toggle="tooltip" title="Toplu servis yönlendirmeleri yapmak için kullanılır."></i>
                       </div>
                     </button>
+                  </div>
+                  
+                  <div class="col-3">
+                    <a href="javascript:void(0);" class="btn btn-warning btn-sm printServices">
+                      <i class="fas fa-print d-inline d-md-none"></i>
+                      <span class="d-inline d-md-none">Yazdır</span>
+                      <span class="d-none d-md-inline"><i class="fas fa-print"></i> Yazdır</span>
+                    </a>
                   </div>
                 </div>
                 {{-- Raporlar, Anketler, Primler butonları taşındı--}}
@@ -1230,7 +1224,96 @@
             }
           }
         },
-        dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+        dom: 'B<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+        buttons: [{
+        extend: 'print',
+        text: 'Yazdır',
+        autoPrint: true,
+        exportOptions: {
+          columns: [0, 1, 2, 3, 4],
+          format: {
+            body: function (data, row, column, node) {
+              if (data === null || data === undefined) {
+                return '';
+              }
+              
+              if (typeof data === 'object') {
+                data = $(data).text();
+              }
+              
+              data = String(data);
+              
+              // Etiketleri temizle
+              data = data.replace(/ID\s*:/gi, '');
+              data = data.replace(/Tarih\s*:/gi, '');
+              data = data.replace(/Müşteri\s*:/gi, '');
+              data = data.replace(/Cihaz\s*:/gi, '');
+              data = data.replace(/S. Durumu:/gi, '');
+              data = data.replace(/Servis\s+Durumu\s*:/gi, '');
+              
+              // Satır sonları ve boşlukları temizle
+              data = data.replace(/\n/g, ' ');
+              data = data.replace(/\s+/g, ' ');
+              
+              return data.trim();
+            }
+          }
+        },
+        customize: function (win) {
+          $(win.document.head).find('style, link').remove();
+          
+          $(win.document.head).append(
+            '<style>' +
+            '.print-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px;}' +
+            '.print-title { text-align: left; font-size: 18px; font-weight: bold; margin-bottom: 13px; }' +
+            'table { width: 100%; border-collapse: collapse; }' +
+            'table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; color: #000 !important; }' +
+            'table thead { display: table-header-group !important; }' +
+            'table tbody { display: table-row-group !important; }' +
+            'table tbody td * { color: #000 !important; font-weight: normal !important; }' +
+            'table tbody td span { color: #000 !important; background-color: transparent !important; font-weight: normal !important; }' +
+            'table tbody td { font-weight: normal !important; background-color: white !important; }' + // Arkaplan renklerini temizle
+            'table tbody td strong { font-weight: normal !important; }' + // Bold'ları kaldır
+            'a, a:link, a:visited, a:hover, a:active { color: #000 !important; text-decoration: none !important; }' +
+            '.print-footer { margin-top: 15px; text-align: left; border-top: 1px solid #ddd; padding-top: 10px; }' +
+            '.page-number-bottom { text-align: center; margin-top: 30px; font-size: 14px; color: #666; font-weight: bold; }' +
+            '@page { margin: 5mm; }' +
+            '</style>'
+          );
+          
+          var printDate = moment().format('DD.MM.YYYY HH:mm');
+          var totalRecords = table.page.info().recordsDisplay;
+          var firmaAdi = '{{ $firma->firma_adi ?? "Firma Adı" }}';
+          
+          $(win.document.body).find('h1').remove();
+          
+          // Inline style'ları temizle, font-weight'i normal yap VE arkaplan renklerini kaldır
+          $(win.document.body).find('table tbody td').each(function() {
+            $(this).find('*').removeAttr('style').css('font-weight', 'normal');
+            $(this).css({
+              'font-weight': 'normal',
+              'background-color': 'white'  // Tüm arkaplan renklerini beyaz yap
+            });
+          });
+          
+          var header = '<div class="print-header">' +
+                      '  <span>' + printDate + '</span>' +
+                      '  <span>' + firmaAdi.toUpperCase() + '</span>' +
+                      '</div>';
+          $(win.document.body).prepend(header);
+          
+          var title = '<div class="print-title">Servisler</div>';
+          $(win.document.body).find('table').before(title);
+          
+          var footer = '<div class="print-footer">' +
+                      '  <span>Listelenen Servis Sayısı: ' + totalRecords + ' - Tarih: ' + moment().format('DD/MM/YYYY') + '</span>' +
+                      '</div>';
+          $(win.document.body).find('table').after(footer);
+          
+          var pageInfo = '<div class="page-number-bottom">1/1</div>';
+          $(win.document.body).append(pageInfo);
+        }
+      }],
         "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
         "initComplete": function (settings, json) {
           // 1. Gerekli ana elemanları seçiyoruz
@@ -1273,6 +1356,11 @@
       });
 
 
+      // Yazdır butonu click event'i
+      $('.printServices').on('click', function(e) {
+        e.preventDefault();
+        table.button('.buttons-print').trigger();
+      });
 
       $('#device_brands').change(function () {
         table.draw();

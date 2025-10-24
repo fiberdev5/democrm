@@ -86,7 +86,6 @@
         }
     }
 </style>
-
 <form id="servisFotoEkle" enctype="multipart/form-data">
     <div class="upload-zone" onclick="document.getElementById('resimInput').click()">
         <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
@@ -295,6 +294,7 @@
             $(document).on('click', '.servisFotoSil', function(e) {
         e.preventDefault();
         
+
          e.stopImmediatePropagation(); // Event'in birden fazla kez tetiklenmesini engelle
 
         const $button = $(this);
@@ -310,6 +310,7 @@
         if (!confirm('Bu fotoğrafı silmek istediğinizden emin misiniz?')) {
             $button.removeClass('deleting'); // Bayrağı kaldır
             return false;
+
         }
 
         const photoId = $(this).data('id');
@@ -389,4 +390,6 @@
                 $('.progress-bar').css('width', '0%');
             }
         });
+
     </script>
+

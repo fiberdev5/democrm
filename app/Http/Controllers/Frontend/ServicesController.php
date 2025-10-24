@@ -121,8 +121,12 @@ if ($request->ajax()) {
     }
 
     // Tarih ve diğer filtreler 
-    $this->applyDefaultLast3DaysIfEmpty($data, $request);
-    $this->applyMainDateRange($data, $request);
+    // SADECE dashboard filtresi aktif DEĞİLSE varsayılan tarih filtrelerini uygula
+    if (!$request->filled('dashboard_filter')) {
+        $this->applyDefaultLast3DaysIfEmpty($data, $request);
+        $this->applyMainDateRange($data, $request);
+    }
+
     $this->applyOperatorFilters($data, $request);
     $this->applyStateFilters($data, $request);
     $this->applyBrandTypeFilters($data, $request);
@@ -357,15 +361,29 @@ if ($request->ajax()) {
         }
     }
 
-    
-    private function applyDashBoardFilters($query, Request $request): void{
-    if ($request->has('dashboard_filter')) {
+  private function applyDashBoardFilters($query, Request $request): void
+{
+    if ($request->filled('dashboard_filter')) {
         
         // Tarih filtresi
-        if ($request->has('dashboard_istatistik_tarih1') && $request->has('dashboard_istatistik_tarih2')) {
-            $query->whereBetween('kayitTarihi', [$request->dashboard_istatistik_tarih1, $request->dashboard_istatistik_tarih2]);
+        if ($request->filled('dashboard_istatistik_tarih1') && $request->filled('dashboard_istatistik_tarih2')) {
+            
+            $startDate = $request->dashboard_istatistik_tarih1;
+            $endDate = $request->dashboard_istatistik_tarih2;
+
+            // Statü grubuna göre hangi tarih sütununun kullanılacağını belirle
+            $dateColumn = 'kayitTarihi'; // Varsayılan olarak kayıt tarihi
+            if ($request->status_group === 'cancelled') {
+                $dateColumn = 'updated_at'; // İptal edilenler için GÜNCELLEME tarihi
+            }
+
+            // whereDate metodu, datetime sütunundan sadece tarih kısmını alır.
+            $query->whereDate($dateColumn, '>=', $startDate)
+                  ->whereDate($dateColumn, '<=', $endDate);
         }
-        if ($request->has('status_group')) {
+
+        // Statü filtresi
+        if ($request->filled('status_group')) {
             $cancelled_statuses = [244];
             $new_service_status = [235];
             $excluded_statuses = array_merge($cancelled_statuses, $new_service_status);
@@ -378,8 +396,8 @@ if ($request->ajax()) {
             }
         }
     }
-    }
-    
+}
+        
 
     // Anket
     private function applySurveyFilters($query, Request $request): void

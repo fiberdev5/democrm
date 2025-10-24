@@ -83,10 +83,16 @@
           <div class="card-body card-offer-body">
             <table id="datatableOffer" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
 
-                {{-- MASAÜSTÜ GÖRÜNÜMÜ (Orijinal Kodunuz - Hiçbir Değişiklik Yapılmadı) --}}
+{{-- MASAÜSTÜ GÖRÜNÜMÜ (Orijinal Kodunuz - Hiçbir Değişiklik Yapılmadı) --}}
 {{-- Bu bölüm sadece geniş ekranlarda (lg ve üstü) görünecektir. --}}
-<div class="">
-    <a class="btn btn-success btn-sm addOffer" data-bs-toggle="modal" data-bs-target="#addOfferModal"><i class="fas fa-plus"></i><span>Teklif Ekle</span></a> 
+<div class="offer-buttons-container">
+    <a class="btn btn-success btn-sm addOffer" data-bs-toggle="modal" data-bs-target="#addOfferModal">
+        <i class="fas fa-plus"></i><span>Teklif Ekle</span>
+    </a>
+    
+    <a href="javascript:void(0);" class="btn btn-warning btn-sm printOffers">
+        <i class="fas fa-print"></i><span>Yazdır</span>
+    </a>
     <div class="searchWrap float-end">
         <div class="btn-group">
             <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -101,6 +107,8 @@
                                 <option value="">Hepsi</option>
                                 <option value="0">Beklemede</option>
                                 <option value="1">Onaylandı</option>
+                                <option value="2">Onaylanmadı</option>
+                                <option value="3">Cevap Gelmedi</option>
                             </select>
                         </div>
                     </div>
@@ -402,7 +410,92 @@ $(document).ready(function () {
         }
       }
     },
-    dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+    dom: 'B<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+    buttons: [{
+  extend: 'print',
+  text: 'Yazdır',
+  autoPrint: true,
+  exportOptions: {
+    columns: [0, 1, 2, 3, 4],
+    format: {
+      body: function (data, row, column, node) {
+        if (data === null || data === undefined) {
+          return '';
+        }
+        
+        if (typeof data === 'object') {
+          data = $(data).text();
+        }
+        
+        data = String(data);
+        
+        // Etiketleri temizle
+        data = data.replace(/ID\s*:/gi, '');
+        data = data.replace(/Tarih\s*:/gi, '');
+        data = data.replace(/Müşteri\s+Adı\s*:/gi, '');
+        data = data.replace(/Müşteri\s*:/gi, '');
+        data = data.replace(/G\.\s*Toplam\s*:/gi, '');
+        data = data.replace(/Durum\s*:/gi, '');
+        
+        // Satır sonları ve boşlukları temizle
+        data = data.replace(/\n/g, ' ');
+        data = data.replace(/\s+/g, ' ');
+        
+        return data.trim();
+      }
+    }
+  },
+  customize: function (win) {
+    $(win.document.head).find('style, link').remove();
+    
+    $(win.document.head).append(
+      '<style>' +
+      '.print-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; }' +
+      '.print-title { text-align: left; font-size: 18px; font-weight: bold; margin-bottom: 13px; }' +
+      'table { width: 100%; border-collapse: collapse; }' +
+      'table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; color: #000 !important; }' +
+      'table thead { display: table-header-group !important; }' +
+      'table tbody { display: table-row-group !important; }' +
+      'table tbody td * { color: #000 !important; font-weight: normal !important; }' +
+      'table tbody td span { color: #000 !important; background-color: transparent !important; font-weight: normal !important; }' +
+      'table tbody td { font-weight: normal !important; }' +
+      'a, a:link, a:visited, a:hover, a:active { color: #000 !important; text-decoration: none !important; }' +
+      '.print-footer { margin-top: 15px; text-align: left; border-top: 1px solid #ddd; padding-top: 10px; }' +
+      '.page-number-bottom { text-align: center; margin-top: 30px; font-size: 14px; color: #666; font-weight: bold; }' +
+      '@page { margin: 5mm; }' +
+      '</style>'
+    );
+    
+    var printDate = moment().format('DD.MM.YYYY HH:mm');
+    var totalRecords = table.page.info().recordsDisplay;
+    var firmaAdi = '{{ $firma->firma_adi ?? "Firma Adı" }}';
+    
+    $(win.document.body).find('h1').remove();
+    
+    // Inline style'ları temizle ve font-weight'i normal yap
+    $(win.document.body).find('table tbody td').each(function() {
+      $(this).find('*').removeAttr('style').css('font-weight', 'normal');
+      $(this).css('font-weight', 'normal');
+    });
+    
+    var header = '<div class="print-header">' +
+                '  <span>' + printDate + '</span>' +
+                '  <span>' + firmaAdi.toUpperCase() + '</span>' +
+                '</div>';
+    $(win.document.body).prepend(header);
+    
+    var title = '<div class="print-title">Teklifler</div>';
+    $(win.document.body).find('table').before(title);
+    
+    var footer = '<div class="print-footer">' +
+                '  <span>Listelenen Teklif Sayısı: ' + totalRecords + ' - Tarih: ' + moment().format('DD/MM/YYYY') + '</span>' +
+                '</div>';
+    $(win.document.body).find('table').after(footer);
+    
+    var pageInfo = '<div class="page-number-bottom">1/1</div>';
+    $(win.document.body).append(pageInfo);
+  }
+}],
     lengthMenu: [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
     initComplete: function(settings, json) {
       var searchContainer = $('#datatableOffer_filter');
@@ -483,7 +576,13 @@ $(document).ready(function () {
   $('.searchWrap').on('hide.bs.dropdown', '.btn-group', function () {
     $(this).find('.filtrele').html('Filtrele <i class="mdi mdi-chevron-down"></i>');
   });
+  // Yazdır butonu click event'i
+    $('.printOffers').on('click', function(e) {
+      e.preventDefault();
+      table.button('.buttons-print').trigger();
+    });
 });
+
 </script>
 
 @endsection

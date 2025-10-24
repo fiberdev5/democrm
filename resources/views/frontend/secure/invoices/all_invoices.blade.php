@@ -124,12 +124,17 @@
             <div class="card-body card-invoices-body">
               <table id="datatableInvoice" class="table table-bordered dt-responsive nowrap"
                 style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                <div class="d-flex gap-2">
+<div class="invoice-buttons-container">
     <a class="btn btn-success btn-sm addInvoice" data-bs-toggle="modal" data-bs-target="#addInvoiceModal">
         <i class="fas fa-plus"></i><span>Fatura Ekle</span>
     </a>
+    
+    <a href="javascript:void(0);" class="btn btn-warning btn-sm printInvoices">
+        <i class="fas fa-print"></i><span>Yazdır</span>
+    </a>
+    
     <a class="btn btn-danger btn-sm tevkifatHesapla" data-bs-toggle="modal" data-bs-target="#tevkifatHesaplamaModal">
-        <i class="fas fa-calculator"></i> <span>Tevkifat Hesaplama</span>
+        <i class="fas fa-calculator"></i><span>Tevkifat Hesaplama</span>
     </a>
 </div>
                 <div class="searchWrap float-end">
@@ -731,7 +736,89 @@
           }
         }
       },
-      dom: '<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+      dom: 'B<"top"f>rt<"bottom"i<"float-end"lp>><"clear">',
+      buttons: [{
+  extend: 'print',
+  text: 'Yazdır',
+  autoPrint: true,
+  exportOptions: {
+    columns: [0, 1, 2, 3, 4, 5],
+    format: {
+      body: function (data, row, column, node) {
+        if (data === null || data === undefined) {
+          return '';
+        }
+        
+        if (typeof data === 'object') {
+          data = $(data).text();
+        }
+        
+        data = String(data);
+        
+        // Tüm etiketleri temizle (büyük/küçük harf duyarsız)
+        data = data.replace(/ID\s*:/gi, '');
+        data = data.replace(/Fatura\s+Tarihi\s*:/gi, '');
+        data = data.replace(/Tarih\s*:/gi, '');
+        data = data.replace(/F\.\s*No\s*:/gi, '');
+        data = data.replace(/Müşteri\s+Adı\s*:/gi, '');
+        data = data.replace(/Müşteri\s*:/gi, '');
+        data = data.replace(/G\.\s*Toplam\s*:/gi, '');
+        data = data.replace(/Durum\s*:/gi, '');
+        
+        return data.trim();
+      }
+    }
+  },
+  customize: function (win) {
+    $(win.document.head).find('style, link').remove();
+    
+    $(win.document.head).append(
+      '<style>' +
+      '.print-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px;}' +
+      '.print-title { text-align: left; font-size: 18px; font-weight: bold; margin-bottom: 13px; }' +
+      'table { width: 100%; border-collapse: collapse; }' +
+      'table th, table td { border: 1px solid #ddd; padding: 8px; text-align: left; color: #000 !important; }' +
+      'table thead { display: table-header-group !important; }' +
+      'table tbody { display: table-row-group !important; }' +
+      'table tbody td * { color: #000 !important; font-weight: normal !important; }' + 
+      'table tbody td span { color: #000 !important; background-color: transparent !important; font-weight: normal !important; }' +
+      'table tbody td { font-weight: normal !important; }' + 
+      'a, a:link, a:visited, a:hover, a:active { color: #000 !important; text-decoration: none !important; }' +
+      '.print-footer { margin-top: 15px; text-align: left; border-top: 1px solid #ddd; padding-top: 10px; }' +
+      '.page-number-bottom { text-align: center; margin-top: 30px; font-size: 14px; color: #666; font-weight: bold; }' +
+      '@page { margin: 5mm; }' +
+      '</style>'
+    );
+    
+    var printDate = moment().format('DD.MM.YYYY HH:mm');
+    var totalRecords = table.page.info().recordsDisplay;
+    var firmaAdi = '{{ $firma->firma_adi ?? "Firma Adı" }}';
+    
+    $(win.document.body).find('h1').remove();
+    
+    // Inline style'ları temizle
+    $(win.document.body).find('table tbody td').each(function() {
+      $(this).find('*').removeAttr('style');
+    });
+    
+    var header = '<div class="print-header">' +
+                '  <span>' + printDate + '</span>' +
+                '  <span>' + firmaAdi.toUpperCase() + '</span>' +
+                '</div>';
+    $(win.document.body).prepend(header);
+    
+    var title = '<div class="print-title">Faturalar</div>';
+    $(win.document.body).find('table').before(title);
+    
+    var footer = '<div class="print-footer">' +
+                '  <span>Listelenen Fatura Sayısı: ' + totalRecords + ' - Tarih: ' + moment().format('DD/MM/YYYY') + '</span>' +
+                '</div>';
+    $(win.document.body).find('table').after(footer);
+    
+    var pageInfo = '<div class="page-number-bottom">1/1</div>';
+    $(win.document.body).append(pageInfo);
+  }
+}],
       "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
       "initComplete": function (settings, json) {
         var searchContainer = $('#datatableInvoice_filter');
@@ -816,6 +903,11 @@
 
     $('#daterange').on('apply.daterangepicker', function (ev, picker) {
       updateValues();
+    });
+    // Yazdır butonu click event'i
+    $('.printInvoices').on('click', function(e) {
+      e.preventDefault();
+      table.button('.buttons-print').trigger();
     });
   });
 </script>

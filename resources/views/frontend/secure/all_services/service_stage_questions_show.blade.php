@@ -94,38 +94,40 @@
                     <div class="col-lg-12" > 
                         @if($stage->cevapTuru == "[Aciklama]")
                             <input type="text" name="soru[{{ $stage->id }}]" class="form-control" autocomplete="off" />
-                        @elseif(str_contains($stage->cevapTuru, 'Grup'))
-                            @php
-                                preg_match('/\[Grup-(\d+)\]/', $stage->cevapTuru, $matches);
-                                $grupKodu = $matches[1] ?? null;
+                       @elseif(str_contains($stage->cevapTuru, 'Grup'))
+                        @php
+                            preg_match('/\[Grup-(\d+)\]/', $stage->cevapTuru, $matches);
+                            $grupKodu = $matches[1] ?? null;
 
-                                $roller = [];
+                            $roller = [];
 
-                                if (in_array($grupKodu, [261, 262])) {
-                                    $roller = ['Atölye Ustası'];
-                                } elseif (in_array($grupKodu, [4, 5])) {
-                                    $roller = ['Teknisyen'];
-                                }
+                            if (in_array($grupKodu, [261, 262])) {
+                                $roller = ['Atölye Ustası'];
+                            } elseif (in_array($grupKodu, [4, 5])) {
+                                $roller = ['Teknisyen'];
+                            }
 
-                                $personeller = App\Models\User::where('tenant_id', $firma->id)
-                                    ->where('status', '1')
-                                    ->whereHas('roles', function($query) use ($roller) {
-                                        $query->whereIn('name', $roller);
-                                    })
-                                    ->orderBy('name', 'asc')
-                                    ->get();
-                            @endphp
+                            $personeller = App\Models\User::where('tenant_id', $firma->id)
+                                ->where('status', '1')
+                                ->whereHas('roles', function($query) use ($roller) {
+                                    $query->whereIn('name', $roller);
+                                })
+                                ->orderBy('name', 'asc')
+                                ->get();
+                            $isRequired = !str_contains($stage->soru, 'Yardımcı');
+                        @endphp
 
-                            @if($personeller->count())
-                                <select class="form-control" name="soru[{{ $stage->id }}]" required>
-                                    <option value="">-Seçiniz-</option>
-                                    @foreach($personeller as $personel)
-                                        <option value="{{ $personel->user_id }}">{{ $personel->name }}</option>
-                                    @endforeach
-                                </select>
-                            @else
-                                <p>Bu gruba ait personel bulunamadı.</p>
-                            @endif
+                        @if($personeller->count())
+                            {{-- 'required' özelliği sadece $isRequired true ise eklenir --}}
+                            <select class="form-control" name="soru[{{ $stage->id }}]" @if($isRequired) required @endif>
+                                <option value="">-Seçiniz-</option>
+                                @foreach($personeller as $personel)
+                                    <option value="{{ $personel->user_id }}">{{ $personel->name }}</option>
+                                @endforeach
+                            </select>
+                        @else
+                            <p>Bu gruba ait personel bulunamadı.</p>
+                        @endif
 
                         @elseif($stage->cevapTuru == "[Tarih]")
                             @php

@@ -72,6 +72,56 @@ margin-right: 0px !important;
 .customer-header-top{margin-top: 30px;}
 
 }
+/* Yazdırma stilleri */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    
+    #printArea, #printArea * {
+        visibility: visible;
+    }
+    
+    #printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+    
+    .print-header {
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+    }
+    
+    .print-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .print-table th,
+    .print-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    
+    .print-table th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+    }
+    
+    .print-footer {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 12px;
+        border-top: 1px solid #ddd;
+        padding-top: 10px;
+    }
+}
+
 </style>
 <div class="page-content">
   <div class="container-fluid customer-header-top">
@@ -86,10 +136,18 @@ margin-right: 0px !important;
 
 <div class="d-flex justify-content-between">
     <!-- Müşteri Ekle Butonu -->
-    <a data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-success btn-sm addCustomer">
-        <i class="fas fa-plus"></i>
-        <span class="d-none d-sm-inline">Müşteri Ekle</span>
-    </a> 
+     <div class="action-buttons-container ">
+        <a data-bs-toggle="modal" data-bs-target="#addCustomerModal" class="btn btn-success btn-sm addCustomer">
+            <i class="fas fa-plus"></i>
+            <span class="d-none d-sm-inline">Müşteri Ekle</span>
+        </a>
+        
+        <!--Yazdır Butonu -->
+        <button id="printCustomers" class="btn btn-primary btn-sm ms-2 printCustomers">
+            <i class="fas fa-print"></i>
+            <span class="d-none d-sm-inline">Yazdır</span>
+        </button>
+    </div>
 
     <!-- Filtreleme ve Arama Alanı (JavaScript ile taşınacak) -->
     <div class="searchWrap float-end">
