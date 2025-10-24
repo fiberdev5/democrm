@@ -37,14 +37,14 @@
                @if($item->kid == auth()->user()->user_id)
   {{-- Düzenle Butonu (İkonlu) --}}
   <td style="vertical-align: middle; width: 45px; text-align: center; padding: 0 10px;">
-    <a href="#" class="btn btn-outline-warning btn-sm fisNotuDuzenle" data-bs-id="{{ $item->id }}" title="Düzenle">
+    <a style="padding: 6px 6px;color:#e39d23" href="#" class="btn btn-outline-warning btn-sm fisNotuDuzenle" data-bs-id="{{ $item->id }}" title="Düzenle">
       <i class="fas fa-edit"></i>
     </a>
   </td>
   
   {{-- Sil Butonu (İkonlu) --}}
   <td style="vertical-align: middle; width: 45px; text-align: center; padding: 0 10px;">
-    <a href="#" class="btn btn-outline-danger  btn-sm fisNotuSil" data-id="{{ $item->id }}" title="Sil">
+    <a style="padding: 6px 7px;" href="#" class="btn btn-outline-danger  btn-sm fisNotuSil" data-id="{{ $item->id }}" title="Sil">
       <i class="fas fa-trash-alt"></i>
     </a>
   </td>

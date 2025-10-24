@@ -74,8 +74,13 @@
               var newRow = `<tr>
                 <td><a class="t-link editPaymentType" href="javascript:void(0);" data-bs-id="${response.id}" data-bs-toggle="modal" data-bs-target="#editPaymentTypeModal"><div class="mobileTitle">Ö. Türü:</div>${response.odemeTuru} </a></td>
                 <td>
-                  <a href="javascript:void(0);" data-bs-id="${response.id}" class="btn btn-warning btn-sm editPaymentType mobilBtn mbuton1" data-bs-toggle="modal" data-bs-target="#editPaymentTypeModal" title="Düzenle"><i class="fas fa-edit"></i> <span> Düzenle</span></a>
-                  <a href="javascript:void(0);"  class="btn btn-danger btn-sm mobilBtn deletePaymentType" data-bs-id="${response.id}" title="Sil"><i class="fas fa-trash-alt"></i> <span> Sil</span></a>
+
+
+
+
+                   <a href="javascript:void(0);" class="btn btn-outline-primary btn-sm editPaymentType mobilBtn mbuton1" data-bs-id="${response.id}" data-bs-toggle="modal" data-bs-target="#editPaymentTypeModal" title="Görüntüle"><i class="fas fa-eye"></i> <span> Düzenle</span></a>
+                    <a href="javascript:void(0);" class="btn btn-outline-warning btn-sm editPaymentType mobilBtn mbuton1" data-bs-id="${response.id}" data-bs-toggle="modal" data-bs-target="#editPaymentTypeModal" title="Düzenle"><i class="fas fa-edit"></i> <span> Düzenle</span></a>
+                    <a href="javascript:void(0);" class="btn btn-outline-danger btn-sm mobilBtn deletePaymentType" data-bs-id="${response.id}" title="Sil"><i class="fas fa-trash-alt"></i> <span> Sil</span></a>
                 </td>
               </tr>`;
               $('#datatablePaymentType tbody').prepend(newRow);

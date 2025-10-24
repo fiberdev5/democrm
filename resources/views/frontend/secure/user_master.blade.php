@@ -54,6 +54,8 @@
 <link href="{{asset('backend/assets/libs/spectrum-colorpicker2/spectrum.min.css')}}" rel="stylesheet" type="text/css">
 <link rel="preload" as="image" href="{{ asset('frontend/img/alarm.gif') }}">
 
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+
 </head>
 
 <body data-topbar="dark">
@@ -166,6 +168,10 @@
 
     <!--toastr messages js-->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    
+   
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
     <script>
 
         toastr.options = {

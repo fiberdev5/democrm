@@ -61,7 +61,7 @@ label{margin-bottom: 3px !important;}
       </div>
       <div class="col-12 col-md-8 text-align-right" style="text-align: right;"> 
         <label>Müşteri Kaynağı: </label>
-        <select class="form-control form-select kaynak" name="kaynak" style="width: 110px; display: inline-block;padding: 3px 5px;font-size:12px;">
+        <select class="form-control form-select kaynak" name="kaynak" style="width: 151px; display: inline-block;padding: 3px 5px;font-size:12px;">
           <option value="">-Seçiniz-</option>
           @foreach($service_resources as $resource)
             <option value="{{$resource->id}}" {{ $service_id->servisKaynak == $resource->id ? 'selected' : ''}}>{{$resource->kaynak}}</option>
@@ -76,7 +76,7 @@ label{margin-bottom: 3px !important;}
 </div>
 
 <div class="row cardWrap2">
-  <div class="col-sm-6">
+  <div class="col-sm-6 custom-p-r-min">
     <div class="card card2">
       <div class="card-header" style="padding: 7px 10px!important;">MÜŞTERİ BİLGİSİ
         <span><a href="#" data-id="{{$service_id->musteri->id}}" class="servisMusteriDuzenleBtn"><i class="fas fa-edit" style="font-size: 15px;color: red;text-shadow: none;"></i></a></span>
@@ -162,8 +162,8 @@ label{margin-bottom: 3px !important;}
         <div class="card-header" style="padding:7px 10px!important;">CİHAZ BİLGİSİ</div>
         <div class="card-body">
                 <div class="row form-group ">
-                  <div class="col-md-4 rw1"><label>Cihaz Markası <span style="font-weight: bold; color: red;">*</span></label></div>
-                  <div class="col-md-8">
+                  <div class="col-md-4 rw1 custom-p-r-min"><label>Cihaz Markası <span style="font-weight: bold; color: red;">*</span></label></div>
+                  <div class="col-md-8 custom-p-min">
                     <select class="form-control form-select cihazMarka" name="cihazMarka" required>
                       <option value="">-Seçiniz-</option>
                       @foreach($device_brands as $marka)
@@ -173,8 +173,8 @@ label{margin-bottom: 3px !important;}
                   </div>
                 </div>
                 <div class="row form-group ">
-                  <div class="col-md-4 rw1"><label>Cihaz Türü <span style="font-weight: bold; color: red;">*</span></label></div>
-                  <div class="col-md-8">
+                  <div class="col-md-4 rw1 custom-p-r-min"><label>Cihaz Türü <span style="font-weight: bold; color: red;">*</span></label></div>
+                  <div class="col-md-8 custom-p-min">
                     <select class="form-control form-select cihazTur" name="cihazTur" required>
                       <option value="">-Seçiniz-</option>
                       @foreach($device_types as $cihaz)
@@ -184,23 +184,23 @@ label{margin-bottom: 3px !important;}
                   </div>
                 </div>
                 <div class="row form-group">
-                  <div class="col-md-4 rw1"><label>Cihaz Modeli</label></div>
-                  <div class="col-md-8"><input type="text" name="cihazModel" class="form-control" autocomplete="off" value="{{$service_id->cihazModel}}"></div>
+                  <div class="col-md-4 rw1 custom-p-r-min"><label>Cihaz Modeli</label></div>
+                  <div class="col-md-8 custom-p-min"><input type="text" name="cihazModel" class="form-control" autocomplete="off" value="{{$service_id->cihazModel}}"></div>
                 </div>
                 <div class="row form-group">
-                  <div class="col-md-4 rw1"><label>Cihaz Arızası <span style="font-weight: bold; color: red;">*</span></label></div>
-                  <div class="col-md-8">
+                  <div class="col-md-4 rw1 custom-p-r-min"><label>Cihaz Arızası <span style="font-weight: bold; color: red;">*</span></label></div>
+                  <div class="col-md-8 custom-p-min">
                     <input id="arizaSearch" type="text" name="cihazAriza" class="form-control buyukYaz cihazAriza" autocomplete="off" value="{{$service_id->cihazAriza}}" required>
                     <ul id="arizaResult" style="margin: 0;padding: 0"></ul>
                   </div>
                 </div>
                 <div class="row form-group">
-                  <div class="col-md-4 rw1"><label>Operatör Notu</label></div>
-                  <div class="col-md-8"><input type="text" name="opNot" class="form-control opNot" autocomplete="off" value="{{$service_id->operatorNotu}}"></div>
+                  <div class="col-md-4 rw1 custom-p-r-min"><label>Operatör Notu</label></div>
+                  <div class="col-md-8 custom-p-min"><input type="text" name="opNot" class="form-control opNot" autocomplete="off" value="{{$service_id->operatorNotu}}"></div>
                 </div>
                 <div class="row form-group" style="margin-bottom: 0; border: 0;">
-                  <div class="col-md-4 rw1"><label>Garanti Süresi</label></div>
-                  <div class="col-md-8">
+                  <div class="col-md-4 rw1 custom-p-r-min"><label>Garanti Süresi</label></div>
+                  <div class="col-md-8 custom-p-min">
                     <select class="form-control form-select" name="cihazGaranti" style="display: inline-block;width: 26%; width: intrinsic; margin-right: 5px;">
                       <option value="">-Seçiniz-</option>
                       @foreach($warranty_periods as $index => $garanti)
@@ -247,11 +247,11 @@ label{margin-bottom: 3px !important;}
   <div class="card card3">
     <div class="card-header" style="padding: 3px 7px!important;">
       <div class="row">
-        <div class="col-12 col-sm-6 left">
+        <div class="col-12 col-sm-6 left custom-left">
           <label class="kayitAlan">  
             <span>{{$service_id->asamalar["asama"]}}</span>                  
           </label>     
-          <label class="servisAcilLabel servisAcilBtn" style="user-select: none;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;-webkit-touch-callout: none;position: relative;margin: 0; color: #fff; background: #343a40; border: 1px solid #212529;padding: 0 5px;border-radius: 3px;height: 25px;top: 1px;line-height: 25px;">
+          <label class="servisAcilLabel servisAcilBtn servisAcilLabel-custom" style="user-select: none;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;-webkit-touch-callout: none;position: relative;margin: 0; color: #fff; background: #343a40; border: 1px solid #212529;padding: 0 5px;border-radius: 3px;height: 21.7px;top: -3px;line-height: 20px;">
               <span>Acil</span>
               <input type="checkbox" style="display: none;" {{$service_id->acil !== 0 ? 'checked' : ''}}>
               <div class="checkmark"><i class="fas fa-check"></i></div>
@@ -284,8 +284,7 @@ label{margin-bottom: 3px !important;}
               <th style="padding: 5px 10px;font-size: 12px;">İşlemi Yapan</th>
               <th style="padding: 5px 10px;font-size: 12px;">İşlem Adı</th>
               <th style="padding: 5px 10px;font-size: 12px;">Açıklama</th>
-              <th style="padding: 5px 10px;font-size: 12px;"></th>
-              <th style="padding: 5px 10px;font-size: 12px;"></th>
+              <th colspan="2" class="text-end" style="padding: 10px;font-size: 12px;"></th>
             </tr>
           </thead>
           <tbody id="serviceHistoryTableBody">
@@ -409,28 +408,32 @@ function renderServiceHistory(data) {
             tbody.append(paraRow);
         } else {
             var buttons = '';
-            
-                if (islem.pid == currentUserId) {
-            // Butonları tek bir hücre ('td') içine alıyoruz.
-            // colspan="2" masaüstü düzeninin bozulmamasını sağlar.
-            // action-buttons-cell adında özel bir class ekliyoruz.
-            buttons += '<td class="action-buttons-cell" colspan="2">';
+if (islem.pid == currentUserId) {
+    // Hücreyi (td) oluştur
+    buttons += '<td colspan="2">';
+    
+    // Değişiklik: İkonları sağa yaslamak ve aralarında boşluk bırakmak için bir div eklendi.
+    // d-flex: Flexbox'ı etkinleştirir.
+    // justify-content-end: İçeriği sağa yaslar.
+    // gap-2: Elemanlar arasına boşluk ekler.
+    buttons += '<div class="d-flex justify-content-end gap-2">';
 
-            // Sil butonu (Sadece ikon)
-            buttons += `<a href="#" id="servisPlanSil" style="font-size: 13px;" class="btn btn-outline-danger btn-sm  btn-sm-custom servisPlanSil" data-id="${islem.id}"> <i class="fas fa-trash-alt"></i></a>`;
-            
-            // Düzenle butonu (Sadece ikon ve aralarında boşluk)
-            buttons += `<a href="#" data-bs-id="${islem.id}" style="font-size: 13px; margin-left: 8px;" class="btn btn-outline-warning btn-sm btn-sm-custom servisPlanDuzenleBtn"> <i class="fas fa-edit"></i></a>`;
-             
-            buttons += '</td>'; // Tek hücreyi kapatıyoruz
-        } else {
-            // Yetkiniz yoksa olan kısım
-            buttons += `
-                <td colspan="2" style="font-size: 11px; color: red; text-align: center;">
-                    <strong>Yetkiniz yok</strong>
-                </td>
-            `;
-        }
+    // Sil butonu (Gereksiz inline stiller kaldırıldı)
+    buttons += `<a style="    padding: 6px 7px;" href="#" id="servisPlanSil" class="btn btn-outline-danger btn-sm btn-sm-custom servisPlanSil" data-id="${islem.id}" title="Sil"><i style="line-height: 1.2;" class="fas fa-trash-alt"></i></a>`;
+    
+    // Düzenle butonu (Gereksiz inline stiller kaldırıldı, boşluk 'gap-2' ile sağlandı)
+    buttons += `<a style="padding: 6px 6px;color:#e39d23 " href="#" data-bs-id="${islem.id}" class="btn btn-outline-warning btn-sm btn-sm-custom servisPlanDuzenleBtn" title="Düzenle"><i class="fas fa-edit"></i></a>`;
+     
+    buttons += '</div>'; // Flexbox div'ini kapat
+    buttons += '</td>';  // Hücreyi (td) kapat
+} else {
+    // Yetkiniz yoksa olan kısım (değişiklik yok)
+    buttons += `
+        <td colspan="2" style="font-size: 11px; color: red; text-align: center;">
+            <strong>Yetkiniz yok</strong>
+        </td>
+    `;
+}
             
             
             var islemRow = `

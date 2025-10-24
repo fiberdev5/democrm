@@ -1,24 +1,24 @@
 <div class="row mt-3 mb-2">
   <div class="col-12">
-    <div class=" d-sm-flex align-items-center justify-content-between">
-      <h4 class="mb-sm-0 fw-bold text-gray border-bottom" style="font-size: 16px;">Firma Ayarları</h4>
+    <div class=" d-sm-flex align-items-center justify-content-center">
+      <h4 class="mb-sm-0 fw-bold text-gray " style="font-size: 19px;">Firma Ayarları</h4>
     </div>
   </div>
 </div>
   
-
-        <form id="companySettings" method="post" action="{{ route('update.firma',$firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate style="width: 32%;">
+<div class="d-flex justify-content-center align-items-center w-100">
+        <form id="companySettings" method="post" action="{{ route('update.firma',$firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate style="width: 50%;">
           @csrf
           <input type="hidden" name="id" value="{{ $firma->id }}">
           
-          <div class="row align-items-center">
+          <div class="row align-items-center border-bottom custom-border-bottom mb-1">
             <label class="col-sm-4 col-form-label">Kayıt Tarihi<span style="font-weight: bold; color: red;">*</span></label>
             <div class="col-sm-8">
               <input name="kayitTarihi" class="form-control datepicker kayitTarihi" type="date" value="{{\Carbon\Carbon::parse($firma->kayitTarihi)->format('Y-m-d')}}" style="border: 1px solid #ced4da;" required>
             </div>
           </div>
 
-          <div class="row align-items-center">
+          <div class="row align-items-center border-bottom custom-border-bottom mb-1">
             <label class="col-sm-4 col-form-label">Firma Adı:</label>
             <div class="col-sm-8">
               <input class="form-control" name="company_name" type="text" value="{{ $firma->firma_adi}}" required>
@@ -26,7 +26,7 @@
           </div>
           <!-- end row -->
 
-          <div class="row align-items-center">
+          <div class="row align-items-center border-bottom custom-border-bottom mb-1">
             <label class="col-sm-4 col-form-label">Telefon</label>
             <div class="col-sm-4 col-6">
               <input name="tel1" class="form-control phone" type="text" placeholder="Telefon 1" value="{{$firma->tel1}}" required>
@@ -36,7 +36,7 @@
             </div>
           </div>
 
-          <div class="row align-items-center ">
+          <div class="row align-items-center  border-bottom custom-border-bottom mb-1">
             <div class="col-sm-4 col-form-label"><label>İl/İlçe</label></div>
             <div class="col-sm-4 col-6">
               <select name="il" id="sehirSelect" class="form-control form-select" style="width:100%!important;">
@@ -46,14 +46,14 @@
                 @endforeach
               </select>
             </div>
-            <div class="col-sm-4 col-6">
+            <div class="col-sm-4 col-6 border-bottom custom-border-bottom mb-1">
               <select name="ilce" id="ilceSelect" class="form-control form-select" style="width:100%!important;">
                 <option value="" selected disabled>-Seçiniz-</option>                              
               </select>
             </div>
           </div> 
   
-          <div class="row align-items-center">
+          <div class="row align-items-center border-bottom custom-border-bottom mb-1">
             <label class="col-sm-4 col-form-label">Firma Adresi:</label>
             <div class="col-sm-8">
               <input class="form-control" name="company_address" type="text" value="{{ $firma->adres}}">
@@ -61,7 +61,7 @@
           </div>
           <!-- end row -->
 
-          <div class="row align-items-center">
+          <div class="row align-items-center border-bottom custom-border-bottom mb-1">
             <label class="col-sm-4 col-form-label">Email:</label>
             <div class="col-sm-8">
               <input class="form-control" name="company_email" type="email" value="{{ $firma->eposta}}">
@@ -69,7 +69,7 @@
           </div>
           <!-- end row -->
   
-          <div class="row  align-items-center">
+          <div class="row  align-items-center border-bottom custom-border-bottom mb-1">
             <label class="col-sm-4 col-form-label">Web Sitesi:</label>
             <div class="col-sm-8">
               <input class="form-control" name="web_sitesi" type="text" value="{{ $firma->webSitesi}}">
@@ -77,7 +77,7 @@
           </div>
           <!-- end row -->
   
-          <div class="row align-items-center">
+          <div class="row align-items-center border-bottom custom-border-bottom mb-1">
             <label class="col-sm-4 col-form-label">İban:</label>
             <div class="col-sm-8">
               <input class="form-control" name="iban" type="text" value="{{ $firma->iban}}">
@@ -85,7 +85,7 @@
           </div>
           <!-- end row -->
   
-          <div class="row align-items-center">
+          <div class="row align-items-center border-bottom custom-border-bottom mb-1">
             <label class="col-sm-4 col-form-label">Vergi No/Dairesi:</label>
             <div class="col-sm-4 col-6">
               <input class="form-control" name="tax_no" type="text" value="{{ $firma->vergiNo}}">
@@ -96,8 +96,8 @@
           </div>
           <!-- end row -->
 
-          <div class="row align-items-center">
-            <label class="col-sm-4 col-form-label">Foto:</label>
+          <div class="row align-items-center border-bottom custom-border-bottom mb-1">
+            <label class="col-sm-4 col-form-label">Logo:</label>
             <div class="col-sm-8">
               <input class="form-control" name="logo" type="file" id="logo">
               @if($errors->has('image'))
@@ -108,7 +108,7 @@
           </div>
           <!-- end row -->
 
-          <div class="row align-items-center">
+          <div class="row align-items-center border-bottom custom-border-bottom mb-1">
             <label class="col-sm-4 col-form-label"></label>
             <div class="col-sm-8">
               <img class="img-thumbnail" id="showImage" width="180" src="{{ asset($firma->logo) }}" data-holder-rendered="true">
@@ -116,14 +116,14 @@
           </div>
           <!-- end row -->
   
-          <div class="row align-items-center">
+          <div class="row align-items-center mt-2">
             <label class="col-sm-4 col-form-label"></label>
             <div class="col-sm-8">
               <input type="submit" class="btn btn-info waves-effect waves-light" value="Kaydet">
             </div>
           </div>
         </form>
-  
+  </div>
 
 <script>
   $(document).ready(function() {

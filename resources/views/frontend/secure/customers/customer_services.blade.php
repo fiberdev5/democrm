@@ -18,7 +18,7 @@
         <td style="vertical-align: middle;font-size: 11px; padding: 3px;border: 1px solid #ddd;text-align:center;">{{$service->id}}</td>
         <td style="vertical-align: middle;font-size: 11px; padding: 3px;border: 1px solid #ddd;text-align:center;"><strong>{{$service->created_at}}</strong></td>
         <td style="vertical-align:middle;font-size: 11px;padding:  3px;border: 1px solid #ddd;text-align:center;"><strong>{{$service->markaCihaz?->marka}} - {{$service->turCihaz?->cihaz}}</strong></td>
-        <td style="vertical-align: middle;font-size: 11px; padding: 3px 0px;border: 1px solid #ddd;text-align:center;"><strong><a href="{{ route('all.services', [$firma->id, 'did' => $service->id]) }}" class="btn btn-customer-custom btn-sm editDomain"  style="font-size:11px" target="_blank">Servisi Aç</a></strong></td>
+        <td style="vertical-align: middle;font-size: 11px; padding: 3px 0px;border: 1px solid #ddd;text-align:center;"><strong><a href="{{ route('all.services', [$firma->id, 'did' => $service->id]) }}" class="btn btn-customer-custom btn-sm editDomain"  style="font-size:12px;font-weight: bolder;" target="_blank">Servisi Aç</a></strong></td>
       </tr>
       @endforeach
     </tbody>

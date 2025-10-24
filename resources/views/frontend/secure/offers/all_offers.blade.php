@@ -3,7 +3,7 @@
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link href="{{asset('backend/assets/css/bootstrap.min.css')}}" id="bootstrap-style" rel="stylesheet" type="text/css" />
-<script src="{{asset('backend/assets/libs/jquery/jquery.min.js')}}"></script>
+<!--<script src="{{asset('backend/assets/libs/jquery/jquery.min.js')}}"></script>-->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />

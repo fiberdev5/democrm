@@ -1,7 +1,5 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+  
 <style>
     .upload-zone {
         border: 2px dashed #ddd;
@@ -146,133 +144,133 @@
 </div>
 
 <script>
-    $(document).ready(function () {
-        // CSRF token ayarı
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        // Fancybox başlatma
-        $('[data-fancybox="gallery"]').fancybox({
-            buttons: ['zoom', 'share', 'slideShow', 'fullScreen', 'download', 'thumbs', 'close'],
-            animationEffect: 'fade',
-            transitionEffect: 'slide'
-        });
-
-        // Drag & Drop işlemleri
-        const uploadZone = $('.upload-zone');
-
-        uploadZone.on('dragover dragenter', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).addClass('dragover');
-        });
-
-        uploadZone.on('dragleave dragend', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).removeClass('dragover');
-        });
-
-        uploadZone.on('drop', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            $(this).removeClass('dragover');
-
-            const files = e.originalEvent.dataTransfer.files;
-            if (files.length > 0) {
-                handleFileUpload(files);
-            }
-        });
-
-        // Dosya seçimi
-        $('#resimInput').on('change', function () {
-            const files = this.files;
-            if (files.length > 0) {
-                handleFileUpload(files);
-            }
-        });
-
-        // Dosya yükleme işlemi
-        function handleFileUpload(files) {
-            const maxSize = 2 * 1024 * 1024; // 5MB
-            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-            const existing = $('#photoGallery .photo-item').length;  // hâlihazırdaki foto sayısı
-            const max = 2;
-
-            // Dosya validasyonu
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-
-                if (!allowedTypes.includes(file.type)) {
-                    showMessage('Sadece JPG, PNG ve JPEG dosyaları yükleyebilirsiniz.', 'error');
-                    return;
-                }
-
-                if (file.size > maxSize) {
-                    showMessage('Dosya boyutu 2MB\'dan büyük olamaz.', 'error');
-                    return;
-                }
-            }
-
-            if (existing >= max) {
-                showMessage('Bu servise zaten 2 fotoğraf yüklendi.', 'error');
-                return;
-            }
-            if (existing + files.length > max) {
-                showMessage(`En fazla ${max - existing} fotoğraf daha yükleyebilirsiniz.`, 'error');
-                return;
-            }
-
-            // Her dosya için ayrı ayrı yükleme
-            for (let i = 0; i < files.length; i++) {
-                uploadSingleFile(files[i]);
-            }
-        }
-
-        // Tek dosya yükleme
-        function uploadSingleFile(file) {
-            const formData = new FormData();
-            formData.append('belge', file);
-            formData.append('servisFotoEkle', 'Ekle');
-            formData.append('servisid', $('input[name="servisid"]').val());
-
-            $('.progress-container').show();
-            var firma_id = {{$firma->id}};
-            $.ajax({
-                url: '/' + firma_id + '/servis-foto-yukle', // Gerçek URL'nizi buraya yazın
-                method: 'POST',
-                data: formData,
-                processData: false,
-                contentType: false,
-                xhr: function () {
-                    const xhr = new window.XMLHttpRequest();
-                    xhr.upload.addEventListener('progress', function (e) {
-                        if (e.lengthComputable) {
-                            const percentComplete = (e.loaded / e.total) * 100;
-                            $('.progress-bar').css('width', percentComplete + '%');
-                        }
-                    });
-                    return xhr;
-                },
-                success: function (response) {
-                    showMessage('Fotoğraf başarıyla yüklendi!', 'success');
-                    addPhotoToGallery(response.photo);
-                    resetUploadForm();
-                },
-                error: function (xhr) {
-                    const message = xhr.responseJSON?.message || 'Yükleme sırasında hata oluştu.';
-                    showMessage(message, 'error');
-                    resetUploadForm();
+        $(document).ready(function() {
+            // CSRF token ayarı
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-        }
 
-        // Fotoğrafı galeriye ekleme
-        function addPhotoToGallery(photo) {
-            const photoHtml = `
+            // Fancybox başlatma
+            $('[data-fancybox="gallery"]').fancybox({
+                buttons: ['zoom', 'share', 'slideShow', 'fullScreen', 'download', 'thumbs', 'close'],
+                animationEffect: 'fade',
+                transitionEffect: 'slide'
+            });
+
+            // Drag & Drop işlemleri
+            const uploadZone = $('.upload-zone');
+            
+            uploadZone.on('dragover dragenter', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).addClass('dragover');
+            });
+
+            uploadZone.on('dragleave dragend', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).removeClass('dragover');
+            });
+
+            uploadZone.on('drop', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).removeClass('dragover');
+                
+                const files = e.originalEvent.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileUpload(files);
+                }
+            });
+
+            // Dosya seçimi
+            $('#resimInput').on('change', function() {
+                const files = this.files;
+                if (files.length > 0) {
+                    handleFileUpload(files);
+                }
+            });
+
+            // Dosya yükleme işlemi
+            function handleFileUpload(files) {
+                const maxSize = 2 * 1024 * 1024; // 5MB
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                const existing = $('#photoGallery .photo-item').length;  // hâlihazırdaki foto sayısı
+                const max = 2;
+                
+                // Dosya validasyonu
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    
+                    if (!allowedTypes.includes(file.type)) {
+                        showMessage('Sadece JPG, PNG ve JPEG dosyaları yükleyebilirsiniz.', 'error');
+                        return;
+                    }
+                    
+                    if (file.size > maxSize) {
+                        showMessage('Dosya boyutu 2MB\'dan büyük olamaz.', 'error');
+                        return;
+                    }
+                }
+
+                if (existing >= max) {
+                    showMessage('Bu servise zaten 2 fotoğraf yüklendi.', 'error');
+                    return;
+                }
+                if (existing + files.length > max) {
+                    showMessage(`En fazla ${max - existing} fotoğraf daha yükleyebilirsiniz.`, 'error');
+                    return;
+                }
+
+                // Her dosya için ayrı ayrı yükleme
+                for (let i = 0; i < files.length; i++) {
+                    uploadSingleFile(files[i]);
+                }
+            }
+
+            // Tek dosya yükleme
+            function uploadSingleFile(file) {
+                const formData = new FormData();
+                formData.append('belge', file);
+                formData.append('servisFotoEkle', 'Ekle');
+                formData.append('servisid', $('input[name="servisid"]').val());
+
+                $('.progress-container').show();
+                var firma_id = {{$firma->id}};
+                $.ajax({
+                    url: '/' + firma_id + '/servis-foto-yukle', // Gerçek URL'nizi buraya yazın
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    xhr: function() {
+                        const xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener('progress', function(e) {
+                            if (e.lengthComputable) {
+                                const percentComplete = (e.loaded / e.total) * 100;
+                                $('.progress-bar').css('width', percentComplete + '%');
+                            }
+                        });
+                        return xhr;
+                    },
+                    success: function(response) {
+                        showMessage('Fotoğraf başarıyla yüklendi!', 'success');
+                        addPhotoToGallery(response.photo);
+                        resetUploadForm();
+                    },
+                    error: function(xhr) {
+                        const message = xhr.responseJSON?.message || 'Yükleme sırasında hata oluştu.';
+                        showMessage(message, 'error');
+                        resetUploadForm();
+                    }
+                });
+            }
+
+            // Fotoğrafı galeriye ekleme
+            function addPhotoToGallery(photo) {
+                const photoHtml = `
                     <div class="col-md-2 col-sm-6">
                         <div class="photo-item">
                             <a href="${photo.url}" data-fancybox="gallery">
@@ -285,14 +283,21 @@
                         </div>
                     </div>
                 `;
+                
+                $('#photoGallery').prepend(photoHtml);
+                $('#noPhotos').hide();
+                
+                // Yeni eklenen fotoğraf için fancybox başlatma
+                $('[data-fancybox="gallery"]').fancybox();
+            }
 
-            $('#photoGallery').prepend(photoHtml);
-            $('#noPhotos').hide();
-
-            // Yeni eklenen fotoğraf için fancybox başlatma
-            $('[data-fancybox="gallery"]').fancybox();
+            // Fotoğraf silme
+            $(document).on('click', '.servisFotoSil', function(e) {
+        e.preventDefault();
+        
+        if (!confirm('Bu fotoğrafı silmek istediğinizden emin misiniz?')) {
+            return;
         }
-
 
         const photoId = $(this).data('id');
         const $photoItem = $(this).closest('.col-md-2, .col-sm-6');
@@ -315,92 +320,61 @@
                         // Hiç fotoğraf kalmadıysa mesaj göster
                         if ($('#photoGallery .col-md-2, #photoGallery .col-sm-6').length === 0) {
                             $('#noPhotos').show();
-
-        // Fotoğraf silme
-        $(document).on('click', '.servisFotoSil', function (e) {
-            e.preventDefault();
-
-            if (!confirm('Bu fotoğrafı silmek istediğinizden emin misiniz?')) {
-                return;
-            }
-
-            const photoId = $(this).data('id');
-            const $photoItem = $(this).closest('.col-md-2, .col-sm-6');
-            const $button = $(this);
-
-            // Butonu deaktive et
-            $button.prop('disabled', true).text('...');
-
-            $.ajax({
-                url: `/{{ $firma->id }}/servis-foto-sil/${photoId}`,
-                method: 'DELETE',
-                data: {
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function (response) {
-                    if (response.success) {
-                        $photoItem.fadeOut(300, function () {
-                            $(this).remove();
-
-                            // Hiç fotoğraf kalmadıysa mesaj göster
-                            if ($('#photoGallery .col-md-3, #photoGallery .col-sm-6').length === 0) {
-                                $('#noPhotos').show();
-                            }
-                        });
-
-                        // Başarı mesajı göster
-                        if (typeof showMessage === 'function') {
-                            showMessage(response.message || 'Fotoğraf başarıyla silindi.', 'success');
-                        } else {
-                            alert(response.message || 'Fotoğraf başarıyla silindi.');
-
                         }
+                    });
+                    
+                    // Başarı mesajı göster
+                    if (typeof showMessage === 'function') {
+                        showMessage(response.message || 'Fotoğraf başarıyla silindi.', 'success');
                     } else {
-                        alert(response.message || 'Silme işlemi başarısız oldu.');
-                        $button.prop('disabled', false).text('×');
+                        alert(response.message || 'Fotoğraf başarıyla silindi.');
                     }
-                },
-                error: function (xhr) {
-                    console.error('Silme hatası:', xhr);
-                    let message = 'Silme işlemi başarısız oldu.';
-
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        message = xhr.responseJSON.message;
-                    } else if (xhr.status === 404) {
-                        message = 'Fotoğraf bulunamadı.';
-                    } else if (xhr.status === 403) {
-                        message = 'Bu işlem için yetkiniz yok.';
-                    }
-
-                    alert(message);
+                } else {
+                    alert(response.message || 'Silme işlemi başarısız oldu.');
                     $button.prop('disabled', false).text('×');
                 }
-            });
+            },
+            error: function(xhr) {
+                console.error('Silme hatası:', xhr);
+                let message = 'Silme işlemi başarısız oldu.';
+                
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                } else if (xhr.status === 404) {
+                    message = 'Fotoğraf bulunamadı.';
+                } else if (xhr.status === 403) {
+                    message = 'Bu işlem için yetkiniz yok.';
+                }
+                
+                alert(message);
+                $button.prop('disabled', false).text('×');
+            }
         });
+    });
 
-        // Mesaj gösterme
-        function showMessage(message, type) {
-            const alertClass = type === 'error' ? 'alert-danger' : 'alert-success';
-            const messageHtml = `
+            // Mesaj gösterme
+            function showMessage(message, type) {
+                const alertClass = type === 'error' ? 'alert-danger' : 'alert-success';
+                const messageHtml = `
                     <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
                         ${message}
                         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
                 `;
+                
+                $('#uploadMessages').html(messageHtml);
+                
+                // 5 saniye sonra mesajı otomatik kapat
+                setTimeout(function() {
+                    $('.alert').fadeOut();
+                }, 2000);
+            }
 
-            $('#uploadMessages').html(messageHtml);
-
-            // 5 saniye sonra mesajı otomatik kapat
-            setTimeout(function () {
-                $('.alert').fadeOut();
-            }, 2000);
-        }
-
-        // Upload formunu sıfırlama
-        function resetUploadForm() {
-            $('#resimInput').val('');
-            $('.progress-container').hide();
-            $('.progress-bar').css('width', '0%');
-        }
-    });
-</script>
+            // Upload formunu sıfırlama
+            function resetUploadForm() {
+                $('#resimInput').val('');
+                $('.progress-container').hide();
+                $('.progress-bar').css('width', '0%');
+            }
+        });
+    </script>

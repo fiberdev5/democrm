@@ -90,11 +90,14 @@
             </div>
             
             <!-- Arama -->
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Arama</label>
                 <input type="text" class="form-control" id="search_input" placeholder="IP, kullanıcı adı ve servis id ile arama yapın...">
             </div>
          
+            <div style="margin-bottom: 7px;" class="col-md-1 custom-p-r-min custom-p-min">
+                <span class="text-muted" id="log_count">0 kayıt</span>
+            </div>
            <!-- Butonlar -->
             <div class="col-md-1 d-flex align-items-end">
                 <div class="d-flex">
@@ -108,12 +111,7 @@
             </div>
         </div>
 
-        <!-- Kayıt Sayısı -->
-        <div class="row mb-3">
-            <div class="col-12 text-end">
-                <span class="text-muted" id="log_count">0 kayıt</span>
-            </div>
-        </div>
+       
 
         <!-- Log Listesi -->
         <div class="table-responsive">
@@ -208,8 +206,10 @@ function createPagination(pagination) {
         // Önceki sayfa
         if (pagination.current_page > 1) {
             html += `<li class="page-item">
-                        <a class="page-link" href="#" onclick="loadLogs(${pagination.current_page - 1})">Önceki</a>
-                    </li>`;
+                <a class="page-link" href="#" onclick="loadLogs(${pagination.current_page - 1})">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>`;
         }
         
         // Sayfa numaraları (sadece birkaç sayfa göster)
@@ -225,8 +225,10 @@ function createPagination(pagination) {
         // Sonraki sayfa
         if (pagination.current_page < pagination.last_page) {
             html += `<li class="page-item page-item-custom">
-                        <a class="page-link" href="#" onclick="loadLogs(${pagination.current_page + 1})">Sonraki</a>
-                    </li>`;
+                <a class="page-link" href="#" onclick="loadLogs(${pagination.current_page + 1})">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>`;
         }
         
         html += '</ul>';

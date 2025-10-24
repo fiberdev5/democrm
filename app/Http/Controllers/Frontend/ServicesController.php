@@ -620,7 +620,7 @@ private function formatStokList(string $value): string
                             $hedef_sonlanmis_asama_id = 255;
                             return '
                                 <div class="form-check form-switch d-flex justify-content-center">
-                                    <input class="form-check-input servis-sonlandir-switch" type="checkbox" role="switch"
+                                    <input class="form-check-input  servis-sonlandir-switch" type="checkbox" role="switch"
                                         style="cursor:pointer; width: 2.7em; height: 1.2em;"
                                         data-servis-id="' . $row->id . '" 
                                         data-gelen-islem-id="' . $row->servisDurum . '"
@@ -665,15 +665,15 @@ private function formatStokList(string $value): string
     {
         $deleteUrl   = route('delete.service', [$row->firma_id, $row->id]);
 
-    $editButton  = '<a href="javascript:void(0);" data-bs-id="'.$row->id.'" 
-                       class="btn btn-outline-warning btn-sm mobilBtn mbuton1 serBilgiDuzenle" 
+    $editButton  = '<a style="padding:6px" href="javascript:void(0);" data-bs-id="'.$row->id.'" 
+                       class="btn btn-outline-warning btn-sm mobilBtn mbuton1 serBilgiDuzenle " 
                        data-bs-toggle="modal" data-bs-target="#editServiceDescModal" 
                        title="Düzenle">
                        <i class="fas fa-edit"></i><span> Düzenle</span>
                     </a>';
 
-    $viewButton  = '<a href="javascript:void(0);" data-bs-id="'.$row->id.'" 
-                       class="btn btn-outline-primary btn-sm mobilBtn mbuton2 serBilgiDuzenle"
+    $viewButton  = '<a style="padding:6px" href="javascript:void(0);" data-bs-id="'.$row->id.'" 
+                       class="btn btn-outline-primary btn-sm mobilBtn mbuton2 serBilgiDuzenle serBilgiDuzenle-custom-l"
                        data-bs-toggle="modal" data-bs-target="#editServiceDescModal" 
                        title="Görüntüle">
                        <i class="fas fa-eye"></i><span> Görüntüle</span>
@@ -681,8 +681,8 @@ private function formatStokList(string $value): string
 
     $deleteButton = '';
     if (Auth::user()->can('Servisleri Silebilir')) {
-        $deleteButton = '<a href="'.$deleteUrl.'" 
-                            class="btn btn-sm btn-outline-danger mobilBtn mbuton3 delete-button" 
+        $deleteButton = '<a style="padding:6px 7px" href="'.$deleteUrl.'" 
+                            class="btn btn-sm btn-outline-danger mobilBtn mbuton3 delete-button serBilgiDuzenle-custom-r" 
                             id="delete" title="Sil">
                             <i class="fas fa-trash-alt"></i> <span> Sil</span>
                          </a>';

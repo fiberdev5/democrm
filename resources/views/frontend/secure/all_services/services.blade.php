@@ -2,16 +2,19 @@
   .custom-size{
     max-width: 376px !important;
   }
+
+  
   @media (min-width: 768px) {
   .custom-modal-width {
     max-width: 380px !important;
     margin: 1.75rem auto;
   }
+
 }
 </style>
 @extends('frontend.secure.user_master')
 @section('user')
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+ <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>-->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
@@ -123,7 +126,7 @@
           <div class="card">
             {{-- Başlık ve Butonlar burada --}}
             <div class="card-header  d-flex flex-wrap justify-content-between align-items-center">
-              <h5 class="sayfaBaslik mb-0">Servisler</h5>
+              <h5 style="color: #505d69 !important;" class="sayfaBaslik mb-0">Servisler</h5>
               <div
                 class="header-buttons d-flex flex-wrap gap-1 w-100 w-md-auto mt-2 mt-md-0 justify-content-center justify-content-md-end">
                 @if(auth()->user()->can('Tüm Servisleri Görebilir'))
@@ -324,14 +327,14 @@
                   style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                   <thead class="title">
                     <tr>
-                      <th style="width: 10px">ID</th>
+                      <th class="custom-table-size-id" style="width: 10px">ID</th>
                       <th style="width: 10px">Tarih</th>
                       <th style="width: 250px">Müşteri</th>
                       <th style="width: 250px">Cihaz</th>
-                      <th>Servis Durumu</th>
-                      <th data-priority="1" style="width: 96px;">Düzenle</th>
+                      <th class="custom-table-size" style="width: 205px !important">Servis Durumu</th>
+                      <th class="custom-table-size-edit" data-priority="1" style="width: 68px;">Düzenle</th>
                       <th style="max-width: 40px!important;">Kapat</th>
-                      <th style="width: 50px; text-align: center;">Seç</th>
+                      <th class="custom-table-size-select" style="width: 50px; text-align: center;">Seç</th>
                     </tr>
                   </thead>
                   <tbody>

@@ -387,7 +387,7 @@ form .mb-3 {
 }
 
 .nav-pills .nav-link.active {
-  background-color: #212529 !important;
+  background-color: none !important;
   color: #fff !important;
 }
 
@@ -465,7 +465,7 @@ form .mb-3 {
 
 #editServiceDescModal #tab1 .card3 .right .altAsamalar {
   display: inline-block;
-  width: 169px;
+  width: 240px;
   margin-left: 2px;
 }
 
@@ -5221,9 +5221,9 @@ div.dataTables_wrapper div.dataTables_filter input {
 
 .servisAcilLabel .checkmark {
   position: relative;
-  top: 1px;
-  width: 14px;
-  height: 14px;
+  top: 1.7px;
+  width: 12px;
+  height: 12px;
   margin: 0;
   background: #ffffff;
   color: #fff;
@@ -5550,9 +5550,9 @@ a.link-stock:hover {
 .servisAcilLabel span {
   display: inline-block;
   float: inherit !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   position: relative;
-  top: -1px;
+  top: 0px;
   color: #fff;
 }
 
@@ -8211,7 +8211,11 @@ b, strong {
       .custom-p-r-min{
         padding-right: 0px !important;
       }
+      .custom-p-min{
+        padding-left: 0px !important;
+      }
       .custom-prim-r-m{padding-right: 0px !important;}
+      .custom-service-r{padding-right: 6px !important;}
       }
 #addCall{
       margin-block-end: 0em !important;
@@ -12425,3 +12429,66 @@ table.dataTable {
     transform: translateY(-50%);
         background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23676a6d'%3E%3Cpath d='M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z'/%3E%3C/svg%3E") 50% / 0.55rem auto no-repeat !important;
 }
+#datatableCustomer_wrapper{min-height: 157px;}
+
+@media (min-width: 768px) {
+  .custom-service-border{
+  border-bottom: 1px solid #e1e4e9;
+  padding-top: 5px;
+  padding-bottom: 3px ;
+}
+#servisDuzenle{margin-block-end: 0em !important; }
+#editServiceDescModal .card{margin-bottom: 3px !important;}
+.servisPlanDuzenleBtn{margin-right: 5px;}
+#serviceHistoryTableBody tr{border-color:#cbd2dd !important}
+.card-footer-service{margin-top: 35px;}
+.custom-rw2{padding-left: 5px !important;}
+}
+.btn-outline-warning:hover{color: white !important;}
+.btn:focus{box-shadow: none !important;}
+
+#datatableStateStats_wrapper{min-height: 148px;}
+#datatableStageStats_wrapper{min-height: 148px;}
+#datatablePersonelDepoStats_wrapper{min-height: 148px;}
+#datatableIlceStats_wrapper{min-height: 148px;}
+#datatableSurveyStats{min-height: 167px;}
+ @media (min-width: 768px) {
+    .custom-padding-offer{padding-left: 11px !important;}
+    .serBilgiDuzenle-custom-l{margin-left: 3px;}
+    .service-money-date{width: 244px !important;}
+    .main-card-padding-l{padding-left: 20px !important;}
+.main-card-padding-r{padding-right: 20px !important;}
+.index-color{background: #f0f0f1 !important;}
+.col-sm-custom{width: 37.5% !important;}
+.bottom .float-end {
+  display: flex; 
+  align-items: center; 
+  gap: 1rem;
+}
+
+.dataTables_length label {
+  margin-bottom: 0;
+}
+.dataTables_paginate .pagination {
+  margin-bottom: 0;
+}
+.custom-border-bottom{border-bottom: 1px solid #e1e5eb !important;}
+  }
+  
+  
+  .servisAsamalari .card-header .custom-left {
+  display: flex; /* Öğeleri esnek bir kutu içine alır */
+  align-items: center; /* Öğeleri dikeyde ortalar, bu sayede yükseklikler eşit görünür */
+  gap: 8px; /* Öğeler arasına 8px boşluk bırakır */
+}
+ @media (max-width: 768px) {
+     .servisAcilLabel-custom{top:2px !important;}
+ }
+.custom-table-size{width:185px !important;}
+.custom-table-size-edit{width:69px !important;}
+.custom-table-size-select{width:44px !important;}
+.custom-table-size-id{width:9px !important;}
+.servis-sonlandir-switch{    border: 1px solid rgb(109 109 109)!important;}
+.filter-btn.active{box-shadow: none !important;}
+.badge-size-custom{font-size: 13px !important;}
+

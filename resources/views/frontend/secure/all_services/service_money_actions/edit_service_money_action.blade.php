@@ -4,7 +4,7 @@
     <div class="row form-group mb-3">
       <div class="col-lg-5"><label>Tarih <span class="text-danger">*</span></label></div>
       <div class="col-lg-7">
-        <input type="date" name="tarih" class="form-control datepicker" 
+        <input type="date" name="tarih" class="form-control datepicker service-money-date" 
           value="{{ \Carbon\Carbon::parse($servisPara->created_at)->format('Y-m-d') }}" 
           style=" display: inline-block; background:#fff">
       </div>

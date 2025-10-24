@@ -204,27 +204,27 @@
         <div class="card-body card-invoices-body" style="padding:17px 5px">
           <div class="row form-group">
             <div class="col-md-4 rw1"><label>Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam" required></div>
+            <div class="col-md-8 rw2 custom-rw2"><input type="text" onkeyup="sayiKontrol(this)" name="toplam" autocomplete="off" class="form-control toplam" required></div>
           </div>
 
           <div class="row form-group">
             <div class="col-md-4 rw1"><label>İndirim</label></div>
-            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" autocomplete="off" class="form-control indirim" value="0.00"></div>
+            <div class="col-md-8 rw2 custom-rw2"><input type="text" onkeyup="sayiKontrol(this)" name="indirim" autocomplete="off" class="form-control indirim" value="0.00"></div>
           </div>
           <div class="row form-group">
             <div class="col-md-4 rw1"><label>Ara Toplam</label></div>
-            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" autocomplete="off" class="form-control araToplam"></div>
+            <div class="col-md-8 rw2 custom-rw2"><input type="text" onkeyup="sayiKontrol(this)" name="araToplam" autocomplete="off" class="form-control araToplam"></div>
           </div>
 
           <div class="row form-group">
-            <div class="col-md-4 rw1"><label>KDV %</label></div>
+            <div class="col-md-2 rw1"><label>KDV %</label></div>
             <div class="col-md-2 col-6 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdvTutar" autocomplete="off" class="form-control kdvTutar" value="20" ></div>
-            <div class="col-md-6 col-6 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="0"></div>
+            <div class="col-md-8 custom-rw2 col-6 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="kdv" class="form-control kdv" value="0"></div>
           </div>
 
           <div class="row form-group" style="padding-bottom: 0">
             <div class="col-md-4 rw1"><label>Genel Toplam<span style="font-weight: bold; color: red;">*</span></label></div>
-            <div class="col-md-8 rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam" required></div>
+            <div class="col-md-8 rw2 custom-rw2"><input type="text" onkeyup="sayiKontrol(this)" name="genelToplam" autocomplete="off" class="form-control genelToplam" required></div>
           </div>
                
         </div>
