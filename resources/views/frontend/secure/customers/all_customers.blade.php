@@ -1,78 +1,9 @@
 @extends('frontend.secure.user_master')
 @section('user')
+  <link href="{{ asset('frontend/css/customer/all_customer.css') }}" rel="stylesheet" type="text/css" />
   <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-<style>
-
-@media (min-width: 768px) {
-  .custom-modal-width {
-    max-width: 360px;
-    margin: 1.75rem auto;
-  }
-  .custom-modal-width-edit{
-    max-width: 463px;
-    margin: 1.75rem auto;
-  }
-  .searchWrap .dropdown-menu{
-    width: 251px !important;
-  }
-  .pageDetail .searchWrap .dropdown-menu{transform: translate3d(2px, 1px, 0px) !important;min-width: 100% !important;}
-  
-}
-#datatableCustomer_filter input[type="search"] {
-    padding-right: 12px !important; 
-}
-
-.searchWrap {
-    visibility: hidden;
-    opacity: 0;
-}
-.dataTables_filter{
-      margin-bottom: -11px !important;
-}
-.card-customer{    border: 1px solid rgba(0, 0, 0, .125);}
-.card-header-custom{background-color: #f7f7f7;border-bottom: 1px solid rgba(0, 0, 0, .125);margin-bottom: 7px;padding: 4px 7px  !important;}
-  .card-customer-body{padding: 3px 7px !important;} 
-@media (max-width: 767px) {
-      .pageDetail .card-header{padding: 4px 7px !important;}
-.btn-secondary {
-    color: #fff !important;
-    background-color: #5c636a !important;
-    border-color: #565e64 !important;
-}
-.custom-p{
-        padding-left: 0px !important;
-      }
- div.dataTables_filter input{margin-left: 0 !important;}
-
- .dataTables_filter{
-margin-right: 0px !important;
-    }
-    .searchWrap{margin-top: 0px !important;}
-    .pageDetail .searchWrap{width: 30% !important;}
-    .pageDetail .searchWrap{margin-bottom: 0px !important;}
-      #datatableCustomer_filter label{width: 100% !important;}
-          .pageDetail .searchWrap .dropdown-menu{transform: translate3d(13px, 2px, 0px) !important;min-width: calc(80vw - 20px) !important;}
-.pageDetail .searchWrap .dropdown-menu .item {
-    margin-bottom: 0px !important;
-  }
-  #datatableCustomer_wrapper .bottom {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding-top: 0.85em !important;
-}
-.searchWrap .dropdown-menu {
-    padding: 5px 1px;
-}
-.custom-p-r-m-c{
-  padding-right: 0px !important;
-}
-.customer-header-top{margin-top: 30px;}
-
-}
-</style>
 <div class="page-content">
   <div class="container-fluid customer-header-top">
     <div class="row pageDetail">

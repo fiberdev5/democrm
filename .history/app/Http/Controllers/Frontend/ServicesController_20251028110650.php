@@ -246,6 +246,7 @@ if ($request->ajax()) {
             return;
         }
         
+
         if(auth()->user()->can('Kendi Servislerini Görebilir')) {
             $from = Carbon::today()->subDays(2)->startOfDay();
             $to   = Carbon::today()->endOfDay();
@@ -258,6 +259,7 @@ if ($request->ajax()) {
             $query->whereBetween('services.created_at', [$from, $to]);
         }
         
+
     }
 
     // Datatable’ın gönderdiği ana tarih aralığı
@@ -2220,9 +2222,11 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
         // Personelleri al
         $personellerAll = User::where('tenant_id', $tenant_id)
             ->where('status', '1')
+
             ->whereDoesntHave('roles', function ($query) {
                 $query->whereIn('name', ['Admin', 'Super Admin']);
             })
+
             ->orderBy('name', 'ASC')
             ->get();
 

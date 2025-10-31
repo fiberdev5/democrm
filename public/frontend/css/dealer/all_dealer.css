@@ -1,0 +1,58 @@
+  @media (min-width: 768px) {
+  .searchWrap .dropdown-menu{
+    width: 221px !important;
+  }
+}
+
+ @media (min-width: 768px) {
+  .custom-modal-width {
+    max-width: 350px;
+    margin: 1.75rem auto;
+  }
+}
+    @media (max-width: 767px) {
+      .pageDetail .card-header {
+        padding: 4px 8px !important;
+    }
+      .pageDetail .searchWrap .dropdown-menu{transform: translate3d(12px, 2px, 0px) !important;min-width: 100% !important;}
+    .custom-p{
+        padding-left: 0px !important;
+      }
+      .pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+    }
+      .searchWrap {
+        margin-top: 0px !important;
+      }
+
+      .pageDetail .searchWrap {
+        width: 30% !important;
+      }
+
+      .pageDetail .searchWrap {
+        margin-bottom: 0px !important;
+      }
+
+      div.dataTables_filter input {
+        margin-left: 0 !important;
+      }
+
+      .dataTables_filter {
+        margin-right: 0px !important;
+      }
+          li.paginate_button.next, li.paginate_button.previous {
+        font-size: 15px;
+    }
+    .dealer-header-top{margin-top: 30px;}
+    }
+    #addBayi{
+        margin-block-end: auto !important;
+      }
+      .card-deal{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-deal-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-deal-body{padding: 3px 7px !important;}
+  .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }

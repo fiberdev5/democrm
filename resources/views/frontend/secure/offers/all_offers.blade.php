@@ -1,76 +1,13 @@
 @extends('frontend.secure.user_master')
 @section('user')
-
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<link href="{{ asset('frontend/css/offer/all_offer.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{asset('backend/assets/css/bootstrap.min.css')}}" id="bootstrap-style" rel="stylesheet" type="text/css" />
 <!--<script src="{{asset('backend/assets/libs/jquery/jquery.min.js')}}"></script>-->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
-<style>
-  .pagination-rounded .page-link {
-    border-radius: 3px !important;
-}
-  .servisDrop {
-    transition: none !important;
-    animation: none !important;
-    transform: translate3d(1px, 2px, 0px) !important;
-  }
-.card-offer{border: 1px solid rgba(0, 0, 0, .125) !important;}
-.card-offer-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
-  .card-offer-body{padding: 3px 7px !important;}
-.searchWrap {
-    visibility: hidden;
-    opacity: 0;
-}
-.p-b{
-  padding-bottom: 5px !important;
-}
-@media (max-width: 767px) {
-.custom-p{
-        padding-left: 0px !important;
-      }
-.pageDetail .searchWrap .dropdown-menu .item {
-        margin-bottom: 0px !important;
-    }
-.searchWrap{margin-top: 0px !important;}
-    .pageDetail .searchWrap{width: 30% !important;}
-    .pageDetail .searchWrap{margin-bottom: 0px !important;}
- div.dataTables_filter input{margin-left: 0 !important;}
-     #datatableOffer_filter label {
-        width: 100% !important;
-    }
-    li.paginate_button.next, li.paginate_button.previous {
-        font-size: 15px;
-    }
-        #datatableOffer_wrapper .dataTables_info {
-        text-align: left !important;
-    }
-    .searchWrap .tarih-araligi {
-    padding: 5px 0px;
-    width: 138px;
-}
-        .pageDetail .searchWrap .dropdown-menu {
-        min-width: calc(78vw - 20px) !important;
-                transform: translate3d(12px, 4px, 0px) !important;
-    }
-        .pageDetail .searchWrap .dropdown-menu .item {
-        margin-bottom: 0px !important;
-        padding: 0px !important;
-    }
-    .searchWrap .dropdown-menu {
-    padding: 0px !important;
-}
-.pageDetail .searchWrap .tarihAraligi .btn {
-        color: #fff !important;
-    background-color: #5c636a !important;
-    border-color: #565e64 !important;
-      }
-      .staff-header-top{margin-top: 30px;}
-      
-}
-</style>
 
 <div class="page-content" id="passwords">
   <div class="container-fluid staff-header-top">

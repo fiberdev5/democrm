@@ -1,127 +1,12 @@
-<style>
-  .custom-size{
-    max-width: 376px !important;
-  }
-
-  
-  @media (min-width: 768px) {
-  .custom-modal-width {
-    max-width: 380px !important;
-    margin: 1.75rem auto;
-  }
-
-}
-</style>
 @extends('frontend.secure.user_master')
 @section('user')
+<link href="{{ asset('frontend/css/services/services.css') }}" rel="stylesheet" type="text/css" />
  <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>-->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-  <style>
-    
-    .servisDrop {
-    transition: none !important;
-    animation: none !important;
-        transform: translate3d(1px, 2px, 0px) !important;
-}
-    .searchWrap.kullanici_teknisyenfiltre {
-      visibility: hidden;
-      opacity: 0;
-    }
 
-    @media (max-width: 767px) {
-
-      .dataTables_filter {
-        margin-right: 0px !important;
-      }
-      .addServiceModal .ekle-modal{
-        width: auto !important;
-      }
-          .ekle-modal {
-        width: auto !important;
-    }
-    #addServiceModal .c1 {
-     padding-right: 0px !important; 
-}
-
-        .pageDetail .searchWrap .tarihAraligi .btn {
-        color: #fff !important;
-    background-color: #5c636a !important;
-    border-color: #565e64 !important;
-      }
-          
-      .custom-p{
-        padding-left: 0px !important;
-      }
-      .pageDetail .searchWrap {
-        width: 26% !important;
-      }
-
-      .searchWrap {
-        margin-top: 0px !important;
-      }
-
-      div.dataTables_filter input {
-        margin-left: 0px !important;
-      }
-
-      .top {
-        margin-top: 19px;
-      }
-
-      div.dataTables_wrapper div.dataTables_filter input {
-        width: 227px !important;
-      }
-
-      .servisDrop {
-        inset: 0px 0px -412px -213px !important;
-      }
-
-      .pageDetail .searchWrap {
-        margin-bottom: 0px !important;
-        width: 30% !important;
-      }
-
-      div.dataTables_wrapper div.dataTables_filter input {
-        width: 100% !important;
-      }
-
-      .pageDetail .searchWrap .dropdown-menu {
-        transform: translate3d(26px, -59px, 0px) !important;
-        ;
-        width: 100% !important;
-      }
-
-      .pageDetail .searchWrap .dropdown-menu .item {
-        margin-bottom: 0px !important;
-      }
-
-      thead.title tr th {
-
-        font-size: 12px;
-      }
-
-      .searchWrap .dropdown-menu {
-        padding: 0px !important;
-      }
-
-      .pageDetail .searchWrap .dropdown-menu .item {
-        padding: 3px !important;
-      }
-          .pageDetail .searchWrap .dropdown-menu {
-        min-width: calc(95vw - 20px) !important;
-    }
-    .p-cihaz{
-      margin-bottom:0px !important ;
-    }
-
-    }
-
-    
-
-  </style>
 <div class="page-content" id="customerTable">
     <div class="container-fluid">
       <div class="row pageDetail">

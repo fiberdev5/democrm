@@ -1,0 +1,86 @@
+.servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+}
+
+.card-consigment {
+    border: 1px solid rgba(0, 0, 0, .125) !important;
+}
+
+.card-consigment-header {
+    background-color: #f7f7f7 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+    margin-bottom: 7px !important;
+    padding: 4px 7px !important;
+}
+
+.card-consigment-body {
+    padding: 3px 7px !important;
+}
+/* Genel Stiller */
+.searchWrap {
+    visibility: hidden; /* JS ile görünür yapılacak */
+    opacity: 0;
+}
+@media (min-width: 768px) {
+.custom-modal-width {
+max-width: 424px;
+margin: 1.75rem auto;
+}
+.searchWrap .dropdown-menu{
+width: 250px !important;
+}
+}
+
+/* Mobil Cihazlar İçin Özel Stiller */
+@media (max-width: 767px) {
+
+        .pageDetail .searchWrap {
+    width: 30% !important;
+    }
+    
+    div.dataTables_filter input {
+    margin-left: 0 !important;
+    }
+    
+    .dataTables_filter {
+    margin-right: 0 !important;
+    }
+    
+    .pageDetail .searchWrap {
+    margin-bottom: 0px !important;
+    }
+
+    .searchWrap {
+    margin-top: 0px !important;
+    }
+    .pageDetail .searchWrap .dropdown-menu{
+    transform: translate3d(9px, 9px, 0px) !important;
+    min-width: calc(78vw - 20px) !important;
+    }
+    .searchWrap .dropdown-menu {
+padding: 0px;
+}
+.pageDetail .searchWrap .dropdown-menu .item{
+    margin-bottom: 0px !important;
+}
+
+    #datatableConsignment_wrapper .dataTables_info{
+        width: auto !important;
+    }
+        #datatableConsignment_wrapper .bottom {
+    flex-direction: row !important;
+}
+    li.paginate_button.next, li.paginate_button.previous {
+    font-size: 15px;
+}
+
+.consigment-header-top{margin-top: 30px;}
+.btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+
+}

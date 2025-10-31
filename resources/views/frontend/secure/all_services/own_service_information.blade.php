@@ -1,19 +1,7 @@
-<style>
-    .card-own {
-      border: 1px solid rgba(0, 0, 0, .125) !important;
-    }
 
-    .card-own-header {
-      background-color: #f7f7f7 !important;
-      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
-      margin-bottom: 7px !important;
-      padding: 4px 7px !important;
-    }
+{{-- resources/views/servis/show.blade.php --}}
+<link href="{{ asset('frontend/css/services/own_service_information.css') }}" rel="stylesheet" type="text/css" />
 
-    .card-own-body {
-      padding: 3px 7px !important;
-    }
-</style>
 <div class="servisModal teknisyenServisModal">
     <form method="POST" id="servisDuzenle" action="">
         @csrf        

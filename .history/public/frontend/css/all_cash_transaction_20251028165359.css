@@ -1,0 +1,95 @@
+  @media (max-width: 767px) {
+
+      li.paginate_button.next,
+      li.paginate_button.previous {
+        display: inline-block;
+        font-size: 16px !important;
+      }
+
+      #datatableKasa_wrapper .dataTables_info {
+        text-align: left !important;
+      }
+
+      .pageDetail .searchWrap .dropdown-menu .item {
+        margin-bottom: 0px !important;
+      }
+
+      .searchWrap .dropdown-menu {
+        padding: 0px !important;
+      }
+
+      .pageDetail .searchWrap .dropdown-menu {
+        min-width: calc(93vw - 20px) !important;
+        transform: translate3d(10.600006px, 4px, 0px) !important;
+            inset: 0px 0px auto auto !important;
+      }
+
+      .pageDetail .searchWrap .tarihAraligi .btn {
+        color: #fff !important;
+        background-color: #5c636a !important;
+        border-color: #565e64 !important;
+      }
+
+      .searchWrap .tarih-araligi {
+        padding: 5px 6px !important;
+      }
+
+      .searchWrap {
+        margin-top: 0px !important;
+      }
+
+      .pageDetail .searchWrap {
+        width: 30% !important;
+      }
+
+      .pageDetail .searchWrap {
+        margin-bottom: 0px !important;
+      }
+
+      div.dataTables_filter input {
+        margin-left: 0 !important;
+      }
+
+      .dataTables_filter {
+        margin-right: 0px !important;
+      }
+
+      .pageDetail .kasaArama {
+        margin-right: 0px !important;
+
+      }
+
+      #datatableKasa_wrapper .kasaArama {
+        display: none;
+      }
+
+      #datatableKasa_filter label {
+        width: 100% !important;
+      }
+
+      #datatableKasa_filter label {
+        margin-bottom: 0px !important;
+      }
+
+      #datatableKasa_wrapper .dataTables_filter {
+        margin-bottom: -1px !important;
+      }
+
+      
+
+    }
+
+    @media (min-width: 768px) {
+      .custom-modal-width {
+        max-width: 390px;
+        margin: 1.75rem auto;
+      }
+    }
+
+    #kasaArama {
+      background-color: #343a40 !important;
+    }
+    .kasaArama {
+          background-color: #343a40;
+    color: white;
+    }

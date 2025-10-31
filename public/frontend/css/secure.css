@@ -8202,8 +8202,6 @@ b, strong {
         margin-bottom: 7px;
       }
 
-
-      
       @media (max-width: 767px) {
         .custom-p-m-k{
         padding-left: 0px !important;
@@ -13756,6 +13754,587 @@ div.dataTables_wrapper table#datatableIntegration {
     margin: 0;
 }
 
+
+/******************** Stok Limiti Uyarı Banner Stilleri *********************************/
+.stock-limit-banner {
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(45, 55, 72, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.stock-limit-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.stock-limit-banner-icon {
+  font-size: 16px;
+}
+
+.stock-limit-banner-text {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.stock-limit-banner-title {
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 0px;
+}
+
+.stock-limit-banner-subtitle {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.stock-limit-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.stock-limit-banner-link {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+.stock-limit-banner-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.stock-limit-banner-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  border-radius: 3px;
+}
+
+.stock-limit-banner-close:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .stock-limit-banner {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .stock-limit-banner-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .stock-limit-banner-text {
+    gap: 4px;
+  }
+
+  .stock-limit-banner-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+/******************** Stok Limiti Uyarı Banner Stilleri *********************************/
+/******************** Konsinye Limiti Uyarı Banner Stilleri *********************************/
+.consignment-limit-banner {
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(45, 55, 72, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.consignment-limit-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.consignment-limit-banner-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.consignment-limit-banner-text {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.consignment-limit-banner-title {
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 0px;
+}
+
+.consignment-limit-banner-subtitle {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.consignment-limit-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.consignment-limit-banner-link {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+.consignment-limit-banner-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.consignment-limit-banner-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.consignment-limit-banner-close:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .consignment-limit-banner {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .consignment-limit-banner-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .consignment-limit-banner-text {
+    gap: 4px;
+  }
+
+  .consignment-limit-banner-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+/******************** Konsinye Limiti Uyarı Banner Stilleri *********************************/
+/******************** Personel Limiti Uyarı Banner Stilleri *********************************/
+.staff-limit-banner {
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(45, 55, 72, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.staff-limit-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.staff-limit-banner-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.staff-limit-banner-text {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.staff-limit-banner-title {
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 0px;
+}
+
+.staff-limit-banner-subtitle {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.staff-limit-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.staff-limit-banner-link {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+.staff-limit-banner-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.staff-limit-banner-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.staff-limit-banner-close:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .staff-limit-banner {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .staff-limit-banner-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .staff-limit-banner-text {
+    gap: 4px;
+  }
+
+  .staff-limit-banner-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+/******************** Personel Limiti Uyarı Banner Stilleri *********************************/
+/******************** Bayi Limiti Uyarı Banner Stilleri *********************************/
+.dealer-limit-banner {
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 5px;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 1px 4px rgba(45, 55, 72, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.dealer-limit-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.dealer-limit-banner-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.dealer-limit-banner-text {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.dealer-limit-banner-title {
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 0px;
+}
+
+.dealer-limit-banner-subtitle {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.dealer-limit-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.dealer-limit-banner-link {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+}
+
+.dealer-limit-banner-link:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.dealer-limit-banner-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 6px;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.dealer-limit-banner-close:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .dealer-limit-banner {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .dealer-limit-banner-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .dealer-limit-banner-text {
+    gap: 4px;
+  }
+
+  .dealer-limit-banner-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+/******************** Bayi Limiti Uyarı Banner Stilleri *********************************/
+/* Parçalar dropdown için scroll */
+.parcalar-dropdown {
+    max-height: 115px !important;
+    overflow-y: auto !important;
+}
+/* Konsinye dropdown için scroll */
+.konsinye-dropdown {
+    max-height: 115px !important;
+    overflow-y: auto !important;
+}
+.card-border {
+    border: 1px solid rgba(0, 0, 0, .125);
+}
+/* Body-header.blade */
+ @media (max-width: 767px) {
+    .navbar-header{
+      padding-right: 0px !important;
+    }
+    .dropdown-divider{
+      display: none;
+    }
+     .username-ellipsis {
+    display: inline-block;
+    max-width: 11ch;         /* 7 karakterlik alan */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: bottom; /* hizalama için */
+  }
+  .mobile-top-logo {
+    position: sticky;   /* veya fixed yapabilirsin */
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #22262b;
+    border-bottom: 1px solid #2f343a;
+    font-weight: 600;
+    font-size: 16px;
+    z-index: 1050;
+    text-transform: uppercase; 
+    color: white;
+  }
+  }
+  /* Body-header.blade */
+
+/*customer_services.blade*/
+  .btn-customer-custom{padding: .25rem 0.1rem !important;color: red;}
+/*customer_services.blade*/
+
+/*activity_log.blade*/
+.card-log {
+      border: 1px solid rgba(0, 0, 0, .125) !important;
+    }
+
+.card-log-header {
+      background-color: #f7f7f7 !important;
+      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+      margin-bottom: 7px !important;
+      padding: 4px 7px !important;
+    }
+
+.card-log-body {
+      padding: 3px 7px !important;
+    }
+.page-item-custom a{
+    width: 53px !important;
+  }
+/*activity_log.blade*/
+
+/*survey_reports.blade*/
+.btn-full{
+    width: 100%;
+  }
+  @media (max-width: 767px) {
+  .btn-full{
+    margin-top: 5px !important;
+  }
+}
+/*survey_reports.blade*/
+
+/* Impersonation modu için özel stiller user_master_blade*/
+.impersonating {
+    position: relative;
+}
+
+.impersonating .navbar {
+    border-top: 3px solid #ffc107;
+}
+
+.impersonation-mode {
+    opacity: 0.95;
+}
+
+#impersonationBanner {
+    position: sticky;
+    top: 0;
+    z-index: 1040;
+    height: 0px;
+    margin-left: 6px;
+}
+@media (max-width: 767px) {
+   #impersonationBanner {
+        margin-left: 0px;
+        height: 54px;
+    } 
+    .font-md{
+        font-size:13px;
+    }
+    .back-button{
+        margin-top:10px;
+    }
+}
+/* Impersonation modu için özel stiller user_master_blade*/
+=======
 .features-list li {
     padding: 10px 0;
     display: flex;
@@ -13791,3 +14370,4 @@ div.dataTables_wrapper table#datatableIntegration {
     .pricing-box{margin-top: 20px;}
     .breadcrumb-custom{margin-top: 33px;}
 }
+

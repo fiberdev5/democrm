@@ -14,6 +14,7 @@ use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str;
 use App\Services\ActivityLogger;
+use Illuminate\Support\Facades\Cache;
 
 class PersonelController extends Controller
 {
@@ -167,6 +168,27 @@ class PersonelController extends Controller
     }
 
     public function StoreStaff(Request $request, $tenant_id) {
+
+        $token = $request->input('form_token');
+        // Token boş mu kontrol et
+        if (empty($token)) {
+            return back()->withInput()->with([
+                'message' => 'Geçersiz form token! Lütfen sayfayı yenileyin.',
+                'alert-type' => 'error'
+            ]);
+        }
+        // Bu token daha önce kullanıldı mı kontrol et
+        $cacheKey = 'staff_form_token_' . $token;
+        if (Cache::has($cacheKey)) {
+            return back()->withInput()->with([
+                'message' => 'Bu form zaten gönderildi! Lütfen bekleyin veya sayfayı yenileyin.',
+                'alert-type' => 'warning'
+            ]);
+        }
+        // Token'ı 10 dakika boyunca sakla
+        Cache::put($cacheKey, true, now()->addMinutes(10));
+
+
         $firma = Tenant::where('id', $tenant_id)->first();
 
         if (!$firma) {
@@ -414,6 +436,26 @@ public function AddDealer($tenant_id) {
 
 public function StoreDealer(Request $request, $tenant_id)
 {
+        $token = $request->input('form_token');
+        // Token boş mu kontrol et
+        if (empty($token)) {
+            return back()->withInput()->with([
+                'message' => 'Geçersiz form token! Lütfen sayfayı yenileyin.',
+                'alert-type' => 'error'
+            ]);
+        }
+        // Bu token daha önce kullanıldı mı kontrol et
+        $cacheKey = 'dealer_form_token_' . $token;
+        if (Cache::has($cacheKey)) {
+            return back()->withInput()->with([
+                'message' => 'Bu form zaten gönderildi! Lütfen bekleyin veya sayfayı yenileyin.',
+                'alert-type' => 'warning'
+            ]);
+        }
+        // Token'ı 10 dakika boyunca sakla
+        Cache::put($cacheKey, true, now()->addMinutes(10));
+
+        
         $firma = Tenant::findOrFail($tenant_id);
         // Aynı isimde bayi kontrolü (sadece aktif olanları kontrol et)
         $existingDealer = User::where('tenant_id', $firma->id)

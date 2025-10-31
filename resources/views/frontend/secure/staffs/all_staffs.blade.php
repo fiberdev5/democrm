@@ -1,54 +1,6 @@
-<style>
-  .servisDrop {
-    transition: none !important;
-    animation: none !important;
-    transform: translate3d(1px, 2px, 0px) !important;
-  }
-.card-staff{border: 1px solid rgba(0, 0, 0, .125) !important;}
-.card-staff-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
-  .card-staff-body{padding: 3px 7px !important;}
-
-  @media (min-width: 767px) {
-    .custom-modal-width {
-      max-width: 360px !important;
-      margin: 1.75rem auto;
-    }
-
-    .searchWrap .dropdown-menu {
-      width: 271px !important;
-    }
-  }
-
-  @media (max-width: 767px) {
-        
-    .pageDetail .searchWrap .dropdown-menu .item{
-      margin-bottom: 0px !important;
-    }
-    .custom-p {
-      padding-left: 0px !important;
-    }
-
-    .pageDetail .searchWrap .dropdown-menu .item {
-      margin-bottom: 0px !important;
-    }
-
-    #datatablePersonel_wrapper .bottom {
-      display: flex !important;
-      justify-content: space-between !important;
-      align-items: center !important;
-      padding-top: 0.85em !important;
-    }
-    .staff-header-top{margin-top: 30px;}
-  }
-
-  #editPers {
-    margin-block-end: 0em !important;
-  }
-</style>
-
 @extends('frontend.secure.user_master')
 @section('user')
-
+<link href="{{ asset('frontend/css/staff/all_staff.css') }}" rel="stylesheet" type="text/css" />
   @php 
     if ($firma->isOnTrial()) {
       // Deneme süresinde => firmalar tablosundaki personelSayisi alanı kullanılacak
@@ -117,37 +69,55 @@
       <div class="row pageDetail">
         <div class="col-12">
           <div class="card card-staff">
-            <div class="card-header card-staff-header sayfaBaslik">
-              Personeller
-            </div>
-            <div class="card-body card-staff-body">
-              <table id="datatablePersonel" class="table table-bordered dt-responsive nowrap"
-                style="border-collapse: collapse; border-spacing: 0; width: 100%;">
-                <div class="staff-buttons-info-wrapper">
-                  <div class="staff-buttons-container d-flex d-sm-block">
-                    @if(is_null($staffLimit) || $staffLimit == -1 || $staffAll < $staffLimit)
-                      <a data-bs-toggle="modal" data-bs-target="#addPersonelModal" class="btn btn-success btn-sm addPersonel">
-                        <i class="fas fa-plus"></i><span>Personel Ekle</span>
-                      </a>
-                    @else
-                      <a class="btn btn-success btn-sm addPersonel" disabled
-                        style="pointer-events: none; opacity: .4; cursor: default;">
-                        <i class="fas fa-plus"></i><span>Personel Ekle</span>
-                      </a>
-                    @endif
-                    
-                    <button id="printStaffs" class="btn btn-warning btn-sm printStaffs">
-                      <i class="fas fa-print"></i>
-                      <span>Yazdır</span>
-                    </button>
-                  </div>
-
-                  @if(!is_null($staffLimit) && $staffLimit != -1 && $staffAll >= $staffLimit)
-                    <span class="text-muted ms-2 staff-limit-warning">
-                      <i class="fas fa-info-circle me-1"></i>Aboneliğinize göre personel limiti doldu (maks: {{ $staffLimit }})
-                    </span>
-                  @endif
-                </div>
+<div class="card-header card-staff-header sayfaBaslik">
+  Personeller
+</div>
+<div class="card-body card-staff-body">
+  @if(!is_null($staffLimit) && $staffLimit != -1 && $staffAll >= $staffLimit)
+    <div class="staff-limit-banner" id="staffLimitBanner">
+      <div class="staff-limit-banner-content">
+        <div class="staff-limit-banner-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="staff-limit-banner-text">
+          <div class="staff-limit-banner-title">Personel Limiti Doldu!</div>
+          <div class="staff-limit-banner-subtitle">
+            Maksimum personel limiti ({{ $staffLimit }}) ulaşıldı. Daha fazla personel eklemek için planınızı yükseltin.
+          </div>
+        </div>
+      </div>
+      <div class="staff-limit-banner-actions">
+        <a href="{{ route('abonelikler', ['tenant_id' => $firma->id]) }}" class="staff-limit-banner-link">
+          <i class="fas fa-arrow-up me-1"></i>Planı Yükselt
+        </a>
+        <button type="button" class="staff-limit-banner-close" onclick="closeStaffBanner()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  @endif
+  
+  <table id="datatablePersonel" class="table table-bordered dt-responsive nowrap"
+    style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+    <div class="staff-buttons-info-wrapper">
+      <div class="staff-buttons-container d-flex d-sm-block">
+        @if(is_null($staffLimit) || $staffLimit == -1 || $staffAll < $staffLimit)
+          <a data-bs-toggle="modal" data-bs-target="#addPersonelModal" class="btn btn-success btn-sm addPersonel">
+            <i class="fas fa-plus"></i><span>Personel Ekle</span>
+          </a>
+        @else
+          <a class="btn btn-success btn-sm addPersonel" disabled
+            style="pointer-events: none; opacity: .4; cursor: default;">
+            <i class="fas fa-plus"></i><span>Personel Ekle</span>
+          </a>
+        @endif
+        
+        <button id="printStaffs" class="btn btn-warning btn-sm printStaffs">
+          <i class="fas fa-print"></i>
+          <span>Yazdır</span>
+        </button>
+      </div>
+    </div>
                 <div class="searchWrap float-end">
                   <div class="btn-group " id="personelfiltre">
                     <button class="btn btn-dark btn-sm dropdown-toggle filtrele" type="button" data-bs-toggle="dropdown"
@@ -516,6 +486,14 @@ customize: function (win) {
         filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
       });
     });
+
+    // Personel Banner Kapatma Fonksiyonu
+    function closeStaffBanner() {
+      const banner = document.getElementById('staffLimitBanner');
+      if (banner) {
+        banner.style.display = 'none';
+      }
+    }
   </script>
 
 @endsection

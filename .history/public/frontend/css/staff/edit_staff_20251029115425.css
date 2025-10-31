@@ -1,0 +1,11 @@
+@media (min-width: 767px) {
+.custom-p-r{
+    padding-right: 0px !important;
+  }
+  .custom-p-l{
+    padding-left: 0px !important;
+  }
+}
+@media (max-width: 767px) {
+#editPers label{margin-bottom: 3px !important;}
+}

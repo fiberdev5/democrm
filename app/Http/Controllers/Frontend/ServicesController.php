@@ -46,6 +46,7 @@ use Illuminate\Support\Str;
 use Image;
 use App\Models\IncomingCall;
 use App\Services\ActivityLogger;
+use Illuminate\Support\Facades\Cache;
 
 
 class ServicesController extends Controller
@@ -923,7 +924,31 @@ private function getYetkiliServisIDleri($user, $tenant_id)
         return view('frontend.secure.all_services.add_service', compact('firma','service_resources','iller','device_brands','device_types','warranty_periods'));
     }
 
-    public function StoreService($tenant_id, Request $request) {        
+    public function StoreService($tenant_id, Request $request) {       
+            $token = $request->input('form_token');
+            // Token boş mu kontrol et
+            if (empty($token)) {
+                $notification = array(
+                    'message' => 'Geçersiz form token! Lütfen sayfayı yenileyin.',
+                    'alert-type' => 'error'
+                );
+                return redirect()->back()->with($notification);
+            }
+
+            // Bu token daha önce kullanıldı mı kontrol et
+            $cacheKey = 'form_token_' . $token;
+
+            if (Cache::has($cacheKey)) {
+                $notification = array(
+                    'message' => 'Bu form zaten gönderildi! Lütfen bekleyin veya sayfayı yenileyin.',
+                    'alert-type' => 'warning'
+                );
+                return redirect()->back()->with($notification);
+            }
+
+            // Token'ı 10 dakika boyunca sakla (duplicate önleme için)
+            Cache::put($cacheKey, true, now()->addMinutes(10));
+
         $firma = Tenant::where('id', $tenant_id)->first();
         
         if (!$firma) {
@@ -1337,19 +1362,27 @@ private function getYetkiliServisIDleri($user, $tenant_id)
 
         // Normal servis işlemleri 
             
-        if (auth()->user()->hasRole('Patron')) {
-            // Patron: tüm personel stoklarını görür
-            $stoklar = PersonelStock::where('firma_id', $firma->id)
-                        ->orderBy('id', 'asc')
-                        ->get();
-        } else {  
-                    $stoklar = PersonelStock::where('firma_id', $firma->id)
-                                ->where('pid', auth()->user()->user_id)
-                                ->orderBy('id', 'asc')
-                                ->get();
-        }
-            //Personele ait toplam stok            
-            $toplamPersonelStokAdedi = $stoklar->sum('adet');
+// Yetkili rolleri kontrol et
+$yetkiliRoller = ['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak'];
+$kullaniciYetkili = auth()->user()->hasAnyRole($yetkiliRoller);
+
+$stoklar = collect();
+$toplamPersonelStokAdedi = 0;
+
+if ($kullaniciYetkili) {
+    if (auth()->user()->hasRole('Patron')) {
+        $stoklar = PersonelStock::where('firma_id', $firma->id)
+                    ->orderBy('id', 'asc')
+                    ->get();
+    } else {  
+        $stoklar = PersonelStock::where('firma_id', $firma->id)
+                    ->where('pid', auth()->user()->user_id)
+                    ->orderBy('id', 'asc')
+                    ->get();
+    }
+    
+    $toplamPersonelStokAdedi = $stoklar->sum('adet');
+}
 
         //Konsinye Cihaz Stok İşlemleri
         $konsinyeKategoriId = 3;
@@ -1414,7 +1447,24 @@ private function getYetkiliServisIDleri($user, $tenant_id)
 
     //Servis Alt Aşamalarını veritabanına kaydederken yapılan işlemleri içeren fonksiyonlar
     public function SaveServicePlan(Request $request, $tenant_id) {
-        $firma = Tenant::where('id', $tenant_id)->first();
+            $firma = Tenant::where('id', $tenant_id)->first();
+            // TOKEN KONTROLÜ - BURASI YENİ EKLENEN KISIM
+            $token = $request->input('form_token');
+            if (empty($token)) {
+                return response()->json([
+                    'status' => 'error', 
+                    'message' => 'Geçersiz form token! Lütfen sayfayı yenileyin.'
+                ]);
+            }
+            $cacheKey = 'service_plan_form_token_' . $token;
+            if (Cache::has($cacheKey)) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Bu form zaten gönderildi! Lütfen bekleyin.'
+                ]);
+            }
+            Cache::put($cacheKey, true, now()->addMinutes(10));
+
 
         try {
             
@@ -2134,14 +2184,26 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
 
             // stokları geri al
             $stokHareketleri = StockAction::where('planId', $servisPlanID)->get();
-            foreach ($stokHareketleri as $stok) {
-                // PersonelStok::where([
-                //     'pid' => $plan->pid,
-                //     'stokid' => $stok->stokid
-                // ])->increment('adet', $stok->adet);
 
-                //KasaHareket::where('stokIslem', $stok->id)->delete();
-                ServiceMoneyAction::where('stokIslem', $stok->id)->delete();
+            foreach ($stokHareketleri as $stok) {
+                // Personel stoğunu bul ve artır
+                $personelStok = PersonelStock::where('pid', $plan->pid)
+                                            ->where('stokid', $stok->stokId)
+                                            ->first();
+                
+                if ($personelStok) {
+                    $personelStok->increment('adet', $stok->adet);
+                } else {
+                    // Eğer personel stoğunda yoksa, yeni kayıt oluştur
+                    PersonelStock::create([
+                        'firma_id' => $tenant_id,
+                        'kid' => $plan->kid ?? null,
+                        'pid' => $plan->pid,
+                        'stokid' => $stok->stokId,
+                        'adet' => $stok->adet,
+                        'tarih' => now()
+                    ]);
+                }
 
                 $stok->delete();
             }  
@@ -2226,25 +2288,32 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
             ->orderBy('name', 'ASC')
             ->get();
 
-        // Stokları al (eğer işlem parça teslim değilse)
-        $personel_id = Auth::user()->user_id;
-        $stoklar = collect();
-        if ($servisPlan->gidenIslem != "259") {
-            $stoklar = PersonelStock::where('firma_id', $tenant_id)
-                ->where('pid', $personel_id)
-                ->with('stok')
-                ->orderBy('id', 'ASC')
-                ->get()
-                ->filter(function($item) {
-                    return $item->stok !== null;
-                });
-        }
+// Stokları al - sadece yetkili roller için
+$personel_id = Auth::user()->user_id;
+$stoklar = collect();
 
-        // Personelin üzerindeki toplam stok adedini hesapla (PersonelStock tablosundan)
-        $toplamPersonelStokAdedi = PersonelStock::where('firma_id', $tenant_id)
-            ->where('pid', $personel_id)
-            ->sum('adet');
+// Yetkili rolleri kontrol et
+$yetkiliRoller = ['Teknisyen', 'Teknisyen Yardımcısı', 'Atölye Ustası', 'Atölye Çırak'];
+$kullaniciYetkili = Auth::user()->hasAnyRole($yetkiliRoller);
 
+if ($servisPlan->gidenIslem != "259" && $kullaniciYetkili) {
+    $stoklar = PersonelStock::where('firma_id', $tenant_id)
+        ->where('pid', $personel_id)
+        ->with('stok')
+        ->orderBy('id', 'ASC')
+        ->get()
+        ->filter(function($item) {
+            return $item->stok !== null;
+        });
+}
+
+// Toplam stok - sadece yetkili roller için
+$toplamPersonelStokAdedi = 0;
+if ($kullaniciYetkili) {
+    $toplamPersonelStokAdedi = PersonelStock::where('firma_id', $tenant_id)
+        ->where('pid', $personel_id)
+        ->sum('adet');
+}
          // Konsinye Cihaz Stok İşlemleri
         $konsinyeKategoriId = 3; // İkinci fonksiyonda olduğu gibi konsinye kategori ID'si
         $konsinyeCihazlar = Stock::where('firma_id', $tenant_id)
@@ -2296,97 +2365,126 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
         ));
     }
     //servis planı düzenleme viewını açma fonksiyonu SONU
-
- //Servis plan aşama düzenleme güncelleme fonksiyonu
-    public function UpdateServicePlan(Request $request, $tenant_id)
-    {
-        $planid = $request->input('planid');
-
-        try {
-            // Servis planını güncelle
-            $servisPlan = ServicePlanning::where('id', $planid)
-                ->where('firma_id', $tenant_id)
-                ->first();
-
-            if (!$servisPlan) {
-                return response()->json(['error' => 'Plan bulunamadı'], 404);
-            }
-
-            // İşlemi yapan personeli güncelle
-            if ($request->has('planIslemiYapan')) {
-                $servisPlan->pid = $request->input('planIslemiYapan');
-                $servisPlan->save();
-            }
-
-            // Plan cevaplarını güncelle
-            $planCevaplar = ServiceStageAnswer::where('firma_id', $tenant_id)->where('planid', $planid)->get();
-            
-            foreach ($planCevaplar as $cevap) {
-                $soruKey = 'soru' . $cevap->id;
-                
-                if ($request->has($soruKey)) {
-                    $yeniCevap = $request->input($soruKey);
-                    // Eğer parça seçimi varsa, checkbox'ları işle
-                    if ($yeniCevap == 'Parca') {
-                        $parcaCevap = $this->processParcaSelection($request, $tenant_id);
-                        $cevap->cevap = $parcaCevap;
-                    }elseif ($yeniCevap == 'Konsinye Cihaz') {
-                    $konsinyeCevap = $this->processKonsinyeSelection($request, $tenant_id);
-                    $cevap->cevap = $konsinyeCevap;
-                    }else{
-                        $cevap->cevap = $yeniCevap;
-                    }
-                    
-                    $cevap->save();
-                }
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Plan başarıyla güncellendi',
-                'servis_id' => $servisPlan->servisid
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Güncelleme sırasında hata oluştu: ' . $e->getMessage()
-            ], 500);
-        }
-    }
     
-private function processParcaSelection(Request $request, $tenant_id)
+//Servis plan aşama düzenleme güncelleme fonksiyonu
+public function UpdateServicePlan(Request $request, $tenant_id)
 {
-    $stokCevap = [];
     $planid = $request->input('planid');
-    $servisPlan = ServicePlanning::where('id', $planid)
-        ->where('firma_id', $tenant_id)
-        ->first();
 
-    if (!$servisPlan) {
-        throw new \Exception("Servis planı bulunamadı");
-    }
-    $servisid = $servisPlan->servisid;
+    try {
+        $servisPlan = ServicePlanning::where('id', $planid)
+            ->where('firma_id', $tenant_id)
+            ->first();
 
-    foreach ($request->all() as $key => $value) {
-        if (strpos($key, 'stokCheck') !== false) {
-            $stokId = (int) filter_var($key, FILTER_SANITIZE_NUMBER_INT);
-            $adet = abs($request->input("stokAdet{$stokId}", 1));
+        if (!$servisPlan) {
+            return response()->json(['error' => 'Plan bulunamadı'], 404);
+        }
 
-            // stokCevap dizisine ekle
-            $stokCevap[] = "{$stokId}---{$adet}";
+        if ($request->has('planIslemiYapan')) {
+            $servisPlan->pid = $request->input('planIslemiYapan');
+            $servisPlan->save();
+        }
 
-            // Kullanım mı teslim mi kontrol et
-            if ($servisPlan->gelenIslem == "238") {
-                $this->parcaTeslimEt($stokId, $adet, $servisid, $planid, $tenant_id);
-            } else {
-                $this->parcaKullan($stokId, $adet, $servisid, $planid, $tenant_id);
+        $planCevaplar = ServiceStageAnswer::where('firma_id', $tenant_id)
+            ->where('planid', $planid)
+            ->get();
+       
+        foreach ($planCevaplar as $cevap) {
+            $soruKey = 'soru' . $cevap->id;
+           
+            if ($request->has($soruKey)) {
+                $yeniCevap = $request->input($soruKey);
+               
+                // PARÇA VE KONSİNYE İÇİN MEVCUT CEVABI KORU
+                if ($yeniCevap == 'Parca' || $yeniCevap == 'Konsinye Cihaz') {
+                    // Cevap değişmez, mevcut parça/konsinye seçimi korunur
+                    continue;
+                } else {
+                    // Diğer cevaplar normal şekilde güncellenir
+                    $cevap->cevap = $yeniCevap;
+                }
+               
+                $cevap->save();
             }
         }
-    }
 
-    return implode(', ', $stokCevap); // View'da input name="soru..." olan alanın cevabına atanır
+        return response()->json([
+            'success' => true,
+            'message' => 'Plan başarıyla güncellendi',
+            'servis_id' => $servisPlan->servisid
+        ]);
+
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'error' => 'Güncelleme sırasında hata oluştu: ' . $e->getMessage()
+        ], 500);
+    }
 }
+
+
+// private function processParcaSelection(Request $request, $tenant_id, $eskiCevap = null)
+// {
+//     $planid = $request->input('planid');
+//     $servisPlan = ServicePlanning::where('id', $planid)
+//         ->where('firma_id', $tenant_id)
+//         ->first();
+
+//     if (!$servisPlan) {
+//         throw new \Exception("Servis planı bulunamadı");
+//     }
+   
+//     $servisid = $servisPlan->servisid;
+   
+//     // ÖNCEDEKİ PARÇALARI AL
+//     $mevcutParcalar = [];
+//     if ($eskiCevap && !empty($eskiCevap)) {
+//         $eskiParcaListesi = explode(', ', $eskiCevap);
+//         foreach ($eskiParcaListesi as $parca) {
+//             if (strpos($parca, '---') !== false) {
+//                 list($stokId, $adet) = explode('---', $parca);
+//                 $mevcutParcalar[$stokId] = $adet;
+//             }
+//         }
+//     }
+   
+//     // YENİ SEÇİLEN PARÇALARI AL
+//     $yeniSecimler = [];
+//     foreach ($request->all() as $key => $value) {
+//         if (strpos($key, 'stokCheck') !== false) {
+//             $stokId = (int) filter_var($key, FILTER_SANITIZE_NUMBER_INT);
+//             $adet = abs($request->input("stokAdet{$stokId}", 1));
+           
+//             $yeniSecimler[$stokId] = $adet;
+           
+//             // Sadece yeni eklenen parçalar için işlem yap (daha önce yoksa)
+//             if (!isset($mevcutParcalar[$stokId])) {
+//                 if ($servisPlan->gelenIslem == "238") {
+//                     $this->parcaTeslimEt($stokId, $adet, $servisid, $planid, $tenant_id);
+//                 } else {
+//                     $this->parcaKullan($stokId, $adet, $servisid, $planid, $tenant_id);
+//                 }
+//             }
+//         }
+//     }
+   
+//     // ESKİ VE YENİ PARÇALARI BİRLEŞTİR
+//     // Eğer form'dan hiç checkbox gönderilmediyse, eski parçaları koru
+//     if (empty($yeniSecimler) && !empty($mevcutParcalar)) {
+//         $tumParcalar = $mevcutParcalar;
+//     } else {
+//         // Yeni seçim varsa, eski + yeni birleştir (yeni olanlar öncelikli)
+//         $tumParcalar = array_merge($mevcutParcalar, $yeniSecimler);
+//     }
+   
+//     // CEVAP FORMATINI OLUŞTUR
+//     $stokCevap = [];
+//     foreach ($tumParcalar as $stokId => $adet) {
+//         $stokCevap[] = "{$stokId}---{$adet}";
+//     }
+
+//     return implode(', ', $stokCevap);
+// }
 
 private function processKonsinyeSelection(Request $request, $tenant_id)
 {
@@ -3028,6 +3126,21 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
     }
 
     public function StoreServiceIncome($tenant_id, Request $request) {
+        $token = $request->input('form_token');
+        if (empty($token)) {
+            return response()->json([
+                'error' => 'Geçersiz form token! Lütfen sayfayı yenileyin.'
+            ], 400);
+        }
+        
+        $cacheKey = 'service_income_form_token_' . $token;
+        
+        if (Cache::has($cacheKey)) {
+            return response()->json([
+                'error' => 'Bu form zaten gönderildi! Lütfen bekleyin.'
+            ], 429);
+        }
+        Cache::put($cacheKey, true, now()->addMinutes(10));
         $rules = [
             'servisid' => 'required|numeric',
             'odemeSekli' => 'required|numeric',
@@ -3141,6 +3254,19 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
     }
 
     public function StoreServiceExpense($tenant_id, Request $request) {
+        $token = $request->input('form_token');
+        if (empty($token)) {
+            return response()->json([
+                'error' => 'Geçersiz form token! Lütfen sayfayı yenileyin.'
+            ], 400);
+        }
+        $cacheKey = 'service_expense_form_token_' . $token;
+        if (Cache::has($cacheKey)) {
+            return response()->json([
+                'error' => 'Bu form zaten gönderildi! Lütfen bekleyin.'
+            ], 429);
+        }
+        Cache::put($cacheKey, true, now()->addMinutes(10));
          $rules = [
             'servisid' => 'required|numeric',
             'odemeSekli' => 'required|numeric',
@@ -3603,6 +3729,19 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
     }
 
     public function StoreReceiptNote($tenant_id, Request $request) {
+        $token = $request->input('form_token');
+        if (empty($token)) {
+            return response()->json([
+                'error' => 'Geçersiz form token! Lütfen sayfayı yenileyin.'
+            ], 400);
+        }
+        $cacheKey = 'receipt_note_form_token_' . $token;
+        if (Cache::has($cacheKey)) {
+            return response()->json([
+                'error' => 'Bu form zaten gönderildi! Lütfen bekleyin.'
+            ], 429);
+        }
+        Cache::put($cacheKey, true, now()->addMinutes(10));
         $kid = Auth::user()->user_id;
         $receiptNotes = ServiceReceiptNote::create([
             'firma_id' => $tenant_id,
@@ -3681,6 +3820,19 @@ private function konsinyeKullan($stokId, $adet, $servisId, $planId, $tenantId)
     }
 
     public function StoreServiceOptNote($tenant_id, Request $request) {
+        $token = $request->input('form_token');
+        if (empty($token)) {
+            return response()->json([
+                'error' => 'Geçersiz form token! Lütfen sayfayı yenileyin.'
+            ], 400);
+        }
+        $cacheKey = 'opt_note_form_token_' . $token;
+        if (Cache::has($cacheKey)) {
+            return response()->json([
+                'error' => 'Bu form zaten gönderildi! Lütfen bekleyin.'
+            ], 429);
+        }
+        Cache::put($cacheKey, true, now()->addMinutes(10));
         $kid = Auth::user()->user_id;
         $optNotes = ServiceOptNote::create([
             'firma_id' => $tenant_id,

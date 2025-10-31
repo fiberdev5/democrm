@@ -1,6 +1,6 @@
 @extends('frontend.secure.user_master')
 @section('user')
-
+  <link href="{{ asset('frontend/css/stocks/all_stock.css') }}" rel="stylesheet" type="text/css" />
   {{-- Daterangepicker için gerekli kütüphaneler --}}
   <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
@@ -17,94 +17,6 @@
       ->where('urunKategori', '!=', 3)
       ->count();
   @endphp
-
-  <style>
-    .servisDrop {
-      transition: none !important;
-      animation: none !important;
-      transform: translate3d(1px, 2px, 0px) !important;
-    }
-
-    .card-stock {
-      border: 1px solid rgba(0, 0, 0, .125) !important;
-    }
-
-    .card-stock-header {
-      background-color: #f7f7f7 !important;
-      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
-      margin-bottom: 7px !important;
-      padding: 4px 7px !important;
-    }
-
-    .card-stock-body {
-      padding: 3px 7px !important;
-    }
-
-    @media (min-width: 768px) {
-      .custom-modal-width {
-        max-width: 340px;
-        margin: 1.75rem auto;
-      }
-
-      .searchWrap .dropdown-menu {
-        width: 321px !important;
-      }
-    }
-
-
-    @media (max-width: 767px) {
-      .stock-header-top{margin-top: 30px;}
-      .custom-p {
-        padding-left: 0px !important;
-      }
-
-      .searchWrap {
-        margin-top: 0px !important;
-      }
-
-      .pageDetail .searchWrap .dropdown-menu .item {
-        margin-bottom: 0px !important;
-      }
-
-      .pageDetail .searchWrap {
-        width: 30% !important;
-      }
-
-      .pageDetail .searchWrap {
-        margin-bottom: 0px !important;
-      }
-
-      div.dataTables_filter input {
-        margin-left: 0 !important;
-      }
-
-      .dataTables_filter {
-        margin-right: 0px !important;
-      }
-
-      #datatableStock_filter label {
-        width: 100% !important;
-      }
-
-      .pageDetail .searchWrap .dropdown-menu {
-        transform: translate3d(11px, 1px, 0px) !important;
-        width: 100% !important;
-        min-width: calc(79vw - 20px) !important;
-        padding: 0px !important;
-      }
-
-      li.paginate_button.next,
-      li.paginate_button.previous {
-        font-size: 15px;
-      }
-      .btn-secondary {
-    color: #fff !important;
-    background-color: #5c636a !important;
-    border-color: #565e64 !important;
-    }
-  }
-  </style>
-
   <div class="page-content">
     <div class="container-fluid stock-header-top">
       <div class="row pageDetail">
@@ -114,31 +26,50 @@
               Depo Stoklar
             </div>
             <div class="card-body card-stock-body">
-<div class="stock-buttons-container">
-  @if(is_null($stockLimit) || $stockLimit == -1 || $stockAll < $stockLimit)
-    <a data-bs-toggle="modal" data-bs-target="#addStockModal" class="btn btn-success btn-sm addStock">
-      <i class="fas fa-plus"></i><span>Stok Kartı Ekle</span>
-    </a>
-  @else
-    <a class="btn btn-success btn-sm addStock" disabled style="pointer-events: none; opacity: .4; cursor: default;">
-      <i class="fas fa-plus"></i><span>Stok Kartı Ekle</span>
-    </a>
-  @endif
-  
-  <a href="javascript:void(0);" class="btn btn-warning btn-sm printStocks">
-    <i class="fas fa-print"></i><span>Yazdır</span>
-  </a>
-  
-  <a href="{{ route('consignmentdevice', $firma->id) }}" class="btn btn-info btn-sm supplierBtn">
-    <i class="fas fa-industry"></i><span class="ms-1">Konsinye Cihazlar</span>
-  </a>
-</div>
+              @if(!is_null($stockLimit) && $stockLimit != -1 && $stockAll >= $stockLimit)
+            <div class="stock-limit-banner" id="stockLimitBanner">
+              <div class="stock-limit-banner-content">
+                <div class="stock-limit-banner-icon">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stock-limit-banner-text">
+                  <div class="stock-limit-banner-title">Stok Limiti Doldu!</div>
+                  <div class="stock-limit-banner-subtitle">
+                    Maksimum stok limiti ({{ $stockLimit }}) ulaşıldı. Daha fazla stok eklemek için planınızı yükseltin.
+                  </div>
+                </div>
+              </div>
+              <div class="stock-limit-banner-actions">
+                <a href="{{ route('abonelikler', ['tenant_id' => $firma->id]) }}" class="stock-limit-banner-link">
+                  <i class="fas fa-arrow-up me-1"></i>Planı Yükselt
+                </a>
+                <button type="button" class="stock-limit-banner-close" onclick="closeStockBanner()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          @endif
+          <div class="stock-buttons-container">
+            @if(is_null($stockLimit) || $stockLimit == -1 || $stockAll < $stockLimit)
+              <a data-bs-toggle="modal" data-bs-target="#addStockModal" class="btn btn-success btn-sm addStock">
+                <i class="fas fa-plus"></i><span>Stok Kartı Ekle</span>
+              </a>
+            @else
+              <a class="btn btn-success btn-sm addStock" disabled style="pointer-events: none; opacity: .4; cursor: default;">
+                <i class="fas fa-plus"></i><span>Stok Kartı Ekle</span>
+              </a>
+            @endif
+            
+            <a href="javascript:void(0);" class="btn btn-warning btn-sm printStocks">
+              <i class="fas fa-print"></i><span>Yazdır</span>
+            </a>
+            
+            <a href="{{ route('consignmentdevice', $firma->id) }}" class="btn btn-info btn-sm supplierBtn">
+              <i class="fas fa-industry"></i><span class="ms-1">Konsinye Cihazlar</span>
+            </a>
+          </div>
 
-@if(!is_null($stockLimit) && $stockLimit != -1 && $stockAll >= $stockLimit)
-  <span class="text-muted stock-limit-warning">
-    <i class="fas fa-info-circle me-1"></i>Stok limiti doldu (maks: {{ $stockLimit }})
-  </span>
-@endif
+
               <!-- Filtre dropdown butonu -->
               <div class="searchWrap float-end">
                 <div class="btn-group" id="depo_filtre">
@@ -713,6 +644,17 @@ $(document).ready(function () {
         filterButton.html('Filtrele <i class="mdi mdi-chevron-down"></i>');
       });
     });
+
+    // Banner Kapatma Fonksiyonu
+function closeStockBanner() {
+  const banner = document.getElementById('stockLimitBanner');
+  if (banner) {
+    banner.classList.add('closing');
+    setTimeout(() => {
+      banner.style.display = 'none';
+    }, 300);
+  }
+}
   </script>
 
 @endsection

@@ -1,6 +1,6 @@
 @extends('frontend.secure.user_master')
 @section('user')
-
+<link href="{{ asset('frontend/css/stocks/consignment_device.css') }}" rel="stylesheet" type="text/css" />
 {{-- Daterangepicker için gerekli kütüphaneler --}}
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
@@ -17,126 +17,54 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
   ->where('urunKategori',  3)
   ->count();
 @endphp
-
-<style>
-   .servisDrop {
-      transition: none !important;
-      animation: none !important;
-      transform: translate3d(1px, 2px, 0px) !important;
-    }
-
-    .card-consigment {
-      border: 1px solid rgba(0, 0, 0, .125) !important;
-    }
-
-    .card-consigment-header {
-      background-color: #f7f7f7 !important;
-      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
-      margin-bottom: 7px !important;
-      padding: 4px 7px !important;
-    }
-
-    .card-consigment-body {
-      padding: 3px 7px !important;
-    }
-    /* Genel Stiller */
-    .searchWrap {
-      visibility: hidden; /* JS ile görünür yapılacak */
-      opacity: 0;
-    }
-    @media (min-width: 768px) {
-  .custom-modal-width {
-    max-width: 424px;
-    margin: 1.75rem auto;
-  }
-  .searchWrap .dropdown-menu{
-    width: 250px !important;
-  }
-}
-
-    /* Mobil Cihazlar İçin Özel Stiller */
-    @media (max-width: 767px) {
-
-          .pageDetail .searchWrap {
-        width: 30% !important;
-      }
-      
-      div.dataTables_filter input {
-        margin-left: 0 !important;
-      }
-      
-      .dataTables_filter {
-        margin-right: 0 !important;
-      }
-      
-      .pageDetail .searchWrap {
-        margin-bottom: 0px !important;
-      }
-
-      .searchWrap {
-        margin-top: 0px !important;
-      }
-      .pageDetail .searchWrap .dropdown-menu{
-        transform: translate3d(9px, 9px, 0px) !important;
-        min-width: calc(78vw - 20px) !important;
-      }
-      .searchWrap .dropdown-menu {
-    padding: 0px;
-}
-    .pageDetail .searchWrap .dropdown-menu .item{
-      margin-bottom: 0px !important;
-    }
-
-        #datatableConsignment_wrapper .dataTables_info{
-          width: auto !important;
-        }
-            #datatableConsignment_wrapper .bottom {
-        flex-direction: row !important;
-    }
-        li.paginate_button.next, li.paginate_button.previous {
-        font-size: 15px;
-    }
-
-    .consigment-header-top{margin-top: 30px;}
-.btn-secondary {
-    color: #fff !important;
-    background-color: #5c636a !important;
-    border-color: #565e64 !important;
-}
-
-    }
-</style>
-
 <div class="page-content">
   <div class="container-fluid consigment-header-top">
     <div class="row pageDetail">
       <div class="col-12">
         <div class="card card-consigment">
-          <div class="card-header card-consigment-header sayfaBaslik">
-            Konsinye Cihazlar
+        <div class="card-header card-consigment-header sayfaBaslik">
+  Konsinye Cihazlar
+</div>
+<div class="card-body card-consigment-body">
+  @if(!is_null($konsinyeLimit) && $konsinyeLimit != -1 && $stockAll >= $konsinyeLimit)
+    <div class="consignment-limit-banner" id="consignmentLimitBanner">
+      <div class="consignment-limit-banner-content">
+        <div class="consignment-limit-banner-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="consignment-limit-banner-text">
+          <div class="consignment-limit-banner-title">Konsinye Limiti Doldu!</div>
+          <div class="consignment-limit-banner-subtitle">
+            Maksimum konsinye limiti ({{ $konsinyeLimit }}) ulaşıldı. Daha fazla cihaz eklemek için planınızı yükseltin.
           </div>
-          <div class="card-body card-consigment-body">
-              <div class="consignment-buttons-container">
-              @if(is_null($konsinyeLimit) || $konsinyeLimit == -1 || $stockAll < $konsinyeLimit)
-                <a data-bs-toggle="modal" data-bs-target="#addConsignmentModal" class="btn btn-success btn-sm addConsignment">
-                  <i class="fas fa-plus"></i><span>Cihaz Ekle</span>
-                </a>
-              @else
-                <a class="btn btn-success btn-sm addStock" disabled style="pointer-events: none; opacity: .4; cursor: default;">
-                  <i class="fas fa-plus"></i><span>Cihaz Ekle</span>
-                </a>
-              @endif
-              
-              <a href="javascript:void(0);" class="btn btn-warning btn-sm printConsignment">
-                <i class="fas fa-print"></i><span>Yazdır</span>
-              </a>
-            </div>
-
-            @if(!is_null($konsinyeLimit) && $konsinyeLimit != -1 && $stockAll >= $konsinyeLimit)
-              <span class="text-muted consignment-limit-warning">
-                <i class="fas fa-info-circle me-1"></i>Konsinye limiti doldu (maks: {{ $konsinyeLimit }})
-              </span>
-            @endif
+        </div>
+      </div>
+      <div class="consignment-limit-banner-actions">
+        <a href="{{ route('abonelikler', ['tenant_id' => $firma->id]) }}" class="consignment-limit-banner-link">
+          <i class="fas fa-arrow-up me-1"></i>Planı Yükselt
+        </a>
+        <button type="button" class="consignment-limit-banner-close" onclick="closeConsignmentBanner()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+    </div>
+  @endif
+  
+  <div class="consignment-buttons-container">
+    @if(is_null($konsinyeLimit) || $konsinyeLimit == -1 || $stockAll < $konsinyeLimit)
+      <a data-bs-toggle="modal" data-bs-target="#addConsignmentModal" class="btn btn-success btn-sm addConsignment">
+        <i class="fas fa-plus"></i><span>Cihaz Ekle</span>
+      </a>
+    @else
+      <a class="btn btn-success btn-sm addStock" disabled style="pointer-events: none; opacity: .4; cursor: default;">
+        <i class="fas fa-plus"></i><span>Cihaz Ekle</span>
+      </a>
+    @endif
+    
+    <a href="javascript:void(0);" class="btn btn-warning btn-sm printConsignment">
+      <i class="fas fa-print"></i><span>Yazdır</span>
+    </a>
+  </div>
 
             <!-- Filtre dropdown butonu -->
             <div class="searchWrap float-end">
@@ -694,6 +622,14 @@ $(document).ready(function () {
     table.button('.buttons-print').trigger();
   });
 });
+
+// Konsinye Banner Kapatma Fonksiyonu
+function closeConsignmentBanner() {
+  const banner = document.getElementById('consignmentLimitBanner');
+  if (banner) {
+    banner.style.display = 'none';
+  }
+}
 </script>
 
 @endsection

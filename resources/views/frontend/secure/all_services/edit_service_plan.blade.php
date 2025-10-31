@@ -28,76 +28,53 @@
           @php
             $soru = App\Models\StageQuestion::find($plan->soruid);
           @endphp   {{-- Parça--}}
-                    @if($soru->cevapTuru == "[Parca]")
-                        <div class="row form-group">
-                            <div class="col-lg-12">
-                                <label>{{ $soru->soru }}</label>
-                                @php
-                                    $kullanilanParcalarArray = [];
-                                    $selectedPartIds = []; // Seçili parça ID'lerini tutmak için
-                                    if ($plan->cevap) {
-                                        $cevaplarArray = explode(', ', $plan->cevap);
-                                        foreach ($cevaplarArray as $cevapItem) {
-                                            list($itemStokId, $itemAdet) = array_pad(explode('---', $cevapItem), 2, 0);
-                                            $kullanilanStok = App\Models\Stock::find($itemStokId);
-                                            if ($kullanilanStok) {
-                                                $kullanilanParcalarArray[] = $kullanilanStok->urunAdi . ' (Adet: ' . $itemAdet . ')';
-                                                $selectedPartIds[$itemStokId] = $itemAdet; // ID ve adedi kaydet
-                                            }
-                                        }
-                                    }
-                                @endphp
+        {{-- Parça - Sadece Görüntüleme --}}
+        @if($soru->cevapTuru == "[Parca]")
+            <div class="row form-group">
+                <div class="col-lg-12">
+                    <label>{{ $soru->soru }}</label>
+                    @php
+                        $kullanilanParcalarArray = [];
+                        if ($plan->cevap) {
+                            $cevaplarArray = explode(', ', $plan->cevap);
+                            foreach ($cevaplarArray as $cevapItem) {
+                                list($itemStokId, $itemAdet) = array_pad(explode('---', $cevapItem), 2, 0);
+                                $kullanilanStok = App\Models\Stock::find($itemStokId);
+                                if ($kullanilanStok) {
+                                    $kullanilanParcalarArray[] = $kullanilanStok->urunAdi . ' (Adet: ' . $itemAdet . ')';
+                                }
+                            }
+                        }
+                    @endphp
 
-                                @if(!empty($kullanilanParcalarArray))
-                                    <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;">
-                                        <ul>
-                                            @foreach($kullanilanParcalarArray as $parcaText)
-                                                <li>{{ $parcaText }}</li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                @endif
-                               <input id="urunAraInput_stok" type="text" class="form-control urunAraInput" autocomplete="off" placeholder="Ürün adı veya kodu">
-                                <div class="parcalar-dropdown myParcaList" data-soru-id="{{ $plan->id }}" style="width:100%">
-                                    <p>Toplam Personel Stok Sayısı: {{ $toplamPersonelStokAdedi }}</p>
-
-                                    @forelse($stoklar as $personelStokKaydi)
-                                        @php
-                                            $stok = $personelStokKaydi->stok;
-                                            $stokId = $stok->id;
-                                            $stokAdet = $personelStokKaydi->adet;
-
-                                            $isChecked = isset($selectedPartIds[$stokId]); // Kaydedilmiş parça ID'si var mı?
-                                            $selectedAdet = $isChecked ? $selectedPartIds[$stokId] : 1; // Varsa adedi, yoksa 1
-                                        @endphp
-
-                                        @if($stok && $stokAdet > 0)
-                                           <div class="checkbox stock-item"
-                                              style="padding:3px 0;"
-                                              data-product-code="{{ $stok->urunKodu ?? '' }}"
-                                              data-product-name="{{ $stok->urunAdi ?? $stok->urun_adi ?? 'N/A' }}">
-                                              <label style="width: calc(100% - 40px);display: inline-block;text-transform: capitalize;">
-                                                    <input type="checkbox" name="stokCheck{{ $stokId }}" value="on" style="position: relative; top:2px; margin-right:3px;" {{ $isChecked ? 'checked' : '' }}>
-                                                    {{ $stok->urunAdi ?? $stok->urun_adi ?? 'Ürün Adı Bulunamadı' }} (Mevcut: {{ $stokAdet }})
-                                              </label>
-                                              <input type="number" name="stokAdet{{ $stokId }}" value="{{ $selectedAdet }}" min="1" max="{{ $stokAdet }}" class="form-control" autocomplete="off" style="width: 40px;display: inline-block;text-align:center;">
-                                            </div>
-                                        @endif
-                                    @empty
-                                    @endforelse
-                                    @if($stoklar->isEmpty())
-                                        <label style="color:red">Uyumlu Parça Bulunamadı.</label>
-                                    @endif
-                                </div>
-                                <input type="hidden" name="soru{{ $plan->id }}" class="form-control" value="Parca"/>
-                            </div>
+                    @if(!empty($kullanilanParcalarArray))
+                        <div class="alert alert-info" style="margin-bottom: 10px; padding: 10px;">
+                            <strong>✓ Kullanılan Parçalar:</strong>
+                            <ul style="margin-bottom:0; margin-top:5px;">
+                                @foreach($kullanilanParcalarArray as $parcaText)
+                                    <li>{{ $parcaText }}</li>
+                                @endforeach
+                            </ul>
+                            <small class="text-muted">* Parça seçimi sonradan değiştirilemez</small>
                         </div>
+                    @else
+                        <div class="alert alert-warning">
+                            <i>Henüz parça seçilmemiş</i>
+                        </div>
+                    @endif
+                    
+                    <!-- Hidden input ile mevcut değeri koru -->
+                    <input type="hidden" name="soru{{ $plan->id }}" value="Parca"/>
+                </div>
+            </div>
             {{-- Konsinye Cihaz --}}            
-            @elseif($soru->cevapTuru == "[Konsinye Cihaz]")
+{{-- Konsinye Cihaz - Sadece Görüntüleme --}}
+@elseif($soru->cevapTuru == "[Konsinye Cihaz]")
+    <div class="row form-group">
+        <div class="col-lg-12">
+            <label>{{ $soru->soru }}</label>
             @php
-                $seciliKonsinyeCihazlar = [];
                 $kullanilanKonsinyeArray = [];
-
                 if ($plan->cevap) {
                     $cevaplarArray = explode(', ', $plan->cevap);
                     foreach ($cevaplarArray as $cevapItem) {
@@ -105,73 +82,29 @@
                         $stok = App\Models\Stock::find($itemStokId);
                         if ($stok) {
                             $kullanilanKonsinyeArray[] = $stok->urunAdi . ' (Adet: ' . $itemAdet . ')';
-                            $seciliKonsinyeCihazlar[$itemStokId] = $itemAdet;
                         }
                     }
                 }
             @endphp
 
             @if(!empty($kullanilanKonsinyeArray))
-                <div style="margin-bottom: 10px; padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;">
-                    <b>Kullanılan Konsinye Cihazlar:</b>
-                    <ul style="margin-bottom:0;">
+                <div class="alert alert-info" style="margin-bottom: 10px; padding: 10px;">
+                    <strong>✓ Kullanılan Konsinye Cihazlar:</strong>
+                    <ul style="margin-bottom:0; margin-top:5px;">
                         @foreach($kullanilanKonsinyeArray as $cihazText)
                             <li>{{ $cihazText }}</li>
                         @endforeach
                     </ul>
+                    <small class="text-muted">* Konsinye cihaz seçimi sonradan değiştirilemez</small>
+                </div>
+            @else
+                <div class="alert alert-warning">
+                    <i>Henüz konsinye cihaz seçilmemiş</i>
                 </div>
             @endif
-
-            <input id="urunAraInput_konsinye" type="text" class="form-control urunAraInput" autocomplete="off" placeholder="Konsinye cihaz adı veya kodu">
-
-            <div class="konsinye-dropdown myKonsinyeList" style="width:100%">
-                <p>Toplam Konsinye Cihaz Sayısı: {{ $toplamKonsinyeCihazAdedi }}</p>
-                @php $konsinye_say = 0; @endphp
-
-                @forelse($konsinyeCihazlar as $konsinyeCihaz)
-                    @php
-                        $konsinyeId = $konsinyeCihaz->id;
-                        $konsinyeAdet = $konsinyeCihaz->current_stock_quantity ?? 0;
-                        $isChecked = isset($seciliKonsinyeCihazlar[$konsinyeId]);
-                        $selectedAdet = $isChecked ? $seciliKonsinyeCihazlar[$konsinyeId] : 1;
-                    @endphp
-
-                    @if($konsinyeAdet > 0)
-                        @php $konsinye_say++; @endphp
-                        <div class="checkbox stock-item"
-                          style="padding:3px 0;"
-                          data-product-code="{{ $konsinyeCihaz->urunKodu ?? '' }}"
-                          data-product-name="{{ $konsinyeCihaz->urunAdi ?? $konsinyeCihaz->urun_adi ?? 'N/A' }}">
-                            <label style="width: calc(100% - 40px); display: inline-block; text-transform: capitalize;">
-                                <input type="checkbox"
-                                  name="konsinyeCheck{{ $konsinyeId }}"
-                                  class="consignment-checkbox"
-                                  value="{{ $konsinyeId }}"
-                                  data-available="{{ $konsinyeAdet }}"
-                                  {{ $isChecked ? 'checked' : '' }}
-                                  style="position: relative; top:2px; margin-right:3px;">
-
-                                {{ $konsinyeCihaz->urunAdi ?? $konsinyeCihaz->urun_adi ?? 'Ürün Adı Bulunamadı' }} (Mevcut: {{ $konsinyeAdet }})
-                            </label>
-
-                          <input type="number"
-                            name="konsinyeAdet{{ $konsinyeId }}"
-                            value="{{ $selectedAdet }}"
-                            min="1" max="{{ $konsinyeAdet }}"
-                            class="form-control quantity-input consignment-quantity-input"
-                            autocomplete="off"
-                            style="width: 40px; display: inline-block; text-align: center; {{ $isChecked ? '' : 'display: none;' }}">
-
-                        </div>
-                    @endif
-                @empty
-                @endforelse
-
-                @if($konsinye_say == 0)
-                    <label style="color:red">Uyumlu Konsinye Cihaz Bulunamadı.</label>
-                @endif
-            </div>
-            <input type="hidden" name="soru{{ $plan->id }}" class="form-control" value="Konsinye Cihaz"/>
+            
+            <!-- Hidden input ile mevcut değeri koru -->
+            <input type="hidden" name="soru{{ $plan->id }}" value="Konsinye Cihaz"/>
             @else
             {{-- Diğer Soru Tipleri --}}
             <div class="row form-group">
@@ -420,8 +353,9 @@ $(document).on('keyup', '.urunAraInput', function () {
         const quantityInput = $(this).closest('.stock-item').find('.quantity-input');
         const quantity = quantityInput.val();
 
-        formData.append(`parca[${stageId}][${stockId}]`, stockId);
-        formData.append(`adet[${stageId}][${stockId}]`, quantity);
+        formData.append(`stokCheck${stockId}`, 'on'); // Checkbox'ın seçili olduğunu belirtir
+        formData.append(`stokAdet${stockId}`, quantity); // Adet bilgisini ekler
+
     });
         // Seçili "Konsinye Cihaz" ürünlerini FormData'ya manuel olarak ekle
        $('.consignment-checkbox:checked').each(function() {

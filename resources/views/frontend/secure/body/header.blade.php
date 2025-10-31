@@ -1,38 +1,6 @@
 @php 
 $user = Auth::user();
 @endphp
-<style>
-  @media (max-width: 767px) {
-    .navbar-header{
-      padding-right: 0px !important;
-    }
-    .dropdown-divider{
-      display: none;
-    }
-     .username-ellipsis {
-    display: inline-block;
-    max-width: 11ch;         /* 7 karakterlik alan */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    vertical-align: bottom; /* hizalama için */
-  }
-  .mobile-top-logo {
-    position: sticky;   /* veya fixed yapabilirsin */
-    top: 0;
-    left: 0;
-    right: 0;
-    background: #22262b;
-    border-bottom: 1px solid #2f343a;
-    font-weight: 600;
-    font-size: 16px;
-    z-index: 1050;
-    text-transform: uppercase; 
-    color: white;
-  }
-  }
-  
-</style>
 <header id="page-topbar">
   <div class="mobile-top-logo d-block d-md-none text-center py-2">
     @if(!empty($user->tenant->firma_adi))

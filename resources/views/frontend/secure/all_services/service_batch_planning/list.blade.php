@@ -1,36 +1,4 @@
-<style>
-  @media (max-width: 767px) {
-    .card-footer {
-      background-color: rgba(0, 0, 0, .03);
-      border-top: 1px solid rgba(0, 0, 0, .125) !important;
-    }
-
-    .servisListe {
-      border: 1px solid rgba(0, 0, 0, .125) !important;
-      padding: 5px 6px !important;
-    }
-
-    .cardBaslik {
-      margin-bottom: 5px !important;
-    }
-
-    .col-form-label {
-      padding-bottom: 1px !important;
-    }
-
-    .card-footer {
-      padding: 5px 0px !important;
-    }
-
-    #assignBtn {
-      width: 100% !important;
-    }
-
-    .personelServisListele {
-      width: 100% !important;
-    }
-  }
-</style>
+<link href="{{ asset('frontend/css/services/service_batch_plannings_list.css') }}" rel="stylesheet" type="text/css" />
 <div class="card-header cardBaslik" style="padding: 5px 10px;font-size: 14px">
   @if(!empty($persID))
     @php $selectedPersonnel = $personeller->firstWhere('user_id', $persID) @endphp

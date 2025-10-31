@@ -1,23 +1,5 @@
 <!-- resources/views/secure/super_admin/activity_logs.blade.php -->
-<style>
-     .card-log {
-      border: 1px solid rgba(0, 0, 0, .125) !important;
-    }
 
-    .card-log-header {
-      background-color: #f7f7f7 !important;
-      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
-      margin-bottom: 7px !important;
-      padding: 4px 7px !important;
-    }
-
-    .card-log-body {
-      padding: 3px 7px !important;
-    }
-    .page-item-custom a{
-    width: 53px !important;
-  }
-</style>
 <div class="card card-log">
     <div class="card-header card-log-header">
         <h5 class="card-title mb-0">Sistem Log Kayıtları</h5>
