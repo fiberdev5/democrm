@@ -1,0 +1,45 @@
+ .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
+.card-staff{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-staff-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-staff-body{padding: 3px 7px !important;}
+
+  @media (min-width: 767px) {
+    .custom-modal-width {
+      max-width: 360px !important;
+      margin: 1.75rem auto;
+    }
+
+    .searchWrap .dropdown-menu {
+      width: 271px !important;
+    }
+  }
+
+  @media (max-width: 767px) {
+        
+    .pageDetail .searchWrap .dropdown-menu .item{
+      margin-bottom: 0px !important;
+    }
+    .custom-p {
+      padding-left: 0px !important;
+    }
+
+    .pageDetail .searchWrap .dropdown-menu .item {
+      margin-bottom: 0px !important;
+    }
+
+    #datatablePersonel_wrapper .bottom {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding-top: 0.85em !important;
+    }
+    .staff-header-top{margin-top: 30px;}
+  }
+
+  #editPers {
+    margin-block-end: 0em !important;
+  }

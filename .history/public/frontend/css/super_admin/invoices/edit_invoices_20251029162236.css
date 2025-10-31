@@ -1,0 +1,16 @@
+.card-invocies{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-invocies-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+.card-invocies-body{padding: 3px 7px !important;}
+
+.card-heaer
+@media (min-width: 767px) {
+.tarihWrap{
+float: inline-end;
+}
+}
+@media (max-width: 767px) {
+.tarihWrap{
+    display: flex;
+padding: 4px 5px;
+}
+}

@@ -1,0 +1,12 @@
+  .btn-full{
+    width: 100%;
+  }
+  label{margin-bottom: 3px !important;}
+  .accordion-body {
+    padding: 7px 10px !important;
+}
+@media (max-width: 767px) {
+  .btn-full{
+    margin-top: 5px !important;
+  }
+}

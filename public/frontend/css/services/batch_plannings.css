@@ -1,0 +1,23 @@
+ .bolgeler option{
+    font-size: 12px !important;
+  }
+  .cihazlar option{
+    font-size: 12px !important;
+  }
+  .kaynaklar option{
+    font-size: 12px !important;
+  }
+  .sag{
+    padding-left: 0px !important;
+  }
+  @media (max-width: 767px) {
+    .row{
+        --bs-gutter-x: 0px !important;
+    }
+    .servisListe .card-body{
+      height: auto !important;
+    }
+    .personelServisListele{
+      margin-top: 5px;
+    }
+  }
