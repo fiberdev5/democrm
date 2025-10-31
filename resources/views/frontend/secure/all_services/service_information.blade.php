@@ -202,7 +202,7 @@
             <span>{{$service_id->asamalar["asama"]}}</span>                  
           </label>     
 
-         <label class="servisAcilLabel servisAcilBtn" style="user-select: none;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;-webkit-touch-callout: none;position: relative;margin: 0; color: #fff; background: #343a40; border: 1px solid #212529;padding: 0 5px;border-radius: 3px;height: 25px;top: 1px;line-height: 25px;cursor: pointer;">
+         <label class="servisAcilLabel servisAcilBtn" style="user-select: none;-ms-user-select: none;-moz-user-select: none;-webkit-user-select: none;-webkit-touch-callout: none;position: relative;margin: 0; color: #fff; background: #343a40; border: 1px solid #212529;padding: 0 5px;border-radius: 3px;top: -2px;cursor: pointer;">
     <span>Acil</span>
     <input type="checkbox" class="acilCheckbox" style="display: none;" {{$service_id->acil == 1 ? 'checked' : ''}}>
     <div class="checkmark" style="display: inline-block; ">
@@ -331,6 +331,8 @@ function renderServiceHistory(data) {
     var tbody = $('#serviceHistoryTableBody');
     tbody.empty();
     var currentUserId = {{ auth()->id() }};
+    var currentUserIsPatron = {{ auth()->user()->hasRole('Patron') ? 'true' : 'false' }};
+
     // Acil durum
     if (data.acilIslem) {
         var acilRow = `
@@ -371,7 +373,7 @@ function renderServiceHistory(data) {
             tbody.append(paraRow);
         } else {
             var buttons = '';
-if (islem.pid == currentUserId) {
+if (islem.pid == currentUserId || currentUserIsPatron) {
     // Hücreyi (td) oluştur
     buttons += '<td colspan="2">';
     

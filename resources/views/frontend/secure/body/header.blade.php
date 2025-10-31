@@ -61,7 +61,7 @@ $user = Auth::user();
                 <a class="dropdown-item" href="{{ route('payment-history.index', $user->tenant_id) }}"><i class="fas fa-receipt align-middle me-1"></i>Ödeme Geçmişi</a>
 
             @endif
-             @if(Auth::user()->hasAnyRole('Patron'))
+             @if(Auth::user()->hasAnyRole(['Patron', 'Super Admin']))
              <a class="dropdown-item" href="{{route('general.settings', $user->tenant_id)}}"><i class="ri-settings-3-fill align-middle me-1"></i>Genel Ayarlar</a>
             @endif
             <div class="dropdown-divider"></div>

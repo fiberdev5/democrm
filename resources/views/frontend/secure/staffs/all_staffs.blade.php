@@ -314,13 +314,13 @@ $(document).ready(function () {
         }
       },
       'columns': [
-        { data: 'user_id'},
-        { data: 'name' },
+        { data: 'user_id', orderable: true},
+        { data: 'name', orderable: false },
         { data: 'grup', orderable: false },
-        { data: 'tel' },
-        { data: 'address' },
-        { data: 'status' },
-        { data: 'action'}           
+        { data: 'tel', orderable: false },
+        { data: 'address', orderable: false },
+        { data: 'status', orderable: false },
+        { data: 'action', orderable: false}           
       ],
       drawCallback: function() {
         $(".dataTables_paginate > .pagination").addClass("pagination-rounded");

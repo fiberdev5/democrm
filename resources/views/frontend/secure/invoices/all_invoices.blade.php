@@ -582,10 +582,10 @@
         { data: 'id' },
         { data: 'faturaTarihi' },
         { data: 'faturaNumarasi' },
-        { data: 'mid' },
+        { data: 'mid', orderable: false },
         { data: 'genelToplam' },
-        { data: 'odemeDurum' },
-        { data: 'actions' }
+        { data: 'odemeDurum', orderable: false },
+        { data: 'actions', orderable: false }
       ],
       drawCallback: function () {
         $(".dataTables_paginate > .pagination").addClass("pagination-rounded");

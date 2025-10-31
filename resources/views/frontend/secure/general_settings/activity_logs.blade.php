@@ -111,12 +111,12 @@
             <div class="col-md-6">
                 <nav id="pagination_container"></nav>
             </div>
-            <div class="col-md-6 text-end">
-                <select class="form-select d-inline-block w-50" id="per_page" onchange="loadLogs()">
-                    <option value="50">50 kayıt</option>
-                    <option value="100" selected>100 kayıt</option>
-                    <option value="200">200 kayıt</option>
-                    <option value="500">500 kayıt</option>
+            <div class="col-md-6 text-end" >
+                <select class="form-select d-inline-block w-custom" id="per_page" onchange="loadLogs()">
+                    <option value="50">50</option>
+                    <option value="100" selected>100</option>
+                    <option value="200">200</option>
+                    <option value="500">500</option>
                 </select>
             </div>
         </div>

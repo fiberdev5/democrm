@@ -247,10 +247,18 @@ if ($request->ajax()) {
             return;
         }
         
-        // Hiçbir şey yoksa (sayfa ilk açıldığında), varsayılan son 3 günü uygula
-        $from = Carbon::today()->subDays(2)->startOfDay();
-        $to   = Carbon::today()->endOfDay();
-        $query->whereBetween('services.created_at', [$from, $to]);
+        if(auth()->user()->can('Kendi Servislerini Görebilir')) {
+            $from = Carbon::today()->subDays(2)->startOfDay();
+            $to   = Carbon::today()->endOfDay();
+            $query->whereBetween('services.updated_at', [$from, $to]);
+        }
+        else {
+            // Hiçbir şey yoksa (sayfa ilk açıldığında), varsayılan son 3 günü uygula
+            $from = Carbon::today()->subDays(2)->startOfDay();
+            $to   = Carbon::today()->endOfDay();
+            $query->whereBetween('services.created_at', [$from, $to]);
+        }
+        
     }
 
     // Datatable’ın gönderdiği ana tarih aralığı
@@ -2169,8 +2177,8 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
             if (in_array($plan->gidenIslem, [267, 268])) {
                 $servisPara = ServiceMoneyAction::where('planIslem', $servisPlanID)->first();
                 if ($servisPara) {
-                    // KasaHareket::where('servisIslem', $servisPara->id)->delete();
-                    // $servisPara->delete();
+                    CashTransaction::where('servisIslem', $servisPara->id)->delete();
+                    $servisPara->delete();
                 }
             }
 
@@ -2274,6 +2282,9 @@ private function parcaIslemleriniYap(Request $request, $servisId, $planId, $tena
         // Personelleri al
         $personellerAll = User::where('tenant_id', $tenant_id)
             ->where('status', '1')
+            ->whereDoesntHave('roles', function ($query) {
+                $query->whereIn('name', ['Admin', 'Super Admin']);
+            })
             ->orderBy('name', 'ASC')
             ->get();
 
@@ -2411,6 +2422,7 @@ public function UpdateServicePlan(Request $request, $tenant_id)
     }
 }
 
+
 // private function processParcaSelection(Request $request, $tenant_id, $eskiCevap = null)
 // {
 //     $planid = $request->input('planid');
@@ -2473,6 +2485,7 @@ public function UpdateServicePlan(Request $request, $tenant_id)
 
 //     return implode(', ', $stokCevap);
 // }
+
 private function processKonsinyeSelection(Request $request, $tenant_id)
 {
     $konsinyeCevap = [];

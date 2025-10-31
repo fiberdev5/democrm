@@ -76,7 +76,8 @@
             <div class="d-flex  justify-content-center align-items-center text gap-2">
               <span>Servisleri Göster</span>
               <i class="fas fa-info-circle d-none d-md-inline" data-toggle="tooltip"
-                title="Toplu servis yönlendirmeleri yapmak için kullanılır."></i>
+                title="Servisleri göster butonu solda seçilen personele ait sadece bugün atanan servisleri listelemeye yaramaktadır.">
+              </i>
             </div>
           </button>
         </div>
@@ -116,7 +117,11 @@
       @endphp
       {{-- mt-1 (margin-top) sınıfı kaldırıldı --}}
       <button id="assignBtn" class="btn btn-success btn-sm atamaBtn" data-id="{{ $gidenDurum }}" @if($dataPers)
-      data-pers="{{ $dataPers }}" @endif>Atama Yap</button>
+      data-pers="{{ $dataPers }}" @endif>Atama Yap 
+        <i class="fas fa-info-circle d-none d-md-inline" data-toggle="tooltip"
+                title="Atama yap butonu listeleme yaptığınız servislere personel atamak için kullanılır. Atama yaparken belirli bir tarih seçilmediği sürece otomatik yarına atama yapmaktadır.">
+              </i>
+    </button>
     </div>
   </div>
 

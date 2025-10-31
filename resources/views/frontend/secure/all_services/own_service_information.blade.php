@@ -1,5 +1,7 @@
+
 {{-- resources/views/servis/show.blade.php --}}
 <link href="{{ asset('frontend/css/services/own_service_information.css') }}" rel="stylesheet" type="text/css" />
+
 <div class="servisModal teknisyenServisModal">
     <form method="POST" id="servisDuzenle" action="">
         @csrf        
@@ -12,7 +14,7 @@
                             <span style="background: #ec0000;border: 1px solid #ce0000;color: #fff;padding: 0px 5px;border-radius: 3px;margin-left: 5px;max-width: 215px">
                                 {{ $servis->skaynak->kaynak ?? 'Belirtilmemiş' }}
                             </span>
-</label>
+                        </label>
                     </div>
                 </div>
             </div>

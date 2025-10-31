@@ -355,6 +355,7 @@ $(document).on('keyup', '.urunAraInput', function () {
 
         formData.append(`stokCheck${stockId}`, 'on'); // Checkbox'ın seçili olduğunu belirtir
         formData.append(`stokAdet${stockId}`, quantity); // Adet bilgisini ekler
+
     });
         // Seçili "Konsinye Cihaz" ürünlerini FormData'ya manuel olarak ekle
        $('.consignment-checkbox:checked').each(function() {

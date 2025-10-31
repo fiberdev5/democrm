@@ -6,6 +6,7 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
 <div class="page-content" id="customerTable">
     <div class="container-fluid">
       <div class="row pageDetail">
@@ -1037,9 +1038,9 @@
         'columns': [
           { data: 'id', name: 'id', orderable: true },
           { data: 'created_at', name: 'created_at', orderable: true },
-          { data: 'm_adi', name: 'm_adi', orderable: true },
-          { data: 'cihaz', name: 'cihaz', orderable: true },
-          { data: 'asama_id', name: 'durum', orderable: true },
+          { data: 'm_adi', name: 'm_adi', orderable: false },
+          { data: 'cihaz', name: 'cihaz', orderable: false },
+          { data: 'asama_id', name: 'durum', orderable: false },
           { data: 'action', name: 'action', orderable: false, searchable: false },
           { data: 'sonlandir_action', name: 'sonlandir_action', orderable: false, searchable: false },
           { data: 'sec_checkbox', name: 'sec_checkbox', orderable: false, searchable: false }
@@ -1205,6 +1206,10 @@
         }
       }],
         "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "Tümü"]],
+        "preDrawCallback": function(settings) {
+      // İlk çizimden önce tabloyu göster
+      $('#datatableService').show();
+    },
         "initComplete": function (settings, json) {
           // 1. Gerekli ana elemanları seçiyoruz
           var topContainer = $('#datatableService_wrapper .top');
@@ -1239,7 +1244,7 @@
 
           // 6. Orijinal 'top' container'ını temizleyip, yeni ve düzenli yapımızı içine yerleştiriyoruz.
           topContainer.empty().append(flexContainer);
-
+          $('#datatableService').fadeIn(300);
           // 7. Son olarak, işlem bittiğinde filtre butonunu görünür hale getiriyoruz.
           filterWrapper.css({ visibility: 'visible', opacity: 1 });
         }

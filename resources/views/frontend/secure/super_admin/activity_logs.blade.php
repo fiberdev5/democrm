@@ -227,7 +227,7 @@ function createPagination(pagination) {
         
         if (pagination.current_page > 1) {
             html += `<li class="page-item">
-                        <a class="page-link" href="#" onclick="loadLogs(${pagination.current_page - 1})">Önceki</a>
+                        <a class="page-link" href="#" onclick="loadLogs(${pagination.current_page - 1})"><i class="fas fa-chevron-left"></i></a>
                     </li>`;
         }
         
@@ -242,7 +242,7 @@ function createPagination(pagination) {
         
         if (pagination.current_page < pagination.last_page) {
             html += `<li class="page-item">
-                        <a class="page-link" href="#" onclick="loadLogs(${pagination.current_page + 1})">Sonraki</a>
+                        <a class="page-link" href="#" onclick="loadLogs(${pagination.current_page + 1})"><i class="fas fa-chevron-right"></i></a>
                     </li>`;
         }
         

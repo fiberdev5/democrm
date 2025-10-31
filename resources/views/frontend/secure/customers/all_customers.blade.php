@@ -401,11 +401,11 @@ function getFilterInfoForPrint() {
         }
       },
       'columns': [
-        { data: 'id'},
-        { data: 'name' },
-        { data: 'tel' },
-        { data: 'address' },
-        { data: 'action'}           
+        { data: 'id', orderable: true},
+        { data: 'name', orderable: false },
+        { data: 'tel', orderable: false },
+        { data: 'address', orderable: false },
+        { data: 'action', orderable: false}           
       ],
       drawCallback: function() {
         $(".dataTables_paginate > .pagination").addClass("pagination-rounded");

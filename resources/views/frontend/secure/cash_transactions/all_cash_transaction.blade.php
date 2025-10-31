@@ -5,7 +5,7 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+
 <div class="page-content" id="cash_transactions">
   <div class="container-fluid">
     <div class="row pageDetail">
@@ -695,13 +695,13 @@ $(document).ready(function(){
         { data: 'id' },
         { data: 'created_at' },
         { data: 'pid' },
-        { data: 'odemeTuru' },
+        { data: 'odemeTuru', orderable: false },
         { data: 'aciklama' },
         { data: 'odemeSekli' },
         { data: 'odemeYonuBorc', orderable:false },
         { data: 'odemeYonuAlacak', orderable:false},
         { data: 'fiyat' },
-        { data: 'action'}           
+        { data: 'action', orderable: false}           
       ],
       drawCallback: function(settings) {
         $(".dataTables_paginate > .pagination").addClass("pagination-rounded");    

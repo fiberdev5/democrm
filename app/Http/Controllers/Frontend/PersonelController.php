@@ -41,14 +41,16 @@ class PersonelController extends Controller
             ]);
         }
         // Firma personelleri
-        $staffs = User::where('tenant_id', $firma->id)->get();
+        $staffs = User::whereDoesntHave('roles', function ($query) {
+                $query->whereIn('name', ['Bayi', 'Admin', 'Super Admin']);
+            });
 
-        $roles = Role::where('name','!=', 'Admin')->get();
+        $roles = Role::whereNotIn('name', ['Bayi', 'Admin', 'Super Admin'])->get();
         if ($request->ajax()) {       
             
             $data = User::whereDoesntHave('roles', function ($query) {
-            $query->where('name', 'Bayi');
-            });    
+                $query->whereIn('name', ['Bayi', 'Admin', 'Super Admin']);
+            });   
             // $data = User::query();  //personeller içinde bayileri de listeliyordu
             if ($request->filled('durum')) {
                 if ($request->get('durum') == 1) {
@@ -152,7 +154,7 @@ class PersonelController extends Controller
     }
 
     public function AddStaff($tenant_id) {
-        $roles= Role::where('name','!=', 'Admin')->get();
+        $roles= Role::whereNotIn('name', ['Bayi', 'Admin', 'Super Admin'])->get();
         $firma = Tenant::where('id', $tenant_id)->first();
         $countries = DB::table('ils')->orderBy('name', 'ASC')->get();
         return view('frontend.secure.staffs.add_staff',compact('roles','firma','countries'));
@@ -288,7 +290,7 @@ class PersonelController extends Controller
             );
             return redirect()->back()->with($notification);
         }
-        $roles = Role::where('name','!=', 'Admin')->get();
+        $roles = Role::whereNotIn('name', ['Bayi', 'Admin', 'Super Admin'])->get();
         $countries = DB::table('ils')->orderBy('name', 'ASC')->get();
         return view('frontend.secure.staffs.edit_staff', compact('staff','roles','firma','countries'));
     }

@@ -70,10 +70,6 @@
     </div>
 </div>
 
-
-
-            
-              
               <thead class="title">
                 <tr>
                   <th style="width: 10px">ID</th>
@@ -303,9 +299,9 @@ $(document).ready(function () {
     columns: [
       { data: 'id', orderable: true},
       { data: 'created_at', orderable: true},
-      { data: 'mid', orderable: true },
+      { data: 'mid', orderable: false },
       { data: 'genelToplam', orderable: true },
-      { data: 'teklifDurumu', orderable: true},
+      { data: 'teklifDurumu', orderable: false},
       { data: 'action', orderable: false}           
     ],
     drawCallback: function() {

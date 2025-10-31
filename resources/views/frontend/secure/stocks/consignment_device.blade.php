@@ -446,14 +446,14 @@ $(document).ready(function () {
         }
       },
       columns: [
-        { data: 'id', name: 'id' },
-        { data: 'created_at', name: 'created_at' },
-        { data: 'urunAdi', name: 'urunAdi' },
-        { data: 'urunKodu', name: 'urunKodu' },
-        { data: 'toplamTutar', name: 'toplamTutar' },
-        { data: 'adet', name: 'adet' },
-        { data: 'raf_adi', name: 'raf_adi' },
-        { data: 'marka_cihaz', name: 'marka_cihaz' },
+        { data: 'id', name: 'id', orderable: true },
+        { data: 'created_at', name: 'created_at', orderable: true },
+        { data: 'urunAdi', name: 'urunAdi', orderable: false },
+        { data: 'urunKodu', name: 'urunKodu', orderable: true },
+        { data: 'toplamTutar', name: 'toplamTutar', orderable: false },
+        { data: 'adet', name: 'adet', orderable: false },
+        { data: 'raf_adi', name: 'raf_adi', orderable: false },
+        { data: 'marka_cihaz', name: 'marka_cihaz', orderable: false },
         { data: 'action', orderable: false, searchable: false }
       ],
       order: [[0, 'desc']],
