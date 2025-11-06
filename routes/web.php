@@ -87,6 +87,7 @@ use App\Http\Controllers\Frontend\SuperAdminInvoicesController;
 use App\Http\Controllers\Frontend\PaymentHistoryController;
 use App\Http\Controllers\Frontend\StorageController;
 use App\Http\Controllers\Frontend\SuperAdminIntegrationController;
+use App\Http\Controllers\Frontend\LegalContentController;
 
 Route::get('/secure', function () {
     return view('backend.index');
@@ -553,6 +554,12 @@ Route::controller(HomeController::class)->group(function() {
     Route::get('/logout', 'logout')->name('logout');
     Route::get('/get-states/{countryId}', 'getStatesByCountry')->name('get.states');
 
+    //Şifre Sıfırlama rotaları
+    Route::get('/sifremi-unuttum', 'showForgotPasswordForm')->name('password.request');
+    Route::post('/sifre-sifirlama-talebi', 'sendResetLinkEmail')->name('password.email');
+    Route::get('/sifre-sifirla/{token}', 'showResetPasswordForm')->name('password.reset');
+    Route::post('/sifre-sifirla', 'resetPassword')->name('password.update');
+
 });
 
 Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId','check.subscription','redirect_after_login','check.tenant.status']], function () {
@@ -869,6 +876,14 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
     Route::controller(ReceiptDesignController::class)->group(function() {
         Route::get('/yazici-fis/tasarimi', 'ReceiptDesign')->name('receipt.design');
         Route::post('/fis-tasarimi/guncelle', 'UpdateReceiptDesign')->name('update.receipt.design');
+    });
+    Route::controller(LegalContentController::class)->group(function() {
+        Route::get('/yasal-metinler', 'legalSettings')->name('legal.settings');
+        Route::post('/yasal-metinler/guncelle', 'updateLegalSettings')->name('update.legal.settings');
+        
+        // Popup için API endpoints
+        Route::get('/api/kullanim-kosullari', 'getTermsContent')->name('api.terms');
+        Route::get('/api/gizlilik-politikasi', 'getPrivacyContent')->name('api.privacy');
     });
 
     //SERVİSLER MODÜLÜ

@@ -14,6 +14,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Cache;
+
 
 class SuperAdminInvoicesController extends Controller
 {
@@ -258,8 +260,27 @@ class SuperAdminInvoicesController extends Controller
     return response()->json($allPayments);
 }
 
-    // Geliştirilmiş StoreInvoice method'u - ödeme ID'si ile ilişkilendirme
-    public function StoreInvoice(Request $request){
+public function StoreInvoice(Request $request){
+    $token = $request->input('form_token');
+    if (empty($token)) {
+        $notification = array(
+            'message' => 'Geçersiz form token! Lütfen sayfayı yenileyin.',
+            'alert-type' => 'error'
+        );
+        return redirect()->back()->with($notification);
+    }
+    
+    $cacheKey = 'invoice_form_token_' . $token;
+    
+    if (Cache::has($cacheKey)) {
+        $notification = array(
+            'message' => 'Bu form zaten gönderildi! Lütfen bekleyin.',
+            'alert-type' => 'warning'
+        );
+        return redirect()->back()->with($notification);
+    }
+    
+    Cache::put($cacheKey, true, now()->addMinutes(10));
     $validateData = $request->validate([
         'document'=> 'max:2000',
         // Çoklu ödeme için validation'ları kaldır

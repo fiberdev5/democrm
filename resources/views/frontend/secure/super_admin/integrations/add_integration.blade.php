@@ -1,3 +1,4 @@
+
 <style>
 @media (min-width: 767px) {
 .custom-p-r{
@@ -117,11 +118,44 @@
 
 <!-- API Fields Örnekleri Modal - FORM DIŞINDA -->
 
-
 <script>
 $('.buyukYaz').keyup(function(){
     this.value = this.value.toUpperCase();
 });
+
+
+$(document).ready(function() {
+    let integrationFormSubmitting = false;
+    
+    // Benzersiz token oluştur
+    function generateToken() {
+        return Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+    
+    // Sayfa yüklendiğinde ilk token'ı oluştur
+    $('#formTokenIntegration').val(generateToken());
+    
+    // Form submit
+    $('#addIntegration').on('submit', function(event) {
+        // TinyMCE içeriğini kaydet
+        if (tinymce.get('elm1')) {
+            tinymce.get('elm1').save();
+        }
+        
+        // Token kontrolü
+        if (integrationFormSubmitting) {
+            event.preventDefault();
+            alert('Form gönderiliyor, lütfen bekleyin...');
+            return false;
+        }
+        
+        // Validasyon kontrolü
+        var formIsValid = true;
+        $(this).find('input, select').each(function() {
+            var isRequired = $(this).prop('required');
+            var isEmpty = !$(this).val();
+            if (isRequired && isEmpty) {
+
 
 // Modal açma fonksiyonu
 function openApiFieldsModal() {
@@ -192,6 +226,7 @@ $(document).ready(function () {
         var formIsValid = true;
         $(this).find('input[required], select[required]').each(function () {
             if (!$(this).val()) {
+
                 formIsValid = false;
                 return false;
             }
@@ -202,6 +237,15 @@ $(document).ready(function () {
             alert('Lütfen zorunlu alanları doldurun.');
             return false;
         }
+
+        
+        // Token işaretle ve butonu disable et
+        integrationFormSubmitting = true;
+        $(this).find('input[type="submit"]').prop('disabled', true);
+        
+        // Form gönderilecek (normal submit devam eder)
+        return true;
+
     });
 });
 </script>

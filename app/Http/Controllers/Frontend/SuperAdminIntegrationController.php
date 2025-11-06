@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Str; 
+use Illuminate\Support\Facades\Cache;
 
 class SuperAdminIntegrationController extends Controller
 {
@@ -118,6 +119,26 @@ class SuperAdminIntegrationController extends Controller
     }
 
     public function StoreIntegration(Request $request) {
+            $token = $request->input('form_token');
+        if (empty($token)) {
+            $notification = array(
+                'message' => 'Geçersiz form token! Lütfen sayfayı yenileyin.',
+                'alert-type' => 'error'
+            );
+            return redirect()->back()->with($notification);
+        }
+        
+        $cacheKey = 'integration_form_token_' . $token;
+        
+        if (Cache::has($cacheKey)) {
+            $notification = array(
+                'message' => 'Bu form zaten gönderildi! Lütfen bekleyin.',
+                'alert-type' => 'warning'
+            );
+            return redirect()->back()->with($notification);
+        }
+        
+        Cache::put($cacheKey, true, now()->addMinutes(10));
         $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required',

@@ -1,93 +1,11 @@
 @extends('frontend.secure.user_master')
 @section('user')
-
+<link href="{{ asset('frontend/css/super_admin/integrations/all_integrations.css') }}" rel="stylesheet" type="text/css" />
   <!--<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>-->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
-  <style>
-    .searchWrap {
-      visibility: hidden;
-      opacity: 0;
-    }
 
-    .card-invocies {
-      border: 1px solid rgba(0, 0, 0, .125) !important;
-    }
-
-    .card-invocies-header {
-      background-color: #f7f7f7 !important;
-      border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
-      margin-bottom: 7px !important;
-      padding: 4px 7px !important;
-    }
-
-    .card-invocies-body {
-      padding: 3px 7px !important;
-    }
-
-    @media (max-width: 767px) {
-      .pageDetail .searchWrap {}
-
-      .btn-secondary {
-        color: #fff !important;
-        background-color: #5c636a !important;
-        border-color: #565e64 !important;
-      }
-
-      .pageDetail .searchWrap .dropdown-menu .item {
-        margin-bottom: 10px !important;
-      }
-
-      .invoices-filtre {
-        width: auto !important;
-      }
-
-      .pageDetail .searchWrap .dropdown-menu {
-        min-width: calc(90vw - 20px) !important;
-        transform: translate3d(9.274994px, 2px, 0px) !important;
-      }
-
-      .searchWrap .tarih-araligi {
-        padding: 5px 3px;
-      }
-
-      .custom-p-m-m {
-        padding-left: 0px !important;
-      }
-
-      #datatableIntegration_filter {
-        margin-right: 0px !important;
-      }
-
-      .dataTables_filter label {}
-
-      .searchWrap {
-        margin-top: 0px !important;
-      }
-
-      div.dataTables_filter input {
-        margin-left: 0px !important;
-      }
-
-      .top {
-        margin-top: 19px;
-      }
-
-      div.dataTables_wrapper div.dataTables_filter input {
-        width: 227px !important;
-      }
-
-      .servisDrop {
-        inset: 0px 0px -412px -213px !important;
-      }
-
-      .pageDetail .searchWrap {
-        margin-bottom: 0px !important;
-      }
-
-    }
-  </style>
   <div class="page-content" id="passwords">
     <div class="container-fluid">
       <div class="row pageDetail">
