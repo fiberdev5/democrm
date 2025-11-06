@@ -1,0 +1,66 @@
+
+.servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
+        @media (min-width: 768px) {
+    .table-modern .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .table-modern .card-header .d-flex {
+        margin-bottom: 0 !important; 
+        width: auto !important;      
+    }
+}
+    @media (max-width: 767px) {
+            .pageDetail .searchWrap .dropdown-menu{
+                        transform: translate3d(-173px, 2px, 0px) !important;
+        min-width: calc(89vw - 20px) !important;
+            inset: 0px auto auto 0px !important;
+            }
+            .pageDetail .searchWrap {width: 30% !important;}
+
+
+            #datatableInvoice_filter {
+                margin-right: 0px !important;
+            }
+
+            .dataTables_filter label {}
+
+            .searchWrap {
+                margin-top: 0px !important;
+            }
+
+            div.dataTables_filter input {
+                margin-left: 0px !important;
+            }
+
+            .pageDetail .searchWrap {
+                margin-bottom: 0px !important;
+            }
+            .searchWrap .tarih-araligi {
+    padding: 5px 0px !important;
+}
+.btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+    .servis-istatistik .btn-action {
+        padding: 4px 6px !important;
+    }
+        }
+.card-header .d-flex.justify-content-end {
+    min-height: 38px; /* Arama kutusu ve filtre butonunun yüksekliğine göre ayarlayın */
+    align-items: center; /* Dikey hizalama için */
+}
+.card-header .dataTables_filter {
+    margin-bottom: 0; /* Gerekirse varsayılan margin'i sıfırlayın */
+}
+.card-header .searchWrap {
+    margin-left: 10px; /* Arama kutusu ile filtre butonu arasına boşluk bırakmak için */
+}
