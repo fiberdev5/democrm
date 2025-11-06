@@ -125,6 +125,130 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 
+<div class="modal fade" id="apiFieldsModal" tabindex="-1" aria-labelledby="apiFieldsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="apiFieldsModalLabel">API Form Alanları Örnekleri</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs mb-3" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="sms-tab-btn" data-bs-toggle="tab" data-bs-target="#sms-tab" type="button" role="tab">SMS (NETGSM)</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="accounting-tab-btn" data-bs-toggle="tab" data-bs-target="#accounting-tab" type="button" role="tab">Muhasebe (Paraşüt)</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="invoice-tab-btn" data-bs-toggle="tab" data-bs-target="#invoice-tab" type="button" role="tab">e-Fatura</button>
+                    </li>
+                </ul>
+                
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="sms-tab" role="tabpanel">
+<pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto;"><code id="sms-code">[
+    {
+        "name": "username",
+        "label": "API Kullanıcı Adı",
+        "type": "text",
+        "placeholder": "850xxxxxxx",
+        "required": true,
+        "help": "NETGSM panelinden aldığınız kullanıcı adı"
+    },
+    {
+        "name": "password",
+        "label": "API Şifresi",
+        "type": "password",
+        "placeholder": "••••••••",
+        "required": true,
+        "help": "NETGSM panel şifreniz"
+    },
+    {
+        "name": "sender_name",
+        "label": "Gönderici Başlığı",
+        "type": "text",
+        "placeholder": "FIRMADI",
+        "required": false,
+        "help": "SMS gönderici adı (max 11 karakter)"
+    }
+]</code></pre>
+                        <button class="btn btn-sm btn-primary" onclick="copyExample('sms-code')">
+                            <i class="fas fa-copy"></i> Kopyala ve Kullan
+                        </button>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="accounting-tab" role="tabpanel">
+<pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto;"><code id="accounting-code">[
+    {
+        "name": "company_id",
+        "label": "Şirket ID",
+        "type": "text",
+        "placeholder": "123456",
+        "required": true,
+        "help": "Paraşüt hesabınızdaki şirket ID"
+    },
+    {
+        "name": "client_id",
+        "label": "Client ID",
+        "type": "text",
+        "required": true
+    },
+    {
+        "name": "client_secret",
+        "label": "Client Secret",
+        "type": "password",
+        "required": true
+    }
+]</code></pre>
+                        <button class="btn btn-sm btn-primary" onclick="copyExample('accounting-code')">
+                            <i class="fas fa-copy"></i> Kopyala ve Kullan
+                        </button>
+                    </div>
+                    
+                    <div class="tab-pane fade" id="invoice-tab" role="tabpanel">
+<pre style="background: #f5f5f5; padding: 15px; border-radius: 5px; max-height: 400px; overflow-y: auto;"><code id="invoice-code">[
+    {
+        "name": "username",
+        "label": "Kullanıcı Adı",
+        "type": "text",
+        "required": true
+    },
+    {
+        "name": "password",
+        "label": "Şifre",
+        "type": "password",
+        "required": true
+    },
+    {
+        "name": "vkn_tckn",
+        "label": "VKN / TCKN",
+        "type": "text",
+        "placeholder": "10 veya 11 haneli",
+        "required": true,
+        "help": "Vergi Kimlik No veya TC Kimlik No"
+    },
+    {
+        "name": "integration_type",
+        "label": "Entegrasyon Tipi",
+        "type": "select",
+        "options": {
+            "test": "Test Ortamı",
+            "prod": "Canlı Ortam"
+        },
+        "required": true
+    }
+]</code></pre>
+                        <button class="btn btn-sm btn-primary" onclick="copyExample('invoice-code')">
+                            <i class="fas fa-copy"></i> Kopyala ve Kullan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     <script type="text/javascript">
       $(document).ready(function () {
         $(".addIntegration").click(function () {

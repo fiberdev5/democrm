@@ -1,16 +1,16 @@
 @extends('frontend.secure.user_master')
-
 @section('user')
+
 <div class="page-content">
-  <div class="container-fluid py-8">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Fatura Bilgileri</h2>
+  <div class="container-fluid">
+    <h2 class="text-2xl font-bold text-gray-800 mb-1">Fatura Bilgileri</h2>
 
     <form action="{{ route('subscription.process', [$tenant_id, $planid]) }}" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-2">
       @csrf
 
       <!-- Sol taraf (Paket Bilgileri) -->
       <div class="bg-white rounded-2xl shadow-lg p-6">
-        <h3 class="text-lg font-semibold text-gray-700 mb-4">Paket Bilgileri</h3>
+        <h3 class="text-lg font-semibold text-gray-700 mb-1">Paket Bilgileri</h3>
         <div class="space-y-3 text-gray-600">
           <p><strong>Paket Adı:</strong> {{ $plan->name }}</p>
           <p><strong>Fiyat:</strong> {{ $plan->getFormattedPrice() }} / {{ $plan->getBillingCycleText() }}</p>

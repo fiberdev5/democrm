@@ -307,7 +307,7 @@ $(document).ready(function() {
   function loadCities(countryId) {
     var citySelect = $("#citySelect");
     citySelect.empty(); // Önceki seçenekleri temizle
-    citySelect.append(new Option("Yükleniyor...", "")); // Kullanıcıya yükleniyor bilgisi ver
+    citySelect.append(new Option("-Seçiniz-", "")); // Kullanıcıya yükleniyor bilgisi ver
 
     // AJAX isteğiyle şehirleri al
     $.get("/get-states/" + countryId, function(data) {

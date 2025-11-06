@@ -1068,10 +1068,11 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
             Route::get('/entegrasyonlar', 'index')->name('tenant.integrations.marketplace');
             Route::get('/entegrasyon-detay/{slug}', 'show')->name('tenant.integrations.show');
             
+            //detaylar sayfasındaki api ayarlarını girerek veritabanına kaydeden urll
+            Route::post('/entegrasyon/{integration_id}/ayarlar-kaydet', 'saveSettings')->name('tenant.integrations.save_settings');
+
              // Satın Alma
-        Route::get('/entegrasyon/{integration_id}/satin-al', 'purchase')->name('tenant.integrations.purchase');
-        
-        // Ödeme Sonuçları
+            Route::get('/entegrasyon/{integration_id}/satin-al', 'purchase')->name('tenant.integrations.purchase');
        
         });
 

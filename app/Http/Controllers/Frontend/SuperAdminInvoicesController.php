@@ -178,7 +178,7 @@ class SuperAdminInvoicesController extends Controller
     }
 
     // Yeni method: Belirli bir firmaya ait tamamlanmış ödemeleri getir
-    public function GetCompletedPayments(Request $request)
+   public function GetCompletedPayments(Request $request)
 {
     $tenantId = $request->get('tenant_id');
     
@@ -189,7 +189,7 @@ class SuperAdminInvoicesController extends Controller
     // Abonelik ödemeleri - fatura oluşturulmamış olanlar
     $subscriptionPayments = SubscriptionPayment::where('tenant_id', $tenantId)
         ->where('status', 'completed')
-        ->whereNull('invoice_path') // Henüz fatura oluşturulmamış
+        ->whereNull('invoice_path')
         ->select('id', 'subscription_id', 'payment_id', 'amount', 'currency', 'payment_method', 'paid_at', 'created_at')
         ->get()
         ->map(function($payment) {
@@ -208,7 +208,7 @@ class SuperAdminInvoicesController extends Controller
     // Ek depolama ödemeleri - fatura oluşturulmamış olanlar
     $storagePayments = StoragePurchase::where('tenant_id', $tenantId)
         ->where('status', 'completed')
-        ->whereNull('invoice_path') // Henüz fatura oluşturulmamış
+        ->whereNull('invoice_path')
         ->select('id', 'storage_package_id', 'payment_token', 'amount', 'storage_gb', 'purchased_at', 'expires_at')
         ->get()
         ->map(function($payment) {
@@ -224,8 +224,36 @@ class SuperAdminInvoicesController extends Controller
             ];
         });
 
-    // İki koleksiyonu birleştir ve sırala
-    $allPayments = $subscriptionPayments->concat($storagePayments)
+    // Entegrasyon ödemeleri - YENİ EKLENEN
+    $integrationPayments = \App\Models\IntegrationPurchase::where('tenant_id', $tenantId)
+        ->where('status', 'completed')
+        ->whereNull('invoice_path')
+        ->with('integration')
+        ->select('id', 'integration_id', 'amount', 'activated_at', 'payment_response')
+        ->get()
+        ->map(function($payment) {
+            $paymentResponse = is_string($payment->payment_response) 
+                ? json_decode($payment->payment_response, true) 
+                : $payment->payment_response;
+            
+            $integrationName = $payment->integration ? $payment->integration->name : 'Bilinmeyen Entegrasyon';
+            
+            return [
+                'id' => $payment->id,
+                'type' => 'integration',
+                'description' => 'Entegrasyon - ' . $integrationName,
+                'amount' => $payment->amount,
+                'currency' => $paymentResponse['currency'] ?? 'TL',
+                'payment_method' => $paymentResponse['payment_method'] ?? 'Kredi Kartı',
+                'paid_at' => $payment->purchased_at,
+                'created_at' => $payment->purchased_at,
+            ];
+        });
+
+    // Üç koleksiyonu birleştir ve sırala
+    $allPayments = $subscriptionPayments
+        ->concat($storagePayments)
+        ->concat($integrationPayments)
         ->sortByDesc('paid_at')
         ->values();
 
@@ -368,6 +396,9 @@ public function StoreInvoice(Request $request){
                 ->update(['invoice_path' => $invoicePath]);
         } elseif ($paymentType === 'storage') {
             StoragePurchase::where('id', $paymentId)
+                ->update(['invoice_path' => $invoicePath]);
+        } elseif ($paymentType === 'integration') {
+            \App\Models\IntegrationPurchase::where('id', $paymentId)
                 ->update(['invoice_path' => $invoicePath]);
         }
     }
@@ -512,6 +543,9 @@ public function StoreInvoice(Request $request){
                 ->update(['invoice_path' => null]);
         } elseif ($paymentType === 'storage') {
             StoragePurchase::where('id', $paymentId)
+                ->update(['invoice_path' => null]);
+        } elseif ($paymentType === 'integration') {
+            \App\Models\IntegrationPurchase::where('id', $paymentId)
                 ->update(['invoice_path' => null]);
         }
     }
@@ -716,56 +750,70 @@ public function StoreInvoice(Request $request){
         return response()->json($firmalar);
     }
     public function GetTenantsWithPendingPayments()
-{
-    // Faturası oluşturulmamış abonelik ödemesi olan firma ID'lerini al
-    $subscriptionTenantIds = SubscriptionPayment::where('status', 'completed')
-        ->whereNull('invoice_path')
-        ->distinct()
-        ->pluck('tenant_id');
-    
-    // Faturası oluşturulmamış depolama ödemesi olan firma ID'lerini al
-    $storageTenantIds = StoragePurchase::where('status', 'completed')
-        ->whereNull('invoice_path')
-        ->distinct()
-        ->pluck('tenant_id');
-    
-    // İki listeyi birleştir ve unique yap
-    $tenantIds = $subscriptionTenantIds->merge($storageTenantIds)->unique();
-    
-    // Firma bilgilerini getir
-    $tenants = Tenant::with(['ils', 'ilces'])
-        ->whereIn('id', $tenantIds)
-        ->where('status', 1)
-        ->where('firma_adi', '!=', 'Super Admin Panel')
-        ->select('id', 'firma_adi', 'tel1', 'tel2', 'il', 'ilce', 'adres', 'vergiNo', 'vergiDairesi')
-        ->orderBy('firma_adi')
-        ->get()
-        ->map(function($firma) {
-            // Her firma için bekleyen ödeme sayısını hesapla
-            $subscriptionCount = SubscriptionPayment::where('tenant_id', $firma->id)
-                ->where('status', 'completed')
-                ->whereNull('invoice_path')
-                ->count();
-            
-            $storageCount = StoragePurchase::where('tenant_id', $firma->id)
-                ->where('status', 'completed')
-                ->whereNull('invoice_path')
-                ->count();
-            
-            return [
-                'id' => $firma->id,
-                'firma_adi' => $firma->firma_adi,
-                'tel1' => $firma->tel1,
-                'tel2' => $firma->tel2,
-                'il' => $firma->ils?->name ?? 'Bilinmiyor',
-                'ilce' => $firma->ilces?->ilceName ?? 'Bilinmiyor',
-                'adres' => $firma->adres,
-                'vergiNo' => $firma->vergiNo,
-                'vergiDairesi' => $firma->vergiDairesi,
-                'pending_payments_count' => $subscriptionCount + $storageCount
-            ];
-        });
-    
-    return response()->json($tenants);
-}
+    {
+        // Faturası oluşturulmamış abonelik ödemesi olan firma ID'lerini al
+        $subscriptionTenantIds = SubscriptionPayment::where('status', 'completed')
+            ->whereNull('invoice_path')
+            ->distinct()
+            ->pluck('tenant_id');
+        
+        // Faturası oluşturulmamış depolama ödemesi olan firma ID'lerini al
+        $storageTenantIds = StoragePurchase::where('status', 'completed')
+            ->whereNull('invoice_path')
+            ->distinct()
+            ->pluck('tenant_id');
+        
+        // Faturası oluşturulmamış entegrasyon ödemesi olan firma ID'lerini al - YENİ
+        $integrationTenantIds = \App\Models\IntegrationPurchase::where('status', 'completed')
+            ->whereNull('invoice_path')
+            ->distinct()
+            ->pluck('tenant_id');
+        
+        // Üç listeyi birleştir ve unique yap
+        $tenantIds = $subscriptionTenantIds
+            ->merge($storageTenantIds)
+            ->merge($integrationTenantIds)
+            ->unique();
+        
+        // Firma bilgilerini getir
+        $tenants = Tenant::with(['ils', 'ilces'])
+            ->whereIn('id', $tenantIds)
+            ->where('status', 1)
+            ->where('firma_adi', '!=', 'Super Admin Panel')
+            ->select('id', 'firma_adi', 'tel1', 'tel2', 'il', 'ilce', 'adres', 'vergiNo', 'vergiDairesi')
+            ->orderBy('firma_adi')
+            ->get()
+            ->map(function($firma) {
+                // Her firma için bekleyen ödeme sayısını hesapla
+                $subscriptionCount = SubscriptionPayment::where('tenant_id', $firma->id)
+                    ->where('status', 'completed')
+                    ->whereNull('invoice_path')
+                    ->count();
+                
+                $storageCount = StoragePurchase::where('tenant_id', $firma->id)
+                    ->where('status', 'completed')
+                    ->whereNull('invoice_path')
+                    ->count();
+                
+                $integrationCount = \App\Models\IntegrationPurchase::where('tenant_id', $firma->id)
+                    ->where('status', 'completed')
+                    ->whereNull('invoice_path')
+                    ->count();
+                
+                return [
+                    'id' => $firma->id,
+                    'firma_adi' => $firma->firma_adi,
+                    'tel1' => $firma->tel1,
+                    'tel2' => $firma->tel2,
+                    'il' => $firma->ils?->name ?? 'Bilinmiyor',
+                    'ilce' => $firma->ilces?->ilceName ?? 'Bilinmiyor',
+                    'adres' => $firma->adres,
+                    'vergiNo' => $firma->vergiNo,
+                    'vergiDairesi' => $firma->vergiDairesi,
+                    'pending_payments_count' => $subscriptionCount + $storageCount + $integrationCount
+                ];
+            });
+        
+        return response()->json($tenants);
+    }
 }

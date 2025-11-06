@@ -1,0 +1,70 @@
+ .searchWrap {
+            visibility: hidden;
+            opacity: 0;
+        }
+        .card-statics-op{border: 1px solid rgba(0, 0, 0, .125) !important;}
+.card-statics-op-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+  .card-statics-op-body{padding: 3px 7px !important;}
+  .servisDrop {
+    transition: none !important;
+    animation: none !important;
+    transform: translate3d(1px, 2px, 0px) !important;
+  }
+        @media (min-width: 768px) {
+    .table-modern .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Javascript ile oluşturulan sarmalayıcının gereksiz stillerini ezelim */
+    .table-modern .card-header .d-flex {
+        margin-bottom: 0 !important; /* Alt boşluğu kaldır */
+        width: auto !important;      /* Genişliği içeriğe göre ayarla */
+    }
+}
+
+        @media (max-width: 767px) {
+            .pageDetail .searchWrap .dropdown-menu {
+                transform: translate3d(-208px, 2px, 0px) !important;
+            }
+
+            .pageDetail .searchWrap {width: 30% !important;}
+
+
+            #datatableInvoice_filter {
+                margin-right: 0px !important;
+            }
+
+            .dataTables_filter label {}
+
+            .searchWrap {
+                margin-top: 0px !important;
+            }
+
+            div.dataTables_filter input {
+                margin-left: 0px !important;
+            }
+
+            .pageDetail .searchWrap {
+                margin-bottom: 0px !important;
+            }
+                .pageDetail .searchWrap .dropdown-menu {
+        transform: translate3d(-170px, 2px, 0px) !important;
+        min-width: calc(87vw - 20px) !important;
+             inset: 0px auto auto 0px !important;
+    }
+.btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+}
+.searchWrap .tarih-araligi {
+    padding: 5px 0px !important;
+
+}
+        }
+div.dataTables_wrapper div.dataTables_filter {
+    margin-top: -31px;
+}
+        
