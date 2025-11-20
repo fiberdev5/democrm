@@ -73,7 +73,5 @@ class Service extends Model
         return $this->hasMany(Survey::class, 'servisid', 'id');
     }
 
-    
-
 
 }
