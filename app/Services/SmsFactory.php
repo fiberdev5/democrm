@@ -1,5 +1,4 @@
 <?php
-// app/Services/SmsFactory.php
 
 namespace App\Services;
 
@@ -8,6 +7,8 @@ use App\Models\IntegrationPurchase;
 use App\Services\SmsProviders\NetgsmProvider;
 use App\Services\SmsProviders\TurkTelekomProvider;
 use App\Services\SmsProviders\SmsProviderInterface;
+use App\Services\SmsProviders\SolvelineProvider;
+use App\Services\SmsProviders\TescomProvider;
 use Illuminate\Support\Facades\Log;
 use App\Services\SmsProviders\VerimorProvider;
 
@@ -18,7 +19,6 @@ class SmsFactory
      */
     public static function getProviderForTenant($tenantId): ?SmsProviderInterface
     {
-        // Firma'nın aktif SMS entegrasyonunu bul
         $purchase = IntegrationPurchase::where('tenant_id', $tenantId)
             ->where('status', 'completed')
             ->whereHas('integration', function($query) {
@@ -35,7 +35,6 @@ class SmsFactory
             return null;
         }
 
-        // Credentials'ı parse et
         $credentials = is_string($purchase->credentials) 
             ? json_decode($purchase->credentials, true) 
             : $purchase->credentials;
@@ -64,6 +63,16 @@ class SmsFactory
             // Diğer SMS provider'ları buraya eklenebilir
             case 'verimor':
                return new VerimorProvider($credentials);  
+
+            
+            case 'tescom':
+            case 'tescom-sms':
+                return new TescomProvider($credentials);
+
+            case 'solveline':
+            case 'solveline-sms':
+                return new SolvelineProvider($credentials);
+
             
             default:
                 Log::error('Bilinmeyen SMS provider', [

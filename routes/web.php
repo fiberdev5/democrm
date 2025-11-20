@@ -90,6 +90,9 @@ use App\Http\Controllers\Frontend\StorageController;
 use App\Http\Controllers\Frontend\SuperAdminIntegrationController;
 use App\Http\Controllers\Frontend\LegalContentController;
 use App\Http\Controllers\Api\VerimorSantralController;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Api\HipcallWebhookController;
+use App\Http\Controllers\Frontend\TenantApiTokenController;
 
 
 Route::get('/secure', function () {
@@ -547,7 +550,6 @@ Route::controller(HomeController::class)->group(function() {
     Route::post('/validate-step', 'validateStep')->name('validate.step');
     Route::get('/get-subscription-plans', 'getSubscriptionPlans')->name('get.subscription.plans');
     // Yeni SMS doğrulama rotaları
-    Route::get('/sms-dogrulama', 'showSmsVerificationForm')->name('sms.verification.form');
     Route::post('/sms-dogrulama', 'verifySmsCode')->name('sms.verification.verify');
     Route::get('/kayit-basarili', 'RegisterSuccess')->name('register.success');
 
@@ -1085,17 +1087,7 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
             Route::post('/integrations/hipcall/fetch-calls', 'fetchHipcallCalls')
                 ->name('tenant.integrations.hipcall.fetch-calls');
 
-            // Hipcall rehberini görüntüle
-    Route::get('/integrations/hipcall/contacts','showHipcallContacts')
-        ->name('tenant.integrations.hipcall.contacts');
-    
-    // Seçili kişileri SerbisERP'ye aktar
-    Route::post('/integrations/hipcall/import-contacts','importHipcallContacts')
-        ->name('tenant.integrations.hipcall.import-contacts');
-    
-    // Rehberi yenile (AJAX)
-    Route::post('/integrations/hipcall/refresh-contacts','refreshHipcallContacts')
-        ->name('tenant.integrations.hipcall.refresh-contacts');
+            
         
         });
 
@@ -1123,7 +1115,14 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
             Route::post('/toplu-sms/gonder', 'send')->name('toplu-sms.gonder');
         });
 
-
+      Route::controller(TenantApiTokenController::class)->group(function() {
+        Route::get('/api-tokens', 'index')->name('api.tokens.index');
+        Route::get('/api-token/olustur', 'create');
+        Route::post('/api-token/kaydet', 'store');
+        Route::post('/api-token/aktif-pasif', 'toggle');
+        Route::delete('/api-token/sil', 'destroy');
+        Route::get('/api-token/goster', 'show');
+    });
 
 });
 Route::controller(IntegrationMarketplaceController::class)->group(function() { 
@@ -1259,4 +1258,25 @@ Route::controller(FeatureController::class)->group(function() {
 });
 
 
+
+Route::get('/{tenant_id}/test-hipcall-card-data/{customer_id}', function($tenant_id, $customer_id) {
+    $customer = DB::table('customers')
+        ->where('firma_id', $tenant_id)
+        ->where('id', $customer_id)
+        ->first();
+    
+    if (!$customer) {
+        return response()->json(['error' => 'Müşteri bulunamadı']);
+    }
+    
+    $hipcallService = new \App\Services\HipcallService($tenant_id);
+    $baseUrl = rtrim(config('app.url'), '/');
+    
+    $cardData = $hipcallService->prepareCustomerCard($customer, $tenant_id, $baseUrl);
+    
+    return response()->json([
+        'card_data' => $cardData,
+     
+    ]);
+})->name('test.hipcall.card');
 

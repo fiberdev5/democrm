@@ -7,6 +7,7 @@ use App\Models\BulkSms;
 use App\Models\DeviceBrand;
 use App\Models\DeviceType;
 use App\Models\Il;
+use App\Models\IntegrationPurchase;
 use App\Models\Service;
 use App\Models\ServiceResource;
 use App\Models\ServiceStage;
@@ -17,6 +18,7 @@ use App\Services\SmsFactory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class BulkSmsController extends Controller
 {
@@ -47,11 +49,9 @@ class BulkSmsController extends Controller
                 ->get();
 
             if ($smsIntegrations->isEmpty()) {
-                $notification = array(
-                    'message' => 'SMS entegrasyonu bulunamadı. Lütfen önce bir SMS entegrasyonu satın alın.',
-                    'alert-type' => 'warning'
-                );
-                return redirect()->back()->with($notification);
+
+                return view('frontend.secure.bulk_sms.no_integration', compact('firma'));
+
             }
 
             $cihazlar = DeviceType::where('firma_id', $tenant_id)
@@ -121,7 +121,7 @@ class BulkSmsController extends Controller
                 $tarih1 = Carbon::parse($tarih1Input)->startOfDay();
                 $tarih2 = Carbon::parse($tarih2Input)->endOfDay();
             } catch (\Exception $e) {
-                \Log::error('Tarih parse hatası', [
+                Log::error('Tarih parse hatası', [
                     'tarih1' => $tarih1Input,
                     'tarih2' => $tarih2Input,
                     'error' => $e->getMessage()
@@ -180,7 +180,7 @@ class BulkSmsController extends Controller
             return view('frontend.secure.bulk_sms.list', compact('servisler', 'durumBaslik','firma', 'smsIntegrations'))->render();
 
         } catch (\Exception $e) {
-            \Log::error('Toplu SMS Listele Hatası: ' . $e->getMessage(), [
+            Log::error('Toplu SMS Listele Hatası: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString()
             ]);
             return response()->json(['error' => 'Bir hata oluştu: ' . $e->getMessage()], 500);
@@ -235,7 +235,8 @@ class BulkSmsController extends Controller
 
         // Credentials kontrolü
         if (empty($purchase->credentials)) {
-            \Log::error('SMS credentials boş', [
+
+            Log::error('SMS credentials boş', [
                 'purchase_id' => $purchase->id,
                 'integration' => $purchase->integration->name
             ]);
@@ -253,7 +254,7 @@ class BulkSmsController extends Controller
 
         // Credentials hala null veya boş mu kontrol et
         if (empty($credentials) || !is_array($credentials)) {
-            \Log::error('SMS credentials parse edilemedi', [
+            Log::error('SMS credentials parse edilemedi', [
                 'purchase_id' => $purchase->id,
                 'credentials_raw' => $purchase->credentials
             ]);
@@ -302,7 +303,8 @@ class BulkSmsController extends Controller
             }
 
             if (strlen($tel) != 11) {
-                \Log::warning('Geçersiz telefon numarası', [
+
+                Log::warning('Geçersiz telefon numarası', [
                     'servis_id' => $servis->id,
                     'tel' => $tel
                 ]);
@@ -332,7 +334,8 @@ class BulkSmsController extends Controller
             ], 400);
         }
 
-        \Log::info('Toplu SMS Gönderiliyor', [
+
+        Log::info('Toplu SMS Gönderiliyor', [
             'firma_id' => $tenant_id,
             'telefon_sayisi' => count($telefonlar),
             'provider' => $purchase->integration->name
@@ -365,7 +368,9 @@ class BulkSmsController extends Controller
             'message' => $e->validator->errors()->first()
         ], 422);
     } catch (\Exception $e) {
-        \Log::error('Toplu SMS Gönderme Hatası: ' . $e->getMessage(), [
+
+        Log::error('Toplu SMS Gönderme Hatası: ' . $e->getMessage(), [
+
             'trace' => $e->getTraceAsString()
         ]);
         

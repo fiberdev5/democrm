@@ -1,0 +1,29 @@
+@extends('frontend.secure.user_master')
+@section('user')
+
+<div class="page-content">
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card mt-5">
+                    <div class="card-body text-center p-5">
+                        <div class="mb-4">
+                            <i class="ri-message-3-line" style="font-size: 80px; color: #f1b44c;"></i>
+                        </div>
+                        <h3 class="mb-3">SMS Entegrasyonu Gerekli</h3>
+                        <p class="text-muted mb-4">
+                            Toplu SMS gönderebilmek için önce bir SMS entegrasyonu satın almanız gerekmektedir.
+                            Entegrasyonlar pazarından NetGSM veya Türk Telekom SMS entegrasyonlarından birini satın alabilirsiniz.
+                        </p>
+<a href="{{ route('tenant.integrations.marketplace', ['category' => 'sms', 'firma' => $firma->id]) }}" class="btn btn-primary btn-lg">
+                            <i class="ri-shopping-cart-line me-2"></i>
+                            Entegrasyonlar Pazarına Git
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@endsection

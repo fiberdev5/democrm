@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Il;
+use App\Models\IntegrationPurchase;
 use App\Models\Service;
 use App\Models\Tenant;
 use Carbon\Carbon;
@@ -12,10 +13,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 use App\Services\ActivityLogger;
+use App\Services\HipcallService;
 use Illuminate\Support\Facades\Cache;
 use App\Services\VerimorSantralService;
 use Illuminate\Support\Facades\Log;
-
 
 
 class CustomerController extends Controller
@@ -269,6 +270,51 @@ class CustomerController extends Controller
 
          // Müşteri oluşturma log kaydı
         ActivityLogger::logCustomerCreated($customer->id, $request->name);
+
+        // Hipcall entegrasyonu kontrolü ve müşteri ekleme
+        try {
+            $hipcallPurchase = IntegrationPurchase::where('tenant_id', $tenant_id)
+                ->whereHas('integration', function($q) {
+                    $q->where('slug', 'hipcall');
+                })
+                ->where('status', 'completed')
+                ->where('is_active', true)
+                ->first();
+            
+            if ($hipcallPurchase) {
+                $hipcallService = new HipcallService($tenant_id);
+                
+                $contactData = [
+                    'name' => $request->name,
+                    'phone' => $request->tel1,
+                    'phone2' => $request->tel2,
+                    'tc_no' => $request->tcNo,
+                    'vergi_no' => $request->vergiNo,
+                    'vergi_dairesi' => $request->vergiDairesi
+                ];
+                
+                $hipcallResult = $hipcallService->createContact($contactData);
+                
+                if ($hipcallResult['success']) {
+                    Log::info('Müşteri Hipcall rehberine eklendi', [
+                        'customer_id' => $customer->id,
+                        'hipcall_response' => $hipcallResult
+                    ]);
+                } else {
+                    // Hipcall'a eklenemese bile müşteri oluşturma işlemi başarılı
+                    Log::warning('Müşteri Hipcall rehberine eklenemedi', [
+                        'customer_id' => $customer->id,
+                        'error' => $hipcallResult['message']
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            // Hipcall hatası müşteri oluşturmayı engellemez
+            Log::error('Hipcall entegrasyon hatası', [
+                'customer_id' => $customer->id,
+                'error' => $e->getMessage()
+            ]);
+        }
 
         $notification = array(
             'message' => 'Müşteri başarıyla eklendi.',

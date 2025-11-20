@@ -261,7 +261,7 @@
                                 </label>
                                 <input type="text" name="smsCode" id="smsCode" class="form-control" 
                                        placeholder="6 haneli kod" required maxlength="6">
-                                <div id="smsCodeError" class="text-danger mt-2" style="display: none;"></div>
+                                <div id="smsCodeError" class="text-danger mt-2"></div>
                             </div>
                         </div>
 
@@ -757,7 +757,7 @@ function loadSubscriptionPlans() {
                 const smsCode = $('#smsCode').val();
                 
                 if (!smsCode || smsCode.length !== 6) {
-                    $('#smsCodeError').text('Lütfen 6 haneli doğrulama kodunu giriniz.').show();
+                    $('#smsCodeError').text('Lütfen 6 haneli doğrulama kodunu giriniz.').css('display', 'block');
                     return;
                 }
 
@@ -776,7 +776,13 @@ function loadSubscriptionPlans() {
                     },
                     error: function(xhr) {
                         const errorMsg = xhr.responseJSON?.message || 'Doğrulama kodu hatalı veya süresi dolmuş.';
-                        $('#smsCodeError').text(errorMsg).show();
+                        $('#smsCodeError').text(errorMsg).css('display', 'block');
+
+                         // Toastr ile de göster
+                        toastr.error(errorMsg);
+                        
+                        // Input'u işaretle
+                        $('#smsCode').addClass('is-invalid');
                     }
                 });
             }
