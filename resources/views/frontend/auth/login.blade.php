@@ -450,8 +450,8 @@ function loadSubscriptionPlans() {
     });
 }
 
-            // Show plan information
-            function showPlanInfo(planData) {
+    // Show plan information
+    function showPlanInfo(planData) {
     const planInfo = $('#planInfo');
     const featuresDiv = planInfo.find('.plan-features');
     
@@ -511,10 +511,7 @@ function loadSubscriptionPlans() {
 
     const compactHTML = `
         <div class="plan-info-compact">
-            <div class="plan-summary">
-                <h6 class="plan-name-compact">${planData.name} Planı</h6>
-                <div class="plan-price-compact">${formatPrice(planData.price, planData.billing_cycle)}</div>
-            </div>
+
             
             ${limitItems.length > 0 ? `
                 <div class="limits-row">

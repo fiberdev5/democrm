@@ -10,6 +10,7 @@ use App\Services\SmsProviders\SmsProviderInterface;
 use App\Services\SmsProviders\SolvelineProvider;
 use App\Services\SmsProviders\TescomProvider;
 use Illuminate\Support\Facades\Log;
+use App\Services\SmsProviders\VerimorProvider;
 
 class SmsFactory
 {
@@ -59,6 +60,10 @@ class SmsFactory
         switch ($slug) {
             case 'netgsm':
                 return new NetgsmProvider($credentials);
+            // Diğer SMS provider'ları buraya eklenebilir
+            case 'verimor':
+               return new VerimorProvider($credentials);  
+
             
             case 'tescom':
             case 'tescom-sms':
@@ -67,6 +72,7 @@ class SmsFactory
             case 'solveline':
             case 'solveline-sms':
                 return new SolvelineProvider($credentials);
+
             
             default:
                 Log::error('Bilinmeyen SMS provider', [

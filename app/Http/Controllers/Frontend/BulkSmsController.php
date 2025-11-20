@@ -12,6 +12,7 @@ use App\Models\Service;
 use App\Models\ServiceResource;
 use App\Models\ServiceStage;
 use App\Models\Tenant;
+use App\Models\IntegrationPurchase;
 use App\Services\NetgsmService;
 use App\Services\SmsFactory;
 use Carbon\Carbon;
@@ -48,7 +49,9 @@ class BulkSmsController extends Controller
                 ->get();
 
             if ($smsIntegrations->isEmpty()) {
+
                 return view('frontend.secure.bulk_sms.no_integration', compact('firma'));
+
             }
 
             $cihazlar = DeviceType::where('firma_id', $tenant_id)
@@ -232,6 +235,7 @@ class BulkSmsController extends Controller
 
         // Credentials kontrolü
         if (empty($purchase->credentials)) {
+
             Log::error('SMS credentials boş', [
                 'purchase_id' => $purchase->id,
                 'integration' => $purchase->integration->name
@@ -299,6 +303,7 @@ class BulkSmsController extends Controller
             }
 
             if (strlen($tel) != 11) {
+
                 Log::warning('Geçersiz telefon numarası', [
                     'servis_id' => $servis->id,
                     'tel' => $tel
@@ -328,6 +333,7 @@ class BulkSmsController extends Controller
                 'message' => 'Geçerli telefon numarası bulunamadı'
             ], 400);
         }
+
 
         Log::info('Toplu SMS Gönderiliyor', [
             'firma_id' => $tenant_id,
@@ -362,7 +368,9 @@ class BulkSmsController extends Controller
             'message' => $e->validator->errors()->first()
         ], 422);
     } catch (\Exception $e) {
+
         Log::error('Toplu SMS Gönderme Hatası: ' . $e->getMessage(), [
+
             'trace' => $e->getTraceAsString()
         ]);
         

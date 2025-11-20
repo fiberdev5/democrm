@@ -89,9 +89,11 @@ use App\Http\Controllers\Frontend\PaymentHistoryController;
 use App\Http\Controllers\Frontend\StorageController;
 use App\Http\Controllers\Frontend\SuperAdminIntegrationController;
 use App\Http\Controllers\Frontend\LegalContentController;
+use App\Http\Controllers\Api\VerimorSantralController;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\HipcallWebhookController;
 use App\Http\Controllers\Frontend\TenantApiTokenController;
+
 
 Route::get('/secure', function () {
     return view('backend.index');
@@ -1087,6 +1089,23 @@ Route::group(['prefix' => '{tenant_id}', 'middleware' => ['auth','checkTenantId'
 
             
         
+        });
+
+        Route::controller(VerimorSantralController::class)
+        ->prefix('integrations/verimor-santral')
+        ->name('tenant.integrations.verimor-santral.')
+        ->group(function() {
+            // Web telefonu ana sayfa
+            Route::get('/webphone', 'showWebphone')->name('webphone');
+            
+            // AJAX - iframe HTML al
+            Route::get('/get-iframe', 'getIframe')->name('get-iframe');
+            
+            // AJAX - Token yenile
+            Route::post('/refresh-token', 'refreshToken')->name('refresh-token');
+            
+            // Bağlantı testi
+            Route::get('/test-connection', 'testConnection')->name('test-connection');
         });
 
         //Toplu SMS modülü routeları

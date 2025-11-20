@@ -1,0 +1,31 @@
+@media (min-width: 767px) {
+.custom-p-r{
+    padding-right: 0px !important;
+  }
+  .custom-p-l{
+    padding-left: 0px !important;
+  }
+}
+
+.json-editor {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+
+.json-valid {
+    border-color: #28a745 !important;
+}
+
+.json-invalid {
+    border-color: #dc3545 !important;
+}
+
+.examples-link {
+    color: #667eea;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.examples-link:hover {
+    color: #5568d3;
+}

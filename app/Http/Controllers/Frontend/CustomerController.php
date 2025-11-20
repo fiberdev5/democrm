@@ -15,7 +15,9 @@ use Yajra\DataTables\DataTables;
 use App\Services\ActivityLogger;
 use App\Services\HipcallService;
 use Illuminate\Support\Facades\Cache;
+use App\Services\VerimorSantralService;
 use Illuminate\Support\Facades\Log;
+
 
 class CustomerController extends Controller
 {
@@ -227,6 +229,45 @@ class CustomerController extends Controller
             'created_at' => Carbon::now(),
         ]);
 
+    
+         //Verimor ekleme entegrasyonu
+        try {
+            // Telefon numarası girilmişse devam et
+            if (!empty($customer->tel1)) {
+                $verimorService = new VerimorSantralService($tenant_id);
+                $result = $verimorService->addContact($customer->adSoyad, $customer->tel1);
+
+                // 3. Eğer Verimor'a kayıt başarılıysa ve ID geldiyse, veritabanına kaydet
+                if ($result['success'] && isset($result['data']['id'])) {
+                    // Verimor'dan dönen ID'yi al
+                    $verimorId = $result['data']['id'];
+
+                    // Müşteri modelini güncelle ve verimor_id'yi kaydet
+                    $customer->verimor_id = $verimorId;
+                    $customer->save();
+                    
+                    Log::info('Verimor ID başarıyla müşteriye kaydedildi.', [
+                        'customer_id' => $customer->id,
+                        'verimor_id' => $verimorId
+                    ]);
+
+                } elseif (!$result['success']) {
+                    // Başarısız olursa logla
+                    Log::warning('Verimor Contacts rehberine kayıt başarısız oldu.', [
+                        'customer_id' => $customer->id,
+                        'tenant_id' => $tenant_id,
+                        'error' => $result['message'] ?? 'Bilinmeyen hata'
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {
+            Log::error('Verimor servisi (Contact) çağrılırken kritik bir hata oluştu.', [
+                'customer_id' => $customer->id,
+                'error_message' => $e->getMessage()
+            ]);
+        }
+        
+
          // Müşteri oluşturma log kaydı
         ActivityLogger::logCustomerCreated($customer->id, $request->name);
 
@@ -339,6 +380,37 @@ class CustomerController extends Controller
             'vergiDairesi' => $request->vergiDairesi,
             'created_at' => $request->kayitTarihi,
         ]);
+        //Verimor Güncelleme Entegrasyonu
+        try {
+            // Sadece verimor_id'si kayıtlıysa ve telefon numarası doluysa güncelleme yap
+            if (!empty($customer->verimor_id) && !empty($request->tel1)) {
+                
+                $verimorService = new VerimorSantralService($tenant_id);
+                
+                // Servis sınıfımızdaki updateContact metodunu çağırıyoruz
+                $result = $verimorService->updateContact(
+                    $customer->verimor_id, // Veritabanından gelen ID
+                    $request->name,        // Formdan gelen yeni ad/soyad
+                    $request->tel1         // Formdan gelen yeni telefon
+                );
+
+                if (!$result['success']) {
+                    // Hata olursa logla, ama kullanıcıya hata gösterme
+                    Log::warning('Verimor kişi güncellemesi başarısız oldu.', [
+                        'customer_id' => $customer->id,
+                        'verimor_id' => $customer->verimor_id,
+                        'error' => $result['message'] ?? 'Bilinmeyen hata'
+                    ]);
+                }
+            }
+
+        } catch (\Exception $e) {
+            // Servis sınıfında kritik bir hata olursa logla
+            Log::error('Verimor güncelleme servisi çağrılırken kritik bir hata oluştu.', [
+                'customer_id' => $customer->id,
+                'error_message' => $e->getMessage()
+            ]);
+        }
 
          // Müşteri güncelleme log kaydı
         ActivityLogger::logCustomerUpdated($customer->id, $request->name);
