@@ -57,23 +57,4 @@ Route::middleware(['check.token.expiration', 'auth:sanctum'])->group(function ()
     });
     // Personele atanan stoklar
     Route::get('/my-stocks', [ServiceController::class, 'myStocks']);
-    
-    //ilgili aşamaya ait aşama soru cevaplarını getiren endpoint
-    Route::get('/stage-questions/{asama_id}', [ServiceController::class, 'getStageQuestions']);
-
-    //İdsi girilen servisin fiş notlarını getiren endpoint
-    Route::get('/service-receipt-notes/{servis_id}', [ServiceController::class, 'getServiceNotes']);
-
-    //servis fotolarını getiren endpoint
-    Route::get('/service-photos/{servis_id}', [ServiceController::class, 'getServicePhotos']);
-
-    //Ödeme şekillerini getiren endpoint
-    Route::get('/payment-methods', [ServiceController::class, 'getPaymentMethods']);
-
-    //Servis para hareketleri endpointi
-    Route::get('/service-payments/{servis_id}', [ServiceController::class, 'getServicePayments']);
-
-    //Cihaz marka ve türleri endpointi
-    Route::get('/device-brands', [ServiceController::class, 'getDeviceBrands']);
-    Route::get('/device-types', [ServiceController::class, 'getDeviceTypes']);
 });

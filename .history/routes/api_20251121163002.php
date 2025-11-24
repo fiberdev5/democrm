@@ -67,13 +67,4 @@ Route::middleware(['check.token.expiration', 'auth:sanctum'])->group(function ()
     //servis fotolarını getiren endpoint
     Route::get('/service-photos/{servis_id}', [ServiceController::class, 'getServicePhotos']);
 
-    //Ödeme şekillerini getiren endpoint
-    Route::get('/payment-methods', [ServiceController::class, 'getPaymentMethods']);
-
-    //Servis para hareketleri endpointi
-    Route::get('/service-payments/{servis_id}', [ServiceController::class, 'getServicePayments']);
-
-    //Cihaz marka ve türleri endpointi
-    Route::get('/device-brands', [ServiceController::class, 'getDeviceBrands']);
-    Route::get('/device-types', [ServiceController::class, 'getDeviceTypes']);
 });

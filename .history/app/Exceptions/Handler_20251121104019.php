@@ -2,7 +2,6 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -29,7 +28,7 @@ class Handler extends ExceptionHandler
         });
     }
 
-     protected function unauthenticated($request, AuthenticationException $exception)
+    protected function unauthenticated($request, AuthenticationException $exception)
     {
         // API istekleri için JSON döndür
         if ($request->expectsJson() || $request->is('api/*')) {
@@ -41,6 +40,6 @@ class Handler extends ExceptionHandler
         }
 
         // Web istekleri için login sayfasına yönlendir
-        return redirect()->guest(route('giris'));
+        return redirect()->guest(route('login'));
     }
 }
