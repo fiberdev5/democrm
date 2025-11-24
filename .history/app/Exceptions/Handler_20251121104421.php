@@ -41,6 +41,6 @@ class Handler extends ExceptionHandler
         }
 
         // Web istekleri için login sayfasına yönlendir
-        return redirect()->guest(route('giris'));
+        return redirect()->guest(route('giris')); // route name'inize göre değiştirin
     }
 }

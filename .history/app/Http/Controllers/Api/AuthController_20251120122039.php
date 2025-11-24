@@ -1,0 +1,189 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
+class AuthController extends Controller
+{   
+    // Token yenileme
+    public function refreshToken(Request $request)
+    {
+        $user = $request->user();
+        
+        // Eski token'ı sil
+        $request->user()->currentAccessToken()->delete();
+        
+        // Yeni token oluştur
+        $token = $user->createToken('mobile-app', ['mobile'])->plainTextToken;
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Token yenilendi',
+            'data' => [
+                'token' => $token,
+                'token_type' => 'Bearer',
+                'expires_in' => 1440 // dakika cinsinden (1 gün)
+            ]
+        ], 200);
+    }
+    public function login(Request $request)
+    {
+        // Validation
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string|min:6',
+        ], [
+            'email.required' => 'E-posta adresi gereklidir',
+            'email.email' => 'Geçerli bir e-posta adresi giriniz',
+            'password.required' => 'Şifre gereklidir',
+            'password.min' => 'Şifre en az 6 karakter olmalıdır',
+        ]);
+
+        // Kullanıcıyı bul
+        $user = User::where('eposta', $request->email)->first();
+
+        // Kullanıcı kontrolü
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'E-posta adresi veya şifre hatalı'
+            ], 401);
+        }
+
+        // Şifre kontrolü
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'E-posta adresi veya şifre hatalı'
+            ], 401);
+        }
+
+        // Kullanıcı durumu kontrolü
+        if ($user->status != 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Hesabınız aktif değil. Lütfen yönetici ile iletişime geçin.'
+            ], 403);
+        }
+
+        // Tenant bilgisini yükle
+        $tenant = $user->tenant;
+
+        if (!$tenant) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Firma bilgisi bulunamadı'
+            ], 404);
+        }
+
+        // Tenant durumu kontrolü
+        if ($tenant->status != 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Firma hesabı aktif değil'
+            ], 403);
+        }
+
+        // Abonelik kontrolü
+        if (!$this->checkSubscription($tenant)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Firma aboneliği sona ermiş. Lütfen aboneliğinizi yenileyin.'
+            ], 403);
+        }
+
+        // Önceki tokenları temizle (tek cihaz için)
+        $user->tokens()->delete();
+
+        // Yeni token oluştur
+        $token = $user->createToken('mobile-app', ['mobile'])->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Giriş başarılı',
+            'data' => [
+                'user' => [
+                    'id' => $user->user_id,
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'email' => $user->eposta,
+                    'tel' => $user->tel,
+                ],
+                'tenant' => [
+                    'id' => $tenant->id,
+                    'name' => $tenant->name,
+                    'firma_adi' => $tenant->firma_adi,
+                    'logo' => $tenant->logo ? url($tenant->logo) : null,
+                    'tel1' => $tenant->tel1,
+                    'tel2' => $tenant->tel2,
+                ],
+                'token' => $token,
+                'token_type' => 'Bearer',
+                'expires_in' => 1440, // 1440 dakika = 1 gün
+                'expires_at' => now()->addDay()->toISOString() // ISO formatında tarih
+            ]
+        ], 200);
+    }
+
+    // Abonelik kontrolü
+    private function checkSubscription($tenant)
+    {
+        $now = now();
+
+        // Trial kontrolü
+        if ($tenant->trial_ends_at && $now->lte($tenant->trial_ends_at)) {
+            return true;
+        }
+
+        // Aktif abonelik kontrolü
+        if ($tenant->subscription_status === 'active' && 
+            $tenant->subscription_ends_at && 
+            $now->lte($tenant->subscription_ends_at)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // Logout endpoint
+    public function logout(Request $request)
+    {
+        // Mevcut token'ı sil
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Çıkış yapıldı'
+        ], 200);
+    }
+
+    // Kullanıcı bilgilerini getir
+    public function me(Request $request)
+    {
+        $user = $request->user();
+        $tenant = $user->tenant;
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'user' => [
+                    'id' => $user->user_id,
+                    'name' => $user->name,
+                    'username' => $user->username,
+                    'email' => $user->eposta,
+                    'tel' => $user->tel,
+                ],
+                'tenant' => [
+                    'id' => $tenant->id,
+                    'name' => $tenant->name,
+                    'firma_adi' => $tenant->firma_adi,
+                    'logo' => $tenant->logo ? url($tenant->logo) : null,
+                ]
+            ]
+        ], 200);
+    }
+}

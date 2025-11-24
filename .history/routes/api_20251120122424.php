@@ -4,7 +4,6 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CustomerApiController;
 use App\Http\Controllers\Api\HipcallWebhookController;
 use App\Http\Controllers\Api\ServiceApiController;
-use App\Http\Controllers\Api\ServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Frontend\ImpersonationController;
@@ -46,34 +45,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 
 // Protected routes
-Route::middleware(['check.token.expiration', 'auth:sanctum'])->group(function () {
-    Route::get('/me', [AuthController::class, 'me']);    
-    Route::post('/refresh-token', [AuthController::class, 'refreshToken']);
+Route::middleware(['auth:sanctum', 'check.token.expiration'])->group(function () {
+        Route::get('/me', [AuthController::class, 'me']);    
     
-    // Servis endpoints
-    Route::prefix('services')->group(function () {
-        Route::get('/', [ServiceController::class, 'myAssignedServices']); // Servis listesi
-        Route::get('/{id}', [ServiceController::class, 'myAssignedServiceDetail']); // Servis detay
-    });
-    // Personele atanan stoklar
-    Route::get('/my-stocks', [ServiceController::class, 'myStocks']);
-    
-    //ilgili aşamaya ait aşama soru cevaplarını getiren endpoint
-    Route::get('/stage-questions/{asama_id}', [ServiceController::class, 'getStageQuestions']);
-
-    //İdsi girilen servisin fiş notlarını getiren endpoint
-    Route::get('/service-receipt-notes/{servis_id}', [ServiceController::class, 'getServiceNotes']);
-
-    //servis fotolarını getiren endpoint
-    Route::get('/service-photos/{servis_id}', [ServiceController::class, 'getServicePhotos']);
-
-    //Ödeme şekillerini getiren endpoint
-    Route::get('/payment-methods', [ServiceController::class, 'getPaymentMethods']);
-
-    //Servis para hareketleri endpointi
-    Route::get('/service-payments/{servis_id}', [ServiceController::class, 'getServicePayments']);
-
-    //Cihaz marka ve türleri endpointi
-    Route::get('/device-brands', [ServiceController::class, 'getDeviceBrands']);
-    Route::get('/device-types', [ServiceController::class, 'getDeviceTypes']);
 });
