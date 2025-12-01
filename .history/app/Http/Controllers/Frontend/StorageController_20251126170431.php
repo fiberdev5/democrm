@@ -1,0 +1,190 @@
+<?php
+
+namespace App\Http\Controllers\Frontend;
+
+use App\Http\Controllers\Controller;
+use App\Models\StoragePackage;
+use App\Models\StoragePurchase;
+use App\Models\Tenant;
+use App\Services\PaytrService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use App\Services\ActivityLogger;
+
+class StorageController extends Controller
+{
+    
+    public function packages($tenant_id)
+    {
+        $firma = Tenant::findOrFail($tenant_id);
+        $packages = StoragePackage::where('is_active', true)
+                                 ->orderBy('sort_order')
+                                 ->orderBy('price')
+                                 ->get();
+        
+        $storageInfo = $firma->getStorageInfo();
+        
+        return view('frontend.secure.storage.storage_packages', compact('firma', 'packages', 'storageInfo'));
+    }
+
+    private function generatePaytrToken($merchant_oid, $amount)
+    {
+        $merchant_id = config('services.paytr.merchant_id');
+        $merchant_key = config('services.paytr.merchant_key');
+        $merchant_salt = config('services.paytr.merchant_salt');
+        
+        $hash_str = $merchant_id . request()->ip() . $merchant_oid . ($amount * 100) . 'TL';
+        $paytr_token = base64_encode(hash_hmac('sha256', $hash_str, $merchant_key, true));
+        
+        return $paytr_token;
+    }
+    
+
+    public function purchase(Request $request, $tenant_id)
+    {
+        $request->validate([
+            'package_id' => 'required|exists:storage_packages,id'
+        ]);
+
+        $firma = Tenant::findOrFail($tenant_id);
+        $package = StoragePackage::findOrFail($request->package_id);
+
+        // Alfanumerik ödeme token'ı oluştur
+        $paymentToken = 'ST' . $tenant_id . time();
+
+        // Storage satın alımını kaydet
+        $purchase = StoragePurchase::create([
+            'tenant_id' => $tenant_id,
+            'storage_package_id' => $package->id,
+            'payment_token' => $paymentToken,
+            'amount' => $package->price,
+            'storage_gb' => $package->storage_gb,
+            'status' => 'pending'
+        ]);
+
+        // PaytrService için veri hazırla
+        $orderData = [
+            'order_id' => $paymentToken,
+            'amount' => number_format($package->price, 2, '.', ''),
+            'email' => $firma->eposta ?: 'test@example.com',
+            'user_name' => $this->cleanString($firma->firma_adi ?: 'Test Kullanici'),
+            'user_address' => $this->cleanString($firma->adres ?: 'Test Adres'),
+            'user_phone' => preg_replace('/[^0-9]/', '', $firma->tel1 ?: '5551234567'),
+            'success_url' => route('storage.payment.success'),
+            'fail_url' => route('storage.payment.fail'),
+            'basket' => [
+                [$package->name, number_format($package->price, 2, '.', ''), 1]
+            ]
+        ];
+        ActivityLogger::log([
+        'action' => 'created',
+        'module' => 'storage',
+        'description' => "Depolama satın alma başlatıldı: {$package->name} ({$package->storage_gb} GB)",
+        'reference_table' => 'storage_purchases',
+        'reference_id' => $purchase->id,
+        'new_values' => json_encode([
+            'package_name' => $package->name,
+            'storage_gb' => $package->storage_gb,
+            'amount' => $package->price,
+            'status' => 'pending',
+            'payment_token' => $paymentToken
+        ])
+    ]);
+
+        // PaytrService kullanarak iframe oluştur
+        $paytrService = app(PaytrService::class);
+        $paytrResponse = $paytrService->createPaymentIframe($orderData);
+
+        if (!$paytrResponse['success']) {
+            ActivityLogger::log([
+            'action' => 'updated',
+            'module' => 'storage',
+            'description' => "Depolama ödeme sayfası oluşturulamadı: {$paytrResponse['error']}",
+            'reference_table' => 'storage_purchases',
+            'reference_id' => $purchase->id,
+            'new_values' => json_encode([
+                'error' => $paytrResponse['error'],
+                'status' => 'failed'
+            ])
+        ]);
+            
+            return redirect()->route('storage.packages', $tenant_id)
+                        ->with('error', 'Ödeme sayfası oluşturulamadı: ' . $paytrResponse['error']);
+        }
+
+        return view('frontend.secure.storage.storage_payment', compact('firma', 'package', 'purchase', 'paytrResponse'));
+    }
+
+    private function cleanString($str)
+    {
+        $tr = array('ş','Ş','ı','I','İ','ğ','Ğ','ü','Ü','ö','Ö','Ç','ç');
+        $en = array('s','S','i','I','I','g','G','u','U','o','O','C','c');
+        
+        $str = str_replace($tr, $en, $str);
+        $str = preg_replace('/[^A-Za-z0-9\s]/', '', $str);
+        
+        return $str;
+    }
+
+    public function paymentSuccess(Request $request)
+    {
+        // Session'da mesaj varsa al ve göster
+        if (session()->has('storage_payment_success')) {
+            $data = session()->get('storage_payment_success');
+
+            ActivityLogger::log([
+            'action' => 'updated',
+            'module' => 'storage',
+            'description' => "Kullanıcı depolama ödeme başarı sayfasına yönlendirildi",
+            'reference_table' => 'tenants',
+            'reference_id' => $data['tenant_id'],
+            'new_values' => json_encode([
+                'message' => $data['message'],
+                'package_name' => $data['package_name']
+            ])
+        ]);
+
+            return redirect()->route('payment-history.index', $data['tenant_id'])
+                            ->with('success', $data['message']);
+        }
+        $user = Auth::user();
+
+            ActivityLogger::log([
+            'action' => 'viewed',
+            'module' => 'storage',
+            'description' => "Depolama ödeme başarı sayfası görüntülendi (session verisi yok)",
+            'reference_table' => 'tenants',
+            'reference_id' => $user->tenant_id
+        ]);
+
+
+        // Genel başarı mesajı
+        return redirect()->route('payment-history.index', $user->tenant_id)->with('success', 'Ödeme işlemi tamamlandı.');
+    }
+
+    public function paymentFail(Request $request)
+    {
+        // Session'da mesaj varsa al ve göster
+        if (session()->has('storage_payment_error')) {
+            $data = session()->get('storage_payment_error');
+            return redirect()->route('storage.packages', $data['tenant_id'])
+                            ->with('error', $data['message']);
+        }
+
+         ActivityLogger::log([
+            'action' => 'updated',
+            'module' => 'storage',
+            'description' => "Depolama ödeme başarısız - Kullanıcı hata sayfasına yönlendirildi: {$data['reason']}",
+            'reference_table' => 'tenants',
+            'reference_id' => $data['tenant_id'],
+            'new_values' => json_encode([
+                'message' => $data['message'],
+                'reason' => $data['reason']
+            ])
+        ]);
+
+        // Genel hata mesajı
+        return redirect()->back()->with('error', 'Ödeme işlemi başarısız.');
+    }
+}

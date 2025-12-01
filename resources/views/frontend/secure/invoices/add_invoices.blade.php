@@ -929,3 +929,41 @@ $(document).ready(function() {
     });
 });
 </script>
+<script>
+$(document).ready(function() {
+    let isSubmitting = false;
+    let shouldReload = false;
+    
+    // Form submit edildiğinde flag'i ayarla
+    $('#addInvo').submit(function() {
+        isSubmitting = true;
+    });
+    
+    // Modal kapatılmaya çalışıldığında
+    $('#addInvoiceModal').on('hide.bs.modal', function(e) {
+        if (isSubmitting) {
+            isSubmitting = false;
+            return true;
+        }
+        
+        // Her zaman onay iste
+        if (!confirm('Kapatmak istediğinizden emin misiniz?')) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        }
+        
+        shouldReload = true; // Tamam'a basıldı, yenile
+        isSubmitting = false;
+    });
+    
+    // Modal tamamen kapandığında sayfayı yenile
+    $('#addInvoiceModal').on('hidden.bs.modal', function() {
+        isSubmitting = false;
+        if (shouldReload) {
+            shouldReload = false;
+            location.reload(); // Sayfayı yenile
+        }
+    });
+});
+</script>

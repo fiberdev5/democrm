@@ -49,7 +49,7 @@ class HomeController extends Controller
 
 
     public function Pricing() {
-        $prices = Pricing::orderBy('id','asc')->get();
+        $prices = SubscriptionPlan::active()->ordered()->get();
         return view('frontend.pages.pricing', compact('prices'));
     }
 
@@ -64,7 +64,7 @@ class HomeController extends Controller
         $tr = array('ş','Ş','ı','I','İ','ğ','Ğ','ü','Ü','ö','Ö','Ç','ç','(',')','/',':',',',"'",'+','_','!','?','.');
         $eng = array('s','s','i','i','i','g','g','u','u','o','o','c','c','','','-','-','','','-','','','','');
         $s = str_replace($tr, $eng, $s);
-        $s = strtolower($s);
+        $s = mb_strtolower($s, 'UTF-8');
         $s = preg_replace('/&amp;amp;amp;amp;amp;amp;amp;amp;amp;.+?;/', '', $s);
         $s = preg_replace('/\s+/', '-', $s);
         $s = preg_replace('|-+|', '-', $s);
@@ -83,85 +83,85 @@ class HomeController extends Controller
         return view('frontend.auth.register');
     }
 
-    public function validateStep(Request $request) 
-{
-    $step = $request->input('step');
-    
-    try {
-        if ($step == 1) {
-            // Step 1: Plan selection validation
-            $validatedData = $request->validate([
-                'subscription_plan' => 'required|exists:subscription_plans,id',
-            ], [
-                'subscription_plan.required' => 'Lütfen bir abonelik planı seçiniz.',
-                'subscription_plan.exists' => 'Seçilen plan geçerli değil.',
+        public function validateStep(Request $request) 
+    {
+        $step = $request->input('step');
+        
+        try {
+            if ($step == 1) {
+                // Step 1: Plan selection validation
+                $validatedData = $request->validate([
+                    'subscription_plan' => 'required|exists:subscription_plans,id',
+                ], [
+                    'subscription_plan.required' => 'Lütfen bir abonelik planı seçiniz.',
+                    'subscription_plan.exists' => 'Seçilen plan geçerli değil.',
+                ]);
+                
+            } elseif ($step == 2) {
+                // Step 2: Personal information validation
+                $validatedData = $request->validate([
+                    'subscription_plan' => 'required|exists:subscription_plans,id',
+                    'name' => 'required|string|max:255',
+                    'email' => 'required|email|max:255|unique:tenants,eposta',
+                    'vergiNo' => 'required|max:10|unique:tenants,vergiNo',
+                ], [
+                    'subscription_plan.required' => 'Lütfen bir abonelik planı seçiniz.',
+                    'subscription_plan.exists' => 'Seçilen plan geçerli değil.',
+                    'name.required' => 'Ad Soyad alanı zorunludur.',
+                    'name.max' => 'Ad Soyad alanı en fazla 255 karakter olmalıdır.',
+                    'email.required' => 'E-posta alanı zorunludur.',
+                    'email.email' => 'Geçerli bir e-posta adresi giriniz.',
+                    'email.max' => 'E-posta alanı en fazla 255 karakter olmalıdır.',
+                    'email.unique' => 'Bu e-posta adresi zaten kayıtlı.',
+                    'vergiNo.required' => 'Vergi numarası alanı zorunludur.',
+                    'vergiNo.max' => 'Vergi numarası alanı en fazla 10 karakter olmalıdır.',
+                    'vergiNo.unique' => 'Bu vergi numarası zaten kayıtlı.',
+                ]);
+                
+            } elseif ($step == 3) {
+                // Step 3: Company information validation
+                $validatedData = $request->validate([
+                    'subscription_plan' => 'required|exists:subscription_plans,id',
+                    'name' => 'required|string|max:255',
+                    'email' => 'required|email|max:255|unique:tenants,eposta',
+                    'vergiNo' => 'required|max:10|unique:tenants,vergiNo',
+                    'firma_adi' => 'required|string|max:50',
+                    'tel' => 'required|regex:/^[0-9\s]+$/|min:12',
+                    'password' => 'required|min:6',
+                ], [
+                    'subscription_plan.required' => 'Lütfen bir abonelik planı seçiniz.',
+                    'subscription_plan.exists' => 'Seçilen plan geçerli değil.',
+                    'name.required' => 'Ad Soyad alanı zorunludur.',
+                    'name.max' => 'Ad Soyad alanı en fazla 255 karakter olmalıdır.',
+                    'email.required' => 'E-posta alanı zorunludur.',
+                    'email.email' => 'Geçerli bir e-posta adresi giriniz.',
+                    'email.max' => 'E-posta alanı en fazla 255 karakter olmalıdır.',
+                    'email.unique' => 'Bu e-posta adresi zaten kayıtlı.',
+                    'vergiNo.required' => 'Vergi numarası alanı zorunludur.',
+                    'vergiNo.max' => 'Vergi numarası alanı en fazla 10 karakter olmalıdır.',
+                    'vergiNo.unique' => 'Bu vergi numarası zaten kayıtlı.',
+                    'firma_adi.required' => 'Firma Adı alanı zorunludur.',
+                    'firma_adi.max' => 'Firma Adı alanı en fazla 50 karakter olmalıdır.',
+                    'tel.required' => 'Telefon alanı zorunludur.',
+                    'tel.regex' => 'Telefon formatı hatalıdır.',
+                    'tel.min' => 'Telefon numarası en az 10 haneli olmalıdır.',
+                    'password.required' => 'Şifre alanı zorunludur.',
+                    'password.min' => 'Şifre en az 6 karakter olmalıdır.',
+                ]);
+            }
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Validasyon başarılı'
             ]);
             
-        } elseif ($step == 2) {
-            // Step 2: Personal information validation
-            $validatedData = $request->validate([
-                'subscription_plan' => 'required|exists:subscription_plans,id',
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255|unique:tenants,eposta',
-                'vergiNo' => 'required|max:10|unique:tenants,vergiNo',
-            ], [
-                'subscription_plan.required' => 'Lütfen bir abonelik planı seçiniz.',
-                'subscription_plan.exists' => 'Seçilen plan geçerli değil.',
-                'name.required' => 'Ad Soyad alanı zorunludur.',
-                'name.max' => 'Ad Soyad alanı en fazla 255 karakter olmalıdır.',
-                'email.required' => 'E-posta alanı zorunludur.',
-                'email.email' => 'Geçerli bir e-posta adresi giriniz.',
-                'email.max' => 'E-posta alanı en fazla 255 karakter olmalıdır.',
-                'email.unique' => 'Bu e-posta adresi zaten kayıtlı.',
-                'vergiNo.required' => 'Vergi numarası alanı zorunludur.',
-                'vergiNo.max' => 'Vergi numarası alanı en fazla 10 karakter olmalıdır.',
-                'vergiNo.unique' => 'Bu vergi numarası zaten kayıtlı.',
-            ]);
-            
-        } elseif ($step == 3) {
-            // Step 3: Company information validation
-            $validatedData = $request->validate([
-                'subscription_plan' => 'required|exists:subscription_plans,id',
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255|unique:tenants,eposta',
-                'vergiNo' => 'required|max:10|unique:tenants,vergiNo',
-                'firma_adi' => 'required|string|max:50',
-                'tel' => 'required|regex:/^[0-9\s]+$/|min:12',
-                'password' => 'required|min:6',
-            ], [
-                'subscription_plan.required' => 'Lütfen bir abonelik planı seçiniz.',
-                'subscription_plan.exists' => 'Seçilen plan geçerli değil.',
-                'name.required' => 'Ad Soyad alanı zorunludur.',
-                'name.max' => 'Ad Soyad alanı en fazla 255 karakter olmalıdır.',
-                'email.required' => 'E-posta alanı zorunludur.',
-                'email.email' => 'Geçerli bir e-posta adresi giriniz.',
-                'email.max' => 'E-posta alanı en fazla 255 karakter olmalıdır.',
-                'email.unique' => 'Bu e-posta adresi zaten kayıtlı.',
-                'vergiNo.required' => 'Vergi numarası alanı zorunludur.',
-                'vergiNo.max' => 'Vergi numarası alanı en fazla 10 karakter olmalıdır.',
-                'vergiNo.unique' => 'Bu vergi numarası zaten kayıtlı.',
-                'firma_adi.required' => 'Firma Adı alanı zorunludur.',
-                'firma_adi.max' => 'Firma Adı alanı en fazla 50 karakter olmalıdır.',
-                'tel.required' => 'Telefon alanı zorunludur.',
-                'tel.regex' => 'Telefon formatı hatalıdır.',
-                'tel.min' => 'Telefon numarası en az 10 haneli olmalıdır.',
-                'password.required' => 'Şifre alanı zorunludur.',
-                'password.min' => 'Şifre en az 6 karakter olmalıdır.',
-            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors' => $e->errors()
+            ], 422);
         }
-        
-        return response()->json([
-            'success' => true,
-            'message' => 'Validasyon başarılı'
-        ]);
-        
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
-            'success' => false,
-            'errors' => $e->errors()
-        ], 422);
     }
-}
 
 /**
  * Updated RegisterAction method to handle plan selection
@@ -409,7 +409,7 @@ public function resendSmsCode(Request $request)
         ], 400);
     }
 
-    // Yeni doğrulama kodu oluştur
+    // Yeni doğrulama kodu oluştur 
     $verificationCode = rand(100000, 999999);
 
     // Session'ı güncelle
@@ -465,13 +465,13 @@ public function resendSmsCode(Request $request)
 
         $firmaAdiSlug = Str::slug($data['firma_adi'], '-');
         // 🔹 Tenant username (firma alan adı gibi düşünülen kısım)
-        $tenantUsername = strtolower(str_replace(' ', '', $data['firma_adi'])) . '.com';
+        $tenantUsername = $this->Seo($data['firma_adi']) . '.com';
         $originalTenantUsername = $tenantUsername;
         $counterTenant = 1;
 
         while (Tenant::where('username', $tenantUsername)->exists()) {
-            // Eğer aynı tenant username varsa sonuna -1, -2 ekle
-            $tenantUsername = strtolower(str_replace(' ', '', $data['firma_adi'])) . '-' . $counterTenant . '.com';
+            $baseName = str_replace('.com', '', $originalTenantUsername);
+            $tenantUsername = $baseName . '-' . $counterTenant . '.com';
             $counterTenant++;
         }
 

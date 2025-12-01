@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\ProfileController;
 use App\Http\Controllers\Backend\AdminController;
@@ -80,7 +79,6 @@ use App\Http\Controllers\Frontend\SuperAdminController;
 use App\Http\Controllers\Frontend\SupportTicketController;
 use App\Http\Controllers\Frontend\AdminSupportController;
 use App\Http\Controllers\Frontend\DestekController;
-
 use App\Http\Controllers\Frontend\ActivityLogController;
 use App\Http\Controllers\Frontend\BulkSmsController;
 use App\Http\Controllers\Frontend\IntegrationMarketplaceController;
@@ -96,7 +94,207 @@ use App\Http\Controllers\Frontend\TenantApiTokenController;
 use App\Http\Controllers\Frontend\MarkaController;
 use App\Http\Controllers\Frontend\ModellController;
 use App\Http\Controllers\Frontend\ArizaKoduController;
+use App\Services\ParasutService;
 
+/******************************************************************* PARAŞÜT DENEME ROUTLARI *************************************************************************************/
+// Bağlantı testi
+// Route::get('/parasut/test', function (ParasutService $parasut) {
+//     $result = $parasut->testConnection();
+//     return response()->json($result);
+// });
+
+// // Token göster
+// Route::get('/parasut/token', function (ParasutService $parasut) {
+//     try {
+//         $token = $parasut->getAccessToken();
+//         return response()->json([
+//             'success' => true,
+//             'token' => $token
+//         ]);
+//     } catch (Exception $e) {
+//         return response()->json([
+//             'success' => false,
+//             'error' => $e->getMessage()
+//         ]);
+//     }
+// });
+
+
+// // Müşteri oluştur - TEST
+// Route::get('/parasut/create-test-customer', function (ParasutService $parasut) {
+//     $customerData = [
+//         'email' => 'test@example.com',
+//         'name' => 'Test Müşteri',
+//         'short_name' => 'Test',
+//         'contact_type' => 'person', // person veya company
+//         'tax_number' => '11111111111', // TC Kimlik No (11 haneli)
+//         'tax_office' => 'Test Vergi Dairesi',
+//         'address' => 'Test Mahallesi Test Sokak No:1',
+//         'city' => 'İstanbul',
+//         'district' => 'Kadıköy',
+//         'phone' => '5551234567',
+//         'account_type' => 'customer' // Müşteri olduğunu belirtiyoruz
+//     ];
+
+//     $result = $parasut->createContact($customerData);
+
+//     return response()->json($result);
+// });
+
+
+// // Fatura oluştur - TEST
+// Route::get('/parasut/create-test-invoice', function (ParasutService $parasut) {
+    
+//     $contactId = '2047425'; // Az önce oluşturduğumuz müşteri ID'si
+    
+//     // Fatura kalemleri
+//     $items = [
+//         [
+//             'description' => 'Teknik Servis Hizmeti',
+//             'quantity' => 1,
+//             'unit_price' => 500.00,
+//             'vat_rate' => 20
+//         ],
+//         [
+//             'description' => 'Yedek Parça',
+//             'quantity' => 2,
+//             'unit_price' => 150.00,
+//             'vat_rate' => 20
+//         ]
+//     ];
+    
+//     // Fatura bilgileri
+//     $invoiceData = [
+//         'item_type' => 'invoice',
+//         'description' => 'Test Servis Faturası',
+//         'issue_date' => date('Y-m-d'),
+//         'due_date' => date('Y-m-d', strtotime('+30 days')),
+//         'currency' => 'TRL'
+//     ];
+    
+//     $result = $parasut->createInvoice($contactId, $items, $invoiceData);
+    
+//     return response()->json($result);
+// });
+
+// Route::get('/parasut/create-test-product', function (ParasutService $parasut) {
+    
+//     // Ürün 1
+//     $product1 = $parasut->createProduct([
+//         'name' => 'Teknik Servis Hizmeti',
+//         'code' => 'SRV-001',
+//         'vat_rate' => 20,
+//         'sales_excise_duty_code' => '',
+//         'sales_invoice_details_count' => 0,
+//         'unit' => 'Adet',
+//         'communications_tax_rate' => 0,
+//         'archived' => false,
+//         'list_price' => 500,
+//         'currency' => 'TRL',
+//         'buying_price' => 0,
+//         'inventory_tracking' => false
+//     ]);
+    
+//     // Ürün 2
+//     $product2 = $parasut->createProduct([
+//         'name' => 'Yedek Parça',
+//         'code' => 'YP-001',
+//         'vat_rate' => 20,
+//         'sales_excise_duty_code' => '',
+//         'sales_invoice_details_count' => 0,
+//         'unit' => 'Adet',
+//         'communications_tax_rate' => 0,
+//         'archived' => false,
+//         'list_price' => 150,
+//         'currency' => 'TRL',
+//         'buying_price' => 0,
+//         'inventory_tracking' => false
+//     ]);
+    
+//     return response()->json([
+//         'product1' => $product1,
+//         'product2' => $product2
+//     ]);
+// });
+// Route::get('/parasut/create-test-invoice', function (ParasutService $parasut) {
+    
+//     $contactId = '2047425'; // Müşteri ID
+    
+//     // Fatura kalemleri - ŞİMDİ ÜRÜN ID'LERİYLE
+//     $items = [
+//         [
+//             'product_id' => '252426', // Teknik Servis Hizmeti
+//             'description' => 'Teknik Servis Hizmeti',
+//             'quantity' => 1,
+//             'unit_price' => 500.00,
+//             'vat_rate' => 20
+//         ],
+//         [
+//             'product_id' => '252427', // Yedek Parça
+//             'description' => 'Yedek Parça',
+//             'quantity' => 2,
+//             'unit_price' => 150.00,
+//             'vat_rate' => 20
+//         ]
+//     ];
+    
+//     // Fatura bilgileri
+//     $invoiceData = [
+//         'item_type' => 'invoice',
+//         'description' => 'Test Servis Faturası',
+//         'issue_date' => date('Y-m-d'),
+//         'due_date' => date('Y-m-d', strtotime('+30 days')),
+//         'currency' => 'TRL'
+//     ];
+    
+//     $result = $parasut->createInvoice($contactId, $items, $invoiceData);
+    
+//     return response()->json($result);
+// });
+
+// // E-Arşiv oluştur - TEST
+// Route::get('/parasut/create-test-e-archive', function (ParasutService $parasut) {
+    
+//     $invoiceId = '2346112'; // Az önce oluşturduğumuz fatura
+    
+//     // İnternet satışı bilgileri (opsiyonel)
+//     $internetSale = [
+//         'url' => 'https://serbis.example.com',
+//         'payment_type' => 'ODEMEARACISI', // KREDIKARTI/BANKAKARTI, EFT/HAVALE, KAPIDAODEME, ODEMEARACISI
+//         'payment_platform' => 'Serbis Ödeme Sistemi',
+//         'payment_date' => date('Y-m-d')
+//     ];
+    
+//     $result = $parasut->createEArchive($invoiceId, $internetSale);
+    
+//     return response()->json($result);
+// });
+
+// // VKN Kontrol - TEST
+// Route::get('/parasut/check-vkn/{taxNumber}', function (ParasutService $parasut, $taxNumber) {
+    
+//     $result = $parasut->checkVknType($taxNumber);
+    
+//     if ($result['is_e_invoice']) {
+//         return response()->json([
+//             'message' => 'Bu VKN e-Fatura sisteminde kayıtlı',
+//             'data' => $result
+//         ]);
+//     } else {
+//         return response()->json([
+//             'message' => 'Bu VKN e-Fatura sisteminde kayıtlı değil, E-Arşiv kullanılmalı',
+//             'data' => $result
+//         ]);
+//     }
+// });
+// // Job durumu kontrol - TEST
+// Route::get('/parasut/check-job/{jobId}', function (ParasutService $parasut, $jobId) {
+    
+//     $result = $parasut->checkJobStatus($jobId);
+    
+//     return response()->json($result);
+// });
+/******************************************************************* PARAŞÜT DENEME ROUTLARI *************************************************************************************/
 
 
 Route::get('/secure', function () {
