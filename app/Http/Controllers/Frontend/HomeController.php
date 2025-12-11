@@ -31,35 +31,713 @@ use App\Mail\PasswordResetMail;
 use App\Mail\RegistrationSuccessMail;
 use App\Services\TescomService;
 use Illuminate\Support\Facades\Log;
+use App\Models\FrontendSetting;
+use App\Models\HomepageContent;
+use App\Mail\ContactFormMail;
 
 class HomeController extends Controller
 {
-    public function Index() {
-        $slide = HomeSlide::orderBy('id', 'asc')->get();
-        $home_about = Faq::find(1);
-        $home_section = Misyon::find(1);
-        $products = Category::orderBy('id', 'desc')->take(8)->get();
-        $settings = Settings::find(1);
-        $pricing = SubscriptionPlan::active()->ordered()->get();
-        $references = Reference::get();
-        $faqs = Clients::orderBy('job','asc')->get();
-        $features = Feature::orderBy('sira','asc')->get();
-        return view('frontend.index', compact('slide','references','features' ,'faqs','pricing' ,'home_about','settings', 'home_section','products'));
-    }
-
-
-
-    public function Pricing() {
-        $prices = SubscriptionPlan::active()->ordered()->get();
-        return view('frontend.pages.pricing', compact('prices'));
-    }
-
-        public function select($planId)
+        public function index()
     {
-        session(['selected_plan' => $planId]);
-        session(['show_register' => true]); 
-        return redirect()->route('giris');
+
+        //İstatistikler
+        $stats = FrontendSetting::where('section', 'home_stats')
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(function($item) {
+                return $item->data;
+            });
+        
+        if($stats->isEmpty()) {
+            $stats = collect([
+                ['number' => '500+', 'label' => 'Aktif Firma'],
+                ['number' => '50K+', 'label' => 'Tamamlanan Servis'],
+                ['number' => '99.9%', 'label' => 'Uptime Garantisi'],
+                ['number' => '7/24', 'label' => 'Destek Hizmeti']
+            ]);
+        }
+        //Özellikler
+        $modules = FrontendSetting::where('section', 'home_modules')
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(function($item) {
+                return $item->data;
+            });
+        
+        // Sektörler
+        $sectors = FrontendSetting::where('section', 'home_sectors')
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(function($item) {
+                return $item->data;
+            });
+
+        // Entegrasyonlar
+        $integrations = FrontendSetting::where('section', 'home_integrations')
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(function($item) {
+                return $item->data;
+            });
+
+        // Yorumlar
+        $testimonials = FrontendSetting::where('section', 'home_testimonials')
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(function($item) {
+                return $item->data;
+            });
+
+        // SSS
+        $faqs = FrontendSetting::where('section', 'home_faqs')
+            ->where('is_active', true)
+            ->orderBy('order')
+            ->get()
+            ->map(function($item) {
+                return $item->data;
+            });
+
+        // Hero İçeriği
+        $hero = HomepageContent::getSection('hero');
+        if(!$hero) {
+        $hero = [
+            'title' => 'Teknik Servis İşletmenizi',
+            'highlight' => 'Dijitalleştirin',
+            'description' => 'Müşteri, servis, stok ve personel yönetiminizi tek platformdan yönetin. İşlerinizi hızlandırın, maliyetleri düşürün, müşteri memnuniyetini artırın.',
+            'primary_button_text' => 'Hemen Başla',
+            'primary_button_icon' => 'fas fa-rocket',
+            'secondary_button_text' => 'Demo İzle',
+            'secondary_button_icon' => 'fas fa-play-circle',
+            'features' => [
+                ['icon' => 'fas fa-check-circle', 'text' => '14 gün ücretsiz'],
+                ['icon' => 'fas fa-check-circle', 'text' => 'Kredi kartı gerektirmez'],
+                ['icon' => 'fas fa-check-circle', 'text' => 'Anında kurulum']
+            ],
+            'image' => 'frontend/img/anasayfa2.png'
+        ];
+       }
+       // Bölüm Başlıkları
+        $sectionHeaders = HomepageContent::getSection('section_headers');
+        if(!$sectionHeaders) {
+            $sectionHeaders = [
+                'modules' => [
+                    'badge' => 'Özellikler',
+                    'title' => 'Güçlü',
+                    'highlight' => 'Özellikler',
+                    'subtitle' => 'İşletmenizi yönetmek için ihtiyacınız olan tüm özellikler tek platformda'
+                ],
+                'sectors' => [
+                    'badge' => 'SEKTÖRLER',
+                    'title' => 'Hangi',
+                    'highlight' => 'Sektörlere',
+                    'title_end' => 'Hizmet Veriyoruz?',
+                    'subtitle' => 'Farklı sektörlerdeki teknik servis işletmelerinin ihtiyaçlarına özel çözümler'
+                ],
+                'integrations' => [
+                    'badge' => 'ENTEGRASYONLAR',
+                    'title' => 'Güçlü',
+                    'highlight' => 'Entegrasyonlar',
+                    'subtitle' => 'Kullandığınız tüm araçlarla sorunsuz entegre olun'
+                ],
+                'testimonials' => [
+                    'badge' => 'MÜŞTERİ YORUMLARI',
+                    'title' => 'Müşterilerimiz',
+                    'highlight' => 'Ne Diyor?',
+                    'subtitle' => 'Binlerce mutlu müşterimizden bazı görüşler'
+                ],
+                'faqs' => [
+                    'badge' => 'SIK SORULAN SORULAR',
+                    'title' => 'Sıkça Sorulan',
+                    'highlight' => 'Sorular',
+                    'subtitle' => 'Merak ettiğiniz soruların cevaplarını burada bulabilirsiniz'
+                ]
+            ];
+        }
+        // İletişim İçeriği
+        $contact = HomepageContent::getSection('contact');
+        if(!$contact) {
+            $contact = [
+                'badge' => 'İLETİŞİM',
+                'title' => 'Bizimle',
+                'highlight' => 'İletişime Geçin',
+                'subtitle' => 'Sorularınız mı var? Size yardımcı olmaktan memnuniyet duyarız',
+                'items' => [
+                    [
+                        'icon' => 'fas fa-phone',
+                        'title' => 'Telefon',
+                        'info' => '0212 909 2861'
+                    ],
+                    [
+                        'icon' => 'fas fa-envelope',
+                        'title' => 'E-posta',
+                        'info' => 'info@serbis.com'
+                    ],
+                    [
+                        'icon' => 'fas fa-map-marker-alt',
+                        'title' => 'Adres',
+                        'info' => 'İstanbul, Türkiye'
+                    ]
+                ]
+            ];
+        }
+
+        // CTA İçeriği
+        $cta = HomepageContent::getSection('cta');
+        if(!$cta) {
+            $cta = [
+                'title' => 'Hemen Başlamaya Hazır mısınız?',
+                'description' => '14 gün ücretsiz deneyin. Kredi kartı gerekmez. İstediğiniz zaman iptal edebilirsiniz.',
+                'button_text' => 'Ücretsiz Denemeyi Başlat',
+                'button_icon' => 'fas fa-rocket'
+            ];
+        }
+
+        // Video İçeriği
+        $video = HomepageContent::getSection('video');
+
+        // // Navbar Content
+        // $navbarContent = HomepageContent::getSection('navbar_content');
+        
+        // // Footer Content
+        // $footerContent = HomepageContent::getSection('footer_content');
+
+
+        return view('frontend.index', compact('stats', 'modules', 'sectors', 'integrations', 'testimonials', 'faqs', 'hero', 'sectionHeaders', 'contact', 'cta', 'video',));
     }
+
+
+public function Sectors()
+{
+    $sectorsContent = HomepageContent::getSection('sectors_content');
+    
+    return view('frontend.frontend_pages.sectors', compact('sectorsContent'));
+}
+public function SectorDetail($slug)
+{
+    // Database'den sektör detayını al
+    $sectorSection = 'sector_' . $slug;
+    $sectorData = HomepageContent::where('section', $sectorSection)->first();
+    
+    // Eğer database'de varsa, oradan al
+    if ($sectorData && $sectorData->is_active) {
+        $sector = $sectorData->content;
+    } else {
+        // Database'de yoksa 404
+        abort(404);
+    }
+    
+    return view('frontend.frontend_pages.sector_detail', compact('sector'));
+}
+public function legalPage($slug)
+{
+    $page = HomepageContent::where('section', $slug)->where('is_active', true)->first();
+    
+    if (!$page) {
+        abort(404);
+    }
+    
+    return view('frontend.frontend_pages.legal_page', compact('page'));
+}
+ public function Features()
+{
+    $featuresContent = HomepageContent::getSection('features_content');
+    
+    return view('frontend.frontend_pages.features', compact('featuresContent'));
+}
+
+public function FeatureDetail($slug)
+{
+    // Database'den özellik detayını al
+    $featureSection = 'feature_' . $slug;
+    $featureData = HomepageContent::where('section', $featureSection)->first();
+    
+    // Eğer database'de varsa, oradan al
+    if ($featureData && $featureData->is_active) {
+        $feature = $featureData->content;
+    } else {
+        // Database'de yoksa 404
+        abort(404);
+    }
+    
+    return view('frontend.frontend_pages.feature_detail', compact('feature'));
+}
+// public function FeatureDetail($slug)
+// {
+//     $featureDetails = [
+//         'musteri-yonetimi' => [
+//             'title' => 'Müşteri Yönetimi',
+//             'subtitle' => 'Tüm müşteri bilgilerinizi tek merkezden yönetin, geçmişi takip edin',
+//             'hero_image' => 'frontend/img/features/musteri_yonetimi.jpg',
+//             'description' => 'Serbis Müşteri Yönetimi modülü ile müşterilerinizin tüm bilgilerini, geçmiş işlemlerini, cihaz kayıtlarını ve iletişim geçmişini tek ekranda görüntüleyin. Detaylı müşteri profilleri oluşturun, notlar ekleyin ve müşteri memnuniyetini artırın.',
+//             'benefits' => [
+//                 [
+//                     'title' => 'Detaylı Müşteri Profilleri',
+//                     'description' => 'Her müşteri için ad, soyad, telefon, email, adres gibi temel bilgilerin yanı sıra özel notlar, etiketler ve kategoriler ekleyin.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-bolt', 'label' => 'Hızlı Kayıt'],
+//                         ['icon' => 'fas fa-database', 'label' => 'Detaylı Bilgi'],
+//                         ['icon' => 'fas fa-tag', 'label' => 'Etiketleme']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Geçmiş İşlem Takibi',
+//                     'description' => 'Müşterinin daha önce yaptırdığı tüm servisleri, satın aldığı parçaları ve ödemelerini kronolojik sırada görün.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-history', 'label' => 'Tüm Geçmiş'],
+//                         ['icon' => 'fas fa-chart-line', 'label' => 'Analiz'],
+//                         ['icon' => 'fas fa-filter', 'label' => 'Filtreleme']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Hızlı Arama ve Filtreleme',
+//                     'description' => 'Binlerce müşteri arasında isim, telefon, email veya müşteri numarası ile anında arama yapın.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-search', 'label' => 'Anında Arama'],
+//                         ['icon' => 'fas fa-sliders-h', 'label' => 'Gelişmiş Filtre'],
+//                         ['icon' => 'fas fa-list', 'label' => 'Listeleme']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Otomatik SMS/Email',
+//                     'description' => 'Doğum günü kutlamaları, servis hazır bildirimleri gibi otomatik mesajlar gönderin.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-sms', 'label' => 'Toplu SMS'],
+//                         ['icon' => 'fas fa-envelope', 'label' => 'Email'],
+//                         ['icon' => 'fas fa-clock', 'label' => 'Zamanlama']
+//                     ]
+//                 ]
+//             ],
+//             'features_list' => [
+//                 'Detaylı müşteri kartları ve profil yönetimi',
+//                 'Müşteri geçmişi ve işlem kronolojisi',
+//                 'Toplu SMS ve Email gönderimi',
+//                 'Müşteri segmentasyonu ve etiketleme',
+//                 'Özel not ve hatırlatma sistemi',
+//                 'Excel içe-dışa aktarım',
+//                 'Müşteri bazlı rapor ve analizler',
+//                 'Cari hesap takibi ve borç/alacak durumu'
+//             ],
+//             'stats' => [
+//                 ['number' => '%60', 'label' => 'Daha Hızlı Kayıt'],
+//                 ['number' => '3 sn', 'label' => 'Ortalama Arama Süresi'],
+//                 ['number' => '500+', 'label' => 'Aktif Kullanıcı'],
+//                 ['number' => '%99', 'label' => 'Müşteri Memnuniyeti'],
+//             ],
+//             'faqs' => [
+//                 [
+//                     'question' => 'Müşteri bilgilerimi nasıl içe aktarabilirim?',
+//                     'answer' => 'Excel veya CSV formatında müşteri listenizi hazırlayıp sisteme toplu olarak yükleyebilirsiniz. Sistem otomatik olarak müşteri kartlarını oluşturur ve gerekli alanları eşleştirir. İçe aktarma sırasında hatalı veya eksik kayıtlar için uyarı alırsınız.'
+//                 ],
+//                 [
+//                     'question' => 'Müşteri verilerim güvende mi?',
+//                     'answer' => 'Evet, tüm müşteri verileri AWS sunucularında şifrelenmiş olarak saklanır. Günlük otomatik yedekleme yapılır ve KVKK uyumlu veri koruma politikalarımız bulunur. Verilerinize sadece sizin yetkilendirdiğiniz personel erişebilir.'
+//                 ],
+//                 [
+//                     'question' => 'Müşterilerimi gruplandırabilir miyim?',
+//                     'answer' => 'Evet, müşteri segmentasyonu için etiket ve kategori sistemimiz bulunur. VIP müşteriler, kurumsal müşteriler veya özel kampanya grupları gibi istediğiniz kategorileri oluşturabilir ve bu gruplara özel işlemler yapabilirsiniz.'
+//                 ],
+//                 [
+//                     'question' => 'Müşteri iletişim geçmişi tutulur mu?',
+//                     'answer' => 'Evet, her müşteri için gönderilen SMS, email, yapılan aramalar ve not kayıtları zaman damgalı olarak tutulur. Hangi personelin ne zaman müşteriyle iletişime geçtiğini detaylı şekilde görebilirsiniz.'
+//                 ],
+//                 [
+//                     'question' => 'Kaç müşteri kaydı tutabilirim?',
+//                     'answer' => 'Serbis\'te müşteri sayısı konusunda bir sınırlama yoktur. İster 100, ister 100.000 müşteri olsun, sistem aynı performansla çalışır. Hızlı arama ve filtreleme özellikleri sayesinde büyük müşteri tabanlarını da kolayca yönetebilirsiniz.'
+//                 ]
+//             ]
+//         ],
+        
+
+//         'is-talep-yonetimi' => [
+//             'title' => 'İş Talep Yönetimi',
+//             'subtitle' => 'Servis taleplerini kaydedin, teknisyen atayın, süreçleri takip edin',
+//             'hero_image' => 'frontend/img/features/is-talep.jpg',
+//             'description' => 'İş Talep Yönetimi modülü ile gelen her servis talebini sistematik bir şekilde kaydedin. Müşteri bilgisi, cihaz bilgisi, arıza açıklaması ve öncelik durumunu belirleyin. Teknisyen ataması yapın ve iş sürecini baştan sona eksiksiz takip edin.',
+//             'benefits' => [
+//                 [
+//                     'title' => 'Hızlı Servis Kaydı',
+//                     'description' => 'Müşteri seçimi, cihaz bilgisi, arıza açıklaması işlemlerini tek ekrandan hızlıca tamamlayın. Seri no veya barkod ile hatasız kayıt oluşturun.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-barcode', 'label' => 'Barkod Okuma'],
+//                         ['icon' => 'fas fa-edit', 'label' => 'Hızlı Giriş'],
+//                         ['icon' => 'fas fa-camera', 'label' => 'Fotoğraf Ekleme']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Teknisyen Atama',
+//                     'description' => 'Servisleri uygun teknisyenlere atayın, iş yüklerini dengeleyin. Kimin elinde kaç iş var anlık olarak görün.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-user-cog', 'label' => 'Personel Atama'],
+//                         ['icon' => 'fas fa-balance-scale', 'label' => 'İş Yükü'],
+//                         ['icon' => 'fas fa-tasks', 'label' => 'Görev Takibi']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Durum Takibi ve Bildirim',
+//                     'description' => 'Cihazın durumunu (Beklemede, Onarımda, Hazır) adım adım izleyin. Her aşamada müşteriye otomatik bilgilendirme gitsin.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-bell', 'label' => 'Oto Bildirim'],
+//                         ['icon' => 'fas fa-step-forward', 'label' => 'Süreç Adımları'],
+//                         ['icon' => 'fas fa-check-circle', 'label' => 'Onay Mekanizması']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Öncelik ve Garanti',
+//                     'description' => 'Acil işleri öne alın, garanti kapsamındaki cihazları otomatik tespit edin. VIP müşterilere özel servis önceliği sağlayın.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-star', 'label' => 'VIP Öncelik'],
+//                         ['icon' => 'fas fa-shield-alt', 'label' => 'Garanti Takibi'],
+//                         ['icon' => 'fas fa-exclamation-triangle', 'label' => 'Acil İşler']
+//                     ]
+//                 ]
+//             ],
+//             'features_list' => [
+//                 'Hızlı servis kaydı ve barkod desteği',
+//                 'Sürükle bırak teknisyen atama',
+//                 'Otomatik SMS ve WhatsApp bildirimleri',
+//                 'Fotoğraflı ve videolu arıza kaydı',
+//                 'Parça talep ve onay sistemi',
+//                 'Servis formu ve etiket yazdırma',
+//                 'Garanti süresi sorgulama',
+//                 'Cihaz seri no/IMEI takibi'
+//             ],
+//             'stats' => [
+//                 ['number' => '%40', 'label' => 'Daha Hızlı Servis'],
+//                 ['number' => '2 Kat', 'label' => 'Müşteri Geri Dönüşü'],
+//                 ['number' => '7/24', 'label' => 'Kesintisiz Takip'],
+//                 ['number' => '%100', 'label' => 'Kayıt Güvenliği'],
+//             ],
+//         ],
+
+//         'mobil-saha-yonetimi' => [
+//             'title' => 'Mobil Saha Yönetimi',
+//             'subtitle' => 'Teknisyenleriniz sahadan mobil cihazlarla işlem yapabilir',
+//             'hero_image' => 'frontend/img/features/mobil-saha-yonetimi.jpg',
+//             'description' => 'Mobil uyumlu Serbis arayüzü ile teknisyenleriniz sahada tablet veya telefonlarından tüm işlemleri gerçekleştirebilir. İş listesini görüntüleme, durum güncelleme, fotoğraf yükleme ve müşteri imzası alma işlemleri artık cebinizde.',
+//             'benefits' => [
+//                 [
+//                     'title' => 'Her Yerden Erişim',
+//                     'description' => 'Responsive tasarım sayesinde uygulama yüklemeden telefon veya tabletten sisteme girin. Sahada ofis konforunu yaşayın.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-mobile-alt', 'label' => 'Mobil Uyumlu'],
+//                         ['icon' => 'fas fa-cloud', 'label' => 'Bulut Tabanlı'],
+//                         ['icon' => 'fas fa-wifi', 'label' => 'Her Yerden']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Anlık İş Emri',
+//                     'description' => 'Teknisyenler kendilerine atanan işleri anında bildirim olarak görür. Adres tarifi alarak müşteriye en kısa yoldan ulaşır.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-map-marker-alt', 'label' => 'Navigasyon'],
+//                         ['icon' => 'fas fa-bolt', 'label' => 'Anlık Bildirim'],
+//                         ['icon' => 'fas fa-route', 'label' => 'Rota Planı']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Fotoğraf ve Dijital İmza',
+//                     'description' => 'Onarım öncesi ve sonrası fotoğrafları sisteme yükleyin. İş bitiminde müşteri imzasını tablet ekranından dijital olarak alın.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-camera', 'label' => 'Fotoğraf Yükle'],
+//                         ['icon' => 'fas fa-pen-nib', 'label' => 'Dijital İmza'],
+//                         ['icon' => 'fas fa-file-pdf', 'label' => 'Servis Fişi']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Sahadan Parça Talebi',
+//                     'description' => 'Teknisyen sahada ihtiyaç duyduğu parçayı sistemden talep edebilir veya aracındaki stoktan düşebilir.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-cubes', 'label' => 'Stok Kontrol'],
+//                         ['icon' => 'fas fa-share-square', 'label' => 'Parça İsteme'],
+//                         ['icon' => 'fas fa-calculator', 'label' => 'Fiyatlandırma']
+//                     ]
+//                 ]
+//             ],
+//             'features_list' => [
+//                 'Mobil uyumlu responsive arayüz',
+//                 'Google Maps entegrasyonu',
+//                 'Sahadan fotoğraf ve video yükleme',
+//                 'Ekranda müşteri imzası alma',
+//                 'Mobil cihazdan fatura/tahsilat girişi',
+//                 'Araç stoğu yönetimi',
+//                 'Konum bazlı teknisyen takibi',
+//                 'QR Kod ile cihaz sorgulama'
+//             ],
+//             'stats' => [
+//                 ['number' => '%75', 'label' => 'Kağıt Tasarrufu'],
+//                 ['number' => '15 dk', 'label' => 'Servis Başı Kazanç'],
+//                 ['number' => '%95', 'label' => 'Doğru Konum'],
+//                 ['number' => '0', 'label' => 'Veri Kaybı'],
+//             ],
+//         ],
+
+//         'stok-parca' => [
+//             'title' => 'Stok ve Yedek Parça',
+//             'subtitle' => 'Parça stoklarınızı takip edin, kritik seviyelerde uyarı alın',
+//             'hero_image' => 'frontend/img/features/stok-yonetimi.jpg',
+//             'description' => 'Stok Yönetimi modülü ile tüm yedek parça, sarf malzemeleri ve aksesuarlarınızın envanterini profesyonelce yönetin. Giriş-çıkış hareketlerini kaydedin, kritik stok seviyelerinde otomatik uyarılar alın ve maliyetlerinizi kontrol altında tutun.',
+//             'benefits' => [
+//                 [
+//                     'title' => 'Akıllı Stok Kartları',
+//                     'description' => 'Her parça için alış/satış fiyatı, KDV oranı, raf yeri ve uyumlu modelleri içeren detaylı kartlar oluşturun.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-box-open', 'label' => 'Ürün Kartı'],
+//                         ['icon' => 'fas fa-barcode', 'label' => 'Barkodlama'],
+//                         ['icon' => 'fas fa-tags', 'label' => 'Fiyat Yönetimi']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Kritik Stok Uyarıları',
+//                     'description' => 'Belirlediğiniz adedin altına düşen ürünler için sistem sizi uyarır. Parça bitmeden sipariş vererek iş kaybını önleyin.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-exclamation-circle', 'label' => 'Azalan Stok'],
+//                         ['icon' => 'fas fa-envelope-open-text', 'label' => 'Mail Uyarısı'],
+//                         ['icon' => 'fas fa-shopping-cart', 'label' => 'Oto Sipariş']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Hareket Geçmişi',
+//                     'description' => 'Hangi parça hangi serviste kullanıldı, ne zaman alındı, kime satıldı? Tüm envanter hareketlerini şeffafça izleyin.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-exchange-alt', 'label' => 'Giriş/Çıkış'],
+//                         ['icon' => 'fas fa-user-check', 'label' => 'Personel Takibi'],
+//                         ['icon' => 'fas fa-calendar-alt', 'label' => 'Tarihçe']
+//                     ]
+//                 ],
+//                 [
+//                     'title' => 'Sayım ve Raporlama',
+//                     'description' => 'Dönemsel stok sayımları yapın, fireleri kaydedin. En çok giden parçaları analiz ederek karlılığınızı artırın.',
+//                     'mini_features' => [
+//                         ['icon' => 'fas fa-clipboard-list', 'label' => 'Sayım Modülü'],
+//                         ['icon' => 'fas fa-chart-pie', 'label' => 'Karlılık Analizi'],
+//                         ['icon' => 'fas fa-file-excel', 'label' => 'Excel Çıktı']
+//                     ]
+//                 ]
+//             ],
+//             'features_list' => [
+//                 'Barkod ve QR kod destekli stok takibi',
+//                 'Kritik stok seviyesi bildirimleri',
+//                 'Tedarikçi ve satın alma yönetimi',
+//                 'Çoklu depo ve raf sistemi',
+//                 'Servis bağlantılı otomatik stok düşümü',
+//                 'Sayım ve envanter eşitleme',
+//                 'Alış/Satış raporları',
+//                 'Toplu Excel ile ürün yükleme'
+//             ],
+//             'stats' => [
+//                 ['number' => '%30', 'label' => 'Maliyet Avantajı'],
+//                 ['number' => '%100', 'label' => 'Stok Doğruluğu'],
+//                 ['number' => '0', 'label' => 'Parça Bekleme'],
+//                 ['number' => '10k+', 'label' => 'Ürün Kapasitesi'],
+//             ],
+//         ],
+//     ];
+
+//     if (!isset($featureDetails[$slug])) {
+//         abort(404);
+//     }
+
+//     $feature = $featureDetails[$slug];
+
+//     return view('frontend.frontend_pages.feature_detail', compact('feature'));
+// }
+public function Integrations()
+{
+    // Database'den entegrasyonlar içeriğini al
+    $integrationsData = HomepageContent::where('section', 'integrations_content')->first();
+    
+    // Eğer database'de varsa, oradan al
+    if ($integrationsData && $integrationsData->is_active) {
+        $integrationsContent = $integrationsData->content;
+    } else {
+        // Database'de yoksa varsayılan yapı
+        $integrationsContent = [
+            'page_header' => [
+                'title' => 'Serbis Entegrasyonları ile Tüm Süreçlerinizi Entegre Edin',
+                'subtitle' => 'Serbis uygulama mağazasındaki uygulama ve entegrasyonlar ile teknik servis sitenizi çok yönlü hale getirin.',
+                'button_text' => 'Deneme Hesabı Oluştur',
+                'button_url' => '/kullanici-girisi'
+            ],
+            'marquee_logos' => [],
+            'categories' => [],
+            'faqs' => []
+        ];
+    }
+    
+    return view('frontend.frontend_pages.integrations', compact('integrationsContent'));
+}
+
+public function About()
+{
+    $aboutContent = HomepageContent::getSection('about-content');
+    
+    return view('frontend.frontend_pages.about', compact('aboutContent'));
+}
+
+public function Pricing()
+{
+    // Database'den fiyatlandırma içeriğini al
+    $pricingData = HomepageContent::where('section', 'pricing_content')->first();
+    
+    // Eğer database'de varsa, oradan al
+    if ($pricingData && $pricingData->is_active) {
+        $pricingContent = $pricingData->content;
+    } else {
+        // Database'de yoksa varsayılan yapı
+        $pricingContent = [
+            'page_header' => [
+                'badge_icon' => 'fas fa-tag',
+                'badge_text' => '14 Gün Ücretsiz Deneme',
+                'title' => 'Size Uygun',
+                'title_highlight' => 'Planı',
+                'title_suffix' => 'Seçin',
+                'subtitle' => 'Her ölçekteki teknik servis için uygun fiyatlı çözümler. Kredi kartı gerektirmeden hemen başlayın, işinizi büyütün.',
+                'hero_features' => []
+            ],
+            'pricing_plans' => [],
+            'faqs' => [],
+            'cta' => [
+                'title' => '14 Gün Ücretsiz Deneyin!',
+                'description' => 'Kredi kartı gerektirmez. Anında başlayın, tüm özellikleri keşfedin.',
+                'button_text' => 'Hemen Ücretsiz Başla',
+                'button_url' => '/kullanici-girisi'
+            ]
+        ];
+    }
+    
+    return view('frontend.frontend_pages.pricing', compact('pricingContent'));
+}
+public function Contact()
+{
+    // Database'den iletişim içeriğini al
+    $contactData = HomepageContent::where('section', 'contact_content')->first();
+    
+    // Eğer database'de varsa, oradan al
+    if ($contactData && $contactData->is_active) {
+        $contactContent = $contactData->content;
+    } else {
+        // Database'de yoksa varsayılan yapı
+        $contactContent = [
+            'page_header' => [
+                'title' => 'İletişim',
+                'subtitle' => 'Sorularınız için bize ulaşın, size yardımcı olmaktan mutluluk duyarız.',
+                'breadcrumb_home' => 'Ana Sayfa',
+                'breadcrumb_current' => 'İletişim'
+            ],
+            'contact_cards' => [],
+            'left_panel' => [
+                'title' => 'Serbis CRM ile',
+                'title_highlight' => 'İşinizi Büyütün',
+                'description' => 'Teknik servis süreçlerinizi dijitalleştirmek için formu doldurun.',
+                'features' => [],
+                'apps_label' => 'Mobil Uygulamamızı İndirin:',
+                'google_play_link' => '#',
+                'app_store_link' => '#'
+            ],
+            'form_section' => [
+                'title' => 'Bize Ulaşın',
+                'subtitle' => 'Aşağıdaki formu doldurarak bize mesaj gönderin.',
+                'name_label' => 'Ad-Soyad',
+                'name_placeholder' => 'Adınız Soyadınız',
+                'email_label' => 'E-posta',
+                'email_placeholder' => 'ornek@email.com',
+                'phone_label' => 'Telefon',
+                'phone_placeholder' => '0555 555 55 55',
+                'message_label' => 'Mesajınız',
+                'message_placeholder' => 'Size nasıl yardımcı olabiliriz?',
+                'button_text' => 'Mesajı Gönder'
+            ]
+        ];
+    }
+    
+    return view('frontend.frontend_pages.contact', compact('contactContent'));
+}
+
+public function ContactSubmit(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email',
+        'phone' => 'nullable|string|max:20',
+        'message' => 'required|string|min:10',
+    ], [
+        'name.required' => 'Ad soyad alanı zorunludur.',
+        'email.required' => 'E-posta alanı zorunludur.',
+        'email.email' => 'Geçerli bir e-posta adresi giriniz.',
+        'message.required' => 'Mesaj alanı zorunludur.',
+        'message.min' => 'Mesajınız en az 10 karakter olmalıdır.',
+    ]);
+
+    try {
+        // Form verilerini hazırla
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'message' => $request->message,
+        ];
+
+        // Mail gönder
+        Mail::to('serbiscrmyazilimi@gmail.com')->send(new ContactFormMail($data));
+
+        // Başarılı mesajı
+        return back()->with('success', 'Mesajınız başarıyla gönderildi! En kısa sürede size dönüş yapılacaktır.');
+        
+    } catch (\Exception $e) {
+        // Hata durumunda
+        \Log::error('Contact form mail error: ' . $e->getMessage());
+        
+        return back()->with('error', 'Mesaj gönderilirken bir hata oluştu. Lütfen tekrar deneyin.')
+                    ->withInput();
+    }
+}
+
+public function selectPlan($planIndex)
+{
+    // Fiyatlandırma verilerini al
+    $pricingData = HomepageContent::where('section', 'pricing_content')->first();
+    
+    if ($pricingData && $pricingData->is_active && isset($pricingData->content['pricing_plans'][$planIndex])) {
+        $selectedPlan = $pricingData->content['pricing_plans'][$planIndex];
+        
+        // Plan adına göre database'deki planı bul
+        $dbPlan = SubscriptionPlan::where('name', $selectedPlan['name'])
+            ->where('is_active', 1)
+            ->first();
+        
+        if ($dbPlan) {
+            // Session'a kaydet
+            session([
+                'selected_plan' => $dbPlan->id, // Database ID
+                'selected_plan_index' => $planIndex, // Frontend index
+                'selected_plan_info' => [ // Detaylı bilgiler
+                    'name' => $selectedPlan['name'],
+                    'price' => $selectedPlan['price'],
+                    'users' => $selectedPlan['users'],
+                    'storage' => $selectedPlan['storage'] ?? null,
+                    'description' => $selectedPlan['description'],
+                    'features' => $selectedPlan['features'] ?? []
+                ],
+                'show_register' => true
+            ]);
+            
+            return redirect()->route('giris')->with([
+                'plan_selected' => true,
+            ]);
+        }
+        session(['show_register' => true]);
+    }
+    
+    // Plan bulunamazsa normal kayıt sayfasına yönlendir
+    return redirect()->route('giris')->with([
+        'message' => 'Plan seçilemedi, lütfen tekrar deneyin.',
+        'alert-type' => 'warning'
+    ]);
+}
 
     public function Seo($s) {
         $tr = array('ş','Ş','ı','I','İ','ğ','Ğ','ü','Ü','ö','Ö','Ç','ç','(',')','/',':',',',"'",'+','_','!','?','.');
@@ -278,6 +956,48 @@ public function RegisterAction(Request $request)
             'selected_plan_id' => $selectedPlanId
         ]);
     }
+
+//    public function getSubscriptionPlans()
+// {
+//     $plans = SubscriptionPlan::where('is_active', 1)
+//         ->orderBy('price', 'asc')
+//         ->get();
+
+//     // Session'dan seçili plan ID'sini al
+//     $selectedPlanId = session('selected_plan');
+    
+//     // Eğer session'da plan index bilgisi varsa (fiyatlandırma sayfasından geliyorsa)
+//     if (session()->has('selected_plan_index')) {
+//         $selectedPlanIndex = session('selected_plan_index');
+        
+//         // Fiyatlandırma sayfasındaki plan bilgilerini al
+//         $pricingData = HomepageContent::where('section', 'pricing_content')->first();
+        
+//         if ($pricingData && isset($pricingData->content['pricing_plans'][$selectedPlanIndex])) {
+//             $selectedPlanFromPricing = $pricingData->content['pricing_plans'][$selectedPlanIndex];
+            
+//             // Plan adına göre database'deki planı bul
+//             $matchedPlan = SubscriptionPlan::where('name', $selectedPlanFromPricing['name'])
+//                 ->where('is_active', 1)
+//                 ->first();
+            
+//             if ($matchedPlan) {
+//                 $selectedPlanId = $matchedPlan->id;
+                
+//                 // Session'a bu ID'yi kaydet (tekrar kullanmak için)
+//                 session(['selected_plan' => $matchedPlan->id]);
+//             }
+//         }
+//     }
+
+//     return response()->json([
+//         'success' => true,
+//         'plans' => $plans,
+//         'selected_plan_id' => $selectedPlanId,
+//         'selected_plan_info' => session('selected_plan_info') // Ek bilgiler için
+//     ]);
+// }
+
 
     public function verifySmsCode(Request $request) 
 {
@@ -596,6 +1316,7 @@ public function resendSmsCode(Request $request)
     }
 
     public function Login(){
+        
         return view('frontend.auth.login');
     }
 

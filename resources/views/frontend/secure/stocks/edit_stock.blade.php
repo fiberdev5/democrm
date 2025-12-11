@@ -187,7 +187,7 @@
             <!-- 1. KART: STOK HAREKETLERİ (KAYDIRILABİLİR) -->
             <div class="card card-stock mb-3">
                 <div class="card-header card-stock-header ch1">
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-between  ">
                         <h5 class="mb-0"><i class="bi bi-arrows-move"></i> Stok Hareketleri</h5>
                         <div>
                         <button type="button" class="btn btn-success btn-sm hareketEkleBtn" data-stokid="{{ $stock->id }}">

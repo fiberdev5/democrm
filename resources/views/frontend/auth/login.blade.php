@@ -343,7 +343,7 @@
                 }
             });
 
-            function switchToLogin() {
+    function switchToLogin() {
     isLoginMode = true;
     $('#toggleSlider').removeClass('register');
     $('#loginToggle').addClass('active');
@@ -361,6 +361,8 @@
     // Plan bilgilerini koru, sadece hata mesajlarını temizle
     $('.text-danger').remove();
     $('.form-control, .form-select').removeClass('is-invalid');
+
+    
 }
 
             function switchToRegister() {
@@ -395,18 +397,71 @@ function resetRegisterForm() {
     loadSubscriptionPlans();
 }
 
-            // loadSubscriptionPlans fonksiyonunda da küçük bir değişiklik:
-function loadSubscriptionPlans() {
-    // Eğer zaten plan seçiliyse ve değer varsa, yeniden yükleme
-    const currentSelection = $('#subscription_plan').val();
+// loadSubscriptionPlans fonksiyonunda da küçük bir değişiklik:
+// function loadSubscriptionPlans() {
+//     // Eğer zaten plan seçiliyse ve değer varsa, yeniden yükleme
+//     const currentSelection = $('#subscription_plan').val();
     
+//     $.ajax({
+//         url: '{{ route("get.subscription.plans") }}',
+//         method: 'GET',
+//         success: function(response) {
+//             const select = $('#subscription_plan');
+//             const wasSelected = select.val(); // Mevcut seçimi sakla
+            
+//             select.empty().append('<option value="">Plan Seçiniz...</option>');
+            
+//             let defaultPlan = null;
+            
+//             response.plans.forEach(function(plan) {
+//                 const option = $('<option></option>')
+//                     .attr('value', plan.id)
+//                     .text(`${plan.name} - ₺${parseFloat(plan.price).toFixed(2)}/${plan.billing_cycle === 'yearly' ? 'yıl' : 'ay'}`)
+//                     .data('name', plan.name)
+//                     .data('price', plan.price)
+//                     .data('billing_cycle', plan.billing_cycle)
+//                     .data('users', plan.limits.users || '0')
+//                     .data('dealers', plan.limits.dealers || '0')
+//                     .data('stocks', plan.limits.stocks || '0')
+//                     .data('tickets', plan.features.tickets || false)
+//                     .data('basic_reports', plan.features.basic_reports || false)
+//                     .data('inventory', plan.features.inventory || false)
+//                     .data('priority_support', plan.features.priority_support || false);
+                
+//                 select.append(option);
+                
+//                 if (!defaultPlan || parseFloat(plan.price) < parseFloat(defaultPlan.price)) {
+//                     defaultPlan = plan;
+//                 }
+//             });
+            
+//             // Öncelik sırası: 1) Önceki seçim, 2) Session'dan gelen, 3) Default plan
+//             if (wasSelected) {
+//                 select.val(wasSelected);
+//             } else if (response.selected_plan_id) {
+//                 select.val(response.selected_plan_id);
+//             } else if (defaultPlan) {
+//                 select.val(defaultPlan.id);
+//             }
+            
+//             // Plan bilgilerini göster
+//             const selectedOption = select.find('option:selected');
+//             if (selectedOption.val()) {
+//                 showPlanInfo(selectedOption.data());
+//             }
+//         },
+//         error: function(xhr) {
+//             console.error('Plans yüklenirken hata oluştu:', xhr);
+//             toastr.error('Planlar yüklenirken bir hata oluştu.');
+//         }
+//     });
+// }
+function loadSubscriptionPlans() {
     $.ajax({
         url: '{{ route("get.subscription.plans") }}',
         method: 'GET',
         success: function(response) {
             const select = $('#subscription_plan');
-            const wasSelected = select.val(); // Mevcut seçimi sakla
-            
             select.empty().append('<option value="">Plan Seçiniz...</option>');
             
             let defaultPlan = null;
@@ -428,24 +483,31 @@ function loadSubscriptionPlans() {
                 
                 select.append(option);
                 
+                // En ucuz planı default olarak sakla
                 if (!defaultPlan || parseFloat(plan.price) < parseFloat(defaultPlan.price)) {
                     defaultPlan = plan;
                 }
             });
             
-            // Öncelik sırası: 1) Önceki seçim, 2) Session'dan gelen, 3) Default plan
-            if (wasSelected) {
-                select.val(wasSelected);
-            } else if (response.selected_plan_id) {
+            // Öncelik sırası:
+            // 1. Fiyatlandırma sayfasından seçilmiş plan varsa
+            if (response.selected_plan_id) {
                 select.val(response.selected_plan_id);
-            } else if (defaultPlan) {
-                select.val(defaultPlan.id);
+                
+                // Plan bilgilerini göster
+                const selectedOption = select.find('option:selected');
+                if (selectedOption.val()) {
+                    showPlanInfo(selectedOption.data());
+                    
+                }
             }
-            
-            // Plan bilgilerini göster
-            const selectedOption = select.find('option:selected');
-            if (selectedOption.val()) {
-                showPlanInfo(selectedOption.data());
+            // 2. Seçili plan yoksa en ucuz planı seç
+            else if (defaultPlan) {
+                select.val(defaultPlan.id);
+                const selectedOption = select.find('option:selected');
+                if (selectedOption.val()) {
+                    showPlanInfo(selectedOption.data());
+                }
             }
         },
         error: function(xhr) {

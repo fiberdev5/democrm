@@ -95,6 +95,7 @@ use App\Http\Controllers\Frontend\MarkaController;
 use App\Http\Controllers\Frontend\ModellController;
 use App\Http\Controllers\Frontend\ArizaKoduController;
 use App\Services\ParasutService;
+use App\Http\Controllers\FrontendHomeController;
 
 /******************************************************************* PARAŞÜT DENEME ROUTLARI *************************************************************************************/
 // Bağlantı testi
@@ -437,6 +438,96 @@ Route::middleware(['auth', 'superadmin'])->group(function () {
         Route::get('/entegrasyon/sil/{id}', 'DeleteIntegration')->name('integration.delete');
 
     });
+
+    // Frontend Yönetimi
+    Route::prefix('frontend')->name('frontend.')->group(function () {
+        Route::get('/', [SuperAdminController::class, 'frontendSettings'])->name('index');
+        Route::get('/anasayfa', [SuperAdminController::class, 'homeSettings'])->name('home');
+
+        // İstatistikler
+        Route::get('/home/stat/{id}', [SuperAdminController::class, 'getStat'])->name('home.stat.get');
+        Route::post('/home/stat', [SuperAdminController::class, 'storeStat'])->name('home.stat.store');
+        Route::put('/home/stat/{id}', [SuperAdminController::class, 'updateStat'])->name('home.stat.update');
+        Route::delete('/home/stat/{id}', [SuperAdminController::class, 'deleteStat'])->name('home.stat.delete');
+
+        // Modüller
+        Route::get('/home/module/{id}', [SuperAdminController::class, 'getModule'])->name('home.module.get');
+        Route::post('/home/module', [SuperAdminController::class, 'storeModule'])->name('home.module.store');
+        Route::put('/home/module/{id}', [SuperAdminController::class, 'updateModule'])->name('home.module.update');
+        Route::delete('/home/module/{id}', [SuperAdminController::class, 'deleteModule'])->name('home.module.delete');
+
+        // Sektörler
+        Route::get('/home/sector/{id}', [SuperAdminController::class, 'getSector'])->name('home.sector.get');
+        Route::post('/home/sector', [SuperAdminController::class, 'storeSector'])->name('home.sector.store');
+        Route::post('/home/sector/{id}', [SuperAdminController::class, 'updateSector'])->name('home.sector.update');
+        Route::delete('/home/sector/{id}', [SuperAdminController::class, 'deleteSector'])->name('home.sector.delete');
+
+        // Entegrasyonlar
+        Route::get('/home/integration/{id}', [SuperAdminController::class, 'getIntegration'])->name('home.integration.get');
+        Route::post('/home/integration', [SuperAdminController::class, 'storeIntegration'])->name('home.integration.store');
+        Route::put('/home/integration/{id}', [SuperAdminController::class, 'updateIntegration'])->name('home.integration.update');
+        Route::delete('/home/integration/{id}', [SuperAdminController::class, 'deleteIntegration'])->name('home.integration.delete');
+
+        // Yorumlar
+        Route::get('/home/testimonial/{id}', [SuperAdminController::class, 'getTestimonial'])->name('home.testimonial.get');
+        Route::post('/home/testimonial', [SuperAdminController::class, 'storeTestimonial'])->name('home.testimonial.store');
+        Route::put('/home/testimonial/{id}', [SuperAdminController::class, 'updateTestimonial'])->name('home.testimonial.update');
+        Route::delete('/home/testimonial/{id}', [SuperAdminController::class, 'deleteTestimonial'])->name('home.testimonial.delete');
+
+        // SSS
+        Route::get('/home/faq/{id}', [SuperAdminController::class, 'getFaq'])->name('home.faq.get');
+        Route::post('/home/faq', [SuperAdminController::class, 'storeFaq'])->name('home.faq.store');
+        Route::put('/home/faq/{id}', [SuperAdminController::class, 'updateFaq'])->name('home.faq.update');
+        Route::delete('/home/faq/{id}', [SuperAdminController::class, 'deleteFaq'])->name('home.faq.delete');
+
+        // Ana Sayfa İçerik Yönetimi
+        Route::get('/icerik', [SuperAdminController::class, 'homepageContent'])->name('content');
+        Route::post('/icerik/guncelle', [SuperAdminController::class, 'updateHomepageContent'])->name('content.update');
+
+        // Navigation Yönetimi
+        Route::get('/navigation', [SuperAdminController::class, 'navigationSettings'])->name('navigation');
+
+        // Yasal Sayfalar
+        Route::get('/legal-pages', [SuperAdminController::class, 'legalPages'])->name('legal-pages');
+        Route::get('/legal-pages/create', [SuperAdminController::class, 'editLegalPage'])->name('legal-pages.create');
+        Route::get('/legal-pages/{section}/edit', [SuperAdminController::class, 'editLegalPage'])->name('legal-pages.edit');
+        Route::post('/legal-pages', [SuperAdminController::class, 'storeLegalPage'])->name('legal-pages.store');
+        Route::delete('/legal-pages/{section}', [SuperAdminController::class, 'deleteLegalPage'])->name('legal-pages.delete');
+
+
+        // Hakkımızda İçerik Yönetimi    
+        Route::get('/about-content', [SuperAdminController::class, 'aboutContent'])->name('about-content');
+        Route::post('/about-content', [SuperAdminController::class, 'updateAboutContent'])->name('about-content.update');
+
+        // Sektörler Yönetimi
+        Route::get('/sectors-content', [SuperAdminController::class, 'sectorsContent'])->name('sectors-content');
+        Route::post('/sectors-content', [SuperAdminController::class, 'updateSectorsContent'])->name('sectors-content.update');
+        // Sektör Detay Yönetimi
+        Route::get('/sector-detail/{slug}', [SuperAdminController::class, 'sectorDetail'])->name('sector-detail');
+        Route::post('/sector-detail/{slug}', [SuperAdminController::class, 'updateSectorDetail'])->name('sector-detail.update');
+
+        // Özellikler Yönetimi
+        Route::get('/features-content', [SuperAdminController::class, 'featuresContent'])->name('features-content');
+        Route::post('/features-content', [SuperAdminController::class, 'updateFeaturesContent'])->name('features-content.update');
+        // Özellik Detay Yönetimi
+        Route::get('/feature-detail/{slug}', [SuperAdminController::class, 'featureDetail'])->name('feature-detail');
+        Route::post('/feature-detail/{slug}', [SuperAdminController::class, 'updateFeatureDetail'])->name('feature-detail.update');
+
+        // Entegrasyonlar
+        Route::get('/integrations-content', [SuperAdminController::class, 'integrationsContent'])->name('integrations-content');
+        Route::post('/integrations-content', [SuperAdminController::class, 'updateIntegrationsContent'])->name('integrations-content.update');
+
+        // Fiyatlandırma
+        Route::get('/pricing-content', [SuperAdminController::class, 'pricingContent'])->name('pricing-content');
+        Route::post('/pricing-content', [SuperAdminController::class, 'updatePricingContent'])->name('pricing-content.update');
+
+        // İletişim
+        Route::get('/contact-content', [SuperAdminController::class, 'contactContent'])->name('contact-content');
+        Route::post('/contact-content', [SuperAdminController::class, 'updateContactContent'])->name('contact-content.update');
+
+
+        });
+
     });
     
 });
@@ -772,12 +863,31 @@ Route::middleware(['auth'])->group(function () {
     });
 });
 
+
+// Yasal Sayfalar
+Route::get('/{slug}', [HomeController::class, 'legalPage'])
+    ->where('slug', 'gizlilik|kullanim-kosullari|kvkk')
+    ->name('legal.page');
 Route::controller(HomeController::class)->group(function() {
     Route::get('/', 'Index')->name('home');
-    Route::get('/pricing', 'Pricing')->name('pricing');
+    Route::get('/hakkimizda', 'About')->name('about'); 
+    Route::get('/sektorler', 'Sectors')->name('sectors');
+    Route::get('/sektor/{slug}', 'SectorDetail')->name('sector.detail');
+    Route::get('/ozellikler', 'Features')->name('features');
+    Route::get('/ozellik/{slug}', 'FeatureDetail')->name('feature.detail');
+    Route::get('/entegrasyonlar', 'Integrations')->name('integrations');
+    Route::get('/fiyatlar', 'Pricing')->name('pricing');
+    Route::get('/iletisim', [HomeController::class, 'Contact'])->name('contact_frontend');
+    Route::post('/iletisim', [HomeController::class, 'ContactSubmit'])->name('contact.submit');
+    // Plan seçimi route'u
+    Route::get('/select-plan/{planIndex}', [HomeController::class, 'selectPlan'])->name('select.plan');
     
-    Route::get('/select-plan/{plan}', 'select')->name('plan.select');
 
+
+
+    //Eski kodlar
+    Route::get('/pricing', 'Pricing')->name('pricing');
+    Route::get('/select-plan/{plan}', 'select')->name('plan.select');
     Route::get('/kullanici-kaydi', 'Register')->name('kayit');
     Route::post('/register-action', 'RegisterAction')->name('kayit.action');
     Route::post('/validate-step', 'validateStep')->name('validate.step');
@@ -1451,30 +1561,6 @@ Route::get('/logs', function () {
 
         return view('frontend.secure.logs.index', compact('logs'));
     })->middleware('auth'); 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 Route::controller(HakkimizdaController::class)->group(function() {
