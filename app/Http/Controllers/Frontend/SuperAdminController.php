@@ -1862,7 +1862,7 @@ public function storeSector(Request $request)
         'slug' => 'required|string',
         'title' => 'required|string',
         'description' => 'required|string',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif'
     ]);
     
     $data = [
@@ -1900,7 +1900,7 @@ public function updateSector(Request $request, $id)
         'slug' => 'required|string',
         'title' => 'required|string',
         'description' => 'required|string',
-        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif'
     ]);
     
     $data = [
@@ -2116,87 +2116,149 @@ public function homepageContent()
     $cta = HomepageContent::where('section', 'cta')->first();
     $video = HomepageContent::where('section', 'video')->first();
     
+    // Eğer hero yoksa boş bir object oluştur
+    if (!$hero) {
+        $hero = (object)['content' => []];
+    }
+    if (!$sectionHeaders) {
+        $sectionHeaders = (object)['content' => []];
+    }
+    if (!$contact) {
+        $contact = (object)['content' => []];
+    }
+    if (!$cta) {
+        $cta = (object)['content' => []];
+    }
+    if (!$video) {
+        $video = (object)['content' => []];
+    }
+    
     return view('frontend.secure.super_admin.frontend.content', compact('hero', 'sectionHeaders', 'contact', 'cta', 'video'));
 }
 
 // İçerik Güncelleme
 public function updateHomepageContent(Request $request)
 {
-    $section = $request->input('section');
-    $content = $request->input('content');
-    
-    // JSON string ise decode et
-    if (is_string($content)) {
-        $content = json_decode($content, true);
-    }
-    
-    // Navbar için logo upload kontrolü
-    if ($section === 'navbar_content' && $request->hasFile('logo')) {
-        $logoFile = $request->file('logo');
+    try {
+        $section = $request->input('section');
         
-        // Eski logoyu sil (default değilse)
-        $existingContent = HomepageContent::where('section', 'navbar_content')->first();
-        if ($existingContent && isset($existingContent->content['logo'])) {
-            $oldLogo = public_path($existingContent->content['logo']);
-            if (file_exists($oldLogo) && $existingContent->content['logo'] !== 'frontend/img/logo_turkce.png') {
-                @unlink($oldLogo);
+        // Hero section için özel işlem
+        if($section == 'hero') {
+            // Mevcut hero verisini al
+            $existingHero = HomepageContent::where('section', 'hero')->first();
+            
+            // Content'i hazırla
+            $content = [
+                'badge' => $request->input('badge'),
+                'title' => $request->input('title'),
+                'highlight' => $request->input('highlight'),
+                'description' => $request->input('description'),
+                'primary_button_text' => $request->input('primary_button_text'),
+                'primary_button_icon' => $request->input('primary_button_icon'),
+                'secondary_button_text' => $request->input('secondary_button_text'),
+                'secondary_button_icon' => $request->input('secondary_button_icon'),
+                'features' => json_decode($request->input('features'), true),
+                'floating_stat' => json_decode($request->input('floating_stat'), true),
+            ];
+            
+            // Mevcut resimleri koru
+            if($existingHero && isset($existingHero->content['image'])) {
+                $content['image'] = $existingHero->content['image'];
             }
+            if($existingHero && isset($existingHero->content['mobile_image'])) {
+                $content['mobile_image'] = $existingHero->content['mobile_image'];
+            }
+            
+            // Ana resim yüklendiyse
+            if ($request->hasFile('image')) {
+                // Eski resmi sil (default resim değilse)
+                if($existingHero && isset($existingHero->content['image']) && $existingHero->content['image'] != 'frontend/img/anasayfa2.png') {
+                    $oldImagePath = public_path($existingHero->content['image']);
+                    if(file_exists($oldImagePath)) {
+                        @unlink($oldImagePath);
+                    }
+                }
+                
+                // Yeni resmi yükle
+                $image = $request->file('image');
+                $imageName = 'hero_' . time() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('frontend/img'), $imageName);
+                $content['image'] = 'frontend/img/' . $imageName;
+            }
+            
+            // Mobil resim yüklendiyse
+            if ($request->hasFile('mobile_image')) {
+                // Eski mobil resmi sil
+                if($existingHero && isset($existingHero->content['mobile_image'])) {
+                    $oldMobileImagePath = public_path($existingHero->content['mobile_image']);
+                    if(file_exists($oldMobileImagePath)) {
+                        @unlink($oldMobileImagePath);
+                    }
+                }
+                
+                // Yeni mobil resmi yükle
+                $mobileImage = $request->file('mobile_image');
+                $mobileImageName = 'hero_mobile_' . time() . '.' . $mobileImage->getClientOriginalExtension();
+                $mobileImage->move(public_path('frontend/img'), $mobileImageName);
+                $content['mobile_image'] = 'frontend/img/' . $mobileImageName;
+            }
+            
+            // Database'e kaydet
+            HomepageContent::updateOrCreate(
+                ['section' => $section],
+                [
+                    'content' => $content,
+                    'is_active' => true
+                ]
+            );
+            
+            return response()->json(['success' => true, 'message' => 'Hero bölümü güncellendi']);
         }
         
-        // Yeni logoyu kaydet
-        $filename = 'logo_' . time() . '.' . $logoFile->getClientOriginalExtension();
-        $logoFile->move(public_path('frontend/img'), $filename);
+        // Diğer section'lar için
+        $content = $request->input('content');
         
-        // Content'e logo path'i ekle
-        $content['logo'] = 'frontend/img/' . $filename;
-    }
-    
-    // Hero section için özel işlem
-    if($section == 'hero') {
-        // Mevcut hero verisini al
-        $existingHero = HomepageContent::where('section', 'hero')->first();
+        // JSON string ise decode et
+        if (is_string($content)) {
+            $content = json_decode($content, true);
+        }
         
-        // Hero için özel işlem (resim upload)
-        $content = [
-            'title' => $request->input('title'),
-            'highlight' => $request->input('highlight'),
-            'description' => $request->input('description'),
-            'primary_button_text' => $request->input('primary_button_text'),
-            'primary_button_icon' => $request->input('primary_button_icon'),
-            'secondary_button_text' => $request->input('secondary_button_text'),
-            'secondary_button_icon' => $request->input('secondary_button_icon'),
-            'features' => json_decode($request->input('features'), true),
-            'image' => $existingHero && isset($existingHero->content['image']) ? $existingHero->content['image'] : 'frontend/img/anasayfa2.png' // Mevcut resmi koru
-        ];
-        
-        // Yeni resim yüklendiyse
-        if ($request->hasFile('image')) {
-            // Eski resmi sil (default resim değilse)
-            if($existingHero && isset($existingHero->content['image']) && $existingHero->content['image'] != 'frontend/img/anasayfa2.png') {
-                $oldImagePath = public_path($existingHero->content['image']);
-                if(file_exists($oldImagePath)) {
-                    @unlink($oldImagePath);
+        // Navbar için logo upload kontrolü
+        if ($section === 'navbar_content' && $request->hasFile('logo')) {
+            $logoFile = $request->file('logo');
+            
+            // Eski logoyu sil (default değilse)
+            $existingContent = HomepageContent::where('section', 'navbar_content')->first();
+            if ($existingContent && isset($existingContent->content['logo'])) {
+                $oldLogo = public_path($existingContent->content['logo']);
+                if (file_exists($oldLogo) && $existingContent->content['logo'] !== 'frontend/img/logo_turkce.png') {
+                    @unlink($oldLogo);
                 }
             }
             
-            // Yeni resmi yükle
-            $image = $request->file('image');
-            $imageName = 'hero_' . time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('frontend/img'), $imageName);
-            $content['image'] = 'frontend/img/' . $imageName;
+            // Yeni logoyu kaydet
+            $filename = 'logo_' . time() . '.' . $logoFile->getClientOriginalExtension();
+            $logoFile->move(public_path('frontend/img'), $filename);
+            
+            // Content'e logo path'i ekle
+            $content['logo'] = 'frontend/img/' . $filename;
         }
+        
+        // Database'e kaydet
+        HomepageContent::updateOrCreate(
+            ['section' => $section],
+            [
+                'content' => $content,
+                'is_active' => true
+            ]
+        );
+        
+        return response()->json(['success' => true, 'message' => 'İçerik güncellendi']);
+        
+    } catch (\Exception $e) {
+        \Log::error('Homepage Content Update Error: ' . $e->getMessage());
+        return response()->json(['success' => false, 'message' => 'Bir hata oluştu: ' . $e->getMessage()], 500);
     }
-    
-    // Database'e kaydet (tüm section'lar için ortak)
-    HomepageContent::updateOrCreate(
-        ['section' => $section],
-        [
-            'content' => $content,
-            'is_active' => true
-        ]
-    );
-    
-    return response()->json(['success' => true, 'message' => 'İçerik güncellendi']);
 }
 // Navbar & Footer Yönetimi
 public function navigationSettings()

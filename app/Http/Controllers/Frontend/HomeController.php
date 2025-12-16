@@ -102,25 +102,9 @@ class HomeController extends Controller
                 return $item->data;
             });
 
-        // Hero İçeriği
-        $hero = HomepageContent::getSection('hero');
-        if(!$hero) {
-        $hero = [
-            'title' => 'Teknik Servis İşletmenizi',
-            'highlight' => 'Dijitalleştirin',
-            'description' => 'Müşteri, servis, stok ve personel yönetiminizi tek platformdan yönetin. İşlerinizi hızlandırın, maliyetleri düşürün, müşteri memnuniyetini artırın.',
-            'primary_button_text' => 'Hemen Başla',
-            'primary_button_icon' => 'fas fa-rocket',
-            'secondary_button_text' => 'Demo İzle',
-            'secondary_button_icon' => 'fas fa-play-circle',
-            'features' => [
-                ['icon' => 'fas fa-check-circle', 'text' => '14 gün ücretsiz'],
-                ['icon' => 'fas fa-check-circle', 'text' => 'Kredi kartı gerektirmez'],
-                ['icon' => 'fas fa-check-circle', 'text' => 'Anında kurulum']
-            ],
-            'image' => 'frontend/img/anasayfa2.png'
-        ];
-       }
+// Hero İçeriği
+$hero = HomepageContent::getSection('hero');
+
        // Bölüm Başlıkları
         $sectionHeaders = HomepageContent::getSection('section_headers');
         if(!$sectionHeaders) {
