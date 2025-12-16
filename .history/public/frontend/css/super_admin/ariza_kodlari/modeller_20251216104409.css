@@ -1,0 +1,124 @@
+
+/* Üst alan düzeni */
+.align-items-center.justify-content-between {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.col-auto {
+    flex: 0 0 auto;
+}
+
+/* DataTable özelleştirme - Sadece arama kutusu */
+#modelTable_wrapper .dataTables_filter {
+    float: right;
+}
+
+#modelTable_wrapper .dataTables_filter label {
+    font-weight: normal;
+}
+
+#modelTable_wrapper .dataTables_filter input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-left: 5px;
+    width: 250px;
+}
+
+#modelTable_wrapper .dataTables_filter input:focus {
+    outline: none;
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* Modal açılma animasyonu */
+.modal.fade .modal-dialog {
+    transition: transform 0.2s ease-out;
+}
+
+/* Modal kapatma butonu */
+.modal-header .close {
+    padding: 0.5rem 0.75rem;
+    margin: -0.5rem -0.75rem -0.5rem auto;
+    opacity: 0.8;
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.3);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-header .close:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.modal-header .close:focus {
+    outline: none;
+}
+
+/* Buton hover efektleri */
+.btn-group-sm .btn {
+    transition: all 0.2s;
+}
+
+.btn-group-sm .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Modal footer butonları ortala */
+.modal-footer {
+    justify-content: center;
+    padding: 0.75rem;
+}
+
+/* DataTables Arama Kutusu Özelleştirme */
+#searchPlaceholder .dataTables_filter {
+    float: none !important;
+    margin: 0 !important;
+    text-align: right;
+}
+
+#searchPlaceholder .dataTables_filter label {
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+#searchPlaceholder .dataTables_filter input {
+    margin-left: 10px !important;
+    height: 34px;
+    padding: 4px 10px;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    outline: none;
+    width: 200px;
+}
+
+
+
+/* Model Ekle Butonu - position: absolute KALDIRILDI */
+.modelEkleBtn i {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    
+}
+
+/* Model adı hover efekti */
+.model-adi-link {
+    transition: all 0.2s;
+}
+
+.model-adi-link:hover {
+    color: #0056b3 !important;
+    text-decoration: underline;
+}
