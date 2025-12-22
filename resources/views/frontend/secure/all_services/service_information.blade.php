@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/services/service_information.css') }}" rel="stylesheet" type="text/css" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <form method="POST" id="servisDuzenle">
   @csrf

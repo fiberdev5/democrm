@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/services/batch_plannings.css') }}" rel="stylesheet" type="text/css" />
 <div class="row wrap">
   <div class="col-lg-3 custom-service-r sol">
     <div id="planlamaSearch" class=" show">

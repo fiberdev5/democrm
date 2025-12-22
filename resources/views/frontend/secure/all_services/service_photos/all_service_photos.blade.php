@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/services/all_service_photos.css') }}" rel="stylesheet" type="text/css" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <form id="servisFotoEkle" enctype="multipart/form-data">
     <div class="upload-zone" onclick="document.getElementById('resimInput').click()">

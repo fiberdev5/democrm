@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/services/add_service.css') }}" rel="stylesheet" type="text/css" />
 <div class="container">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   @if($service_resources->isEmpty())
@@ -50,7 +49,7 @@
           
           <select class="form-select servisReso" name="servisReso" 
                   style="width: 152px; display: inline-block;" required>
-            <option value="">Seçiniz</option>
+            <option value="">SEÇİNİZ</option>
             @foreach($service_resources as $item)
               <option value="{{ $item->id }}">{{ $item->kaynak }}</option>
             @endforeach
@@ -88,14 +87,14 @@
                 </div>
                 <div class="row form-group">
                   <div class="col-md-4 rw1"><label>Telefon <span style="font-weight: bold; color: red;">*</span></label></div>
-                  <div class="col-md-4 col-6 custom-p-r-m-md rw2"><input type="text" name="tel1" class="form-control phone tel1" autocomplete="off" placeholder="Telefon 1" required></div>
-                  <div class="col-md-4 col-6 custom-p-m-md rw2"><input type="text" name="tel2" class="form-control phone tel2" autocomplete="off" placeholder="Telefon 2"></div>
+                  <div class="col-md-4 col-6 custom-p-r-m-md rw2"><input type="text" name="tel1" class="form-control phone tel1" autocomplete="off" placeholder="TELEFON 1" required></div>
+                  <div class="col-md-4 col-6 custom-p-m-md rw2"><input type="text" name="tel2" class="form-control phone tel2" autocomplete="off" placeholder="TELEFON 2"></div>
                 </div>
                 <div class="row form-group">
                   <div class="col-md-4 rw1"><label>İl/İlçe <span style="font-weight: bold; color: red;">*</span></label></div>
                   <div class="col-md-4 col-6 custom-p-r-m-md rw2">
                     <select class="form-control form-select il" name="il" id="countrySelect" required>
-                      <option value="">-Seçiniz-</option>
+                      <option value="">-SEÇİNİZ-</option>
                       @foreach($iller as $il)
                         <option value="{{ $il->id }}" {{ $il->id == 34 ? 'selected' : '' }}>{{ $il->name }}</option>
                       @endforeach
@@ -115,12 +114,8 @@
                 <div class="row form-group" id="tcNoRow" style="border: 0;margin-bottom: 0">
                   <div class="col-md-4 rw1"><label>T.C. No</label></div>
                   <div class="col-md-8 rw2">
-                    <input type="text" name="tcNo" id="tcKimlik" class="form-control tcNo" autocomplete="off" placeholder="11 haneli TC Kimlik No">
-                    @if(isset($hasInvoiceIntegration) && $hasInvoiceIntegration)
-                      <small class="text-muted" style="display: block; margin-top: 5px;">
-                        <i class="fas fa-info-circle"></i> Fatura kesilecekse TC No zorunludur 
-                      </small>
-                    @endif
+                    <input type="text" name="tcNo" id="tcKimlik" class="form-control tcNo" autocomplete="off" placeholder="TC">
+                    
                   </div>
                 </div>
                 
@@ -160,7 +155,7 @@
                         </button>
                       @endif
                       <select class="form-select cihazMarka flex-grow-1" name="cihazMarka" required>
-                        <option value="">-Seçiniz-</option>
+                        <option value="">-SEÇİNİZ-</option>
                         @foreach($device_brands as $marka)
                           <option value="{{ $marka->id }}">{{ $marka->marka }}</option>
                         @endforeach
@@ -183,7 +178,7 @@
                         </button>
                       @endif
                       <select class="form-select cihazTur flex-grow-1" name="cihazTur" required>
-                        <option value="">-Seçiniz-</option>
+                        <option value="">-SEÇİNİZ-</option>
                         @foreach($device_types as $cihaz)
                           <option value="{{ $cihaz->id }}">{{ $cihaz->cihaz }}</option>
                         @endforeach
@@ -210,7 +205,7 @@
                   <div class="col-md-4 rw1"><label>Garanti Süresi</label></div>
                   <div class="col-md-8">
                     <select class="form-control form-select" name="cihazGaranti">
-                      <option value="">-Seçiniz-</option>
+                      <option value="">-SEÇİNİZ-</option>
                       @foreach($warranty_periods as $index => $garanti)
                         <option value="{{ $garanti->id }}" {{ $index == 0 ? 'selected' : '' }}>
                           {{ $garanti->garanti }} Ay
@@ -376,12 +371,12 @@ $(document).ready(function() {
   function loadCities(countryId) {
     var citySelect = $("#citySelect");
     citySelect.empty(); // Önceki seçenekleri temizle
-    citySelect.append(new Option("-Seçiniz-", "")); // Kullanıcıya yükleniyor bilgisi ver
+    citySelect.append(new Option("-SEÇİNİZ-", "")); // Kullanıcıya yükleniyor bilgisi ver
 
     // AJAX isteğiyle şehirleri al
     $.get("/get-states/" + countryId, function(data) {
       citySelect.empty(); // Yükleniyor mesajını temizle
-      citySelect.append(new Option("-Seçiniz-", "")); // İlk boş seçeneği ekle
+      citySelect.append(new Option("-SEÇİNİZ-", "")); // İlk boş seçeneği ekle
       $.each(data, function(index, city) {
         citySelect.append(new Option(city.ilceName, city.id));
       });
@@ -660,24 +655,16 @@ $(document).ready(function () {
       // Sadece yeni müşteri ekleniyorsa kontrol yap (mevcut müşteri seçilmediyse)
       if (!eskiMusteriId || eskiMusteriId === '') {
         if (musteriTipi == '1') {
-          // Bireysel Müşteri - TC No Kontrolü
+          // Bireysel Müşteri - TC No Kontrolü (sadece uzunluk)
           var tcNo = $('#tcKimlik').val().replace(/\s/g, '');
           
-          if (!tcNo || tcNo.length === 0) {
-            // TC No boş - Kullanıcıya sor
-            var confirmMessage = 'Fatura keseceğiniz bir müşteriyse TC Kimlik Numarası girmeniz önerilir.\n\n' +
-                                'TC No olmadan devam etmek istiyor musunuz?';
-            
-            if (!confirm(confirmMessage)) {
-              formIsValid = false;
-              $('#tcKimlik').focus();
-              return false;
-            }
-          } else if (tcNo.length !== 11) {
+          // TC No girildiyse sadece uzunluk kontrolü yap
+          if (tcNo && tcNo.length !== 11) {
             errorMessage = 'TC Kimlik Numarası 11 haneli olmalıdır.';
             formIsValid = false;
             $('#tcKimlik').focus();
           }
+          // TC No boşsa hiçbir şey yapma, devam et
         } 
         else if (musteriTipi == '2') {
           // Kurumsal Müşteri - Vergi No ZORUNLU

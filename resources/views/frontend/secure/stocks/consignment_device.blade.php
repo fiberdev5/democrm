@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/stocks/consignment_device.css') }}" rel="stylesheet" type="text/css" />
 {{-- Daterangepicker için gerekli kütüphaneler --}}
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
@@ -53,7 +52,7 @@ $stockAll = App\Models\Stock::where('firma_id', $firma->id)
   <div class="consignment-buttons-container">
     @if(is_null($konsinyeLimit) || $konsinyeLimit == -1 || $stockAll < $konsinyeLimit)
       <a data-bs-toggle="modal" data-bs-target="#addConsignmentModal" class="btn btn-success btn-sm addConsignment">
-        <i class="fas fa-plus"></i><span>Cihaz Ekle</span>
+        <span>Cihaz Ekle</span>
       </a>
     @else
       <a class="btn btn-success btn-sm addStock" disabled style="pointer-events: none; opacity: .4; cursor: default;">

@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/dealer/edit_dealer.css') }}" rel="stylesheet" type="text/css" />
 <form method="post" id="editBayi" action="{{ route('update.dealer', [$firma->id, $bayi->user_id]) }}" enctype="multipart/form-data">
   @csrf
 

@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-  <link href="{{ asset('frontend/css/cash_transactions/all_cash_transaction.css') }}" rel="stylesheet" type="text/css" />
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>

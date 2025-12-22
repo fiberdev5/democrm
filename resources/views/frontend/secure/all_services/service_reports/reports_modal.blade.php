@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/services/service_reports_modal.css') }}" rel="stylesheet" type="text/css" />
 <div id="serviceReportAccordion">
   <div class="accordion-item">
     <h2 class="accordion-header" id="heading1">

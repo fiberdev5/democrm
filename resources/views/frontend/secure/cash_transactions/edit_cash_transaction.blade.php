@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/cash_transactions/edit_cash_transaction.css') }}" rel="stylesheet" type="text/css" />
 <form method="post" id="editDom" action="{{ route('update.cash.transaction', $firma->id) }}" enctype="multipart/form-data" class="needs-validation" novalidate>
   @csrf
   @php 

@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/cash_transactions/add_cash_transaction.css') }}" rel="stylesheet" type="text/css" />
 <form method="post" id="addCashTransaction" action="{{ route('store.cash.transaction', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
   @csrf
   <input type="hidden" name="form_token" id="cashFormToken" value="">

@@ -1,7 +1,6 @@
 {{-- resources/views/frontend/secure/storage/packages.blade.php --}}
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/storage/storage_packages.css') }}" rel="stylesheet" type="text/css" />
 <div class="page-content">
   <div class="container-fluid">
     <!-- Başlık -->

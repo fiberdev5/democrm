@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/stocks/edit_stock.css') }}" rel="stylesheet" type="text/css" />
 <div class="modal-header">
     <h5 class="modal-title" id="editStockModal">Stok Detayları ve Yönetimi [{{ $stock->urunAdi }}]</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
@@ -368,18 +367,17 @@
 </div>
 
           <!-- Tedarikçi -->
-          <!-- Tedarikçi -->
 <div class="row mb-3" id="tedarikciSelectDiv">
   <label for="tedarikciSelect" class="col-sm-4 col-4 col-form-label">Tedarikçi</label>
   <div class="col-sm-8 col-8">
-    <div class="input-group">
-      <select name="tedarikci" id="tedarikciSelect" class="form-select">
+    <div class="input-group input-group-sm">
+      <select name="tedarikci" id="tedarikciSelect" class="form-select form-select-sm">
         <option value="">Seçiniz</option>
         @foreach($sonTedarikciler as $tedarikci)
         <option value="{{ $tedarikci->id }}">{{ $tedarikci->tedarikci }}</option>
         @endforeach
       </select>
-      <button class="btn btn-success" type="button" id="addNewSupplierBtn">
+      <button class="btn btn-success btn-sm" type="button" id="addNewSupplierBtn">
         +
       </button>
     </div>
@@ -417,8 +415,8 @@
 
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-          <button type="submit" class="btn btn-primary">Kaydet</button>
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">İptal</button>
+          <button type="submit" class="btn btn-primary btn-sm">Kaydet</button>
         </div>
       </div>
     </form>

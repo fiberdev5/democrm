@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/super_admin/invoices/edit_invoices.css') }}" rel="stylesheet" type="text/css" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="edit_invoices_superadmin">
 <form method="post" id="editInvo" action="{{ route('super.admin.invoices.update')}}" enctype="multipart/form-data" class="needs-validation" novalidate>

@@ -1,7 +1,6 @@
 {{-- resources/views/frontend/secure/super_admin/support/dashboard.blade.php --}}
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/super_admin/support/dashboard.css') }}" rel="stylesheet" type="text/css" />
 
 <div class="page-content">
     <div class="container-fluid">

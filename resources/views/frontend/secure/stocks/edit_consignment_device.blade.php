@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/stocks/edit_consignment_device.css') }}" rel="stylesheet" type="text/css" />
 <div class="modal-header">
     <h5 class="modal-title" id="editConsignmentModalTitle">Konsinye Cihaz Detayları [{{ $stock->urunAdi }}]</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
@@ -360,8 +359,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">İptal</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Kaydet</button>
                 </div>
             </div>
         </form>

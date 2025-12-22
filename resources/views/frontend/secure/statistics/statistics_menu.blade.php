@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/statistics/statistics-menu.css') }}" rel="stylesheet" type="text/css" />
 <div class="row pageDetail">
   <div class="col-12">
     <div class="row">

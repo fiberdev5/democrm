@@ -1,7 +1,9 @@
+
 @extends('frontend.secure.user_master')
 @section('user')
 <div class="page-content">
     <div class="container-fluid">
+        
         
         <div class="row">
             <div class="col-12">
@@ -353,4 +355,5 @@ $(document).on('input', '.sector-slug', function() {
     });
 });
 </script>
+
 @endsection

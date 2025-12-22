@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/super_admin/ariza_kodlari/modeller.css') }}" rel="stylesheet" type="text/css" />
 <div class="page-content" id="passwords">
     <div class="container-fluid">
         <div class="row pageDetail">
