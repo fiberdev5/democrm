@@ -1,0 +1,105 @@
+/* service_statistics.css - Servis İstatistikleri Sayfası için özel stiller */
+
+#serviceStatsPage .servisDrop {
+  transition: none !important;
+  animation: none !important;
+  transform: translate3d(1px, 2px, 0px) !important;
+}
+
+#serviceStatsPage .card-statics {
+  border: 1px solid rgba(0, 0, 0, .125) !important;
+}
+
+#serviceStatsPage .card-statics-header {
+  background-color: #f7f7f7 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+  margin-bottom: 7px !important;
+  padding: 4px 7px !important;
+}
+
+#serviceStatsPage .card-statics-body {
+  padding: 3px 7px !important;
+}
+
+#serviceStatsPage .period-statistics {
+  border: 1px solid #d7d7d7;
+  padding: 5px;
+}
+
+#serviceStatsPage .sayfaBaslik .btn-group {
+  padding-right: 5px !important;
+  padding-top: 5px !important;
+}
+
+#serviceStatsPage .istatistik-card .sayfaBaslik {
+  padding: 5px;
+  padding-left: 9px !important;
+  background-color: #e5e4e4;
+}
+
+#serviceStatsPage .card-p-c {
+  margin-bottom: 0px !important;
+}
+
+#serviceStatsPage .grafik-t-c {
+  margin-top: 10px !important;
+}
+
+
+#serviceStatsPage .col-j {
+  background-color: #e5e4e4 !important;
+}
+
+@media (min-width: 576px) {
+  #serviceStatsPage .calendar {
+    margin-top: 4px !important;
+    margin-right: 5px !important;
+  }
+}
+
+@media (max-width: 576px) {
+  #serviceStatsPage .tarihAraligi {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 2px !important;
+  }
+
+  #serviceStatsPage .head-b {
+    font-size: 17px !important;
+  }
+
+  #serviceStatsPage .head-padding h5 {
+    font-size: 14px;
+    margin-top: 5px !important;
+  }
+
+  #serviceStatsPage .col-c {
+    flex-direction: row !important;
+  }
+
+  #serviceStatsPage .col-j {
+    align-items: flex-start !important;
+    margin-top: 3px;
+  }
+
+  #serviceStatsPage .grafik-csutom {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  #serviceStatsPage .tarih-m-l {
+    margin-left: -46px;
+  }
+
+  #serviceStatsPage .servisSayilariChart .nav-link,
+  #serviceStatsPage .servisSaatleriChart .nav-link {
+    padding: 0.35rem 0.3rem !important;
+  }
+
+  #serviceStatsPage .btn-secondary {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+  }
+}

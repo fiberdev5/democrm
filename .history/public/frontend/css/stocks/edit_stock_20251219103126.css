@@ -1,0 +1,56 @@
+/* edit_stock.css - Stok Düzenleme Modal için özel stiller */
+
+#editStockModal .card-stock {
+  border: 1px solid rgba(0, 0, 0, .125) !important;
+}
+
+#editStockModal .card-stock-header {
+  background-color: #f7f7f7 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+  margin-bottom: 7px !important;
+  padding: 6px 7px !important;
+}
+
+#editStockModal .card-stock-body {
+  padding: 5px 7px !important;
+}
+
+#hareketEkleModal .modal-dialog-stok-hereketi {
+  max-width: 342px;
+  margin: 1.75rem auto;
+}
+
+#editStockModal .table > tbody > tr > td {
+  padding-left: 3px !important;
+}
+
+#editStockModal .modal-footer {
+  padding: 2px !important;
+}
+
+#hareketEkleModal .modal-footer {
+  padding: 2px !important;
+}
+
+@media (max-width: 767px) {
+  #hareketEkleModal.stokhareket-modal {
+    padding: 5px !important;
+  }
+
+  #editStockModal #editStockModal {
+    font-size: 14px !important;
+  }
+
+  #editStockModal .card-header {
+    padding: 5px !important;
+  }
+
+  #editStockModal .card-header h5 {
+    padding: 1px !important;
+    font-size: 13px !important;
+  }
+
+  #editStockModal .row > .col-lg-7 {
+    margin-bottom: 0px !important;
+  }
+}

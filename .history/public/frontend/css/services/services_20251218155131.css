@@ -1,0 +1,158 @@
+/* services.css - Servisler Sayfası için özel stiller */
+
+#servicesPage .custom-size {
+  max-width: 376px !important;
+}
+
+@media (min-width: 768px) {
+  #servicesPage .custom-modal-width {
+    max-width: 380px !important;
+    margin: 1.75rem auto;
+  }
+}
+
+#servicesPage .servisDrop {
+  transition: none !important;
+  animation: none !important;
+  transform: translate3d(1px, 2px, 0px) !important;
+}
+
+#servicesPage .searchWrap.kullanici_teknisyenfiltre {
+  visibility: hidden;
+  opacity: 0;
+}
+
+/* Servisler sayfası için özel dropdown genişliği */
+#servicesPage .searchWrap .dropdown-menu {
+  width: 350px;
+}
+
+#servicesPage .searchWrap .tarih-araligi {
+  width: 100%;
+}
+
+#servicesPage .table>tbody>tr>td>.t-link {
+  color: #000;
+}
+
+@media (max-width: 767px) {
+  #servicesPage .dataTables_filter {
+    margin-right: 0px !important;
+  }
+
+  #servicesPage .addServiceModal .ekle-modal {
+    width: auto !important;
+  }
+
+  #servicesPage .ekle-modal {
+    width: auto !important;
+  }
+
+  #servicesPage #addServiceModal .c1 {
+    padding-right: 0px !important;
+  }
+
+  #servicesPage .pageDetail .searchWrap .tarihAraligi .btn {
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
+  }
+
+  #servicesPage .custom-p {
+    padding-left: 0px !important;
+  }
+
+  #servicesPage .pageDetail .searchWrap {
+    width: 26% !important;
+  }
+
+  #servicesPage .searchWrap {
+    margin-top: 0px !important;
+  }
+
+  #servicesPage div.dataTables_filter input {
+    margin-left: 0px !important;
+  }
+
+  #servicesPage .top {
+    margin-top: 19px;
+  }
+
+  #servicesPage div.dataTables_wrapper div.dataTables_filter input {
+    width: 227px !important;
+  }
+
+  #servicesPage .servisDrop {
+    inset: 0px 0px -412px -213px !important;
+  }
+
+  #servicesPage .pageDetail .searchWrap {
+    margin-bottom: 0px !important;
+    width: 30% !important;
+  }
+
+  #servicesPage div.dataTables_wrapper div.dataTables_filter input {
+    width: 100% !important;
+  }
+
+  #servicesPage .pageDetail .searchWrap .dropdown-menu {
+    transform: translate3d(26px, -59px, 0px) !important;
+    width: 100% !important;
+  }
+
+  #servicesPage .pageDetail .searchWrap .dropdown-menu .item {
+    margin-bottom: 0px !important;
+  }
+
+  #servicesPage thead.title tr th {
+    font-size: 12px;
+  }
+
+  #servicesPage .searchWrap .dropdown-menu {
+    padding: 0px !important;
+  }
+
+  #servicesPage .pageDetail .searchWrap .dropdown-menu .item {
+    padding: 3px !important;
+  }
+
+  #servicesPage .pageDetail .searchWrap .dropdown-menu {
+    min-width: calc(95vw - 97px) !important;
+  }
+
+  #servicesPage .p-cihaz {
+    margin-bottom: 0px !important;
+  }
+}
+
+/* Çok küçük mobil ekranlar için özel düzeltme */
+@media (max-width: 480px) {
+  #servicesPage .pageDetail .searchWrap .dropdown-menu {
+    min-width: calc(100vw - 72px) !important;
+    transform: translate3d(10px, -59px, 0px) !important;
+  }
+
+  #servicesPage div.dataTables_wrapper div.dataTables_filter input {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+@media (max-width: 767px) {
+  #servicesPage .pageDetail .searchWrap .dropdown-menu {
+    width: 92vw !important;
+    min-width: auto !important;
+    max-width: 95vw !important;
+    transform: none !important;
+    inset: auto !important;
+    position: absolute !important;
+    top: 100% !important;
+    right: -10px !important;
+    left: auto !important;
+    margin-top: 5px !important;
+  }
+
+  #servicesPage .pageDetail .searchWrap .dropdown-menu .item {
+    white-space: normal !important;
+  }
+}

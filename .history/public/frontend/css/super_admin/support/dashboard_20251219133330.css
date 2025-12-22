@@ -1,0 +1,27 @@
+/* dashboard.css - Destek Talepleri Dashboard Sayfası için özel stiller */
+
+@media (max-width: 768px) {
+  #supportDashboardPage .custom-header {
+    margin-top: 34px !important;
+  }
+
+  #supportDashboardPage .page-title-box {
+    padding-bottom: 7px !important;
+  }
+
+  #supportDashboardPage .quick-action-btn {
+    margin-bottom: 0px !important;
+  }
+
+  #supportDashboardPage .btn-secondary {
+    padding: 5px 6px !important;
+  }
+
+  #supportDashboardPage .fa-arrow-right {
+    font-size: 11px;
+  }
+
+  #supportDashboardPage .support-dashboard-table-modern .table td {
+    padding: 5px 4.85rem !important;
+  }
+}
