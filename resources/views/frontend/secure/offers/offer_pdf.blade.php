@@ -56,7 +56,7 @@
           </div>
           <div class="col c2">
             <div class="thumb">
-              <h4>{{$firma->firma_adi}}</h4>
+              <h4>{{$firma->firma_adi ?? ''}}</h4>
               <ul>
                 <li><span>Telefon</span>: 0{{$firma->tel1}}</li>
                 <li><span>GSM</span>: {{$firma->tel2}}</li>
