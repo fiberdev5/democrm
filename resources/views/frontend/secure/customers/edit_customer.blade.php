@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/customer/edit_customer.css') }}" rel="stylesheet" type="text/css" />
 <ul class="nav nav-pills " role="tablist" style="margin-bottom: 5px;">
   <li class="nav-item" style="font-size: 14px;"><a class="nav-link nav1 active" data-bs-toggle="pill" href="#tab1" data-id="{{$customer->id}}" role="tab">Müşteri Bilgileri</a></li>
   <li class="nav-item" style="font-size: 14px;"><a class="nav-link nav2" data-bs-toggle="pill" href="#tab2" data-id="{{$customer->id}}" role="tab">Servisleri</a></li>

@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/super_admin/integrations/all_integrations.css') }}" rel="stylesheet" type="text/css" />
   <!--<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>-->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>

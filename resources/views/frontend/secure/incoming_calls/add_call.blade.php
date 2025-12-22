@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/incoming_call/add_call.css') }}" rel="stylesheet" type="text/css" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <form method="post" id="addCall" action="{{ route('store.call', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
     @csrf

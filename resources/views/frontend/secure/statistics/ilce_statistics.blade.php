@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-    <link href="{{ asset('frontend/css/statistics/ilce_statistics.css') }}" rel="stylesheet" type="text/css" />
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />

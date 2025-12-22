@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/super_admin/integrations/add_integrations.css') }}" rel="stylesheet" type="text/css" />
 <form method="post" id="addIntegration" action="{{ route('super.admin.integration.store')}}" enctype="multipart/form-data">
     @csrf   
     <input type="hidden" name="form_token" id="formTokenIntegration" value="">

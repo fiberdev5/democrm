@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/super_admin/edit_tenants.css') }}" rel="stylesheet" type="text/css" />
 <!-- Header -->
 <div class="card-header text-white d-flex align-items-center justify-content-between p-3" >
   <!-- Add this hidden input in your modal -->

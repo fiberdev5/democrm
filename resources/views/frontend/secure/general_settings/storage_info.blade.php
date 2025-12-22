@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/general_settings/storage_info.css') }}" rel="stylesheet" type="text/css" />
 {{-- resources/views/components/storage-widget.blade.php --}}
 
 @php

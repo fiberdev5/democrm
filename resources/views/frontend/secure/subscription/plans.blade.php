@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/subscription/plans.css') }}" rel="stylesheet" type="text/css" />
 <script src="https://cdn.tailwindcss.com"></script>
 
 <div class="page-content plans-container">

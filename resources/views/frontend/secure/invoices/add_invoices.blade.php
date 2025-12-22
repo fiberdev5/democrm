@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/invoices/add_invoices.css') }}" rel="stylesheet" type="text/css" />
 @if(App\Services\InvoiceIntegrationFactory::hasIntegration($firma->id))
     <div class="alert alert-info mb-3">
         <i class="fas fa-sync-alt"></i> 

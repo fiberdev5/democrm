@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/customer/add_customer.css') }}" rel="stylesheet" type="text/css" />
 <form method="post" id="addCust" action="{{ route('store.customer', $firma->id)}}" enctype="multipart/form-data" >
   @csrf   
   <input type="hidden" name="form_token" id="formToken" value="">

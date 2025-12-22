@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/super_admin/dashboard.css') }}" rel="stylesheet" type="text/css" />
 <div class="page-content gradient-bg">
     <div class="container-fluid">
         <!-- Page Title -->
