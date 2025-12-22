@@ -1,1 +1,0 @@
-class="btn btn-info waves-effect waves-light"
