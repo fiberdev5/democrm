@@ -1,5 +1,5 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<link href="{{ asset('frontend/css/prim/index.css') }}" rel="stylesheet" type="text/css" />
+<!-- <link href="{{ asset('frontend/css/prim/index.css') }}" rel="stylesheet" type="text/css" /> -->
 <div class="container-fluid mt-1" >
   <div class="row">
     <div class="col-12">

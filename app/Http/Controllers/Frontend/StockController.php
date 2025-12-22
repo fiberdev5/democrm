@@ -46,8 +46,8 @@ public function AllStocks($tenant_id, Request $request)
 
     $firma = Tenant::findOrFail($tenant_id);
 
-     // Trial sürecinde veya inventory feature yoksa uyarı sayfası göster
-    if (!$firma->hasFeature('inventory') || $firma->isOnTrial()) {
+     // Trial sürecinde izin ver, değilse inventory feature kontrolü yap
+    if (!$firma->isOnTrial() && !$firma->hasFeature('inventory')) {
         return view('frontend.secure.stocks.no_inventory_feature', compact('firma'));
     }
 
@@ -624,7 +624,12 @@ public function storeServiceResourceAjax(Request $request, $tenant_id)
     }
     Cache::put($cacheKey, true, now()->addMinutes(10));
     
-    $request->validate(['kaynak' => 'required|string|max:255']);
+    $request->validate([
+        'kaynak' => 'required|string|max:18'
+    ], [
+        'kaynak.required' => 'Kaynak alanı zorunludur.',
+        'kaynak.max' => 'Kaynak en fazla 18 karakter olabilir.'
+    ]);
 
     $serviceResource = ServiceResource::create([
         'firma_id' => $tenant_id,
