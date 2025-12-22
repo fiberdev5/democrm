@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/stocks/edit_stock.css') }}" rel="stylesheet" type="text/css" />
 <div class="modal-header">
     <h5 class="modal-title" id="editStockModal">Stok Detayları ve Yönetimi [{{ $stock->urunAdi }}]</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>

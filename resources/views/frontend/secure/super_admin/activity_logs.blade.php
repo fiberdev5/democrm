@@ -1,5 +1,4 @@
 <!-- resources/views/secure/super_admin/activity_logs.blade.php -->
-<link href="{{ asset('frontend/css/super_admin/activity_logs.css') }}" rel="stylesheet" type="text/css" />
 <div class="container-fluid">
     <div class="card card-log">
         <div class="card-header card-log-header d-flex justify-content-between align-items-center">

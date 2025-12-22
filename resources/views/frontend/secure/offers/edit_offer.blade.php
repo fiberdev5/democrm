@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/offer/edit_offer.css') }}" rel="stylesheet" type="text/css" />
 <script type="text/javascript">
     function sayiKontrol(v) {
       var isNum = /^[0-9-'.']*$/;

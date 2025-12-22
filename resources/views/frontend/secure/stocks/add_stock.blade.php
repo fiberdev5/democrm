@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/stocks/add_stock.css') }}" rel="stylesheet" type="text/css" />
 @if($kategoriler->isEmpty() || $rafListesi->isEmpty())
 <!-- Ürün Grubu veya Raf Yoksa Uyarı -->
 <div class="alert alert-warning d-flex align-items-center justify-content-between flex-wrap" role="alert" style="margin-bottom: 15px; padding: 10px 15px; gap: 10px;">

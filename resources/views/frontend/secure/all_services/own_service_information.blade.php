@@ -1,5 +1,3 @@
-{{-- resources/views/servis/show.blade.php --}}
-<link href="{{ asset('frontend/css/services/own_service_information.css') }}" rel="stylesheet" type="text/css" />
 <div class="servisModal teknisyenServisModal">
     <form method="POST" id="servisDuzenle" action="">
         @csrf        

@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/invoices/edit_invoices.css') }}" rel="stylesheet" type="text/css" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 @php

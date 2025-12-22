@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/super_admin/invoices/add_invoices.css') }}" rel="stylesheet" type="text/css" />
 <div class="add_invoices_superadmin">
 <form method="post" id="addInvo" action="{{ route('super.admin.invoices.store')}}" enctype="multipart/form-data" class="needs-validation" novalidate>
 @csrf

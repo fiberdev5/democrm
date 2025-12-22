@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/dealer/all_dealer.css') }}" rel="stylesheet" type="text/css" />
   @php 
       if ($firma->isOnTrial()) {
       $dealerLimit = $firma->bayiSayisi ?? null;

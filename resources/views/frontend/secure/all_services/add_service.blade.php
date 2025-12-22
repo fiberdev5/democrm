@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/services/add_service.css') }}" rel="stylesheet" type="text/css" />
 <div class="container">
   <meta name="csrf-token" content="{{ csrf_token() }}">
   @if($service_resources->isEmpty())

@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/super_admin/all_tenants.css') }}" rel="stylesheet" type="text/css" />
   <div class="page-content">
     <div class="container-fluid staff-header-top">
       <div class="row pageDetail">

@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/staff/edit_staff.css') }}" rel="stylesheet" type="text/css" />
 <form method="post" id="editPers" action="{{ route('update.personel', [$firma->id, $staff->user_id]) }}" enctype="multipart/form-data">
     @csrf
     <div class="row">

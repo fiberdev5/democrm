@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/offer/add_offer.css') }}" rel="stylesheet" type="text/css" />
 <form method="post" id="addOffer" class="servisModal" action="{{ route('store.offer', $firma->id)}}" enctype="multipart/form-data" class="needs-validation" novalidate>
     @csrf
     <input type="hidden" name="form_token" id="offerFormToken" value="">

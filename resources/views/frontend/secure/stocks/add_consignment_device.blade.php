@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/stocks/add_consignment_device.css') }}" rel="stylesheet" type="text/css" />
 <form method="POST" id="addConsignmentDevice" action="{{ route('store.consignment.device', $tenant_id) }}" enctype="multipart/form-data">
     @csrf
     <input type="hidden" name="form_token" id="formToken" value="">

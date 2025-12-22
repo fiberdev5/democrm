@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/super_admin/payment_history.css') }}" rel="stylesheet" type="text/css" />
 <div class="page-content">
   <div class="container-fluid">
     <div class="row">

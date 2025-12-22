@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/services/service_batch_plannings_list.css') }}" rel="stylesheet" type="text/css" />
 <div class="card-header cardBaslik" style="padding: 5px 10px;font-size: 14px">
   @if(!empty($persID))
     @php $selectedPersonnel = $personeller->firstWhere('user_id', $persID) @endphp

@@ -1,4 +1,3 @@
-<link href="{{ asset('frontend/css/dealer/add_dealer.css') }}" rel="stylesheet" type="text/css" />
 <form method="post" id="addBayi" action="{{ route('store.dealer',$firma->id)}}" enctype="multipart/form-data" >
   @csrf   
   <input type="hidden" name="form_token" id="formToken" value="">

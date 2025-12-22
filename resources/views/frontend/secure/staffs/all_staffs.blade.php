@@ -1,6 +1,5 @@
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/staff/all_staff.css') }}" rel="stylesheet" type="text/css" />
   @php 
     if ($firma->isOnTrial()) {
       // Deneme süresinde => firmalar tablosundaki personelSayisi alanı kullanılacak

@@ -1,7 +1,6 @@
 {{-- resources/views/frontend/secure/super_admin/support/index.blade.php --}}
 @extends('frontend.secure.user_master')
 @section('user')
-<link href="{{ asset('frontend/css/super_admin/support/index.css') }}" rel="stylesheet" type="text/css" />
 <div class="page-content support-index-page">
     <div class="container-fluid">
         <!-- Başlık -->

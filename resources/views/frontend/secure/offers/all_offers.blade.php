@@ -1,7 +1,6 @@
 @extends('frontend.secure.user_master')
 @section('user')
 <meta name="csrf-token" content="{{ csrf_token() }}">
-<link href="{{ asset('frontend/css/offer/all_offer.css') }}" rel="stylesheet" type="text/css" />
 <link href="{{asset('backend/assets/css/bootstrap.min.css')}}" id="bootstrap-style" rel="stylesheet" type="text/css" />
 <!--<script src="{{asset('backend/assets/libs/jquery/jquery.min.js')}}"></script>-->
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
