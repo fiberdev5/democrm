@@ -1,0 +1,7 @@
+#editOffer .card-offer{border: 1px solid rgba(0, 0, 0, .125) !important;}
+#editOffer .card-offer-header{background-color: #f7f7f7 !important;border-bottom: 1px solid rgba(0, 0, 0, .125) !important;margin-bottom: 7px !important; padding: 4px 7px !important;}
+#editOffer .card-offer-body{padding: 3px 7px !important;}
+
+@media (max-width: 768px) {
+#editOffer .custom-gutter{    --bs-gutter-x: 5px !important;}
+ }

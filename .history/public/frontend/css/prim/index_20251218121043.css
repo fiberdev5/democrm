@@ -1,0 +1,23 @@
+ #primHesaplamaApp .card-header-custom{
+    border: 1px solid rgba(0, 0, 0, .125);
+  }
+  .card-body-custom{
+        border: 1px solid rgba(0, 0, 0, .125);
+  }
+  .staff-header{
+        padding: 6px 13px;
+    margin-bottom: 0px !important;
+  }
+  .card-custom{
+    margin-bottom: 4px !important;
+    padding: 3px;
+  }
+  @media (max-width: 767px) {
+    .border-none{
+    border: none !important;
+  }
+  #ozetKartlari .col-md-3{font-size: 13px !important;}
+  .prim-hesapla{flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 5px !important;}
+  }

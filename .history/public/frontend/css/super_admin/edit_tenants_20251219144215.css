@@ -1,0 +1,1327 @@
+/* edit_tenants.css - Müşteri Düzenleme Modal Sayfası için özel stiller */
+
+/* Info Cards */
+#editTenantModal .card-tenants {
+  border: 1px solid rgba(0, 0, 0, .125) !important;
+}
+
+#editTenantModal .card-tenants-header {
+  background-color: #f7f7f7 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, .125) !important;
+  margin-bottom: 7px !important;
+  padding: 4px 7px !important;
+}
+
+#editTenantModal .card-tenants-body {
+  padding: 3px 7px !important;
+}
+
+#editTenantModal .unified-subscription-storage-widget {
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+  border-radius: 16px;
+  padding: 10px 20px;
+  color: white;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+#editTenantModal .info-card {
+  background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+  border-radius: 16px;
+  padding: 10px 20px;
+  color: white;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+  height: 97%;
+  font-size: 14px;
+}
+
+#editTenantModal .info-card-title {
+  color: #ffffff;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+#editTenantModal .info-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 18px;
+}
+
+#editTenantModal .info-value {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+#editTenantModal .info-content {
+  /* Style for info-content if needed */
+}
+
+/* Subscription Section */
+#editTenantModal .subscription-header {
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 8px 12px;
+  border-radius: 6px 6px 0 0;
+}
+
+#editTenantModal .subscription-title {
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Subscription Details - Tek Column Full Width */
+#editTenantModal .subscription-details {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 10px;
+  width: 100%;
+}
+
+/* Storage Accordion Styles */
+#editTenantModal .storage-accordion-section {
+  margin-top: 5px !important;
+}
+
+#editTenantModal .accordion-button {
+  background-color: #f8f9fa;
+  font-weight: 500;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+}
+
+#editTenantModal .accordion-button:not(.collapsed) {
+  color: #212529 !important;
+  background-color: #e7f1ff;
+  box-shadow: none !important;
+}
+
+#editTenantModal .accordion-body {
+  padding: 8px 12px;
+  background: #ffffff;
+}
+
+/* Storage breakdown listesi için mevcut stiller korunur */
+#editTenantModal .storage-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#editTenantModal .storage-type {
+  font-size: 0.85rem;
+  min-width: 100px;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+#editTenantModal .storage-size {
+  font-size: 0.8rem;
+}
+
+#editTenantModal .detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+#editTenantModal .detail-row:last-child {
+  border-bottom: none;
+}
+
+#editTenantModal .detail-label {
+  font-size: 0.85rem;
+  min-width: 100px;
+  color: #1e293b;
+  font-weight: 600;
+}
+
+#editTenantModal .detail-value {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+#editTenantModal .detail-value.price {
+  /* Additional price styling */
+}
+
+#editTenantModal .detail-value.remaining {
+  /* Additional remaining styling */
+}
+
+/* Status Styling */
+#editTenantModal .status-active {
+  color: #16a34a;
+}
+
+#editTenantModal .status-trial {
+  color: #ea580c;
+}
+
+#editTenantModal .status-inactive {
+  color: #dc2626;
+}
+
+/* Storage Progress */
+#editTenantModal .storage-extra {
+  font-size: 0.75rem;
+  color: #059669;
+  display: block;
+  margin-top: 2px;
+}
+
+#editTenantModal .storage-progress {
+  margin-top: 6px;
+}
+
+#editTenantModal .progress-bar {
+  width: 100%;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#editTenantModal .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #f59e0b 70%, #ef4444 90%);
+  transition: width 0.3s ease;
+}
+
+/* History Table */
+#editTenantModal .subscription-history {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+#editTenantModal .history-title {
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+#editTenantModal .history-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+#editTenantModal .history-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 0.8rem;
+}
+
+#editTenantModal .history-table th {
+  background: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+#editTenantModal .history-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f3f4f6;
+  color: #1f2937;
+}
+
+#editTenantModal .history-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* No Subscription */
+#editTenantModal .no-subscription {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+#editTenantModal .no-subscription-text {
+  color: #6b7280;
+  font-size: 0.9rem;
+  background: #fef3c7;
+  border: 1px solid #fbbf24;
+  border-radius: 6px;
+  padding: 16px;
+  display: inline-block;
+}
+
+/* Ana Tab Stilleri */
+#editTenantModal .nav-pills .nav-link {
+  border-radius: 0.375rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+#editTenantModal .nav-pills .nav-link:hover {
+  background-color: rgba(13, 110, 253, 0.1);
+  color: #0d6efd;
+}
+
+#editTenantModal .nav-pills .nav-link.active {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* ÖDEME TABLOSU STİLLERİ - SADECE ÖDEME TABLOSU */
+#editTenantModal #payments-table {
+  border-collapse: separate !important;
+  border-spacing: 0;
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+#editTenantModal #payments-table th {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+  text-align: left !important;
+  vertical-align: middle;
+  padding: 0px 10px !important;
+  background-color: #f8f9fa;
+}
+
+#editTenantModal #payments-table td {
+  vertical-align: middle !important;
+  font-size: 0.8rem;
+  text-align: left !important;
+  padding: 12px !important;
+  border-bottom: 1px solid #dee2e6;
+  line-height: 1.4;
+}
+
+/* Tablo satır stilleri - sadece ödeme tablosu */
+#editTenantModal #payments-table .payment-row-clickable {
+  cursor: pointer;
+  min-height: 50px;
+}
+
+/* BUTON STİLLERİ - SADECE ÖDEME TABLOSU */
+#editTenantModal #payments-table .btn-group-sm {
+  display: inline-flex;
+  vertical-align: middle;
+  gap: 2px;
+}
+
+#editTenantModal #payments-table .btn-group-sm .btn {
+  padding: 5px 8px !important;
+  font-size: 0.75rem;
+  border: 1px solid #dee2e6;
+  background-color: #ffffff;
+  color: #495057;
+  margin: 0 1px;
+  min-width: 28px;
+  text-align: center;
+}
+
+/* Buton hover efektleri - sadece ödeme tablosu */
+#editTenantModal #payments-table .btn-outline-primary {
+  color: #0d6efd !important;
+  border-color: #0d6efd !important;
+  background-color: #ffffff !important;
+}
+
+#editTenantModal #payments-table .btn-outline-primary:hover {
+  color: #ffffff !important;
+  background-color: #0d6efd !important;
+  border-color: #0d6efd !important;
+}
+
+#editTenantModal #payments-table .btn-outline-info {
+  color: #0dcaf0 !important;
+  border-color: #0dcaf0 !important;
+  background-color: #ffffff !important;
+}
+
+#editTenantModal #payments-table .btn-outline-info:hover {
+  color: #ffffff !important;
+  background-color: #0dcaf0 !important;
+  border-color: #0dcaf0 !important;
+}
+
+/* Badge stilleri */
+#editTenantModal .badge.bg-opacity-10 {
+  --bs-bg-opacity: 0.1;
+}
+
+/* Loading spinner */
+#editTenantModal .spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Pagination düzenlemeleri */
+#editTenantModal .pagination-sm .page-link {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Tab content padding */
+#editTenantModal .tab-content > .tab-pane {
+  padding: 0;
+}
+
+/* Badge renkleri */
+#editTenantModal .text-primary { color: #0d6efd !important; }
+#editTenantModal .text-success { color: #198754 !important; }
+#editTenantModal .text-warning { color: #ffc107 !important; }
+#editTenantModal .text-danger { color: #dc3545 !important; }
+#editTenantModal .text-info { color: #0dcaf0 !important; }
+
+/* Card border renkleri */
+#editTenantModal .border-success { border-color: #198754 !important; }
+#editTenantModal .border-warning { border-color: #ffc107 !important; }
+#editTenantModal .border-danger { border-color: #dc3545 !important; }
+#editTenantModal .border-info { border-color: #0dcaf0 !important; }
+
+/* Loading state */
+#editTenantModal #payment-loading {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Error state */
+#editTenantModal #payment-error {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Payment Detail Modal Styles */
+#paymentDetailModal .modal-dialog {
+  max-width: 800px;
+}
+
+#paymentDetailModal .card {
+  border: 1px solid #e3e6f0;
+}
+
+#paymentDetailModal .card-header {
+  background-color: #f8f9fc !important;
+  border-bottom: 1px solid #e3e6f0;
+  font-weight: 600;
+}
+
+#paymentDetailModal .row.mb-2 {
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+#paymentDetailModal .row.mb-2:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* Loading, Error states */
+#paymentDetailModal #paymentDetailLoading,
+#paymentDetailModal #paymentDetailError {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Boş durum mesajı */
+#editTenantModal #no-payments-message {
+  padding: 40px 20px;
+}
+
+#editTenantModal #no-payments-message i {
+  opacity: 0.5;
+}
+
+/* Servis İstatistikleri Özel Stilleri */
+#editTenantModal .service-total-footer {
+  border-top: 1px solid #eee;
+  padding-top: 0.75rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+#editTenantModal .service-total-badge {
+  text-align: center;
+}
+
+#editTenantModal .service-total-number {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1.2;
+}
+
+#editTenantModal .service-total-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+/* Period Navigation - Daha dar */
+#editTenantModal .service-period-nav {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+}
+
+#editTenantModal .service-period-btn {
+  flex: 1;
+  min-width: 65px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  padding: 0.4rem 0.2rem;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 43px;
+}
+
+#editTenantModal .service-period-btn.active {
+  background: #ffffff;
+  border-color: #217aff;
+  box-shadow: 0 0 0 0.1rem rgba(13, 110, 253, 0.1);
+}
+
+#editTenantModal .period-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #495057;
+  margin-bottom: 0.1rem;
+  line-height: 1;
+}
+
+#editTenantModal .period-count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2c3e50;
+  line-height: 1;
+}
+
+/* Stats Cards - Daha dar */
+#editTenantModal .service-stats-card {
+  background: #ffffff;
+  border: 1px solid #e3e6f0;
+  border-radius: 0.375rem;
+  height: 100%;
+}
+
+#editTenantModal .service-stats-card-header {
+  background: #f8f9fc;
+  border-bottom: 1px solid #e3e6f0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem 0.375rem 0 0;
+}
+
+#editTenantModal .stats-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5a5c69;
+}
+
+#editTenantModal .service-stats-card-body {
+  padding: 0.5rem 0.75rem;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+#editTenantModal .stats-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.375rem 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+#editTenantModal .stats-item:last-child {
+  border-bottom: none;
+}
+
+#editTenantModal .stats-name {
+  flex: 1;
+  font-size: 0.8rem;
+  color: #495057;
+  word-break: break-word;
+}
+
+#editTenantModal .stats-count {
+  background: #e9ecef;
+  color: #495057;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  min-width: 25px;
+  text-align: center;
+}
+
+#editTenantModal .stats-empty {
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-align: center;
+  padding: 0.75rem 0;
+  font-style: italic;
+}
+
+/* TABLO RESPONSİVE DÜZENLEMESİ */
+#editTenantModal .table-responsive {
+  border-radius: 0.375rem;
+  overflow-x: auto;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#editTenantModal .table-responsive .table {
+  margin-bottom: 0;
+  min-width: 800px;
+}
+
+/* Tablo başlık hizalaması - sadece ödeme tablosu */
+#editTenantModal #payments-table thead th:nth-child(1) { width: 15%; }
+#editTenantModal #payments-table thead th:nth-child(2) { width: 12%; }
+#editTenantModal #payments-table thead th:nth-child(3) { width: 25%; }
+#editTenantModal #payments-table thead th:nth-child(4) { width: 12%; }
+#editTenantModal #payments-table thead th:nth-child(5) { width: 15%; }
+#editTenantModal #payments-table thead th:nth-child(6) { width: 12%; }
+#editTenantModal #payments-table thead th:nth-child(7) { width: 9%; }
+
+/* Ödeme Tablosu Genel Toplam */
+#editTenantModal .odemeToplamaAlani {
+  margin-top: -1px;
+  margin-bottom: 0;
+  clear: both;
+}
+
+#editTenantModal .odemeToplamaAlani .r1 {
+  background: #28a745;
+}
+
+#editTenantModal .odemeToplamaAlani .row {
+  margin: 1px;
+  color: #fff;
+  font-weight: 700;
+}
+
+#editTenantModal .odemeToplamaAlani .r1 .sol {
+  border-right: 1px solid #238c3b;
+}
+
+#editTenantModal .odemeToplamaAlani .row .sol {
+  text-align: right;
+  padding: 36px 15px;
+  border: 1px solid #e0e0e0;
+  float: left;
+  background: #eff2f7;
+  color: #000;
+  width: calc(100% - 230px);
+}
+
+#editTenantModal .odemeToplamaAlani .row .sag {
+  padding: 5px 15px;
+  float: right;
+  width: 230px;
+  text-align: left;
+  font-size: 13px!important;
+}
+
+#editTenantModal .odemeToplamaAlani .row .sag .tur span {
+  width: 97px;
+  display: inline-block;
+  text-align: left;
+}
+
+#editTenantModal .odemeToplamaAlani .row .sag .t4 {
+  border-top: 1px solid #fff;
+  padding-top: 8px;
+  margin-top: 5px;
+  font-weight: bolder;
+}
+
+#editTenantModal .odemeToplamaAlani .row .sag .t5 {
+  /* Additional t5 styling if needed */
+}
+
+/* Ödeme Geçmişi */
+#editTenantModal .card.mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+#editTenantModal #payment-info .card-body {
+  padding: 9px !important;
+}
+
+#editTenantModal #payment-info .card-body.p-0 {
+  padding: 0 !important;
+}
+
+#editTenantModal #payment-info .card {
+  margin-bottom: 0px !important;
+}
+
+#editTenantModal .card-header.bg-light {
+  padding: 12px 16px;
+}
+
+#editTenantModal #payments-table tbody tr:hover {
+  background-color: transparent !important;
+}
+
+/* Ödeme tablosundaki butonlar için Bootstrap btn-group border-radius özelliklerini devre dışı bırak */
+#editTenantModal #payments-table .btn-group > .btn-group:not(:last-child) > .btn,
+#editTenantModal #payments-table .btn-group > .btn:not(:last-child):not(.dropdown-toggle) {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+#editTenantModal #payments-table .btn-group > .btn-group:not(:first-child) > .btn,
+#editTenantModal #payments-table .btn-group > .btn:not(:first-child) {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+/* Unified Widget Styles */
+#editTenantModal .unified-subscription-storage-widget::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+  pointer-events: none;
+}
+
+#editTenantModal .unified-subscription-storage-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.2);
+}
+
+#editTenantModal .widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  position: relative;
+  z-index: 2;
+}
+
+#editTenantModal .widget-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+#editTenantModal .widget-icon {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+#editTenantModal .status-badge {
+  font-size: 10px;
+  padding: 3px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#editTenantModal .status-success {
+  background: rgba(40, 167, 69, 0.3);
+  border: 1px solid rgba(40, 167, 69, 0.5);
+}
+
+#editTenantModal .status-warning {
+  background: rgba(255, 193, 7, 0.3);
+  border: 1px solid rgba(255, 193, 7, 0.5);
+}
+
+#editTenantModal .status-danger {
+  background: rgba(220, 53, 69, 0.3);
+  border: 1px solid rgba(220, 53, 69, 0.5);
+}
+
+#editTenantModal .status-trial {
+  background: rgba(255, 133, 0, 0.3);
+  border: 1px solid rgba(255, 133, 0, 0.5);
+}
+
+#editTenantModal .status-inactive {
+  background: rgba(108, 117, 125, 0.3);
+  border: 1px solid rgba(108, 117, 125, 0.5);
+}
+
+#editTenantModal .widget-actions {
+  display: flex;
+  gap: 8px;
+}
+
+#editTenantModal .btn-refresh,
+#editTenantModal .btn-details {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  padding: 6px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  font-size: 12px;
+}
+
+#editTenantModal .btn-refresh:hover,
+#editTenantModal .btn-details:hover {
+  background: rgba(255,255,255,0.2);
+  transform: scale(1.05);
+}
+
+/* Main Content Layout */
+#editTenantModal .widget-main-content {
+  display: flex;
+  gap: 20px;
+  align-items: stretch;
+  position: relative;
+  z-index: 2;
+}
+
+#editTenantModal .subscription-section,
+#editTenantModal .storage-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#editTenantModal .widget-divider {
+  width: 1px;
+  background: rgba(255,255,255,0.2);
+  margin: 0 10px;
+  flex-shrink: 0;
+}
+
+#editTenantModal .section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+#editTenantModal .section-header i {
+  opacity: 0.8;
+}
+
+/* Plan Info */
+#editTenantModal .plan-info {
+  margin-bottom: 15px;
+}
+
+#editTenantModal .plan-name {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+#editTenantModal .plan-price {
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+/* Compact Progress Bars */
+#editTenantModal .time-progress-compact,
+#editTenantModal .storage-progress-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#editTenantModal .time-stats,
+#editTenantModal .storage-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+#editTenantModal .stat {
+  text-align: center;
+  flex: 1;
+}
+
+#editTenantModal .stat .value {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#editTenantModal .stat .label {
+  font-size: 11px;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+#editTenantModal .progress-bar-simple {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+#editTenantModal .progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.8s ease-in-out;
+}
+
+#editTenantModal .progress-fill.bg-success {
+  background: linear-gradient(90deg, #28a745, #20c997);
+}
+
+#editTenantModal .progress-fill.bg-warning {
+  background: linear-gradient(90deg, #ffc107, #fd7e14);
+}
+
+#editTenantModal .progress-fill.bg-danger {
+  background: linear-gradient(90deg, #dc3545, #e91e63);
+}
+
+#editTenantModal .date-info,
+#editTenantModal .storage-info {
+  text-align: center;
+}
+
+#editTenantModal .date-info small,
+#editTenantModal .storage-info small {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+/* Storage Status Badges */
+#editTenantModal .storage-status-badge {
+  font-size: 9px;
+  padding: 2px 5px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 8px;
+}
+
+#editTenantModal .storage-status-badge.success {
+  background: rgba(40, 167, 69, 0.3);
+  border: 1px solid rgba(40, 167, 69, 0.5);
+}
+
+#editTenantModal .storage-status-badge.warning {
+  background: rgba(255, 193, 7, 0.3);
+  border: 1px solid rgba(255, 193, 7, 0.5);
+}
+
+#editTenantModal .storage-status-badge.danger {
+  background: rgba(220, 53, 69, 0.3);
+  border: 1px solid rgba(220, 53, 69, 0.5);
+}
+
+/* Unified Details */
+#editTenantModal .unified-details {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  position: relative;
+  z-index: 2;
+}
+
+#editTenantModal .subscription-details-section,
+#editTenantModal .storage-details-section {
+  margin-bottom: 25px;
+}
+
+#editTenantModal .subscription-details-section h6,
+#editTenantModal .storage-details-section h6 {
+  margin: 0 0 15px 0;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.9);
+  font-weight: 600;
+}
+
+/* Subscription Details - Full Width List Style */
+#editTenantModal .subscription-details {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 15px;
+  width: 100%;
+}
+
+#editTenantModal .subscription-details-inline {
+  /* Inline details styling */
+}
+
+#editTenantModal .subscription-storage-detail {
+  /* Storage detail styling */
+}
+
+/* Storage Progress in Detail */
+#editTenantModal .storage-extra {
+  font-size: 11px;
+  color: #4ade80;
+  display: block;
+  margin-top: 2px;
+}
+
+#editTenantModal .storage-progress {
+  margin-top: 6px;
+}
+
+#editTenantModal .storage-progress .progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#editTenantModal .storage-progress .progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80 0%, #fbbf24 70%, #f87171 90%);
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+/* Storage Breakdown Container */
+#editTenantModal .storage-breakdown-container {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 15px;
+  width: 100%;
+}
+
+#editTenantModal .storage-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#editTenantModal .storage-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+#editTenantModal .storage-item:last-child {
+  border-bottom: none;
+}
+
+#editTenantModal .storage-item.total {
+  border-top: 1px solid rgba(255,255,255,0.2);
+  margin-top: 8px;
+  padding-top: 12px;
+  font-weight: 700;
+}
+
+#editTenantModal .storage-type {
+  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  font-weight: 500;
+}
+
+#editTenantModal .storage-size {
+  font-size: 13px;
+  color: rgba(255,255,255,0.95);
+  font-weight: 600;
+}
+
+/* Alert Messages */
+#editTenantModal .unified-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+#editTenantModal .alert-danger {
+  background: rgba(220, 53, 69, 0.15);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  color: #f8d7da;
+}
+
+#editTenantModal .alert-warning {
+  background: rgba(255, 193, 7, 0.15);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  color: #fff3cd;
+}
+
+#editTenantModal .alert-content strong {
+  margin-right: 8px;
+  font-size: 12px;
+}
+
+#editTenantModal .alert-content span {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+#editTenantModal .alert-content {
+  /* Content styling */
+}
+
+/* Loading Animation */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+#editTenantModal .unified-subscription-storage-widget.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+#editTenantModal .unified-subscription-storage-widget.loading .btn-refresh i {
+  animation: spin 1s linear infinite;
+}
+
+#editTenantModal .subscription-details-inline h6,
+#editTenantModal .storage-details-inline h6 {
+  font-size: 12px;
+  margin-bottom: 10px;
+  opacity: 0.8;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #editTenantModal .subscription-content .row {
+    flex-direction: column;
+  }
+
+  #editTenantModal .subscription-content .col-md-8,
+  #editTenantModal .subscription-content .col-md-4 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  #editTenantModal .storage-details-card {
+    margin-top: 20px;
+  }
+
+  #editTenantModal .subscription-content {
+    padding: 16px;
+  }
+
+  #editTenantModal .subscription-header {
+    padding: 12px 16px;
+  }
+
+  #editTenantModal .detail-row {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  #editTenantModal .detail-label {
+    min-width: auto;
+    font-weight: 600;
+  }
+
+  #editTenantModal .detail-value {
+    text-align: left;
+  }
+
+  #editTenantModal .table-responsive {
+    font-size: 0.75rem;
+  }
+
+  #editTenantModal .table td,
+  #editTenantModal .table th {
+    padding: 8px 10px !important;
+    font-size: 0.75rem;
+  }
+
+  #editTenantModal .btn-group-sm .btn {
+    padding: 4px 6px !important;
+    font-size: 0.7rem;
+    min-width: 26px;
+  }
+
+  #editTenantModal .badge {
+    font-size: 0.7rem;
+  }
+
+  #editTenantModal .nav-pills .nav-link {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  #editTenantModal .nav-pills .nav-link i {
+    display: none;
+  }
+
+  #editTenantModal .card-body h4 {
+    font-size: 1.25rem;
+  }
+
+  #editTenantModal .service-period-nav {
+    flex-direction: row;
+  }
+
+  #editTenantModal .service-period-btn {
+    min-width: auto;
+  }
+
+  #editTenantModal .service-stats-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  #editTenantModal .service-total-number {
+    font-size: 1.25rem;
+  }
+
+  #paymentDetailModal .modal-dialog {
+    margin: 1rem;
+  }
+
+  #paymentDetailModal .row.mb-2 .col-5,
+  #paymentDetailModal .row.mb-2 .col-7 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  #paymentDetailModal .row.mb-2 .col-5 {
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+  }
+
+  #editTenantModal .unified-subscription-storage-widget {
+    padding: 16px;
+  }
+
+  #editTenantModal .widget-main-content {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  #editTenantModal .widget-divider {
+    width: 100%;
+    height: 1px;
+    margin: 10px 0;
+  }
+
+  #editTenantModal .widget-title {
+    font-size: 14px;
+  }
+
+  #editTenantModal .plan-name {
+    font-size: 16px;
+  }
+
+  #editTenantModal .stat .value {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 576px) {
+  #editTenantModal .info-card {
+    padding: 12px;
+  }
+
+  #editTenantModal .subscription-details {
+    padding: 12px;
+  }
+
+  #editTenantModal .storage-details-card {
+    padding: 12px;
+  }
+
+  #editTenantModal .d-flex.gap-2 {
+    flex-direction: row;
+    gap: 0.5rem !important;
+  }
+
+  #editTenantModal .form-select-sm {
+    width: 100% !important;
+  }
+
+  #editTenantModal .service-stats-card-body {
+    padding: 0.5rem;
+  }
+
+  #editTenantModal .stats-item {
+    padding: 0.375rem 0;
+  }
+
+  #editTenantModal .stats-name {
+    font-size: 0.8rem;
+  }
+
+  #editTenantModal .stats-count {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  #editTenantModal .table-responsive .table {
+    min-width: 600px;
+  }
+
+  #editTenantModal .time-stats,
+  #editTenantModal .storage-stats {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  #editTenantModal .time-stats {
+    flex-direction: row !important;
+    gap: 8px;
+  }
+
+  #editTenantModal .widget-title span {
+    display: none;
+  }
+
+  #editTenantModal .widget-title::after {
+    content: 'Abonelik & Depolama';
+  }
+}
