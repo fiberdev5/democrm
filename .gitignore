@@ -8,6 +8,8 @@
 /.env
 /database/seeders
 /.env.*
+.history/
+.DS_Store
 Homestead.json
 Homestead.yaml
 npm-debug.log
